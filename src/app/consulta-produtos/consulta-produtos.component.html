@@ -16,6 +16,7 @@
             <thead>
                 <tr>
                     <th>Miniatura</th> <!-- Nova coluna para miniaturas -->
+                    <th>Lotes</th>
                     <th>Código</th>
                     <th>Nome do produto</th>
                     <th>Descrição</th>
@@ -32,10 +33,20 @@
                     <th>Confirmação</th>
                 </tr>
             </thead>
-            <!-- corpo da tabela -->
+            
+        <ng-container *ngFor="let p of produtos"><!-- corpo da tabela -->
             <tbody>
-                <tr *ngFor="let p of produtos">
-                    <td><img [src]="p.imagemUrl" alt="{{p.nome}}" width="50" (click)="expandirImagem(p.imagemUrl)"></td> <!-- Coluna para exibir a miniatura -->
+                <tr>
+                    <td><img [src]="p.imagemUrl" alt="{{p.nome}}" width="50" (click)="expandirImagem(p.imagemUrl)"></td>
+                    <td> <!-- Nova coluna para o botão de mais detalhes -->
+                        <button class="btn btn-info btn-sm" (click)="toggleDetalhes(p)">+</button>
+                        <div *ngIf="p.mostrarDetalhes">
+                            <!-- Aqui você pode listar os detalhes adicionais -->
+                            <ul>
+                                <li *ngFor="let modelo of p.modelos">{{ modelo }}</li>
+                            </ul>
+                        </div>
+                    </td> <!-- Coluna para exibir a miniatura -->
                     <td>{{p.codigo}}</td>
                     <td>{{p.nome | uppercase}}</td>
                     <td>{{p.descricao}}</td>
@@ -60,7 +71,15 @@
                     </td>
                     
                 </tr>
+                <tr *ngIf="p.mostrarDetalhes">
+                    <td colspan="16">
+                        <ul>
+                            <li *ngFor="let modelo of p.modelos">{{ modelo }}</li>
+                        </ul>
+                    </td>
+                </tr>
             </tbody>
+        </ng-container>
             <!-- rodapé da tabela -->
             <tfoot>
                 <tr>

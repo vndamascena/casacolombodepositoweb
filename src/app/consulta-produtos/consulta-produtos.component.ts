@@ -117,5 +117,12 @@ export class ConsultaProdutosComponent implements OnInit {
         )
       );
     }
-} }
+
+  } 
+
+  toggleDetalhes(produto: any) {
+    produto.mostrarDetalhes = !produto.mostrarDetalhes;
+}
+}
+
 
