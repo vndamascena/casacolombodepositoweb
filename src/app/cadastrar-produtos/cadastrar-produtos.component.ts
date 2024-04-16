@@ -27,7 +27,7 @@ export class CadastrarProdutosComponent implements OnInit {
   ) { }
 
   //criando a estrutura do formulário
-    form = new FormGroup({
+  form = new FormGroup({
     codigo: new FormControl(''),
     nome: new FormControl(''),
     marca: new FormControl(''),
@@ -66,7 +66,7 @@ export class CadastrarProdutosComponent implements OnInit {
         }
       });
 
-    
+
   }
 
   // método para realizar o cadastro
@@ -85,5 +85,19 @@ export class CadastrarProdutosComponent implements OnInit {
         }
       });
   }
-  
- }
+  // Função para lidar com a seleção de arquivo no frontend
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // Obtém o caminho do arquivo após a leitura
+        const imagePath: string = reader.result as string;
+        // Define o valor do campo imagemUrl no formulário como o caminho do arquivo
+        this.form.get('imagemUrl')?.setValue(imagePath);
+      };
+    }
+  }
+
+}

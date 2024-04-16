@@ -18,6 +18,9 @@ export class ConsultaProdutosComponent implements OnInit {
   produtos: any[] = []; //array de objetos
   expression: string = '';
   imagemAmpliadaUrl: string | null = null;
+  produtosFiltrados: any[] = [];
+  termoPesquisa: string = '';
+
   
   produto: any = {}; // Objeto para armazenar os detalhes do produto
   //construtor para inicializar os atributos da classe
@@ -28,6 +31,7 @@ export class ConsultaProdutosComponent implements OnInit {
 
  ngOnInit(): void {
     // Recuperar o ID do produto da URL
+    
     const productId = this.route.snapshot.queryParams['id'];
 
     // Verificar se o ID do produto está presente na URL
@@ -76,5 +80,42 @@ export class ConsultaProdutosComponent implements OnInit {
         imagemAmpliada.classList.remove('mostrar');
     }
   }
-}
+  // Função para registrar a venda e atualizar a quantidade em estoque
+  confirmarVenda(produto: any) {
+    // Verifica se a quantidade vendida é válida
+    if (produto.quantidadeVendida > 0) {
+      // Envia uma solicitação para a API para registrar a venda
+      this.httpClient.post  <any>('http://localhost:5096/api', { 
+        produtoId: produto.id,
+        quantidadeVendida: produto.quantidadeVendida
+      }).subscribe({
+        next: (response) => {
+          // Atualiza a quantidade em estoque com base na resposta da API
+          produto.quantidade -= response.quantidadeVendida;
+          // Reinicia a quantidade vendida para 0 após a venda ser confirmada
+          produto.quantidadeVendida = 0;
+          alert('Venda confirmada com sucesso!');
+        },
+        error: (error) => {
+          console.error('Erro ao confirmar venda:', error);
+          alert('Erro ao confirmar venda. Por favor, tente novamente mais tarde.');
+        }
+      });
+    } else {
+      alert('Por favor, selecione uma quantidade válida para vender.');
+    }
+  }
+  filtrarProdutos(): void {
+    if (this.expression.trim() === '') {
+      // Se a expressão de pesquisa estiver vazia, carrega todos os produtos
+      this.ngOnInit ();
+    } else {
+      // Filtra os produtos com base na expressão de pesquisa
+      this.produtos = this.produtos.filter(p =>
+        Object.values(p).some(value =>
+          typeof value === 'string' && value.toLowerCase().includes(this.expression.toLowerCase())
+        )
+      );
+    }
+} }
 

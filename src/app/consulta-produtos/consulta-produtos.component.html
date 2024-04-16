@@ -4,8 +4,10 @@
     <p>Construir, Reformar e Decorar</p>
     <!-- Botão para cadastro de produto -->
     <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">Pesquisar</span>
-        <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar" aria-describedby="basic-addon1">
+        <button class="btn btn-success" type="button" (click)="filtrarProdutos()">Pesquisar</button>
+
+        <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarProdutos()">
+        
     </div>
     <!-- Tabela para exibir a consulta de produtos -->
     <div class="table-responsive">
@@ -26,6 +28,8 @@
                     <th>Qtd CX</th>
                     <th>Categoria</th>
                     <th>Operação</th>
+                    <th>Vender</th>
+                    <th>Confirmação</th>
                 </tr>
             </thead>
             <!-- corpo da tabela -->
@@ -48,6 +52,13 @@
                             Editar
                         </button>
                     </td>
+                    <td>
+                        <input type="number" min="0" [(ngModel)]="p.quantidadeVendida" style="width: 50px;">
+                    </td>
+                    <td>
+                        <button class="btn btn-success" (click)="confirmarVenda(p)">Vender</button>
+                    </td>
+                    
                 </tr>
             </tbody>
             <!-- rodapé da tabela -->

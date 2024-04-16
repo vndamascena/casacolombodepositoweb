@@ -71,7 +71,7 @@
 
             <div class="col-md-4">
                 <label>Upload de Imagem:</label>
-                <input type="file"  class="form-control" formControlName="imagemUrl" />
+                <input type="file" id="imagemUrl" class="form-control" (change)="onFileSelected($event)" />
             </div>
         </div>
         
