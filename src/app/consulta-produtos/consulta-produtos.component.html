@@ -1,0 +1,69 @@
+<div class="container mt-3">
+    <!-- Título da página -->
+    <h3>Casa Colombo</h3>
+    <p>Construir, Reformar e Decorar</p>
+    <!-- Botão para cadastro de produto -->
+    <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Pesquisar</span>
+        <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar" aria-describedby="basic-addon1">
+    </div>
+    <!-- Tabela para exibir a consulta de produtos -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <!-- cabeçalho da tabela -->
+            <thead>
+                <tr>
+                    <th>Miniatura</th> <!-- Nova coluna para miniaturas -->
+                    <th>Código</th>
+                    <th>Nome do produto</th>
+                    <th>Descrição</th>
+                    <th>PEI</th>
+                    <th>Marca</th>
+                    <th>Peça CX</th>
+                    <th>M2 CX</th>
+                    <th>Preço M2</th>
+                    <th>Preço CX</th>
+                    <th>Qtd CX</th>
+                    <th>Categoria</th>
+                    <th>Operação</th>
+                </tr>
+            </thead>
+            <!-- corpo da tabela -->
+            <tbody>
+                <tr *ngFor="let p of produtos">
+                    <td><img [src]="p.imagemUrl" alt="{{p.nome}}" width="50" (click)="expandirImagem(p.imagemUrl)"></td> <!-- Coluna para exibir a miniatura -->
+                    <td>{{p.codigo}}</td>
+                    <td>{{p.nome | uppercase}}</td>
+                    <td>{{p.descricao}}</td>
+                    <td>{{p.lote}}</td>
+                    <td>{{p.marca}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>                  
+                    <td></td>
+                    <td>{{p.quantidade}}</td>
+                    <td>{{p.categoria?.nome}}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-2" (click)="editarProduto(p.id)">
+                            Editar
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+            <!-- rodapé da tabela -->
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        Quantidade de produtos: {{produtos.length}}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+   
+
+</div>
+<div class="imagem-ampliada">
+    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+    <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada">
+</div>

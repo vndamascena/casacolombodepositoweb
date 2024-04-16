@@ -1,0 +1,116 @@
+<div class="container mt-3">
+    <h3><strong>CADASTRAR PRODUTOS</strong></h3>
+    <p>Preencha os campos para realizar o cadastramento do produto.</p>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <!-- primeira linha -->
+        <div class="row">
+            <!-- primeira coluna -->
+            <div class="col-md-2">
+                <label><strong>Código:</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName ="codigo" />
+            </div>
+            <div class="col-md-5">
+                <label><strong>Nome do produto:</strong> </label>
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName ="nome"/>
+            </div>
+            <!-- segunda coluna -->
+            <div class="col-md-5">
+                <label><strong>Descrição:</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName ="descricao" />
+            </div>
+        </div>
+        <!-- linha de separação -->
+        <hr>
+        <!-- segunda linha -->
+        <div class="row">
+            <!-- primeira coluna -->
+            <div class="col-md-3">
+                <label><strong>Marca:</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui"formControlName ="marca" />
+            </div>
+            <div class="col-md-3">
+                <label><strong>Quantidade:</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui"formControlName ="quantidade" />
+            </div>
+            <!-- segunda coluna -->
+            <div class="col-md-3">
+                <label><strong>lote:</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName ="lote" />
+            </div>
+            <!-- terceira coluna -->
+            <div class="col-md-3">
+                <label><strong>Deposito:</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName ="depositoId" />
+            </div>
+           
+        </div>
+        <!-- linha de separação -->
+        <hr>
+        <!-- terceira linha -->
+        <div class="row">
+            <!-- primeira coluna -->
+            <div class="col-md-2">
+                <label><strong>Preço M2</strong></label>
+                <input type="text" class="form-control" placeholder="R$0,00" />
+            </div>
+            <!-- segunda coluna -->
+            <div class="col-md-2">
+                <label><strong>Preço CX</strong></label>
+                <input type="text" class="form-control" placeholder="R$0,00" />
+            </div>
+            <div class="col-md-2">
+                <label><strong>Peça CX</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" />
+            </div>
+            <!-- quarta coluna -->
+            <div class="col-md-2">
+                <label><strong>M2 CX</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" />
+                
+            </div>
+
+            <div class="col-md-4">
+                <label>Upload de Imagem:</label>
+                <input type="file"  class="form-control" formControlName="imagemUrl" />
+            </div>
+        </div>
+        
+        <!-- linha de separação -->
+        <hr>
+        <!-- quarta linha -->
+        <div class="row mt-3">
+            <!-- primeira coluna -->
+            <div class="col">
+                <label><strong>Categoria</strong></label>
+                <select class="form-select" formControlName ="categoriaId">
+                    <option value="">Selecione uma categoria</option>
+                    <option *ngFor="let c of categorias" value="{{c.id}}">
+                        {{c.nome | uppercase}}
+                    </option>
+                </select>
+            </div>
+            <!-- segunda coluna -->
+            <div class="col">
+                <label><strong>Fornecedor</strong></label>
+                <select class="form-select" formControlName ="fornecedorId">
+                    <option value="">Selecione um fornecedor</option>
+                    <option *ngFor="let f of fornecedores" value="{{f.id}}">
+                        {{f.nome | uppercase}}
+                    </option>
+                </select>
+            </div>
+        </div>
+        <!-- linha de separação -->
+        
+        <hr>
+        <!-- quinta linha -->
+        <div class="row mt-3">
+            <!-- coluna única -->
+            <div class="col text-center">
+                <button type="submit" class="btn btn-success btn-lg">
+                    Realizar Cadastro
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
