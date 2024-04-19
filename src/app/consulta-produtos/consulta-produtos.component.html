@@ -5,9 +5,7 @@
     <!-- Botão para cadastro de produto -->
     <div class="input-group mb-3">
         <button class="btn btn-success" type="button" (click)="filtrarProdutos()">Pesquisar</button>
-
         <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarProdutos()">
-        
     </div>
     <!-- Tabela para exibir a consulta de produtos -->
     <div class="table-responsive">
@@ -15,8 +13,8 @@
             <!-- cabeçalho da tabela -->
             <thead>
                 <tr>
-                    <th>Miniatura</th> <!-- Nova coluna para miniaturas -->
-                    <th>Lotes</th>
+                    <th>Miniatura</th>
+                    <th>Detalhes</th>
                     <th>Código</th>
                     <th>Nome do produto</th>
                     <th>Descrição</th>
@@ -29,71 +27,80 @@
                     <th>Qtd CX</th>
                     <th>Categoria</th>
                     <th>Operação</th>
-                    <th>Vender</th>
-                    <th>Confirmação</th>
                 </tr>
             </thead>
-            
-        <ng-container *ngFor="let p of produtos"><!-- corpo da tabela -->
+            <!-- Corpo da tabela -->
             <tbody>
-                <tr>
-                    <td><img [src]="p.imagemUrl" alt="{{p.nome}}" width="50" (click)="expandirImagem(p.imagemUrl)"></td>
-                    <td> <!-- Nova coluna para o botão de mais detalhes -->
-                        <button class="btn btn-info btn-sm" (click)="toggleDetalhes(p)">+</button>
-                        <div *ngIf="p.mostrarDetalhes">
-                            <!-- Aqui você pode listar os detalhes adicionais -->
-                            <ul>
-                                <li *ngFor="let modelo of p.modelos">{{ modelo }}</li>
-                            </ul>
-                        </div>
-                    </td> <!-- Coluna para exibir a miniatura -->
-                    <td>{{p.codigo}}</td>
-                    <td>{{p.nome | uppercase}}</td>
-                    <td>{{p.descricao}}</td>
-                    <td>{{p.lote}}</td>
-                    <td>{{p.marca}}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>                  
-                    <td></td>
-                    <td>{{p.quantidade}}</td>
-                    <td>{{p.categoria?.nome}}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary me-2" (click)="editarProduto(p.id)">
-                            Editar
-                        </button>
-                    </td>
-                    <td>
-                        <input type="number" min="0" [(ngModel)]="p.quantidadeVendida" style="width: 50px;">
-                    </td>
-                    <td>
-                        <button class="btn btn-success" (click)="confirmarVenda(p)">Vender</button>
-                    </td>
-                    
-                </tr>
-                <tr *ngIf="p.mostrarDetalhes">
-                    <td colspan="16">
-                        <ul>
-                            <li *ngFor="let modelo of p.modelos">{{ modelo }}</li>
-                        </ul>
-                    </td>
-                </tr>
+                <ng-container *ngFor="let produto of produtos">
+                    <tr>
+                        <!-- Colunas para exibir os detalhes básicos do produto -->
+                        <td><img [src]="produto.imagemUrl" alt="{{ produto.nome }}" width="50" (click)="expandirImagem(produto.imagemUrl)"></td>
+                        <td>
+                            <button class="btn  btn-outline-success" (click)="toggleDetalhes(produto)">+</button>
+                        </td>
+                        <td>{{ produto.codigo }}</td>
+                        <td>{{ produto.nome | uppercase }}</td>
+                        <td>{{ produto.descricao }}</td>
+                        <td>{{ produto.pei }}</td>
+                        <td>{{ produto.marca }}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>{{ produto.quantidade }}</td>
+                        <td>{{ produto.categoria?.nome }}</td>
+                        <!-- Botão de editar -->
+                        <td>
+                            <button class="btn btn-sm btn-outline-success me-2" (click)="editarProduto(produto.id)">
+                                Editar
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Linha para exibir os detalhes adicionais -->
+                    <tr *ngIf="produto.mostrarDetalhes">
+                        <td colspan="13">
+                            <!-- Tabela para os detalhes dos lotes -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Número do Lote</th>
+                                        <th>Quantidade</th>
+                                        <th>Quantidade Vendida</th>
+                                        <th>Confirmar Venda</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Use um ngFor para iterar sobre os lotes -->
+                                    <tr *ngFor="let lote of produto.lotes">
+                                        <td>{{ lote.numeroLote }}</td>
+                                        <td>{{ lote.quantidadeLote }}</td>
+                                        <!-- Coluna para quantidade vendida -->
+                                        <td>
+                                            <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida" style="width: 50px;">
+                                        </td>
+                                        <!-- Botão de vender -->
+                                        <td>
+                                            <button class="btn btn-success" (click)="confirmarVenda(lote)">Vender</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
-        </ng-container>
             <!-- rodapé da tabela -->
             <tfoot>
                 <tr>
-                    <td colspan="7">
-                        Quantidade de produtos: {{produtos.length}}
+                    <td colspan="14">
+                        Quantidade de produtos: {{ produtos.length }}
                     </td>
                 </tr>
             </tfoot>
         </table>
     </div>
-   
-
 </div>
-<div class="imagem-ampliada">
+<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
     <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
     <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada">
 </div>

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-cadastro-produtos',
@@ -10,7 +10,8 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule],
+    ReactiveFormsModule
+  ],
   templateUrl: './cadastrar-produtos.component.html',
   styleUrl: './cadastrar-produtos.component.css'
 })
@@ -23,25 +24,35 @@ export class CadastrarProdutosComponent implements OnInit {
 
   // construtor
   constructor(
+    
+    private formBiulder: FormBuilder,
     private httpClient: HttpClient
   ) { }
 
-  //criando a estrutura do formulário
+  // criando a estrutura do formulário
   form = new FormGroup({
     codigo: new FormControl(''),
     nome: new FormControl(''),
     marca: new FormControl(''),
-    quantidade: new FormControl(''),
-    lote: new FormControl(''),
+    pei: new FormControl(''),
     descricao: new FormControl(''),
     categoriaId: new FormControl(''),
     fornecedorId: new FormControl(''),
     depositoId: new FormControl(''),
     imagemUrl: new FormControl(''),
-
-
+    lote: new FormArray([
+      new FormGroup({
+        numeroLote: new FormControl(''),
+        quantidadeLote: new FormControl(''),
+      })
+      
+    ]),
   });
 
+  // getter para acessar o FormArray 'lotes'
+  get lotes() {
+    return this.form.get('lote') as FormArray;
+  }
 
   // função executada no momento em que o componente é carregado
   ngOnInit(): void {
@@ -65,19 +76,26 @@ export class CadastrarProdutosComponent implements OnInit {
           console.log(e.error);
         }
       });
-
-
   }
 
   // método para realizar o cadastro
   onSubmit(): void {
-    //enviando uma requisição POST para a API
-    this.httpClient.post(environment.apiUrl + "/produto",
-      this.form.value)
+    // Obtém o FormArray 'lotes'
+    const lotesArray = this.form.get('lote') as FormArray;
+  
+    // Verifica se o FormArray 'lotes' tem algum controle
+    if (lotesArray && lotesArray.length === 0) {
+      // Se estiver vazio, exibe uma mensagem de erro
+      console.error('A lista de lotes não pode estar vazia.');
+      return;
+    }
+    
+    // Se o FormArray 'lotes' não estiver vazio, envia o formulário para o servidor
+    this.httpClient.post(environment.apiUrl + "/produto", this.form.value)
       .subscribe({
         next: (data: any) => {
-          alert(data.message); //exibir mensagem de sucesso
-          this.form.reset(); //limpar os campos do formulário
+          alert(data.message); // exibir mensagem de sucesso
+          this.form.reset(); // limpar os campos do formulário
         },
         error: (e) => {
           console.log(e.error);
@@ -85,6 +103,12 @@ export class CadastrarProdutosComponent implements OnInit {
         }
       });
   }
+  
+  
+
+
+
+
   // Função para lidar com a seleção de arquivo no frontend
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
@@ -100,4 +124,12 @@ export class CadastrarProdutosComponent implements OnInit {
     }
   }
 
+  adicionarLote(): void {
+    const novoLote = new FormGroup({
+        numeroLote: new FormControl(''),
+        quantidadeLote: new FormControl(''),
+    });
+    // Adicione o novo lote ao FormArray 'lotes'
+    this.lotes.push(novoLote);
+}
 }
