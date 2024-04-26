@@ -23,7 +23,7 @@
         <hr>
         <!-- Exibição dos lotes -->
         <div class="row" formArrayName="lote">
-            <div class="col-md-4" *ngFor="let lote of lotes.controls; let i=index" [formGroupName]="i">
+            <div class="col-md-7" *ngFor="let lote of lotes.controls; let i=index" [formGroupName]="i">
                 <div class="row">
                     <div class="col">
                         <label for="numeroLote{{i}}">Lote {{ i + 1 }}</label>
@@ -33,13 +33,24 @@
                         <label for="quantidadeLote{{i}}">Quantidade</label>
                         <input type="text" class="form-control" formControlName="quantidadeLote" id="quantidadeLote{{i}}" placeholder="Digite aqui">
                     </div>
+                    <div class="col-md-4">
+                        <label for="quantidadeLote{{i}}">Endereço</label>
+                        <input type="text" class="form-control" formControlName="ala" id="ala{{i}}" placeholder="Digite aqui">
+                    </div>
+                    <div class="col-md-2">
+                        <!-- Passando o ID do lote corretamente para a função deleteLote -->
+                        <button type="button" class="btn btn-danger mt-4" (click)="excluirLote(produto.id)">Excluir</button>
+        
+                    </div>
                 </div>
             </div>
+           
             <div class="col-md-4">
                 <div class="row">
                     <div class="col">
                         <button type="button" class="btn btn-success mt-4" (click)="adicionarLote()">Adicionar Lote</button>
                     </div>
+                   
                 </div>
             </div>
         </div>
@@ -60,10 +71,7 @@
                 <label><strong>Marca:</strong></label>
                 <input type="text" class="form-control" placeholder="Digite aqui" formControlName="marca" />
             </div>
-            <div class="col-md-2">
-                <label><strong>Deposito:</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="depositoId" />
-            </div>
+           
             <div class="col-md-3">
                 <label>Upload de Imagem:</label>
                 <input type="file" id="imagemUrl" class="form-control" (change)="onFileSelected($event)" />
@@ -76,23 +84,25 @@
             <!-- primeira coluna -->
             <div class="col-md-2">
                 <label><strong>Preço M2</strong></label>
-                <input type="text" class="form-control" placeholder="R$0,00" />
+                <input type="text" class="form-control" placeholder="R$0,00" formControlName="precoMetroQ" (input)="atualizarPrecoCaixa()" />
+            </div>
+            
+            <div class="col-md-2">
+                <label><strong>M2 CX</strong></label>
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="metroQCaixa" (input)="atualizarPrecoCaixa()" />
+                
             </div>
             <!-- segunda coluna -->
             <div class="col-md-2">
                 <label><strong>Preço CX</strong></label>
-                <input type="text" class="form-control" placeholder="R$0,00" />
+                <input type="text" class="form-control" placeholder="R$0,00" formControlName="precoCaixa"/>
             </div>
             <div class="col-md-2">
                 <label><strong>Peça CX</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" />
+                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="pecascaixa"/>
             </div>
-            <!-- quarta coluna -->
-            <div class="col-md-2">
-                <label><strong>M2 CX</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" />
-                
-            </div>
+            
+            
 
             
         </div>
@@ -118,6 +128,16 @@
                     <option value="">Selecione um fornecedor</option>
                     <option *ngFor="let f of fornecedores" [value]="f.id">
                         {{f.nome | uppercase}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col">
+                <label><strong>Depósito</strong></label>
+                <select class="form-select" formControlName="depositoId">
+                    <option value="">Selecione um depósito</option>
+                    <option *ngFor="let d of depositos" [value]="d.depositoId">
+                        {{d.nomeDeposito | uppercase}}
                     </option>
                 </select>
             </div>

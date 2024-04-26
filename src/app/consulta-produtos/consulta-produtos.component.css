@@ -31,3 +31,7 @@ User
     right: 30px; /* Ajusta a posição da direita */
     z-index: 9999; /* Garante que o botão esteja acima da imagem */
 }
+.table td,
+.table th {
+    text-align: center;
+}

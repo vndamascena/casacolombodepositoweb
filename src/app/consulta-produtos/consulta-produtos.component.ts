@@ -86,31 +86,30 @@ export class ConsultaProdutosComponent implements OnInit {
   }
 
   // Função para registrar a venda e atualizar a quantidade em estoque
-  confirmarVenda(produto: any): void {
-    // Verifica se a quantidade vendida é válida
-    if (produto.quantidadeVendida > 0) {
-      // Envia uma solicitação para a API para registrar a venda
-      this.httpClient.post<any>('http://localhost:5096/api/venda', {
-        produtoId: produto.id,
-        quantidadeVendida: produto.quantidadeVendida
-      })
-        .subscribe({
-          next: (response) => {
-            // Atualiza a quantidade em estoque com base na resposta da API
-            produto.quantidade -= response.quantidadeVendida;
-            // Reinicia a quantidade vendida para 0 após a venda ser confirmada
-            produto.quantidadeVendida = 0;
-            alert('Venda confirmada com sucesso!');
-          },
-          error: (error) => {
-            console.error('Erro ao confirmar venda:', error);
-            alert('Erro ao confirmar venda. Por favor, tente novamente mais tarde.');
-          }
-        });
+  confirmarVenda(lote: any): void {
+    if (lote.quantidadeVendida > 0) {
+        // Configuração dos parâmetros da solicitação POST
+        const options = { params: { Id: lote.id } };
+        
+        this.httpClient.post<any>('http://localhost:5096/api/produto/venda', { quantidadeVendida: lote.quantidadeVendida }, options)
+            .subscribe({
+                next: (response) => {
+                    // Atualiza a quantidade do lote no cliente
+                    lote.quantidadeLote -= lote.quantidadeVendida;
+                    lote.quantidadeVendida = 0;
+                    alert('Venda confirmada com sucesso!');
+                },
+                error: (error) => {
+                    console.error('Erro ao confirmar venda:', error);
+                    alert('Erro ao confirmar venda. Por favor, tente novamente mais tarde.');
+                }
+            });
     } else {
-      alert('Por favor, selecione uma quantidade válida para vender.');
+        alert('Por favor, selecione uma quantidade válida para vender.');
     }
-  }
+}
+
+
 
   // Método para filtrar os produtos com base na expressão de pesquisa
   filtrarProdutos(): void {
@@ -139,18 +138,16 @@ export class ConsultaProdutosComponent implements OnInit {
   carregarLotes(produto: any): void {
     // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
     if (produto.lotes && produto.lotes.length > 0) {
-      // Se os lotes já estiverem presentes no objeto do produto,
-      // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
-      console.log('Lotes já carregados:', produto.lotes);
+        // Se os lotes já estiverem presentes no objeto do produto,
+        // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
+        console.log('Lotes já carregados:', produto.lotes);
     } else {
-      
-  
-      this.httpClient.get<any[]>(`http://localhost:5096/api/produto/${produto.id}/lotes`)
-        .subscribe((lotesData) => {
-          produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
-          console.log('Lotes carregados:', produto.lotes);
-        }, (error) => {
-          console.error('Erro ao carregar os lotes:', error);
-        });
+        this.httpClient.get<any[]>(`http://localhost:5096/api/produto/${produto.id}/lotes`)
+            .subscribe((lotesData) => {
+                produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
+                console.log('Lotes carregados:', produto.lotes);
+            }, (error) => {
+                console.error('Erro ao carregar os lotes:', error);
+            });
     }
-  }}  
+}}

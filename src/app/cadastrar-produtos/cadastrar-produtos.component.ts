@@ -18,6 +18,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
 export class CadastrarProdutosComponent implements OnInit {
 
   // atributos
+  depositos: any [] = [];
   categorias: any[] = [];
   fornecedores: any[] = [];
   produto: any = {}; // objeto para armazenar os dados do produto
@@ -36,6 +37,10 @@ export class CadastrarProdutosComponent implements OnInit {
     marca: new FormControl(''),
     pei: new FormControl(''),
     descricao: new FormControl(''),
+    pecascaixa: new FormControl(''),
+    metroQCaixa: new FormControl(''),
+    precoMetroQ: new FormControl(''),
+    precoCaixa: new FormControl(''),
     categoriaId: new FormControl(''),
     fornecedorId: new FormControl(''),
     depositoId: new FormControl(''),
@@ -44,6 +49,7 @@ export class CadastrarProdutosComponent implements OnInit {
       new FormGroup({
         numeroLote: new FormControl(''),
         quantidadeLote: new FormControl(''),
+        ala: new FormControl(''),
       })
       
     ]),
@@ -76,6 +82,16 @@ export class CadastrarProdutosComponent implements OnInit {
           console.log(e.error);
         }
       });
+
+      this.httpClient.get(environment.apiUrl + "/deposito")
+        .subscribe({
+            next: (data) => {
+                this.depositos = data as any[];
+            },
+            error: (e) => {
+                console.log(e.error);
+            }
+        });
   }
 
   // método para realizar o cadastro
@@ -128,8 +144,44 @@ export class CadastrarProdutosComponent implements OnInit {
     const novoLote = new FormGroup({
         numeroLote: new FormControl(''),
         quantidadeLote: new FormControl(''),
+        ala: new FormControl(''),
     });
     // Adicione o novo lote ao FormArray 'lotes'
     this.lotes.push(novoLote);
+  }
+ 
+  atualizarPrecoCaixa(): void {
+    const precoMetroQControl = this.form.get('precoMetroQ');
+    const metroQCaixaControl = this.form.get('metroQCaixa');
+    const precoCaixaControl = this.form.get('precoCaixa');
+
+    if (precoMetroQControl && metroQCaixaControl && precoCaixaControl) {
+        const precoMetroQValue = precoMetroQControl.value;
+        const metroQCaixaValue = metroQCaixaControl.value;
+
+        if (typeof precoMetroQValue === 'string' && typeof metroQCaixaValue === 'string') {
+            const precoM2 = parseFloat(precoMetroQValue) || 0;
+            const m2CX = parseFloat(metroQCaixaValue) || 0;
+
+            if (!isNaN(precoM2) && !isNaN(m2CX)) {
+                const precoCX = precoM2 * m2CX;
+                precoCaixaControl.setValue(precoCX.toFixed(2));
+            } else {
+                precoCaixaControl.setValue('0.00');
+            }
+        } else {
+            precoCaixaControl.setValue('0.00');
+        }
+    } else {
+        console.error("Um dos controles é nulo.");
+    }
 }
+
+excluirLote( loteId: string): void {
+
+  
+  // Remover o último campo de lote localmente
+  this.lotes.removeAt(this.lotes.length - 1);
+  
+ }
 }

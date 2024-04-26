@@ -18,14 +18,13 @@
                     <th>Código</th>
                     <th>Nome do produto</th>
                     <th>Descrição</th>
-                    <th>PEI</th>
+                    <th>Pei</th>
                     <th>Marca</th>
-                    <th>Peça CX</th>
-                    <th>M2 CX</th>
-                    <th>Preço M2</th>
+                    <th>Preço M²</th>
+                    <th>M² CX</th>
                     <th>Preço CX</th>
+                    <th>Peças CX</th>                    
                     <th>Qtd CX</th>
-                    <th>Categoria</th>
                     <th>Operação</th>
                 </tr>
             </thead>
@@ -43,12 +42,12 @@
                         <td>{{ produto.descricao }}</td>
                         <td>{{ produto.pei }}</td>
                         <td>{{ produto.marca }}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{ produto.precoMetroQ | currency:'BRL':'symbol':'1.2-2'}}</td>
+                        <td>{{ produto.metroQCaixa }}</td>
+                        <td>{{ produto.precoCaixa | currency:'BRL':'symbol':'1.2-2'}}</td>
+                        <td>{{ produto.pecasCaixa }}</td>
                         <td>{{ produto.quantidade }}</td>
-                        <td>{{ produto.categoria?.nome }}</td>
+                        
                         <!-- Botão de editar -->
                         <td>
                             <button class="btn btn-sm btn-outline-success me-2" (click)="editarProduto(produto.id)">
@@ -65,15 +64,17 @@
                                     <tr>
                                         <th>Número do Lote</th>
                                         <th>Quantidade</th>
+                                        <th>Endereço</th>
                                         <th>Quantidade Vendida</th>
                                         <th>Confirmar Venda</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <!-- Use um ngFor para iterar sobre os lotes -->
-                                    <tr *ngFor="let lote of produto.lotes">
+                                    <tr *ngFor="let lote of produto.lotes"> 
                                         <td>{{ lote.numeroLote }}</td>
                                         <td>{{ lote.quantidadeLote }}</td>
+                                        <td>{{lote.ala}}</td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
                                             <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida" style="width: 50px;">
@@ -90,16 +91,19 @@
                 </ng-container>
             </tbody>
             <!-- rodapé da tabela -->
-            <tfoot>
-                <tr>
-                    <td colspan="14">
-                        Quantidade de produtos: {{ produtos.length }}
-                    </td>
-                </tr>
-            </tfoot>
+            
         </table>
+        <tfoot>
+            <tr>
+                <td colspan="14">
+                    Quantidade de produtos: {{ produtos.length }}
+                </td>
+            </tr>
+        </tfoot>
     </div>
+    
 </div>
+
 <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
     <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
     <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada">
