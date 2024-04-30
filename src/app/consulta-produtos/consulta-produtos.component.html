@@ -5,7 +5,8 @@
     <!-- Botão para cadastro de produto -->
     <div class="input-group mb-3">
         <button class="btn btn-success" type="button" (click)="filtrarProdutos()">Pesquisar</button>
-        <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarProdutos()">
+        <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar"
+            aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarProdutos()">
     </div>
     <!-- Tabela para exibir a consulta de produtos -->
     <div class="table-responsive">
@@ -23,7 +24,7 @@
                     <th>Preço M²</th>
                     <th>M² CX</th>
                     <th>Preço CX</th>
-                    <th>Peças CX</th>                    
+                    <th>Peças CX</th>
                     <th>Qtd CX</th>
                     <th>Operação</th>
                 </tr>
@@ -33,7 +34,8 @@
                 <ng-container *ngFor="let produto of produtos">
                     <tr>
                         <!-- Colunas para exibir os detalhes básicos do produto -->
-                        <td><img [src]="produto.imagemUrl" alt="{{ produto.nome }}" width="50" (click)="expandirImagem(produto.imagemUrl)"></td>
+                        <td><img [src]="produto.imagemUrl" alt="{{ produto.nome }}" width="50"
+                                (click)="expandirImagem(produto.imagemUrl)"></td>
                         <td>
                             <button class="btn  btn-outline-success" (click)="toggleDetalhes(produto)">+</button>
                         </td>
@@ -47,7 +49,7 @@
                         <td>{{ produto.precoCaixa | currency:'BRL':'symbol':'1.2-2'}}</td>
                         <td>{{ produto.pecasCaixa }}</td>
                         <td>{{ produto.quantidade }}</td>
-                        
+
                         <!-- Botão de editar -->
                         <td>
                             <button class="btn btn-sm btn-outline-success me-2" (click)="editarProduto(produto.id)">
@@ -71,17 +73,21 @@
                                 </thead>
                                 <tbody>
                                     <!-- Use um ngFor para iterar sobre os lotes -->
-                                    <tr *ngFor="let lote of produto.lotes"> 
+                                    <tr *ngFor="let lote of produto.lotes">
                                         <td>{{ lote.numeroLote }}</td>
                                         <td>{{ lote.quantidadeLote }}</td>
                                         <td>{{lote.ala}}</td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
-                                            <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida" style="width: 50px;">
+                                            <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida"
+                                                style="width: 50px;">
                                         </td>
                                         <!-- Botão de vender -->
                                         <td>
-                                            <button class="btn btn-success" (click)="confirmarVenda(lote)">Vender</button>
+                                            <button class="btn btn-success"
+                                                (click)="abrirFormularioCredenciais(lote)">Vender</button>
+
+
                                         </td>
                                     </tr>
                                 </tbody>
@@ -91,7 +97,7 @@
                 </ng-container>
             </tbody>
             <!-- rodapé da tabela -->
-            
+
         </table>
         <tfoot>
             <tr>
@@ -101,10 +107,26 @@
             </tr>
         </tfoot>
     </div>
-    
+
 </div>
+
+
 
 <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
     <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
     <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada">
+</div>
+
+<div class="formulario-credenciais text-center" *ngIf="loteSelecionado && loteSelecionado === loteSelecionado">
+    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+    <h4>Confirme a sua venda</h4>
+    <div class="mb-3">
+        <label for="matriculaInput" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula" [(ngModel)]="matricula">
+    </div>
+    <div class="mb-3">
+        <label for="senhaInput" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+    </div>
+    <button class="btn btn-outline-light" (click)="confirmarVenda(loteSelecionado)"style="font-weight: bold;">Confirmar</button>
 </div>

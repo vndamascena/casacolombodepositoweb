@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import * as crypto from 'crypto-js';
 
 @Component({
   selector: 'app-consulta-produtos',
@@ -12,7 +13,9 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
   styleUrls: ['./consulta-produtos.component.css']
 })
 export class ConsultaProdutosComponent implements OnInit {
-
+  loteSelecionado: any;
+  matricula: string = ''; // Propriedade para armazenar a matrícula do usuário
+  senha: string = ''; // Propriedade para armazenar a senha do usuário
   produtos: any[] = []; // Array de objetos para armazenar produtos
   expression: string = ''; // String para armazenar a expressão de pesquisa
   imagemAmpliadaUrl: string | null = null; // URL da imagem ampliada
@@ -85,29 +88,56 @@ export class ConsultaProdutosComponent implements OnInit {
     }
   }
 
-  // Função para registrar a venda e atualizar a quantidade em estoque
+
+  
+
+
+
+  abrirFormularioCredenciais(lote: any): void {
+    this.loteSelecionado= lote;
+  }
+  fecharFormularioCredenciais(): void {
+    this.loteSelecionado = null;
+  }
+
+
+
   confirmarVenda(lote: any): void {
-    if (lote.quantidadeVendida > 0) {
-        // Configuração dos parâmetros da solicitação POST
-        const options = { params: { Id: lote.id } };
-        
-        this.httpClient.post<any>('http://localhost:5096/api/produto/venda', { quantidadeVendida: lote.quantidadeVendida }, options)
-            .subscribe({
-                next: (response) => {
-                    // Atualiza a quantidade do lote no cliente
-                    lote.quantidadeLote -= lote.quantidadeVendida;
-                    lote.quantidadeVendida = 0;
-                    alert('Venda confirmada com sucesso!');
-                },
-                error: (error) => {
-                    console.error('Erro ao confirmar venda:', error);
-                    alert('Erro ao confirmar venda. Por favor, tente novamente mais tarde.');
-                }
-            });
+    // Verifica se um lote foi selecionado
+    this.loteSelecionado = lote;
+
+    if (this.loteSelecionado) {
+        // Verifica se a quantidade vendida é maior que 0
+        if (this.loteSelecionado.quantidadeVendida > 0) {
+            // Configuração dos parâmetros da solicitação POST
+            const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
+
+            this.httpClient.post<any>('http://localhost:5096/api/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
+                .subscribe({
+                    next: (response) => {
+                        // Atualiza a quantidade do lote no cliente
+                        this.loteSelecionado.quantidadeLote -= this.loteSelecionado.quantidadeVendida;
+                        this.loteSelecionado.quantidadeVendida = 0;
+                        
+                        alert('Venda confirmada com sucesso!');
+                        this.fecharFormularioCredenciais();
+                    },
+                    error: (error) => {
+                        console.error('Erro ao confirmar venda:', error);
+                        alert('Erro ao confirmar venda. Por favor, tente novamente mais tarde.');
+                    }
+                });
+        } else {
+            alert('Por favor, selecione uma quantidade válida para vender.');
+        }
     } else {
-        alert('Por favor, selecione uma quantidade válida para vender.');
+        alert('Por favor, selecione um lote para venda.');
     }
 }
+  
+  
+  
+  
 
 
 
@@ -133,7 +163,9 @@ export class ConsultaProdutosComponent implements OnInit {
       this.carregarLotes(produto); // Carrega os lotes do produto se ainda não estiverem carregados
     }
   }
+  
 
+  
   // Método para carregar os lotes do produto
   carregarLotes(produto: any): void {
     // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
@@ -145,7 +177,7 @@ export class ConsultaProdutosComponent implements OnInit {
         this.httpClient.get<any[]>(`http://localhost:5096/api/produto/${produto.id}/lotes`)
             .subscribe((lotesData) => {
                 produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
-                console.log('Lotes carregados:', produto.lotes);
+                
             }, (error) => {
                 console.error('Erro ao carregar os lotes:', error);
             });

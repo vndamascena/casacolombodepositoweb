@@ -21,7 +21,7 @@ export const routes: Routes = [
     },
     {
         path: '', pathMatch: 'full', //url raiz
-        redirectTo: 'inicio'
+        redirectTo: 'consulta-produtos'
     }
 
 
