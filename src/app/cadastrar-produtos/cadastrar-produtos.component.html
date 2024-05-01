@@ -137,7 +137,7 @@
                 <select class="form-select" formControlName="depositoId">
                     <option value="">Selecione um depósito</option>
                     <option *ngFor="let d of depositos" [value]="d.depositoId">
-                        {{d.nomeDeposito | uppercase}}
+                        {{d.nome | uppercase}}
                     </option>
                 </select>
             </div>
