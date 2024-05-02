@@ -143,7 +143,7 @@ export class CadastrarProdutosComponent implements OnInit {
         },
         error: (e) => {
           console.log(e.error);
-          alert('Falha ao cadastrar o produto.');
+          alert('Falha ao cadastrar o produto. Verifique os campos preenchidos');
         }
       });
   }
