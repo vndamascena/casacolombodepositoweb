@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, FormGroup, FormBuilder, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { FormsModule, FormGroup, FormBuilder, ReactiveFormsModule, FormArray, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 
@@ -13,6 +13,8 @@ import { environment } from '../../environments/environment.development';
   styleUrls: ['./edicao-produtos.component.css']
 })
 export class EdicaoProdutosComponent implements OnInit {
+
+ 
 
   form: FormGroup = this.formBuilder.group({
     codigo: [''],
@@ -31,6 +33,8 @@ export class EdicaoProdutosComponent implements OnInit {
     imagemUrl: [''],
     lote: this.formBuilder.array([]),
   });
+
+  mensagem: string = '';
   depositos: any[] = []; 
   categorias: any[] = [];
   fornecedores: any[] = [];
@@ -44,23 +48,46 @@ export class EdicaoProdutosComponent implements OnInit {
     private httpClient: HttpClient
   ) { }
 
+  get f() : any {
+    return this.form.controls;
+    
+  }
+
   ngOnInit(): void {
     const productId = this.route.snapshot.params['id'];
 
     this.form = this.formBuilder.group({
-      codigo: [''],
-      nome: [''],
+      codigo: ['',[
+        Validators.required,
+        Validators.maxLength(10),
+        Validators.minLength(1)
+      ]],
+      nome: ['', [
+        //campo 'nome'
+        Validators.required,
+        Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s]{4,100}$/)
+      ]],
       marca: [''],
       pei: [''],
       quantidade: [''],
-      descricao: [''],
+      descricao: ['',[
+        Validators.required,
+        Validators.maxLength(500),
+        Validators.minLength(8)
+      ]],
       pecasCaixa: [''],
       metroQCaixa: [''],
       precoMetroQ: [''],
       precoCaixa: [''],
-      categoriaId: [''],
-      fornecedorId: [''],
-      depositoId: [''],
+      categoriaId: ['',[
+        Validators.required
+      ]],
+      fornecedorId: ['',[
+        Validators.required
+      ]],
+      depositoId: ['',[
+        Validators.required
+      ]],
       imagemUrl: [''],
       lote: this.formBuilder.array([]),
 
@@ -127,8 +154,8 @@ export class EdicaoProdutosComponent implements OnInit {
 
     this.httpClient.put(`${environment.apiUrl}/produto/ `, formDataWithId)
       .subscribe({
-        next: (data) => {
-          console.log('Produto atualizado com sucesso!', data);
+        next: (data: any) => {
+         this.mensagem = data.message;
           this.router.navigate(['/consulta-produtos']);
         },
         error: (error) => {

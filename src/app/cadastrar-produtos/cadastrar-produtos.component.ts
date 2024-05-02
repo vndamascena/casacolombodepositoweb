@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-cadastro-produtos',
@@ -22,6 +22,7 @@ export class CadastrarProdutosComponent implements OnInit {
   categorias: any[] = [];
   fornecedores: any[] = [];
   produto: any = {}; // objeto para armazenar os dados do produto
+  mensagem: string = '';
 
   // construtor
   constructor(
@@ -32,28 +33,55 @@ export class CadastrarProdutosComponent implements OnInit {
 
   // criando a estrutura do formulário
   form = new FormGroup({
-    codigo: new FormControl(''),
-    nome: new FormControl(''),
-    marca: new FormControl(''),
+    codigo: new FormControl('',[
+      Validators.required,
+      Validators.maxLength(10),
+      Validators.minLength(1)
+    ]),
+    nome: new FormControl('', [
+      //campo 'nome'
+      Validators.required,
+      Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s]{4,100}$/)
+      ]),
+    marca: new FormControl('',[]),
     pei: new FormControl(''),
-    descricao: new FormControl(''),
+    descricao: new FormControl('',[
+      Validators.required,
+      Validators.maxLength(500),
+      Validators.minLength(8)
+    ]),
     pecascaixa: new FormControl(''),
     metroQCaixa: new FormControl(''),
     precoMetroQ: new FormControl(''),
     precoCaixa: new FormControl(''),
-    categoriaId: new FormControl(''),
-    fornecedorId: new FormControl(''),
-    depositoId: new FormControl(''),
+    categoriaId: new FormControl('',[
+      Validators.required
+    ]),
+    fornecedorId: new FormControl('',[
+      Validators.required
+    ]),
+    depositoId: new FormControl('',[
+      Validators.required
+    ]),
     imagemUrl: new FormControl(''),
     lote: new FormArray([
       new FormGroup({
-        numeroLote: new FormControl(''),
-        quantidadeLote: new FormControl(''),
+        numeroLote: new FormControl('',[
+          Validators.required
+        ]),
+        quantidadeLote: new FormControl('',[
+          Validators.required
+        ]),
         ala: new FormControl(''),
       })
       
     ]),
   });
+
+  get f() : any {
+    return this.form.controls;
+    
+  }
 
   // getter para acessar o FormArray 'lotes'
   get lotes() {
@@ -110,7 +138,7 @@ export class CadastrarProdutosComponent implements OnInit {
     this.httpClient.post(environment.apiUrl + "/produto", this.form.value)
       .subscribe({
         next: (data: any) => {
-          alert(data.message); // exibir mensagem de sucesso
+          this.mensagem = data.message; // exibir mensagem de sucesso
           this.form.reset(); // limpar os campos do formulário
         },
         error: (e) => {
