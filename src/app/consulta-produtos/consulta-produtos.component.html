@@ -2,6 +2,11 @@
     <!-- Título da página -->
     <h3>Casa Colombo</h3>
     <p>Construir, Reformar e Decorar</p>
+
+    <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{mensagem}}</strong>
+        <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+    </div>
     <!-- Botão para cadastro de produto -->
     <div class="input-group mb-3">
         <button class="btn btn-success" type="button" (click)="filtrarProdutos()">Pesquisar</button>

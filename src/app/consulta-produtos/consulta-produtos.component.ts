@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 
 
@@ -21,6 +21,7 @@ export class ConsultaProdutosComponent implements OnInit {
   imagemAmpliadaUrl: string | null = null; // URL da imagem ampliada
   produtosFiltrados: any[] = []; // Array para armazenar produtos filtrados
   termoPesquisa: string = ''; // String para armazenar o termo de pesquisa
+  mensagem: string = '';
 
   produto: any = {}; // Objeto para armazenar os detalhes do produto atual
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
@@ -70,7 +71,7 @@ export class ConsultaProdutosComponent implements OnInit {
 
   // Método para expandir a imagem na mesma página
   expandirImagem(imagemUrl: string): void {
-    console.log('Imagem clicada:', imagemUrl);
+    
     this.imagemAmpliadaUrl = imagemUrl;
 
     // Adiciona uma classe para mostrar a imagem ampliada
@@ -119,12 +120,12 @@ export class ConsultaProdutosComponent implements OnInit {
                         this.loteSelecionado.quantidadeLote -= this.loteSelecionado.quantidadeVendida;
                         this.loteSelecionado.quantidadeVendida = 0;
                         
-                        alert('Venda confirmada com sucesso!');
+                        this.mensagem = response.message; // exibir mensagem de sucesso
                         this.fecharFormularioCredenciais();
                     },
                     error: (error) => {
-                        console.error('Erro ao confirmar venda:', error);
-                        alert('Erro ao confirmar venda. Por favor, tente novamente mais tarde.');
+                        
+                        alert('Erro ao confirmar venda. Usuário e senha incorreto, tente novamente.');
                     }
                 });
         } else {
@@ -172,7 +173,7 @@ export class ConsultaProdutosComponent implements OnInit {
     if (produto.lotes && produto.lotes.length > 0) {
         // Se os lotes já estiverem presentes no objeto do produto,
         // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
-        console.log('Lotes já carregados:', produto.lotes);
+       
     } else {
         this.httpClient.get<any[]>(`http://localhost:5096/api/produto/${produto.id}/lotes`)
             .subscribe((lotesData) => {
