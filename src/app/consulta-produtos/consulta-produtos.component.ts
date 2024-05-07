@@ -39,7 +39,7 @@ export class ConsultaProdutosComponent implements OnInit {
 
     // Verifica se o ID do produto está presente na URL
     if (productId) {
-      this.httpClient.get(`http://casacolombo1-001-site1.btempurl.com/api/produto/${productId}`)
+      this.httpClient.get(`https://casacolombo1-001-site1.btempurl.com/api/produto/${productId}`)
         .subscribe({
           next: (produtoData) => {
             this.produto = produtoData;
@@ -52,7 +52,7 @@ export class ConsultaProdutosComponent implements OnInit {
         });
     } else {
       // Se não houver ID do produto na URL, exibe todos os produtos
-      this.httpClient.get('http://casacolombo1-001-site1.btempurl.com/api/produto')
+      this.httpClient.get('https://casacolombo1-001-site1.btempurl.com/api/produto')
         .subscribe({
           next: (produtosData) => {
             this.produtos = produtosData as any[];
@@ -113,7 +113,7 @@ export class ConsultaProdutosComponent implements OnInit {
             // Configuração dos parâmetros da solicitação POST
             const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
 
-            this.httpClient.post<any>('http://casacolombo1-001-site1.btempurl.com/api/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
+            this.httpClient.post<any>('https://casacolombo1-001-site1.btempurl.com/api/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
                 .subscribe({
                     next: (response) => {
                         // Atualiza a quantidade do lote no cliente
@@ -175,7 +175,7 @@ export class ConsultaProdutosComponent implements OnInit {
         // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
        
     } else {
-        this.httpClient.get<any[]>(`http://casacolombo1-001-site1.btempurl.com/api/produto/${produto.id}/lotes`)
+        this.httpClient.get<any[]>(`https://casacolombo1-001-site1.btempurl.com/api/produto/${produto.id}/lotes`)
             .subscribe((lotesData) => {
                 produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
                 
