@@ -1,5 +1,5 @@
 export const environment = {
     /* endpoints da api de produtos */
-    apiUrl: 'http://casacolombo1-001-site1.btempurl.com/api'
+    apiUrl: 'http://colombo01-001-site1.gtempurl.com/api'
     
 };

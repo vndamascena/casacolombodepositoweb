@@ -155,15 +155,20 @@ export class CadastrarProdutosComponent implements OnInit {
 
   // Função para lidar com a seleção de arquivo no frontend
   // Função para lidar com a seleção de arquivo no frontend
-onFileSelected(event: any): void {
-  const file: File = event.target.files[0];
-  if (file) {
-    // Crie um novo objeto URL a partir do arquivo selecionado
-    const imageUrl: string = URL.createObjectURL(file);
-    // Defina o valor do campo imagemUrl no formulário como o URL do objeto
-    this.form.get('imagemUrl')?.setValue(imageUrl);
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        // A imagem foi carregada com sucesso
+        const base64Image: string = e.target.result;
+        // Defina o valor do campo imagemUrl no formulário como a imagem no formato base64
+        this.form.get('imagemUrl')?.setValue(base64Image);
+      };
+      // Carrega o arquivo como base64
+      reader.readAsDataURL(file);
+    }
   }
-}
 
 
   adicionarLote(): void {

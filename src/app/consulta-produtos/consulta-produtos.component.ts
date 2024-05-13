@@ -114,7 +114,7 @@ export class ConsultaProdutosComponent implements OnInit {
             // Configuração dos parâmetros da solicitação POST
             const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
 
-            this.httpClient.post<any>(environment.apiUrl + '/api/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
+            this.httpClient.post<any>(environment.apiUrl + '/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
                 .subscribe({
                     next: (response) => {
                         // Atualiza a quantidade do lote no cliente
@@ -168,7 +168,6 @@ export class ConsultaProdutosComponent implements OnInit {
   
 
   
-  // Método para carregar os lotes do produto
   carregarLotes(produto: any): void {
     // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
     if (produto.lotes && produto.lotes.length > 0) {
@@ -176,7 +175,7 @@ export class ConsultaProdutosComponent implements OnInit {
         // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
        
     } else {
-        this.httpClient.get<any[]>(environment.apiUrl + '/api/produto/${produto.id}/lotes')
+        this.httpClient.get<any[]>(`${environment.apiUrl}/produto/${produto.id}/lotes`)
             .subscribe((lotesData) => {
                 produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
                 
@@ -184,4 +183,5 @@ export class ConsultaProdutosComponent implements OnInit {
                 console.error('Erro ao carregar os lotes:', error);
             });
     }
-}}
+}
+}

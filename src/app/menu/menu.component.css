@@ -1,0 +1,19 @@
+.line {
+    height: 10px;
+    width: 71.5%;
+    margin: 0 auto;
+    background-color: rgb(102, 222, 102);
+}
+
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    /* Alinha verticalmente os itens */
+    margin-right: -60px;
+    /* Espaçamento entre os itens */
+}
+
+.navbar-brand {
+    margin-right: 100px;
+    /* Adiciona margem à direita do logo */
+}
