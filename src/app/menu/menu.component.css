@@ -9,11 +9,14 @@
     display: flex;
     align-items: center;
     /* Alinha verticalmente os itens */
-    margin-right: -60px;
+    margin-right: -10px;
     /* Espaçamento entre os itens */
 }
 
 .navbar-brand {
     margin-right: 100px;
     /* Adiciona margem à direita do logo */
+}
+.black-text {
+    color: black; /* Define a cor do texto como preto */
 }
