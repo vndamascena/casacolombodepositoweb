@@ -1,17 +1,12 @@
-<div class="container mt-3">
+<div class="container mt-1">
     <!-- Título da página -->
-   
 
     <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>{{mensagem}}</strong>
         <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
     </div>
     <!-- Botão para cadastro de produto -->
-    <div class="input-group mb-3">
-        <button class="btn btn-success" type="button" (click)="filtrarProdutos()">Pesquisar</button>
-        <input type="text" class="form-control" placeholder="Digite o nome do produto" aria-label="Pesquisar"
-            aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarProdutos()">
-    </div>
+   
     <!-- Tabela para exibir a consulta de produtos -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
@@ -77,10 +72,10 @@
                                 </thead>
                                 <tbody>
                                     <!-- Use um ngFor para iterar sobre os lotes -->
-                                    <tr *ngFor="let lote of produto.lotes">
-                                        <td>{{ lote.numeroLote }}</td>
-                                        <td>{{ lote.quantidadeLote }}</td>
-                                        <td>{{lote.ala}}</td>
+                                    <tr *ngFor="let lote of produto.lotes; let primeiro = first">
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.numeroLote }}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote }}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{lote.ala}}</td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
                                             <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida"
@@ -101,7 +96,6 @@
                 </ng-container>
             </tbody>
             <!-- rodapé da tabela -->
-
         </table>
         <tfoot>
             <tr>
@@ -111,10 +105,7 @@
             </tr>
         </tfoot>
     </div>
-
 </div>
-
-
 
 <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
     <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>

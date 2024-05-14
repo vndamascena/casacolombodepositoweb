@@ -1,8 +1,8 @@
 .line {
-    height: 10px;
-    width: 71.5%;
+    height: 3px;
+    width: 75.5%;
     margin: 0 auto;
-    background-color: rgb(102, 222, 102);
+    background-color: rgb(4, 105, 45);
 }
 
 .navbar-nav .nav-link {
@@ -14,9 +14,47 @@
 }
 
 .navbar-brand {
-    margin-right: 100px;
+    margin-right: 50px;
     /* Adiciona margem à direita do logo */
 }
 .black-text {
     color: black; /* Define a cor do texto como preto */
+}
+.nav-item{
+    margin-right: -30px;
+}
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.barra-pesquisa {
+    margin-top: 0px; /* Move a barra de pesquisa para baixo */
+}
+
+.form-control.lupa {
+    padding-right: 45px; /* Ajusta o espaço para a imagem e o elemento de sobreposição */
+    background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
+    background-repeat: no-repeat;
+    background-position: right; /* Ajusta a posição da imagem */
+    background-size: 70px; /* Define o tamanho da imagem */
+    z-index: 1; /* Garante que a imagem fique na frente do elemento de sobreposição */
+    height: 40px; /* Define a altura da barra de pesquisa */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: 65px; /* Largura do espaço clicável */
+    cursor: pointer;
+    z-index: 2; /* Coloca o elemento de sobreposição sobre a imagem */
+}
+.titulo {
+    text-align: center; /* Centraliza o texto */
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
 }
