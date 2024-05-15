@@ -4,10 +4,12 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && npm run postbuild",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
-  },
+    "test": "ng test",
+    "postbuild": "cp src/assets/web.config dist/web.config"
+},
+
   "private": true,
   "dependencies": {
     "@angular/animations": "^17.3.0",

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-cadastro-produtos',
@@ -10,7 +11,7 @@ import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFo
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule, RouterModule
   ],
   templateUrl: './cadastrar-produtos.component.html',
   styleUrl: './cadastrar-produtos.component.css'
@@ -28,7 +29,8 @@ export class CadastrarProdutosComponent implements OnInit {
   constructor(
     
     private formBiulder: FormBuilder,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private router: Router
   ) { }
 
   // criando a estrutura do formulário
@@ -215,4 +217,6 @@ excluirLote( loteId: string): void {
   this.lotes.removeAt(this.lotes.length - 1);
   
  }
+
+ 
 }
