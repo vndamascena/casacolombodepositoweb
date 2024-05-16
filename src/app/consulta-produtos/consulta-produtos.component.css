@@ -23,7 +23,7 @@ User
     transform: translate(-50%, -50%); /* Centraliza a imagem na tela */
     z-index: 9999; /* Garante que a imagem esteja acima de outros elementos */
     background-color: rgba(255, 255, 255, 0.9); /* Adiciona um fundo transparente */
-    padding: 20px; /* Adiciona um espaço interno */
+    padding: 10px; /* Adiciona um espaço interno */
     border-radius: 10px; /* Adiciona cantos arredondados */
 }
 
@@ -61,7 +61,7 @@ User
 }
 .line {
     height: 3px;
-    width: 75.5%;
+    width: 100%;
     margin: 0 auto;
     background-color: rgb(4, 105, 45);
 }
@@ -119,3 +119,6 @@ User
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
+td {
+    vertical-align: middle;
+  }

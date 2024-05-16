@@ -54,13 +54,7 @@
         <!-- primeira linha -->
         <div class="row">
             <!-- primeira coluna -->
-            <div class="col-md-2">
-                <label><strong>Código:</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="codigo" />
-                <div class="text-danger" *ngIf="f['codigo'].touched && f['codigo'].invalid">
-                    Informe o codigo do produto.
-                </div>
-            </div>
+           
             <div class="col-md-5">
                 <label><strong>Nome do produto:</strong> </label>
                 <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
@@ -86,6 +80,13 @@
         <div class="row" formArrayName="lote">
             <div class="col-md-7" *ngFor="let lote of lotes.controls; let i=index" [formGroupName]="i">
                 <div class="row">
+
+                    <div class="col-md-2">
+                        <label><strong>Código:</strong></label>
+                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="codigo" />
+                        
+                    </div>
+
                     <div class="col">
                         <label for="numeroLote{{i}}">Lote {{ i + 1 }}</label>
                         <input type="text" class="form-control" formControlName="numeroLote" id="numeroLote{{i}}"

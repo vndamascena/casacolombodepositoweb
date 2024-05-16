@@ -35,11 +35,7 @@ export class CadastrarProdutosComponent implements OnInit {
 
   // criando a estrutura do formulário
   form = new FormGroup({
-    codigo: new FormControl('',[
-      Validators.required,
-      Validators.maxLength(10),
-      Validators.minLength(1)
-    ]),
+    
     nome: new FormControl('', [
       //campo 'nome'
       Validators.required,
@@ -67,7 +63,12 @@ export class CadastrarProdutosComponent implements OnInit {
     ]),
     imagemUrl: new FormControl(''),
     lote: new FormArray([
+
       new FormGroup({
+
+        codigo: new FormControl('',[
+
+        ]),
         numeroLote: new FormControl('',[
           Validators.required
         ]),

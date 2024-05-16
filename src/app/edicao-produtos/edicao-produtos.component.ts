@@ -57,11 +57,7 @@ export class EdicaoProdutosComponent implements OnInit {
     const productId = this.route.snapshot.params['id'];
 
     this.form = this.formBuilder.group({
-      codigo: ['',[
-        Validators.required,
-        Validators.maxLength(10),
-        Validators.minLength(1)
-      ]],
+      
       nome: ['', [
         //campo 'nome'
         Validators.required,
@@ -111,39 +107,7 @@ export class EdicaoProdutosComponent implements OnInit {
     });
 
 
-    this.httpClient.get(`${environment.apiUrl}/categoria`)
-      .subscribe({
-        next: (data) => {
-          this.categorias = data as any[];
-        },
-        error: (e) => {
-          console.log(e.error);
-        }
-      });
-
-    this.httpClient.get(`${environment.apiUrl}/fornecedor`)
-      .subscribe({
-        next: (data) => {
-          this.fornecedores = data as any[];
-        },
-        error: (e) => {
-          console.log(e.error);
-        }
-   
-   
-      });
-
-      this.httpClient.get(`${environment.apiUrl}/deposito`)
-      .subscribe({
-        next: (data) => {
-          this.depositos = data as any[];
-        },
-        error: (e) => {
-          console.log(e.error);
-        }
-   
-   
-      });
+    
   }
   
     
@@ -164,23 +128,15 @@ export class EdicaoProdutosComponent implements OnInit {
       });
   }
 
-  onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        const imagePath: string = reader.result as string;
-        this.form.get('imagemUrl')?.setValue(imagePath);
-      };
-    }
-  }
+ 
 
   adicionarLote(): void {
     const novoLote = this.formBuilder.group({
+      codigo: [''],
       numeroLote: [''],
       quantidadeLote: [''],
       ala:[''],
+
     });
     this.lotes.push(novoLote);
   }
@@ -191,6 +147,7 @@ export class EdicaoProdutosComponent implements OnInit {
     lotes.forEach(lote => {
       loteFormArray.push(this.formBuilder.group({
         id: [lote.id], // Certifique-se de incluir a propriedade 'id'
+        codigo:[lote.codigo],
         numeroLote: [lote.numeroLote],
         quantidadeLote: [lote.quantidadeLote],
         ala:[lote.ala],
