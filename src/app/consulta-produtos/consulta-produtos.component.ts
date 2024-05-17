@@ -27,6 +27,7 @@ export class ConsultaProdutosComponent implements OnInit {
   produto: any = {}; // Objeto para armazenar os detalhes do produto atual
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
   
+  
 
   // Construtor para inicializar os atributos da classe
   constructor(
@@ -185,4 +186,5 @@ export class ConsultaProdutosComponent implements OnInit {
             });
     }
 }
+
 }

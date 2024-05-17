@@ -34,52 +34,46 @@ export class CadastrarProdutosComponent implements OnInit {
   ) { }
 
   // criando a estrutura do formulário
-  form = new FormGroup({
-    
-    nome: new FormControl('', [
-      //campo 'nome'
-      Validators.required,
-      Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s]{4,100}$/)
-      ]),
-    marca: new FormControl('',[]),
-    pei: new FormControl(''),
-    descricao: new FormControl('',[
-      Validators.required,
-      Validators.maxLength(500),
-      Validators.minLength(8)
-    ]),
-    pecascaixa: new FormControl(''),
-    metroQCaixa: new FormControl(''),
-    precoMetroQ: new FormControl(''),
-    precoCaixa: new FormControl(''),
-    categoriaId: new FormControl('',[
-      Validators.required
-    ]),
-    fornecedorId: new FormControl('',[
-      Validators.required
-    ]),
-    depositoId: new FormControl('',[
-      Validators.required
-    ]),
-    imagemUrl: new FormControl(''),
-    lote: new FormArray([
-
-      new FormGroup({
-
-        codigo: new FormControl('',[
-
-        ]),
-        numeroLote: new FormControl('',[
-          
-        ]),
-        quantidadeLote: new FormControl('',[
-          
-        ]),
-        ala: new FormControl(''),
-      })
+    form = new FormGroup({
       
-    ]),
-  });
+      nome: new FormControl('', [
+        //campo 'nome'
+        Validators.required,
+        Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s]{4,100}$/)
+        ]),
+      marca: new FormControl('',[]),
+      pei: new FormControl(''),
+      descricao: new FormControl('',[
+        Validators.required,
+        Validators.maxLength(500),
+        Validators.minLength(8)
+      ]),
+      pecascaixa: new FormControl(''),
+      metroQCaixa: new FormControl(''),
+      precoMetroQ: new FormControl(''),
+      precoCaixa: new FormControl(''),
+      categoriaId: new FormControl('',[
+        Validators.required
+      ]),
+      fornecedorId: new FormControl('',[
+        Validators.required
+      ]),
+      depositoId: new FormControl('',[
+        Validators.required
+      ]),
+      imagemUrl: new FormControl(''),
+      lote: new FormArray([
+
+        new FormGroup({
+
+          codigo: new FormControl(''),
+          numeroLote: new FormControl(''),
+          quantidadeLote: new FormControl(''),
+          ala: new FormControl(''),
+        })
+        
+      ]),
+    });
 
   get f() : any {
     return this.form.controls;
@@ -176,6 +170,7 @@ export class CadastrarProdutosComponent implements OnInit {
 
   adicionarLote(): void {
     const novoLote = new FormGroup({
+        codigo: new FormControl(''),
         numeroLote: new FormControl(''),
         quantidadeLote: new FormControl(''),
         ala: new FormControl(''),
