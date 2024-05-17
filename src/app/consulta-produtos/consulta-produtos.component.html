@@ -72,7 +72,7 @@
                     <th>M² CX</th>
                     <th>Preço CX</th>
                     <th>Peças CX</th>
-                    <th>Qtd CX</th>
+                    <th style="background-color: lightgreen;">Qtd CX</th>
                     <th>Operação</th>
                 </tr>
             </thead>
@@ -95,7 +95,7 @@
                         <td>{{ produto.metroQCaixa }}</td>
                         <td>{{ produto.precoCaixa | currency:'BRL':'symbol':'1.2-2'}}</td>
                         <td>{{ produto.pecasCaixa }}</td>
-                        <td>{{ produto.quantidade }}</td>
+                        <td style="background-color: lightgreen;">{{ produto.quantidade }}</td>
 
                         <!-- Botão de editar -->
                         <td>
@@ -113,7 +113,7 @@
                                     <tr>
                                         <th>Código</th>
                                         <th>Número do Lote</th>
-                                        <th>Quantidade</th>
+                                        <th style="background-color: lightgreen;">Quantidade</th>
                                         <th>Endereço</th>
                                         <th>Quantidade Vendida</th>
                                         <th>Confirmar Venda</th>
@@ -124,7 +124,7 @@
                                     <tr *ngFor="let lote of produto.lotes; let primeiro = first">
                                         <td>{{ lote.codigo }}</td>
                                         <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.numeroLote }}</td>
-                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote }}</td>
+                                        <td  style="background-color: lightgreen;"[ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote }}</td>
                                         <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{lote.ala}}</td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
