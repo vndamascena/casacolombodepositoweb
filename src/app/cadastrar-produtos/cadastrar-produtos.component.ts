@@ -70,10 +70,10 @@ export class CadastrarProdutosComponent implements OnInit {
 
         ]),
         numeroLote: new FormControl('',[
-          Validators.required
+          
         ]),
         quantidadeLote: new FormControl('',[
-          Validators.required
+          
         ]),
         ala: new FormControl(''),
       })
@@ -194,22 +194,24 @@ export class CadastrarProdutosComponent implements OnInit {
         const metroQCaixaValue = metroQCaixaControl.value;
 
         if (typeof precoMetroQValue === 'string' && typeof metroQCaixaValue === 'string') {
-            const precoM2 = parseFloat(precoMetroQValue) || 0;
-            const m2CX = parseFloat(metroQCaixaValue) || 0;
+            // Substituir vírgulas por pontos
+            const precoM2 = parseFloat(precoMetroQValue.replace(',', '.')) || 0;
+            const m2CX = parseFloat(metroQCaixaValue.replace(',', '.')) || 0;
 
             if (!isNaN(precoM2) && !isNaN(m2CX)) {
                 const precoCX = precoM2 * m2CX;
-                precoCaixaControl.setValue(precoCX.toFixed(2));
+                precoCaixaControl.setValue(precoCX.toFixed(2).replace('.', ','));
             } else {
-                precoCaixaControl.setValue('0.00');
+                precoCaixaControl.setValue('0,00');
             }
         } else {
-            precoCaixaControl.setValue('0.00');
+            precoCaixaControl.setValue('0,00');
         }
     } else {
         console.error("Um dos controles é nulo.");
     }
 }
+
 
 excluirLote( loteId: string): void {
 

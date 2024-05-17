@@ -72,7 +72,7 @@
                     <th>M² CX</th>
                     <th>Preço CX</th>
                     <th>Peças CX</th>
-                    <th style="background-color: lightgreen;">Qtd CX</th>
+                    <th style="color: #07612b; font-weight: bold;">Qtd CX</th>
                     <th>Operação</th>
                 </tr>
             </thead>
@@ -91,11 +91,11 @@
                         <td>{{ produto.descricao | uppercase }}</td>
                         <td>{{ produto.pei }}</td>
                         <td>{{ produto.marca | uppercase}}</td>
-                        <td>{{ produto.precoMetroQ | currency:'BRL':'symbol':'1.2-2'}}</td>
+                        <td>{{ produto.precoMetroQ }}</td>
                         <td>{{ produto.metroQCaixa }}</td>
-                        <td>{{ produto.precoCaixa | currency:'BRL':'symbol':'1.2-2'}}</td>
+                        <td>{{ produto.precoCaixa }}</td>
                         <td>{{ produto.pecasCaixa }}</td>
-                        <td style="background-color: lightgreen;">{{ produto.quantidade }}</td>
+                        <td style="color: #07612b; font-weight: bold;">{{ produto.quantidade }}</td>
 
                         <!-- Botão de editar -->
                         <td>
@@ -113,7 +113,8 @@
                                     <tr>
                                         <th>Código</th>
                                         <th>Número do Lote</th>
-                                        <th style="background-color: lightgreen;">Quantidade</th>
+                                        <th style="color: #07612b; font-weight: bold;">Quantidade</th>
+
                                         <th>Endereço</th>
                                         <th>Quantidade Vendida</th>
                                         <th>Confirmar Venda</th>
@@ -123,9 +124,9 @@
                                     <!-- Use um ngFor para iterar sobre os lotes -->
                                     <tr *ngFor="let lote of produto.lotes; let primeiro = first">
                                         <td>{{ lote.codigo }}</td>
-                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.numeroLote }}</td>
-                                        <td  style="background-color: lightgreen;"[ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote }}</td>
-                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{lote.ala}}</td>
+                                        <td>{{ lote.numeroLote }}</td>
+                                        <td  style="color: #07612b; font-weight: bold;">{{ lote.quantidadeLote }}</td>
+                                        <td >{{lote.ala}}</td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
                                             <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida"
