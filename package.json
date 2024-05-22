@@ -8,8 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "postbuild": "cp src/assets/web.config dist/web.config"
-},
-
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "^17.3.0",
@@ -21,7 +20,9 @@
     "@angular/platform-browser-dynamic": "^17.3.0",
     "@angular/router": "^17.3.0",
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "crypto-js": "^4.2.0",
+    "ngx-image-compress": "^15.1.6",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

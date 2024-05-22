@@ -28,6 +28,7 @@ export class ConsultaProdutosComponent implements OnInit {
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
   
   
+  
 
   // Construtor para inicializar os atributos da classe
   constructor(
@@ -66,6 +67,9 @@ export class ConsultaProdutosComponent implements OnInit {
         });
     }
   }
+  getFullImageUrl(imagemUrl: string): string {
+    return `${environment.apiUrl + '/produto'}${imagemUrl}`;
+  }
 
   // Método para redirecionar para a página de edição do produto
   editarProduto(id: string): void {
@@ -75,7 +79,7 @@ export class ConsultaProdutosComponent implements OnInit {
   // Método para expandir a imagem na mesma página
   expandirImagem(imagemUrl: string): void {
     
-    this.imagemAmpliadaUrl = imagemUrl;
+    this.imagemAmpliadaUrl = `${environment.apiUrl + '/produto'}${imagemUrl}`;
 
     // Adiciona uma classe para mostrar a imagem ampliada
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
