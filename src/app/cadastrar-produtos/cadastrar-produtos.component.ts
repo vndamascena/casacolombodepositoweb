@@ -151,30 +151,20 @@ export class CadastrarProdutosComponent implements OnInit {
 
 
   // Função para lidar com a seleção de arquivo no frontend
-  // Função para lidar com a seleção de arquivo no frontend
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
-  
-      // Supondo que você está usando um serviço HTTP para lidar com as chamadas para o backend
-      this.httpClient.post(environment.apiUrl + "/produto/upload", formData).subscribe(
-        (response: any) => {
-          // Recebeu a URL da imagem do backend
-          const imageUrl: string = response.imageUrl;
-  
-          // Defina o valor do campo imagemUrl no formulário como a URL da imagem
-          this.form.get('imagemUrl')?.setValue(imageUrl);
-        },
-        (error: any) => {
-          // Tratar erro, se necessário
-          console.error('Erro ao fazer upload da imagem:', error);
-        }
-      );
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        // A imagem foi carregada com sucesso
+        const base64Image: string = e.target.result;
+        // Defina o valor do campo imagemUrl no formulário como a imagem no formato base64
+        this.form.get('imagemUrl')?.setValue(base64Image);
+      };
+      // Carrega o arquivo como base64
+      reader.readAsDataURL(file);
     }
   }
-  
 
 
   adicionarLote(): void {

@@ -123,13 +123,13 @@
                                 <tbody>
                                     <!-- Use um ngFor para iterar sobre os lotes -->
                                     <tr *ngFor="let lote of produto.lotes; let primeiro = first">
-                                        <td>{{ lote.codigo }}</td>
-                                        <td>{{ lote.numeroLote }}</td>
-                                        <td style="color: #07612b; font-weight: bold;">{{ lote.quantidadeLote }}</td>
-                                        <td>{{lote.ala | uppercase}}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.codigo }}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.numeroLote }}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote }}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{lote.ala | uppercase}}</td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
-                                            <input type="number" min="0" [(ngModel)]="lote.quantidadeVendida"
+                                            <input type="number" min="-100" [(ngModel)]="lote.quantidadeVendida"
                                                 style="width: 50px;">
                                         </td>
                                         <!-- Botão de vender -->
@@ -137,8 +137,7 @@
                                             <button class="btn btn-success"
                                                 (click)="abrirFormularioCredenciais(lote)">Vender</button>
 
-
-                                        </td>
+          
                                     </tr>
                                 </tbody>
                             </table>
