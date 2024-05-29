@@ -4,12 +4,13 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 
 @Component({
   selector: 'app-consulta-produtos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
   templateUrl: './consulta-produtos.component.html',
   styleUrls: ['./consulta-produtos.component.css']
 })
@@ -24,8 +25,10 @@ export class ConsultaProdutosComponent implements OnInit {
   termoPesquisa: string = ''; // String para armazenar o termo de pesquisa
   mensagem: string = '';
 
+
   produto: any = {}; // Objeto para armazenar os detalhes do produto atual
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
+  p: number = 1;
   
   
   
@@ -101,12 +104,12 @@ export class ConsultaProdutosComponent implements OnInit {
 
 
 
-  abrirFormularioCredenciais(lote: any): void {
-    this.loteSelecionado= lote;
-  }
-  fecharFormularioCredenciais(): void {
-    this.loteSelecionado = null;
-  }
+    abrirFormularioCredenciais(lote: any): void {
+      this.loteSelecionado= lote;
+    }
+    fecharFormularioCredenciais(): void {
+      this.loteSelecionado = null;
+    }
 
 
 

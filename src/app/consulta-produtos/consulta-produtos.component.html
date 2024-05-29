@@ -20,13 +20,6 @@
         </div>
 
 
-
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -49,6 +42,8 @@
 <br>
 <div class="container mt-1">
     <!-- Título da página -->
+
+
 
     <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
         <strong>{{mensagem}}</strong>
@@ -77,11 +72,13 @@
                 </tr>
             </thead>
             <!-- Corpo da tabela -->
+
             <tbody>
-                <ng-container *ngFor="let produto of produtos">
+                <ng-container *ngFor="let produto of produtos | paginate: { itemsPerPage: 10, currentPage: p }">
                     <tr>
                         <!-- Colunas para exibir os detalhes básicos do produto -->
-                        <td><img [src]="getFullImageUrl(produto.imagemUrl)" alt="{{ produto.nome }}" width="50" (click)="expandirImagem(produto.imagemUrl)"></td>
+                        <td><img [src]="getFullImageUrl(produto.imagemUrl)" alt="{{ produto.nome }}" width="50"
+                                (click)="expandirImagem(produto.imagemUrl)"></td>
                         <td>
                             <button class="btn  btn-outline-success" (click)="toggleDetalhes(produto)">+</button>
                         </td>
@@ -90,9 +87,9 @@
                         <td>{{ produto.descricao | uppercase }}</td>
                         <td>{{ produto.pei | uppercase}}</td>
                         <td>{{ produto.marca | uppercase}}</td>
-                        <td>{{ produto.precoMetroQ | currency:'R$':'symbol':'1.2-2' }}</td>
-                        <td>{{ produto.metroQCaixa | currency:'R$':'symbol':'1.2-2' }}</td>
-                        <td>{{ produto.precoCaixa | currency:'R$':'symbol':'1.2-2' }}</td>
+                        <td>R${{ produto.precoMetroQ }}</td>
+                        <td>{{ produto.metroQCaixa }}M²</td>
+                        <td>R${{ produto.precoCaixa }}</td>
 
                         <td>{{ produto.pecasCaixa}}</td>
                         <td style="color: #07612b; font-weight: bold;">{{ produto.quantidade }}</td>
@@ -124,9 +121,12 @@
                                     <!-- Use um ngFor para iterar sobre os lotes -->
                                     <tr *ngFor="let lote of produto.lotes; let primeiro = first">
                                         <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.codigo }}</td>
-                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.numeroLote }}</td>
-                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote }}</td>
-                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{lote.ala | uppercase}}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.numeroLote }}
+                                        </td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{ lote.quantidadeLote
+                                            }}</td>
+                                        <td [ngStyle]="{'color': primeiro ? 'red' : 'inherit'}">{{lote.ala | uppercase}}
+                                        </td>
                                         <!-- Coluna para quantidade vendida -->
                                         <td>
                                             <input type="number" min="-100" [(ngModel)]="lote.quantidadeVendida"
@@ -135,9 +135,11 @@
                                         <!-- Botão de vender -->
                                         <td>
                                             <button class="btn btn-success"
-                                                (click)="abrirFormularioCredenciais(lote)">Vender</button>
+                                                (click)="abrirFormularioCredenciais(lote)">Vender
+                                            </button>
+                                        </td>
 
-          
+
                                     </tr>
                                 </tbody>
                             </table>
@@ -155,7 +157,18 @@
             </tr>
         </tfoot>
     </div>
+
 </div>
+
+
+<div class="col text-center">
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+
+
+
+</div>
+
+
 
 <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
     <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
@@ -175,5 +188,6 @@
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
     <button class="btn btn-outline-light" (click)="confirmarVenda(loteSelecionado)"
-        style="font-weight: bold;">Confirmar</button>
+        style="font-weight: bold;">Confirmar
+    </button>
 </div>

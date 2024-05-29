@@ -39,6 +39,9 @@ export class EdicaoProdutosComponent implements OnInit {
   categorias: any[] = [];
   fornecedores: any[] = [];
   produto: any = {};
+  produtoselecionado: any;
+  matricula: string = ''; 
+  senha: string = '';
  
 
   constructor(
@@ -110,25 +113,42 @@ export class EdicaoProdutosComponent implements OnInit {
     
   }
   
-    
+  abrirFormularioCredenciais(produto: any): void {
+    this.produtoselecionado= produto;
+  }
+  fecharFormularioCredenciais(): void {
+    this.produtoselecionado = null;
+  }
 
   onSubmit(): void {
     const productId = this.route.snapshot.params['id'];
     const formDataWithId = { ...this.form.value, id: productId };
 
-    this.httpClient.put(`${environment.apiUrl}/produto/ `, formDataWithId)
-      .subscribe({
-        next: (data: any) => {
-         this.mensagem = data.message;
-          this.router.navigate(['/consulta-produtos']);
-        },
-        error: (error) => {
-          console.error('Erro ao atualizar produto:', error);
-        }
-      });
+    if (this.matricula && this.senha) {
+      // Configuração dos parâmetros da solicitação PUT
+      const options = { params: { matricula: this.matricula, senha: this.senha } };
+
+      this.httpClient.put(`${environment.apiUrl}/produto`, formDataWithId, options)
+        .subscribe({
+          next: (data: any) => {
+            this.mensagem = data.message;
+            alert('Produto editado com sucesso!');
+            this.router.navigate(['/consulta-produtos']);
+            this.fecharFormularioCredenciais();
+          },
+          error: (error) => {
+            console.error('Erro ao atualizar produto:', error);
+            alert('Erro ao atualizar o produto. Por favor, tente novamente.');
+          }
+        });
+    } else {
+      alert('Preencha os campos de matrícula e senha para confirmar a edição.');
+    }
   }
 
+
  
+  
 
   adicionarLote(): void {
     const novoLote = this.formBuilder.group({
@@ -204,33 +224,33 @@ excluirLote(produtoId: string, loteId: string): void {
         }
       });
   }
-
   atualizarPrecoCaixa(): void {
     const precoMetroQControl = this.form.get('precoMetroQ');
     const metroQCaixaControl = this.form.get('metroQCaixa');
     const precoCaixaControl = this.form.get('precoCaixa');
 
     if (precoMetroQControl && metroQCaixaControl && precoCaixaControl) {
-        const precoMetroQValue = precoMetroQControl.value;
-        const metroQCaixaValue = metroQCaixaControl.value;
+      const precoMetroQValue = precoMetroQControl.value;
+      const metroQCaixaValue = metroQCaixaControl.value;
 
-        if (typeof precoMetroQValue === 'string' && typeof metroQCaixaValue === 'string') {
-            const precoM2 = parseFloat(precoMetroQValue) || 0;
-            const m2CX = parseFloat(metroQCaixaValue) || 0;
+      if (typeof precoMetroQValue === 'string' && typeof metroQCaixaValue === 'string') {
+        // Substituir vírgulas por pontos
+        const precoM2 = parseFloat(precoMetroQValue.replace(',', '.')) || 0;
+        const m2CX = parseFloat(metroQCaixaValue.replace(',', '.')) || 0;
 
-            if (!isNaN(precoM2) && !isNaN(m2CX)) {
-                const precoCX = precoM2 * m2CX;
-                precoCaixaControl.setValue(precoCX.toFixed(2));
-            } else {
-                precoCaixaControl.setValue('0.00');
-            }
+        if (!isNaN(precoM2) && !isNaN(m2CX)) {
+          const precoCX = precoM2 * m2CX;
+          precoCaixaControl.setValue(precoCX.toFixed(2).replace('.', ','));
         } else {
-            precoCaixaControl.setValue('0.00');
+          precoCaixaControl.setValue('0,00');
         }
+      } else {
+        precoCaixaControl.setValue('0,00');
+      }
     } else {
-        console.error("Um dos controles é nulo.");
+      console.error("Um dos controles é nulo.");
     }
-}
+  }
   
   
 }
