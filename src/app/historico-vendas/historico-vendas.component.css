@@ -1,0 +1,124 @@
+
+User
+/* Adicione esta classe para controlar a visibilidade da imagem ampliada */
+
+
+.imagem-ampliada {
+    display: none;
+}
+.imagem-ampliada.mostrar {
+    display: block;
+}
+
+.imagem-ampliada img {
+    max-width: 80%; /* Defina a largura máxima desejada */
+    max-height: 80%; /* Defina a altura máxima desejada */
+}
+
+.imagem-ampliada {
+    display: none;
+    position: fixed; /* Define a posição fixa para a imagem expandida */
+    top: 50%; /* Ajusta a posição verticalmente */
+    left: 50%; /* Ajusta a posição horizontalmente */
+    transform: translate(-50%, -50%); /* Centraliza a imagem na tela */
+    z-index: 9999; /* Garante que a imagem esteja acima de outros elementos */
+    background-color: rgba(255, 255, 255, 0.9); /* Adiciona um fundo transparente */
+    padding: 10px; /* Adiciona um espaço interno */
+    border-radius: 10px; /* Adiciona cantos arredondados */
+}
+
+.imagem-ampliada .btn-close {
+    position: absolute; /* Define a posição absoluta para o botão de fechar */
+    top: 1px; /* Ajusta a posição do topo */
+    right: 30px; /* Ajusta a posição da direita */
+    z-index: 9999; /* Garante que o botão esteja acima da imagem */
+}
+.table td,
+.table th {
+    text-align: center;
+}
+.formulario-credenciais {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+
+
+.formulario-credenciais .btn-close {
+    position: absolute; /* Define a posição absoluta para o botão de fechar */
+    top: 1px; /* Ajusta a posição do topo */
+    right: 01px; /* Ajusta a posição da direita */
+    z-index: 9999; /* Garante que o botão esteja acima da imagem */
+        
+}
+.line {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(4, 105, 45);
+}
+
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    /* Alinha verticalmente os itens */
+    margin-right: -10px;
+    /* Espaçamento entre os itens */
+}
+
+.navbar-brand {
+    margin-right: 50px;
+    /* Adiciona margem à direita do logo */
+}
+.black-text {
+    color: black; /* Define a cor do texto como preto */
+}
+.nav-item{
+    margin-right: -30px;
+}
+.input-group {
+    position: relative;
+    width: 100%;
+}
+
+.barra-pesquisa {
+    margin-top: 0px; /* Move a barra de pesquisa para baixo */
+}
+
+.form-control.lupa {
+    padding-right: 45px; /* Ajusta o espaço para a imagem e o elemento de sobreposição */
+    background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
+    background-repeat: no-repeat;
+    background-position: right; /* Ajusta a posição da imagem */
+    background-size: 70px; /* Define o tamanho da imagem */
+    z-index: 1; /* Garante que a imagem fique na frente do elemento de sobreposição */
+    height: 40px; /* Define a altura da barra de pesquisa */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: 65px; /* Largura do espaço clicável */
+    cursor: pointer;
+    z-index: 2; /* Coloca o elemento de sobreposição sobre a imagem */
+}
+.titulo {
+    text-align: center; /* Centraliza o texto */
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+td {
+    vertical-align: middle;
+  }
