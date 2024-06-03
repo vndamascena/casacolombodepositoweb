@@ -50,7 +50,7 @@
         <strong>{{mensagem}}</strong>
         <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
     </div>
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <form [formGroup]="form" >
         <!-- primeira linha -->
         <div class="row">
             <!-- primeira coluna -->
@@ -227,7 +227,7 @@
         <hr>
         <!-- quinta linha -->
         <div class="col text-center">
-            <button type="submit" class="btn btn-success btn-lg">
+            <button type="submit" class="btn btn-success btn-lg" (click)="abrirFormularioCredenciais(produto)">
               Realizar Cadastro
             </button>
           
@@ -236,4 +236,21 @@
           
         
     </form>
+</div>
+
+<div class="formulario-credenciais text-center" *ngIf="cadastrarproduto && cadastrarproduto === cadastrarproduto">
+    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+    <h4>Confirme o cadastro</h4>
+    <div class="mb-3">
+        <label for="matriculaInput" class="form-label"></label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+            [(ngModel)]="matricula">
+    </div>
+    <div class="mb-3">
+        <label for="senhaInput" class="form-label"></label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+    </div>
+    <button type="button" class="btn btn-outline-light" (click)="onSubmit()" style="font-weight: bold;">
+        Confirmar
+      </button>
 </div>

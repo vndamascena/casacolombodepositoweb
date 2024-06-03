@@ -62,3 +62,25 @@
 .col .btn {
     margin: 10px 20px; /* Adiciona 10px de margem vertical e 20px de margem horizontal */
   }
+
+  .formulario-credenciais {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+
+
+.formulario-credenciais .btn-close {
+    position: absolute; /* Define a posição absoluta para o botão de fechar */
+    top: 1px; /* Ajusta a posição do topo */
+    right: 01px; /* Ajusta a posição da direita */
+    z-index: 9999; /* Garante que o botão esteja acima da imagem */
+}

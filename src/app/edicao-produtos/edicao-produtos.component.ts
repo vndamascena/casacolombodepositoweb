@@ -118,6 +118,8 @@ export class EdicaoProdutosComponent implements OnInit {
   }
   fecharFormularioCredenciais(): void {
     this.produtoselecionado = null;
+    this.matricula = '';
+    this.senha = '';
   }
 
   onSubmit(): void {

@@ -109,6 +109,8 @@ export class ConsultaProdutosComponent implements OnInit {
     }
     fecharFormularioCredenciais(): void {
       this.loteSelecionado = null;
+      this.matricula = '';
+      this.senha = '';
     }
 
 

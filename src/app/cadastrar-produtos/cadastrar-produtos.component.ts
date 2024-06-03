@@ -24,6 +24,9 @@ export class CadastrarProdutosComponent implements OnInit {
   fornecedores: any[] = [];
   produto: any = {}; // objeto para armazenar os dados do produto
   mensagem: string = '';
+  matricula: string = ''; 
+  senha: string = '';
+  cadastrarproduto: any;
 
   // construtor
   constructor(
@@ -119,6 +122,19 @@ export class CadastrarProdutosComponent implements OnInit {
       });
   }
 
+
+  abrirFormularioCredenciais(produto: any): void {
+    this.cadastrarproduto = produto;
+    
+  }
+  fecharFormularioCredenciais(): void {
+    this.cadastrarproduto = null;
+    this.matricula = '';
+    this.senha = '';
+  }
+
+
+
   // método para realizar o cadastro
   onSubmit(): void {
     // Obtém o FormArray 'lotes'
@@ -130,19 +146,28 @@ export class CadastrarProdutosComponent implements OnInit {
       console.error('A lista de lotes não pode estar vazia.');
       return;
     }
+    
+    if (this.matricula && this.senha) {
+      // Configuração dos parâmetros da solicitação PUT
+      const options = { params: { matricula: this.matricula, senha: this.senha } };
 
     // Se o FormArray 'lotes' não estiver vazio, envia o formulário para o servidor
-    this.httpClient.post(environment.apiUrl + "/produto", this.form.value)
+    this.httpClient.post(environment.apiUrl  + "/produto", this.form.value, options)
       .subscribe({
         next: (data: any) => {
           this.mensagem = data.message; // exibir mensagem de sucesso
           this.form.reset(); // limpar os campos do formulário
+          this.fecharFormularioCredenciais();
+          
         },
         error: (e) => {
           console.log(e.error);
           alert('Falha ao cadastrar o produto. Verifique os campos preenchidos');
         }
       });
+    } else {
+      alert('Preencha os campos de matrícula e senha para confirmar a edição.');
+    } 
   }
 
 
