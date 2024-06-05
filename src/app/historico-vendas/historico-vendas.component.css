@@ -33,10 +33,18 @@ User
     right: 30px; /* Ajusta a posição da direita */
     z-index: 9999; /* Garante que o botão esteja acima da imagem */
 }
-.table td,
-.table th {
+.table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    white-space: nowrap; /* Impede a quebra de linha no texto */
+    width: 150px; /* Define uma largura fixa para todas as células */
     text-align: center;
-}
+  }
 .formulario-credenciais {
     position: absolute;
     top: 50%;

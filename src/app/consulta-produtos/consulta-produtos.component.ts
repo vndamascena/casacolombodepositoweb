@@ -1,16 +1,21 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule} from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, Validators } from '@angular/forms';
+import { FormsModule, Validators} from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+
 
 
 @Component({
   selector: 'app-consulta-produtos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './consulta-produtos.component.html',
   styleUrls: ['./consulta-produtos.component.css']
 })
@@ -37,21 +42,27 @@ export class ConsultaProdutosComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    private spinner: NgxSpinnerService
   ) { }
 
   ngOnInit(): void {
     // Recupera o ID do produto da URL
     const productId = this.route.snapshot.queryParams['id'];
-
+    
     // Verifica se o ID do produto está presente na URL
     if (productId) {
       this.httpClient.get(environment.apiUrl + '/produto/${productId}')
+    
         .subscribe({
           next: (produtoData) => {
+            
             this.produto = produtoData;
+            
+            
             // Carrega os lotes do produto após obter os dados do produto
             this.carregarLotes(this.produto); 
+            
           },
           error: (error) => {
             console.error('Erro ao carregar o produto:', error);
@@ -63,6 +74,7 @@ export class ConsultaProdutosComponent implements OnInit {
         .subscribe({
           next: (produtosData) => {
             this.produtos = produtosData as any[];
+           
           },
           error: (error) => {
             console.error('Erro ao carregar os produtos:', error);
@@ -124,6 +136,7 @@ export class ConsultaProdutosComponent implements OnInit {
         if (this.loteSelecionado.quantidadeVendida > 0) {
             // Configuração dos parâmetros da solicitação POST
             const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
+            this.spinner.show();
 
             this.httpClient.post<any>(environment.apiUrl + '/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
                 .subscribe({
@@ -131,9 +144,12 @@ export class ConsultaProdutosComponent implements OnInit {
                         // Atualiza a quantidade do lote no cliente
                         this.loteSelecionado.quantidadeLote -= this.loteSelecionado.quantidadeVendida;
                         this.loteSelecionado.quantidadeVendida = 0;
+                        this.spinner.hide();
                         
                         this.mensagem = response.message; // exibir mensagem de sucesso
+                       
                         this.fecharFormularioCredenciais();
+                        
                     },
                     error: (error) => {
                         

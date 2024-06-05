@@ -21,7 +21,7 @@ export class HistoricoVendasComponent implements OnInit {
   grupoVendas: any = {};
   startDate: Date = new Date();
   endDate: Date = new Date();
-  venda: any ={}
+  userApiUrl: string = 'http://localhost:5233/api/usuarios';
 
   constructor(
     private route: ActivatedRoute,
@@ -30,68 +30,80 @@ export class HistoricoVendasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
     this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`)
       .subscribe({
         next: (vendasData) => {
-          this.vendas = vendasData.reduce((acc, venda) => {
-            const usuarioId = venda.usuarioId;
-            if (!acc[usuarioId]) {
-              acc[usuarioId] = {
-                usuarioId: usuarioId,
-                vendas: [],
-                mostrarDetalhes: false,
-              };
-            }
-            acc[usuarioId].vendas.push(venda);
-            return acc;
-          }, {});
-          this.vendas = Object.values(this.vendas);
+          this.vendas = vendasData;
+         
         },
         error: (error) => {
           console.error('Erro ao carregar o histórico de vendas:', error);
-        },
+        }
       });
+
   }
+
+
+
+
+
+  
+
+
+
+  
 
   filterData() {
     if (this.startDate && this.endDate) {
-      const start = this.startDate.toISOString();
-      const end = this.endDate.toISOString();
-      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`, {
-        params: {
-          startDate: start,
-          endDate: end
-        }
-      }).subscribe({
+      const start = new Date(this.startDate);
+      const end = new Date(this.endDate);
+  
+      // Set the end date to the beginning of the next day to include all sales on the end date
+      end.setDate(end.getDate() + 1);
+  
+      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`).subscribe({
         next: (vendasData) => {
-          this.vendas = vendasData;
+          this.vendas = vendasData.filter(venda => {
+            const vendaDate = new Date(venda.dataVenda);
+  
+            // Check if the sale date is within the range (inclusive start, exclusive end)
+            return vendaDate >= start && vendaDate < end;
+          });
+         
         },
-          error: (error) => {
-            console.error('Erro ao filtrar o histórico de vendas:', error);
+        error: (error) => {
+          console.error('Erro ao filtrar o histórico de vendas:', error);
         }
       });
     }
   }
-
-   // Método para alternar a exibição dos detalhes do produto
-   toggleDetalhesUsuario(vendaAgrupada: any): void {
-    vendaAgrupada.mostrarDetalhes = !vendaAgrupada.mostrarDetalhes;
-    if (vendaAgrupada.mostrarDetalhes && !vendaAgrupada.lotesCarregados) {
-      this.carregarLotesUsuario(vendaAgrupada);
-    }
-  }
   
-  carregarLotesUsuario(vendaAgrupada: any): void {
-    vendaAgrupada.lotesCarregados = true;
-    vendaAgrupada.vendas.forEach((venda: { lotes: any[]; id: any; }) => {
-      if (!venda.lotes) {
-        this.httpClient
-          .get<any[]>(`${environment.apiUrl}/produto/${venda.id}/lotes`)
-          .subscribe((lotesData) => {
-            venda.lotes = Array.isArray(lotesData) ? lotesData : [];
-          });
+    
+  
+   // Método para alternar a exibição dos detalhes do produto
+   toggleDetalhes(produto: any): void {
+        produto.mostrarDetalhes = !produto.mostrarDetalhes;
+        if(produto.mostrarDetalhes && !produto.lotes) {
+        this.carregarLotes(produto);// Carrega os lotes do produto se ainda não estiverem carregados
       }
-    });
+    }
+
+    carregarLotes(produto: any): void {
+      // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
+      if(produto.lotes && produto.lotes.length > 0) {
+      // Se os lotes já estiverem presentes no objeto do produto,
+      // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
+
+    } else {
+      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/${produto.id}/lotes`)
+        .subscribe((lotesData) => {
+          produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
+
+        }, (error) => {
+          console.error('Erro ao carregar os lotes:', error);
+        });
+    }
   }
 
   // Método para filtrar os produtos com base na expressão de pesquisa
@@ -107,7 +119,6 @@ export class HistoricoVendasComponent implements OnInit {
         )
       );
     }
-  } 
+  }
 
 }
-

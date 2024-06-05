@@ -4,6 +4,8 @@ import { environment } from '../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
   selector: 'app-cadastro-produtos',
@@ -11,8 +13,9 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule, RouterModule
-  ],
+    ReactiveFormsModule, RouterModule,
+    NgxSpinnerModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './cadastrar-produtos.component.html',
   styleUrl: './cadastrar-produtos.component.css'
 })
@@ -33,7 +36,8 @@ export class CadastrarProdutosComponent implements OnInit {
 
     private formBiulder: FormBuilder,
     private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    private spinner: NgxSpinnerService
   ) { }
 
   // criando a estrutura do formulário
@@ -150,7 +154,7 @@ export class CadastrarProdutosComponent implements OnInit {
     if (this.matricula && this.senha) {
       // Configuração dos parâmetros da solicitação PUT
       const options = { params: { matricula: this.matricula, senha: this.senha } };
-
+      this.spinner.show();
     // Se o FormArray 'lotes' não estiver vazio, envia o formulário para o servidor
     this.httpClient.post(environment.apiUrl  + "/produto", this.form.value, options)
       .subscribe({
@@ -158,6 +162,7 @@ export class CadastrarProdutosComponent implements OnInit {
           this.mensagem = data.message; // exibir mensagem de sucesso
           this.form.reset(); // limpar os campos do formulário
           this.fecharFormularioCredenciais();
+          this.spinner.hide();
           
         },
         error: (e) => {

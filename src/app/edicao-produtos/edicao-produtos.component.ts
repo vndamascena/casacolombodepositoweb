@@ -134,13 +134,13 @@ export class EdicaoProdutosComponent implements OnInit {
         .subscribe({
           next: (data: any) => {
             this.mensagem = data.message;
-            alert('Produto editado com sucesso!');
+            //this.form.reset();
             this.router.navigate(['/consulta-produtos']);
             this.fecharFormularioCredenciais();
           },
           error: (error) => {
             console.error('Erro ao atualizar produto:', error);
-            alert('Erro ao atualizar o produto. Por favor, tente novamente.');
+            alert('Erro ao atualizar o produto. Verifique os campos e tente novamente.');
           }
         });
     } else {
