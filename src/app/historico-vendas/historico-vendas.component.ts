@@ -35,6 +35,7 @@ export class HistoricoVendasComponent implements OnInit {
       .subscribe({
         next: (vendasData) => {
           this.vendas = vendasData;
+          this.vendas.forEach(venda => this.loadUserName(venda));
          
         },
         error: (error) => {
@@ -45,7 +46,17 @@ export class HistoricoVendasComponent implements OnInit {
   }
 
 
-
+  loadUserName(venda: any): void {
+    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
+      .subscribe({
+        next: (userData) => {
+          venda.nome = userData.nome;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar o nome do usuário:', error);
+        }
+      });
+  }
 
 
   
