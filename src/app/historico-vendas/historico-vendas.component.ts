@@ -21,7 +21,8 @@ export class HistoricoVendasComponent implements OnInit {
   grupoVendas: any = {};
   startDate: Date = new Date();
   endDate: Date = new Date();
-  userApiUrl: string = 'http://localhost:5233/api/usuarios';
+  p: number = 1;
+  userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
 
   constructor(
     private route: ActivatedRoute,
@@ -31,11 +32,28 @@ export class HistoricoVendasComponent implements OnInit {
 
   ngOnInit(): void {
 
+    
+    const currentDate = new Date();
+    this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+    
+
+    
+
     this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`)
       .subscribe({
         next: (vendasData) => {
-          this.vendas = vendasData;
+          this.vendas = vendasData.map(venda => {
+            venda.dataVenda = this.convertToBrazilTime(new Date(venda.dataVenda));
+            return venda;
+          });
+          
+          this.vendas.sort((a, b) => b.dataVenda - a.dataVenda);
+          this.vendas.forEach(venda => this.loadUserName(venda));
+          this.filterData();
+          
          
+
         },
         error: (error) => {
           console.error('Erro ao carregar o histórico de vendas:', error);
@@ -45,31 +63,62 @@ export class HistoricoVendasComponent implements OnInit {
   }
 
 
+ 
+
+  convertToBrazilTime(date: Date): Date {
+    // Cria um novo objeto Date baseado na data original
+    const pstDate = new Date(date);
+
+    // Calcula a diferença entre PST (UTC-8) e BRT (UTC-3)
+    const timeZoneOffset = pstDate.getTimezoneOffset() + (1 * 60);
+
+    // Ajusta a data para o fuso horário do Brasil
+    const brazilTime = new Date(pstDate.getTime() + timeZoneOffset * 60000);
+
+    return brazilTime;
+  }
 
 
 
-  
 
 
 
-  
 
-  filterData() {
+  loadUserName(venda: any): void {
+    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
+      .subscribe({
+        next: (userData) => {
+          venda.nome = userData.nome; // Atribuir o nome do usuário
+        },
+        error: (error) => {
+          console.error('Erro ao carregar o nome do usuário:', error);
+        }
+      });
+  }
+
+
+  filterData(): void {
+
+    
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
-  
-      // Set the end date to the beginning of the next day to include all sales on the end date
+     
       end.setDate(end.getDate() + 1);
-  
+
       this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`).subscribe({
         next: (vendasData) => {
-          this.vendas = vendasData.filter(venda => {
+          this.vendas = vendasData.map(venda => {
+            venda.dataVenda = this.convertToBrazilTime(new Date(venda.dataVenda));
+            return venda;
+          }).filter(venda => {
             const vendaDate = new Date(venda.dataVenda);
-  
-            // Check if the sale date is within the range (inclusive start, exclusive end)
+
             return vendaDate >= start && vendaDate < end;
           });
+           
+          this.vendas.sort((a, b) => b.dataVenda - a.dataVenda);
+          this.vendas.forEach(venda => this.loadUserName(venda));
          
         },
         error: (error) => {
@@ -78,20 +127,20 @@ export class HistoricoVendasComponent implements OnInit {
       });
     }
   }
-  
-    
-  
-   // Método para alternar a exibição dos detalhes do produto
-   toggleDetalhes(produto: any): void {
-        produto.mostrarDetalhes = !produto.mostrarDetalhes;
-        if(produto.mostrarDetalhes && !produto.lotes) {
-        this.carregarLotes(produto);// Carrega os lotes do produto se ainda não estiverem carregados
-      }
-    }
 
-    carregarLotes(produto: any): void {
-      // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
-      if(produto.lotes && produto.lotes.length > 0) {
+
+
+  // Método para alternar a exibição dos detalhes do produto
+  toggleDetalhes(produto: any): void {
+    produto.mostrarDetalhes = !produto.mostrarDetalhes;
+    if (produto.mostrarDetalhes && !produto.lotes) {
+      this.carregarLotes(produto);// Carrega os lotes do produto se ainda não estiverem carregados
+    }
+  }
+
+  carregarLotes(produto: any): void {
+    // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
+    if (produto.lotes && produto.lotes.length > 0) {
       // Se os lotes já estiverem presentes no objeto do produto,
       // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
 

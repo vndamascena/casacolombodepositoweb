@@ -154,13 +154,16 @@ export class ConsultaProdutosComponent implements OnInit {
                     error: (error) => {
                         
                         alert('Erro ao confirmar venda. Usuário e senha incorreto, tente novamente.');
+                        this.spinner.hide();
                     }
                 });
         } else {
             alert('Por favor, selecione uma quantidade válida para vender.');
+            this.spinner.hide();
         }
     } else {
         alert('Por favor, selecione um lote para venda.');
+        this.spinner.hide();
     }
 }
   

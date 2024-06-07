@@ -31,6 +31,11 @@
             <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="125" height="125">
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link black-text" routerLink="/historico-vendas">
+            <img src="/assets/1.jpg" alt="Ícone de Consulta" width="125" height="125">
+          </a>
+        </li>
 
       </ul>
     </div>
@@ -45,16 +50,18 @@
 <div class="table-responsive">
 
 
-  <div class="container mt-2">
+  <div class="container mt-2 ">
     <h2>Histórico de Vendas</h2>
     <div class="row mb-2 align-items-end">
       <div class="col-md-2">
         <label for="startDate">Data Inicial:</label>
-        <input type="date" id="startDate" class="form-control" [(ngModel)]="startDate">
+        <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'"
+          (ngModelChange)="startDate = $event">
       </div>
       <div class="col-md-2">
         <label for="endDate">Data Final:</label>
-        <input type="date" id="endDate" class="form-control" [(ngModel)]="endDate">
+        <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'"
+          (ngModelChange)="endDate = $event">
       </div>
       <div class="col-md-2">
         <button class="btn btn-primary" (click)="filterData()">Filtrar</button>
@@ -67,7 +74,7 @@
     <thead>
       <tr>
         <th>Usuário</th>
-       
+
         <th>Detalhes</th>
 
 
@@ -76,32 +83,32 @@
     <!-- Corpo da tabela -->
 
     <tbody>
-      <ng-container *ngFor="let venda of vendas">
-         
-         <!-- Linha para exibir os detalhes adicionais -->
-         <tr >
-          <td>{{ venda.usuarioId }}</td>
-           <!-- Colunas para exibir os detalhes básicos do produto -->
-           
-           <td colspan="13">  
-             <!-- Tabela para os detalhes dos lotes -->
-             <table class="table table-bordered table-hover">
-               
-              <tbody>
-                 <!-- Use um ngFor para iterar sobre os lotes -->
-                  <tr>
-                   <td>{{ venda.nomeProduto }}</td>
-                   <td>{{ venda.codigo }}</td>
-                   <td>{{ venda.numeroLote }}</td>
-                   <td>{{ venda.quantidade }}</td>
-                   <td>{{ venda.dataVenda | date:'dd/MM/yyyy - HH:mm' }} </td>
-                   </tr>
-                 </tbody>
-               </table>
-             </td>
-          </tr>
-         </ng-container>
-       </tbody>
+      <ng-container *ngFor="let venda of vendas | paginate: { itemsPerPage: 8, currentPage: p }">
+
+        <!-- Linha para exibir os detalhes adicionais -->
+        <tr>
+          <td class="usuario-col">{{ venda.nome }}</td>
+          <!-- Colunas para exibir os detalhes básicos do produto -->
+
+          <td colspan="13">
+            <!-- Tabela para os detalhes dos lotes -->
+            <table class="table inner-table">
+
+
+              <!-- Use um ngFor para iterar sobre os lotes -->
+              <tr>
+                <td>{{ venda.nomeProduto }}</td>
+                <td>{{ venda.codigo }}</td>
+                <td>{{ venda.numeroLote }}</td>
+                <td>{{ venda.quantidade }}</td>
+                <td>{{ venda.dataVenda | date:'dd/MM/yyyy - HH:mm' }} </td>
+              </tr>
+
+            </table>
+          </td>
+        </tr>
+      </ng-container>
+    </tbody>
 
     <!-- rodapé da tabela -->
   </table>
@@ -114,4 +121,11 @@
       </td>
     </tr>
   </tfoot>
+</div>
+
+<div class="col text-center">
+  <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+
+
+
 </div>
