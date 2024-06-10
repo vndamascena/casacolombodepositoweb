@@ -69,48 +69,30 @@
     </div>
   </div>
 
-  <table class="table ">
-    <!-- cabeçalho da tabela -->
-    <thead>
+  <table class="table">
+    <!-- Cabeçalho da tabela -->
+    <thead  >
       <tr>
-        <th>Usuário</th>
-
-        <th>Detalhes</th>
-
-
+        <th style="color: white;">Usuário</th>
+        <th style="color: white;">Nome do Produto</th>
+        <th style="color: white;">Código</th>
+        <th style="color: white;">Número do Lote</th>
+        <th style="color: white;">Quantidade</th>
+        <th style="color: white;">Data da Venda</th>
       </tr>
     </thead>
     <!-- Corpo da tabela -->
-
-    <tbody>
-      <ng-container *ngFor="let venda of vendas | paginate: { itemsPerPage: 8, currentPage: p }">
-
-        <!-- Linha para exibir os detalhes adicionais -->
-        <tr>
-          <td class="usuario-col">{{ venda.nome }}</td>
-          <!-- Colunas para exibir os detalhes básicos do produto -->
-
-          <td colspan="13">
-            <!-- Tabela para os detalhes dos lotes -->
-            <table class="table inner-table">
-
-
-              <!-- Use um ngFor para iterar sobre os lotes -->
-              <tr>
-                <td>{{ venda.nomeProduto }}</td>
-                <td>{{ venda.codigo }}</td>
-                <td>{{ venda.numeroLote }}</td>
-                <td>{{ venda.quantidade }}</td>
-                <td>{{ venda.dataVenda | date:'dd/MM/yyyy - HH:mm' }} </td>
-              </tr>
-
-            </table>
-          </td>
-        </tr>
-      </ng-container>
-    </tbody>
-
-    <!-- rodapé da tabela -->
+    <ng-container *ngFor="let venda of vendas | paginate: { itemsPerPage: 12, currentPage: p }; let i = index">
+      <tr [ngStyle]="{'background-color': getColor(i)}">
+        <td>{{ venda.nome }}</td>
+        <td>{{ venda.nomeProduto }}</td>
+        <td>{{ venda.codigo }}</td>
+        <td>{{ venda.numeroLote }}</td>
+        <td>{{ venda.quantidade }}</td>
+        <td>{{ venda.dataVenda | date:'dd/MM/yyyy - HH:mm' }}</td>
+      </tr>
+    </ng-container>
+    
   </table>
 
 

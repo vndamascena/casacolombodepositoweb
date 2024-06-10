@@ -62,7 +62,9 @@ export class HistoricoVendasComponent implements OnInit {
 
   }
 
-
+  getColor(index: number): string {
+    return index % 2 === 0 ? '#8bc546' : '#ffffff';
+  }
  
 
   convertToBrazilTime(date: Date): Date {
