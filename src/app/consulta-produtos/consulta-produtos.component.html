@@ -67,7 +67,7 @@
                     <th>Detalhes</th>
                     <th>Nome do produto</th>
                     <th>Descrição</th>
-                    <th>Pei</th>
+                    <th>Lu - Pei</th>
                     <th>Marca</th>
                     <th>Preço M²</th>
                     <th>M² CX</th>
@@ -88,11 +88,17 @@
                         <td>
                             <button class="btn  btn-outline-success" (click)="toggleDetalhes(produto)">+</button>
                         </td>
+                        
+                        
 
                         <td>{{ produto.nome | uppercase }}</td>
                         <td>{{ produto.descricao | uppercase }}</td>
-                        <td>{{ produto.pei | uppercase}}</td>
-                        <td>{{ produto.marca | uppercase}}</td>
+                            <td style="width: 90px">
+                                <button class="btn btn-sm btn-close-white me-2 " (click)="mostrarInformacoes(produto)">
+                                    {{ produto.pei | uppercase}}
+                                </button>
+                            </td>
+                        <td >{{ produto.marca | uppercase}}</td>
                         <td>R${{ produto.precoMetroQ }}</td>
                         <td>{{ produto.metroQCaixa }}M²</td>
                         <td>R${{ produto.precoCaixa }}</td>
@@ -103,7 +109,7 @@
                         <!-- Botão de editar -->
                         <td>
                             <button class="btn btn-sm btn-outline-success me-2" (click)="editarProduto(produto.id)">
-                                Editar
+                                <strong>Editar</strong>
                             </button>
                         </td>
                     </tr>
@@ -157,8 +163,8 @@
         </table>
         <tfoot>
             <tr>
-                <td colspan="14">
-                    Quantidade de produtos: {{ produtos.length }}
+                <td colspan="14"><strong> Quantidade de produtos: {{ produtos.length }}</strong>
+                   
                 </td>
             </tr>
         </tfoot>
@@ -167,8 +173,10 @@
 </div>
 
 
-<div class="col text-center">
-    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+<div class="col text-center"><strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+     nextLabel="Próximo"></pagination-controls>
+    </strong>
 
 
 

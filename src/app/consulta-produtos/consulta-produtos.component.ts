@@ -113,8 +113,30 @@ export class ConsultaProdutosComponent implements OnInit {
 
 
   
+  mostrarInformacoes(produto: any): void {
+    const informacoes = `                                      INDICAÇÕES DE USO
 
+👉 LA: Lavabos e banheiros residencias.
 
+👉 LB: Salas, dormitórios, corredores, áreas de serviços e
+           cozinhas residencias sem acessos para rua e locais LA.
+
+👉 LC: Ambientes comerciais sem acesso para a rua, garagens, 
+           varandas e ambientes residencias  com acesso para 
+           a rua e locais LA e LB.
+
+👉 LD: Àreas comecerciais com acesso para a rua 
+           e locais LA, LB e LC.
+
+👉 LE: Calçadas e ambientes externos com áreas planas
+           e locais  LA, LB, LC e LD.
+
+👉 LF: Fachadas (limitado a 5 metros de altura  e com uso 
+           de argamassa apropriada).
+           
+👉 LR: Revestimentos para paredes internas.`;
+    window.alert(informacoes);
+  }
 
     abrirFormularioCredenciais(lote: any): void {
       this.loteSelecionado= lote;

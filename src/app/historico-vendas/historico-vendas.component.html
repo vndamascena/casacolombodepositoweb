@@ -99,14 +99,15 @@
   <tfoot>
     <tr>
       <td colspan="14">
-        Quantidade usuários: {{ vendas.length }}
+       <strong> Quantidade vendas: {{ vendas.length }}</strong>
       </td>
     </tr>
   </tfoot>
 </div>
 
-<div class="col text-center">
-  <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+<div class="col text-center"><strong>
+  <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" 
+  nextLabel="Próximo"></pagination-controls></strong>
 
 
 

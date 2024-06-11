@@ -63,7 +63,7 @@
             <!-- primeira coluna -->
           
             <div class="col-md-5">
-                <label><strong>Nome do produto:</strong> </label>
+                <label><strong>Nome do produto</strong> </label>
                 <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
                 <div class="text-danger" *ngIf="f['nome'].touched && f['nome'].invalid">
                     Por favor, informe um nome válido de 4 a 100 caracteres.
@@ -72,7 +72,7 @@
             </div>
             <!-- segunda coluna -->
             <div class="col-md-5">
-                <label><strong>Descrição:</strong></label>
+                <label><strong>Descrição</strong></label>
                 <input type="text" class="form-control" placeholder="Digite aqui" formControlName="descricao" />
                 <div class="text-danger" *ngIf="f['descricao'].touched && f['descricao'].invalid">
                     Informe a descrição do produto, com minimo de 8 caracteres
@@ -87,30 +87,30 @@
             <div class="col-md-7" *ngFor="let lote of lotes.controls; let i=index" [formGroupName]="i">
                 <div class="row">
                     <div class="col-md-2">
-                        <label><strong>Código:</strong></label>
+                        <label><strong>Código</strong></label>
                         <input type="text" class="form-control" placeholder="Digite aqui" formControlName="codigo" />
                         
                     </div>
 
                     <div class="col">
-                        <label for="numeroLote{{i}}">Lote {{ i + 1 }}</label>
+                        <label for="numeroLote{{i}}"><strong>Lote {{i + 1}}</strong></label>
                         <input type="text" class="form-control" formControlName="numeroLote" id="numeroLote{{i}}"
                             placeholder="Digite aqui">
                     </div>
                     <div class="col">
-                        <label for="quantidadeLote{{i}}">Quantidade</label>
+                        <label for="quantidadeLote{{i}}"><strong>Quantidade</strong></label>
                         <input type="text" class="form-control" formControlName="quantidadeLote"
                             id="quantidadeLote{{i}}" placeholder="Digite aqui">
                     </div>
                     <div class="col-md-4">
-                        <label for="ala{{i}}">Endereço</label>
+                        <label for="ala{{i}}"><strong>Endereço</strong></label>
                         <input type="text" class="form-control" formControlName="ala" id="ala{{i}}"
                             placeholder="Digite aqui">
                     </div>
                     <div class="col">
                         <!-- Passando o ID do lote corretamente para a função deleteLote -->
                         <button type="button" class="btn btn-danger mt-4"
-                            (click)="excluirLote(produto.id, lote.value.id)">Excluir</button>
+                            (click)="excluirLote(produto.id, lote.value.id)"><strong>Excluir</strong></button>
 
                     </div>
                 </div>
@@ -118,8 +118,7 @@
             <div class="col-md-4">
                 <div class="row">
                     <div class="col">
-                        <button type="button" class="btn btn-success mt-4" (click)="adicionarLote()">Adicionar
-                            Lote</button>
+                        <button type="button" class="btn btn-success mt-4" (click)="adicionarLote()"><strong>Adicionar lote</strong></button>
                     </div>
                 </div>
             </div>
@@ -134,11 +133,11 @@
             <!-- primeira coluna -->
 
             <div class="col-md-2">
-                <label><strong>Pei:</strong></label>
+                <label><strong>Pei</strong></label>
                 <input type="text" class="form-control" placeholder="Digite aqui" formControlName="pei" />
             </div>
             <div class="col-md-3">
-                <label><strong>Marca:</strong></label>
+                <label><strong>Marca</strong></label>
                 <input type="text" class="form-control" placeholder="Digite aqui" formControlName="marca" />
             </div>
 
@@ -229,10 +228,10 @@
         <!-- quinta linha -->
         <div class="col text-center">
             <button type="submit" class="btn btn-success btn-lg" (click)="abrirFormularioCredenciais(produto)">
-              Editar produto        
+                <strong>Editar produto</strong>        
             </button>
           
-            <a href="#" class="btn btn-primary btn-lg">Voltar</a>
+            <a href="#" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
         </div>
         
     </form>
@@ -240,7 +239,7 @@
 
 <div class="formulario-credenciais text-center" *ngIf="produtoselecionado && produtoselecionado === produtoselecionado">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Confirme edição</h4>
+    <h4><strong>Confirmar edição</strong></h4>
     <div class="mb-3">
         <label for="matriculaInput" class="form-label"></label>
         <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
@@ -251,6 +250,6 @@
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
     <button type="button" class="btn btn-outline-light" (click)="onSubmit()" style="font-weight: bold;">
-        Confirmar
+        <strong>Confirmar</strong>
       </button>
 </div>
