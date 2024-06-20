@@ -33,10 +33,18 @@ User
     right: 30px; /* Ajusta a posição da direita */
     z-index: 9999; /* Garante que o botão esteja acima da imagem */
 }
-.table td,
-.table th {
+.table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th, .table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    
+    
     text-align: center;
-}
+  }
 .formulario-credenciais {
     position: absolute;
     top: 50%;
@@ -74,16 +82,13 @@ User
     /* Espaçamento entre os itens */
 }
 
-
 .navbar-brand {
     margin-right: 50px;
     /* Adiciona margem à direita do logo */
 }
-.black-text {
-    color: black; /* Define a cor do texto como preto */
-}
+
 .nav-item{
-    margin-right: -5px;
+    margin-right: -30px;
 }
 .input-group {
     position: relative;
@@ -96,7 +101,7 @@ User
 
 .form-control.lupa {
     padding-right: 45px; /* Ajusta o espaço para a imagem e o elemento de sobreposição */
-    /*background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
+    background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
     background-repeat: no-repeat;
     background-position: right; /* Ajusta a posição da imagem */
     background-size: 70px; /* Define o tamanho da imagem */
@@ -120,6 +125,40 @@ User
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
-td, th {
+td {
     vertical-align: middle;
+    
+    
   }
+
+  .table {
+    width: 1289px; /* Ajuste a largura da tabela conforme necessário */
+    border: 1px solid #cccccc; /* Ajuste a espessura da borda conforme necessário */
+    
+  }
+  
+  .table th {
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 3px solid #ccc; /* Ajuste a espessura da borda das células conforme necessário */
+    background-color: #03682b;
+    color: #fff;
+    white-space: nowrap; /* Impede a quebra de linha no texto */
+    
+  }
+  
+  .table td {
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 1px solid #cccccc; /* Ajuste a espessura da borda das células conforme necessário */
+    
+    
+  }
+  .inner-table {
+    padding: 4px;
+    border: none; /* Remove a borda da tabela interna */
+}
+
+
+
+
+
+

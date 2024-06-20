@@ -4,6 +4,8 @@ import { InicioComponent } from './inicio/inicio.component';
 import { EdicaoProdutosComponent } from './edicao-produtos/edicao-produtos.component';
 import { CadastrarProdutosComponent } from './cadastrar-produtos/cadastrar-produtos.component';
 import { HistoricoVendasComponent } from './historico-vendas/historico-vendas.component';
+import { HistoricoBaixaOcorrenciaComponent } from './ocorrencias/historico-baixa-ocorrencia/historico-baixa-ocorrencia.component';
+import { OcorrenciaComponent } from './ocorrencias/ocorrencia/ocorrencia.component';
 
 export const routes: Routes = [
 
@@ -24,6 +26,15 @@ export const routes: Routes = [
         path: 'historico-vendas',
         component: HistoricoVendasComponent
     },
+    {
+        path: 'historico-baixa-ocorrencia',
+        component: HistoricoBaixaOcorrenciaComponent
+    },
+    {
+        path: 'ocorrencia',
+        component: OcorrenciaComponent
+    },
+
     {
         path: '', pathMatch: 'full', //url raiz
         redirectTo: 'consulta-produtos'

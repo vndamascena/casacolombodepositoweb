@@ -38,6 +38,7 @@ User
     border-collapse: collapse;
   }
   
+  
   .table th, .table td {
     border: 1px solid #dddddd;
     padding: 8px;
@@ -86,9 +87,7 @@ User
     margin-right: 50px;
     /* Adiciona margem à direita do logo */
 }
-.black-text {
-    color: black; /* Define a cor do texto como preto */
-}
+
 .nav-item{
     margin-right: -30px;
 }
@@ -130,3 +129,33 @@ User
 td {
     vertical-align: middle;
   }
+
+  .table {
+    width: 1289px; /* Ajuste a largura da tabela conforme necessário */
+    border: 1px solid #cccccc; /* Ajuste a espessura da borda conforme necessário */
+    
+  }
+  
+  .table th {
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 3px solid #ccc; /* Ajuste a espessura da borda das células conforme necessário */
+    background-color: #03682b;
+    color: #fff;
+    
+  }
+  
+  .table td {
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 1px solid #cccccc; /* Ajuste a espessura da borda das células conforme necessário */
+    
+    
+  }
+  .inner-table {
+    padding: 4px;
+    border: none; /* Remove a borda da tabela interna */
+}
+
+
+
+
+

@@ -1,4 +1,4 @@
-.line {
+/*.line {
     height: 0.2px;
     width: 75.5%;
     margin: 0 auto;
@@ -8,17 +8,17 @@
 .navbar-nav .nav-link {
     display: flex;
     align-items: center;
-    /* Alinha verticalmente os itens */
+    /* Alinha verticalmente os itens 
     margin-right: -10px;
-    /* Espaçamento entre os itens */
+    
 }
 
 .navbar-brand {
     margin-right: 50px;
-    /* Adiciona margem à direita do logo */
+    
 }
 .black-text {
-    color: black; /* Define a cor do texto como preto */
+    color: black; 
 }
 .nav-item{
     margin-right: -30px;
@@ -29,17 +29,17 @@
 }
 
 .barra-pesquisa {
-    margin-top: 0px; /* Move a barra de pesquisa para baixo */
+    margin-top: 0px; /* Move a barra de pesquisa para baixo 
 }
 
 .form-control.lupa {
-    padding-right: 45px; /* Ajusta o espaço para a imagem e o elemento de sobreposição */
-    background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
+    padding-right: 45px; /* Ajusta o espaço para a imagem e o elemento de sobreposição 
+    background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa 
     background-repeat: no-repeat;
-    background-position: right; /* Ajusta a posição da imagem */
-    background-size: 70px; /* Define o tamanho da imagem */
-    z-index: 1; /* Garante que a imagem fique na frente do elemento de sobreposição */
-    height: 40px; /* Define a altura da barra de pesquisa */
+    background-position: right; /* Ajusta a posição da imagem 
+    background-size: 70px; /* Define o tamanho da imagem 
+    z-index: 1; /* Garante que a imagem fique na frente do elemento de sobreposição 
+    height: 40px; /* Define a altura da barra de pesquisa 
 }
 
 .overlay {
@@ -48,13 +48,122 @@
     right: 0;
     bottom: 0;
     left: auto;
-    width: 65px; /* Largura do espaço clicável */
+    width: 65px; /* Largura do espaço clicável 
     cursor: pointer;
-    z-index: 2; /* Coloca o elemento de sobreposição sobre a imagem */
+    z-index: 2; /* Coloca o elemento de sobreposição sobre a imagem 
 }
 .titulo {
-    text-align: center; /* Centraliza o texto */
-    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
+    text-align: center; /* Centraliza o texto 
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde 
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
+
+
+/* General dropdown styling */
+.navbar-nav .dropdown-menu {
+    display: none;
+    
+}
+
+.navbar-nav .dropdown:hover > .dropdown-menu {
+    display: block;
+    
+}
+
+.navbar-nav .dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+    
+}
+.navbar-nav  {
+  width: 100%;
+  background-color: #036822; /* cor de fundo para o menu principal */
+  padding: 0.5rem 1rem;
+  position: fixed; /* Add this line */
+  top: 0; 
+  height: 50px;
+  z-index: 100;
+  
+}
+.nav-item .nav-link{
+    color: #ffffff;
+}
+
+.dropdown-menu {
+    background-color: #036822;
+    border: 1px solid #ddd;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 0;
+    position: absolute;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.5rem rem;
+    display: block;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.5;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+    
+}
+
+.dropdown-item:hover {
+    background-color: #87c746;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.dropdown-toggle::after {
+    content: "";
+    display: inline-block;
+    width: 0.25em;
+    height: 0.25em;
+    border-top: 0.25em solid #ffffff;
+    border-right: 0.25em solid transparent;
+    border-bottom: 0.25em solid transparent;
+    margin-left: 5px;
+    vertical-align: middle;
+    transform: rotate(270deg);
+    transition: transform 0.3s ease;
+}
+
+.dropdown-toggle[aria-expanded="true"]::after {
+    transform: rotate(-90deg);
+}
+
+.dropdown-menu {
+    max-width: 200px; 
+    margin-left: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-menu:not(.dropdown-menu-end) {
+    right: auto;
+    left: auto;
+}
+
+.dropdown-menu-end {
+    right: auto;
+    left: auto;
+}
+

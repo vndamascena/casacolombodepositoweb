@@ -168,10 +168,12 @@ export class CadastrarProdutosComponent implements OnInit {
         error: (e) => {
           console.log(e.error);
           alert('Falha ao cadastrar o produto. Verifique os campos preenchidos');
+          this.spinner.hide();
         }
       });
     } else {
       alert('Preencha os campos de matrícula e senha para confirmar a edição.');
+      this.spinner.hide();
     } 
   }
 
