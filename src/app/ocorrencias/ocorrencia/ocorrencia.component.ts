@@ -25,7 +25,9 @@ export class OcorrenciaComponent implements OnInit {
   ocorrencias: any[] = [];
   ocorrencia: any = {};
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
-  grupoVendas: any = {};
+  grupoOcorrencias: any = {};
+  expression: string = ''; 
+  ocorr: any;
 
 
 
@@ -45,12 +47,19 @@ export class OcorrenciaComponent implements OnInit {
     const ocorrencId = this.route.snapshot.queryParams['id'];
 
     if (ocorrencId) {
-      this.httpClient.get(environment.ocorrencApi + 'ocorrencia/${ocorrencId}')
+      this.httpClient.get<any[]>(environment.ocorrencApi + 'ocorrencia/${ocorrencId}')
 
         .subscribe({
-          next: (ocorrenciaData) => {
+          next: (ocorrenciasData) => {
 
-            this.ocorrencia = ocorrenciaData;
+            this.ocorrencias = ocorrenciasData.map(ocorrencia => {
+              ocorrencia.dataTime = this.convertToBrazilTime(new Date(ocorrencia.dataTime));
+              return ocorrencia;
+            
+            });
+            this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
+            this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
+            
 
 
 
@@ -61,16 +70,20 @@ export class OcorrenciaComponent implements OnInit {
         });
     } else {
       // Se não houver ID da ocorrencia na URL, exibe todos os produtos
-      this.httpClient.get(environment.ocorrencApi + '/ocorrencia')
+      this.httpClient.get<any[]>(environment.ocorrencApi + '/ocorrencia')
         .subscribe({
           next: (ocorrenciasData) => {
-            this.ocorrencias = ocorrenciasData.map(ocorr => {
-              ocorr.dataOcorrencia = this.convertToBrazilTime(new Date(ocorr.dataOcorrencia))
-              return ocorr;
+            this.ocorrencias = ocorrenciasData.map(ocorrencia => {
+              
+              
+              ocorrencia.dataTime = this.convertToBrazilTime(new Date(ocorrencia.dataTime));
+              
+              return ocorrencia;
             
             });
-            this.ocorrencias = ocorrenciasData as any[];
+            this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
             this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
+           
 
           },
           error: (error) => {
@@ -86,12 +99,54 @@ export class OcorrenciaComponent implements OnInit {
 
   }
 
+  abrirFormularioCredenciais(ocorr: any): void{ 
+    this.ocorr= ocorr ;
+  }
+  fecharFormularioCredenciais(): void {
+    this.ocorr = null;
+    this.matricula = '';
+    this.senha = '';
+  }
+
+  concluirOcorrencia(ocorr: any): void{
+    this.ocorrencias = ocorr;
+    const options = { params: { matricula: this.matricula, senha: this.senha} };
+    //this.spinner.show();
+
+    this.httpClient.post<any>(environment.ocorrencApi + '/ocorrencia/baixaOcorrencia',  options)
+        .subscribe({
+            next: (response) => {
+                // Atualiza a quantidade do lote no cliente
+               
+                //this.spinner.hide();
+                
+                this.mensagem = response.message; // exibir mensagem de sucesso
+               
+                //this.fecharFormularioCredenciais();
+                
+            },
+            error: (error) => {
+              alert('Erro ao concluir ocorrencia. Usuário e senha incorreto, tente novamente.');
+                //'this.spinner.hide();
+            }
+        });
+  }
+
+  isDateOlderThanThreeDays(dateString: string): boolean {
+    const date = new Date(dateString);
+    const now = new Date();
+    const threeDaysAgo = new Date(now.setDate(now.getDate() - 1));
+    return date < threeDaysAgo;
+  }
+
+  
+
   convertToBrazilTime(date: Date): Date {
     // Cria um novo objeto Date baseado na data original
     const pstDate = new Date(date);
 
     // Calcula a diferença entre PST (UTC-8) e BRT (UTC-3)
-    const timeZoneOffset = pstDate.getTimezoneOffset() + (1 * 60);
+    const timeZoneOffset = pstDate.getTimezoneOffset() + (-1 * 60);
 
     // Ajusta a data para o fuso horário do Brasil
     const brazilTime = new Date(pstDate.getTime() + timeZoneOffset * 60000);
@@ -120,6 +175,27 @@ export class OcorrenciaComponent implements OnInit {
 
       end.setDate(end.getDate() + 1);
 
+      
+      
+      this.httpClient.get<any[]>(environment.ocorrencApi + '/ocorrencia').subscribe({
+        next: (ocorrenciasData) => {
+          this.ocorrencias = ocorrenciasData.map(ocorrencia => {
+            ocorrencia.dataTime = this.convertToBrazilTime(new Date(ocorrencia.dataTime));
+            return ocorrencia;
+          }).filter(ocorrencia => {
+            const ocorrenciaDate = new Date(ocorrencia.dataTime);
+
+            return ocorrenciaDate >= start && ocorrenciaDate < end;
+          });
+           
+          this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
+          this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
+         
+        },
+        error: (error) => {
+          console.error('Erro ao filtrar o histórico de vendas:', error);
+        }
+      });
 
     }
   }
