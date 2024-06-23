@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
   selector: 'app-ocorrencia',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule],
   templateUrl: './ocorrencia.component.html',
   styleUrl: './ocorrencia.component.css'
 })
@@ -28,14 +28,31 @@ export class OcorrenciaComponent implements OnInit {
   grupoOcorrencias: any = {};
   expression: string = ''; 
   ocorr: any;
+  tipoOcorrencias: any[] = [];
+  
 
 
 
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
-    private router: Router
+    private router: Router,
+    private spinner: NgxSpinnerService,
+    private formBiulder: FormBuilder,
   ) { }
+
+  form = new FormGroup({
+
+    tipoOcorrenciaId: new FormControl('',[])
+    
+    
+  });
+  get f(): any {
+    return this.form.controls;
+
+  }
+
+ 
 
   ngOnInit(): void {
 
@@ -98,9 +115,12 @@ export class OcorrenciaComponent implements OnInit {
 
 
   }
+  
+  
 
   abrirFormularioCredenciais(ocorr: any): void{ 
     this.ocorr= ocorr ;
+    console.log('id:', this.ocorr);
   }
   fecharFormularioCredenciais(): void {
     this.ocorr = null;
@@ -110,24 +130,26 @@ export class OcorrenciaComponent implements OnInit {
 
   concluirOcorrencia(ocorr: any): void{
     this.ocorrencias = ocorr;
-    const options = { params: { matricula: this.matricula, senha: this.senha} };
+    const options = { params: { matricula: this.matricula, senha: this.senha, id: this.ocorr} };
     //this.spinner.show();
 
-    this.httpClient.post<any>(environment.ocorrencApi + '/ocorrencia/baixaOcorrencia',  options)
+    console.log('Dados enviados:', options); 
+
+    this.httpClient.post<any>(`${environment.ocorrencApi}/ocorrencia/baixaOcorrencia`, { id: this.ocorr.id},  options)
         .subscribe({
             next: (response) => {
-                // Atualiza a quantidade do lote no cliente
+                
                
-                //this.spinner.hide();
+                this.spinner.hide();
                 
                 this.mensagem = response.message; // exibir mensagem de sucesso
                
-                //this.fecharFormularioCredenciais();
+                this.fecharFormularioCredenciais();
                 
             },
             error: (error) => {
               alert('Erro ao concluir ocorrencia. Usuário e senha incorreto, tente novamente.');
-                //'this.spinner.hide();
+                this.spinner.hide();
             }
         });
   }

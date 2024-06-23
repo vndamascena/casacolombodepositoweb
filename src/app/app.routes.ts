@@ -6,6 +6,7 @@ import { CadastrarProdutosComponent } from './cadastrar-produtos/cadastrar-produ
 import { HistoricoVendasComponent } from './historico-vendas/historico-vendas.component';
 import { HistoricoBaixaOcorrenciaComponent } from './ocorrencias/historico-baixa-ocorrencia/historico-baixa-ocorrencia.component';
 import { OcorrenciaComponent } from './ocorrencias/ocorrencia/ocorrencia.component';
+import { CadastraOcorrenciaComponent } from './ocorrencias/cadastra-ocorrencia/cadastra-ocorrencia.component';
 
 export const routes: Routes = [
 
@@ -33,6 +34,10 @@ export const routes: Routes = [
     {
         path: 'ocorrencia',
         component: OcorrenciaComponent
+    },
+    {
+        path: "cadastra-ocorrencia",
+        component: CadastraOcorrenciaComponent
     },
 
     {

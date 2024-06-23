@@ -42,7 +42,7 @@ User
   .table th, .table td {
     border: 1px solid #dddddd;
     padding: 8px;
-    white-space: nowrap; /* Impede a quebra de linha no texto */
+    /*white-space: nowrap; /* Impede a quebra de linha no texto */
     width: 150px; /* Define uma largura fixa para todas as células */
     text-align: center;
   }
@@ -126,7 +126,7 @@ User
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
-td {
+th,td {
     vertical-align: middle;
   }
 

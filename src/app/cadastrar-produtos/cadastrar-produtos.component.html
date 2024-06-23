@@ -55,192 +55,179 @@
         <strong>{{mensagem}}</strong>
         <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
     </div>
-    <form [formGroup]="form" >
-        <!-- primeira linha -->
-        <div class="row">
-            <!-- primeira coluna -->
-           
-            <div class="col-md-5">
-                <label><strong>Nome do produto</strong> </label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
-                <div class="text-danger" *ngIf="f['nome'].touched && f['nome'].invalid">
-                    Por favor, informe um nome válido de 4 a 30 caracteres.
-
-                </div>
-
-            </div>
-            <!-- segunda coluna -->
-            <div class="col-md-5">
-                <label><strong>Descrição</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="descricao" />
-                <div class="text-danger" *ngIf="f['descricao'].touched && f['descricao'].invalid">
-                    Informe a descrição do produto, com minimo de 8 caracteres
-
-                </div>
-            </div>
-        </div>
-        <!-- linha de separação -->
-        <hr>
-        <!-- Exibição dos lotes -->
-        <div class="row" formArrayName="lote">
-            <div class="col-md-7" *ngFor="let lote of lotes.controls; let i=index" [formGroupName]="i">
-                <div class="row">
-
-                    <div class="col-md-2">
-                        <label><strong>Código</strong></label>
-                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="codigo" />
-                        
+    <form [formGroup]="form">
+        <!-- Contêiner centralizado -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    
+                    <!-- primeira linha -->
+                    <div class="row">
+                        <!-- primeira coluna -->
+                        <div class="col-md-6">
+                            <label><strong>Nome do produto</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
+                            <div class="text-danger" *ngIf="f['nome'].touched && f['nome'].invalid">
+                                Por favor, informe um nome válido de 4 a 30 caracteres.
+                            </div>
+                        </div>
+                        <!-- segunda coluna -->
+                        <div class="col-md-6">
+                            <label><strong>Descrição</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="descricao" />
+                            <div class="text-danger" *ngIf="f['descricao'].touched && f['descricao'].invalid">
+                                Informe a descrição do produto, com minimo de 8 caracteres
+                            </div>
+                        </div>
                     </div>
+    
+                    <!-- linha de separação -->
+                    <hr>
+    
+                    <!-- Exibição dos lotes -->
+                    <div class="row" formArrayName="lote">
+                        <div class="col-md-12" *ngFor="let lote of lotes.controls; let i=index" [formGroupName]="i">
+                            <div class="row">
 
-                    <div class="col">
-                        <label for="numeroLote{{i}}"><strong>Lote {{ i + 1 }}</strong></label>
-                        <input type="text" class="form-control" formControlName="numeroLote" id="numeroLote{{i}}"
-                            placeholder="Digite aqui">
+                                <div class="col-md-2">
+                                    <label for="numeroLote{{i}}"><strong>Lote {{ i + 1 }}</strong></label>
+                                    <input type="text" class="form-control" formControlName="numeroLote" id="numeroLote{{i}}" placeholder="Digite aqui">
+                                </div>
+                                <div class="col-md-2">
+                                    <label><strong>Código</strong></label>
+                                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="codigo" />
+                                </div>
+    
+                               
+                                
+                                <div class="col-md-2">
+                                    <label for="quantidadeLote{{i}}"><strong>Quantidade</strong></label>
+                                    <input type="text" class="form-control" formControlName="quantidadeLote" id="quantidadeLote{{i}}" placeholder="Digite aqui">
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <label for="quantidadeLote{{i}}"><strong>Endereço</strong></label>
+                                    <input type="text" class="form-control" formControlName="ala" id="ala{{i}}" placeholder="Digite aqui">
+                                </div>
+                                
+                                <div class="col-md-2">
+                                    <!-- Passando o ID do lote corretamente para a função deleteLote -->
+                                    <button type="button" class="btn btn-danger mt-4" (click)="excluirLote(produto.id)"><strong>Excluir</strong></button>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-success mt-2" (click)="adicionarLote()"><strong>Adicionar Lote</strong></button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col">
-                        <label for="quantidadeLote{{i}}"><strong>Quantidade</strong></label>
-                        <input type="text" class="form-control" formControlName="quantidadeLote"
-                            id="quantidadeLote{{i}}" placeholder="Digite aqui">
+    
+                    <!-- linha de separação -->
+                    <hr>
+    
+                    <!-- segunda linha -->
+                    <div class="row">
+                        <!-- primeira coluna -->
+                        <div class="col-md-4">
+                            <label><strong>Lu - Pei</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="pei" />
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Marca</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="marca" />
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Upload de Imagem</strong></label>
+                            <input type="file" id="imagemUrl" class="form-control" (change)="onFileSelected($event)" />
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="quantidadeLote{{i}}"><strong>Endereço</strong></label>
-                        <input type="text" class="form-control" formControlName="ala" id="ala{{i}}"
-                            placeholder="Digite aqui">
+    
+                    <!-- linha de separação -->
+                    <hr>
+    
+                    <!-- terceira linha -->
+                    <div class="row">
+                        <!-- primeira coluna -->
+                        <div class="col-md-3">
+                            <label><strong>Preço M2</strong></label>
+                            <input type="text" class="form-control" placeholder="R$0,00" formControlName="precoMetroQ" (input)="atualizarPrecoCaixa()" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>M2 CX</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="metroQCaixa" (input)="atualizarPrecoCaixa()" />
+                        </div>
+                        <!-- segunda coluna -->
+                        <div class="col-md-3">
+                            <label><strong>Preço CX</strong></label>
+                            <input type="text" class="form-control" placeholder="R$0,00" formControlName="precoCaixa" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Peça CX</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="pecascaixa" />
+                        </div>
                     </div>
-                    <div class="col-md-2">
-                        <!-- Passando o ID do lote corretamente para a função deleteLote -->
-                        <button type="button" class="btn btn-danger mt-4"
-                            (click)="excluirLote(produto.id)"><strong>Excluir</strong></button>
-
+    
+                    <!-- linha de separação -->
+                    <hr>
+    
+                    <!-- quarta linha -->
+                    <div class="row mt-3">
+                        <!-- primeira coluna -->
+                        <div class="col-md-4">
+                            <label><strong>Categoria</strong></label>
+                            <select class="form-select" formControlName="categoriaId">
+                                <option value="">Selecione uma categoria</option>
+                                <option *ngFor="let c of categorias" [value]="c.id">{{ c.nome | uppercase }}</option>
+                            </select>
+                            <div class="text-danger" *ngIf="f['categoriaId'].touched && f['categoriaId'].invalid">
+                                Selecione uma categoria para o produto.
+                            </div>
+                        </div>
+                        <!-- segunda coluna -->
+                        <div class="col-md-4">
+                            <label><strong>Fornecedor</strong></label>
+                            <select class="form-select" formControlName="fornecedorId">
+                                <option value="">Selecione um fornecedor</option>
+                                <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase }}</option>
+                            </select>
+                            <div class="text-danger" *ngIf="f['fornecedorId'].touched && f['fornecedorId'].invalid">
+                                Selecione um fornecedor para o produto.
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Depósito</strong></label>
+                            <select class="form-select" formControlName="depositoId">
+                                <option value="">Selecione um depósito</option>
+                                <option *ngFor="let d of depositos" [value]="d.depositoId">{{ d.nomeDeposito | uppercase }}</option>
+                            </select>
+                            <div class="text-danger" *ngIf="f['depositoId'].touched && f['depositoId'].invalid">
+                                Selecione um depósito para o produto.
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="row">
-                    <div class="col">
-                        <button type="button" class="btn btn-success mt-4" (click)="adicionarLote()"><strong>Adicionar Lote</strong>
+    
+                    <!-- linha de separação -->
+                    <hr>
+    
+                    <!-- quinta linha -->
+                    <div class="row text-center">
+                        <div class="col">
+                            <button type="submit" class="btn btn-success btn-lg" (click)="abrirFormularioCredenciais(produto)">
+                                <strong>Realizar cadastro</strong>
                             </button>
+                            <a href="#" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
+                        </div>
                     </div>
-
+    
                 </div>
             </div>
         </div>
-
-
-
-        <!-- linha de separação -->
-        <hr>
-        <!-- segunda linha -->
-        <div class="row">
-            <!-- primeira coluna -->
-
-            <div class="col-md-2">
-                <label><strong>Lu - Pei</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="pei" />
-            </div>
-            <div class="col-md-2">
-                <label><strong>Marca</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="marca" />
-            </div>
-
-            <div class="col-md-3">
-                <label><strong>Upload de Imagem</strong></label>
-                <input type="file" id="imagemUrl" class="form-control" (change)="onFileSelected($event)" />
-            </div>
-        </div>
-        <!-- linha de separação -->
-        <hr>
-        <!-- terceira linha -->
-        <div class="row">
-            <!-- primeira coluna -->
-            <div class="col-md-2">
-                <label><strong>Preço M2</strong></label>
-                <input type="text" class="form-control" placeholder="R$0,00" formControlName="precoMetroQ"
-                    (input)="atualizarPrecoCaixa()" />
-            </div>
-
-            <div class="col-md-2">
-                <label><strong>M2 CX</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="metroQCaixa"
-                    (input)="atualizarPrecoCaixa()" />
-
-            </div>
-            <!-- segunda coluna -->
-            <div class="col-md-2">
-                <label><strong>Preço CX</strong></label>
-                <input type="text" class="form-control" placeholder="R$0,00" formControlName="precoCaixa" />
-            </div>
-            <div class="col-md-2">
-                <label><strong>Peça CX</strong></label>
-                <input type="text" class="form-control" placeholder="Digite aqui" formControlName="pecascaixa" />
-            </div>
-
-
-
-
-        </div>
-
-        <!-- linha de separação -->
-        <hr>
-        <!-- quarta linha -->
-        <div class="row mt-3">
-            <!-- primeira coluna -->
-            <div class="col">
-                <label><strong>Categoria</strong></label>
-                <select class="form-select" formControlName="categoriaId">
-                    <option value="">Selecione uma categoria</option>
-                    <option *ngFor="let c of categorias" [value]="c.id">
-                        {{c.nome | uppercase}}
-                    </option>
-                </select>
-                <div class="text-danger" *ngIf="f['categoriaId'].touched && f['categoriaId'].invalid">
-
-                    Selecione uma categoria para o produto.
-                </div>
-            </div>
-            <!-- segunda coluna -->
-            <div class="col">
-                <label><strong>Fornecedor</strong></label>
-                <select class="form-select" formControlName="fornecedorId">
-                    <option value="">Selecione um fornecedor</option>
-                    <option *ngFor="let f of fornecedores" [value]="f.id">
-                        {{f.nome | uppercase}}
-                    </option>
-                </select>
-                <div class="text-danger" *ngIf="f['fornecedorId'].touched && f['fornecedorId'].invalid">
-                    Selecione um fornecedor para o produto.
-                </div>
-            </div>
-
-            <div class="col">
-                <label><strong>Depósito</strong></label>
-                <select class="form-select" formControlName="depositoId">
-                    <option value="">Selecione um depósito</option>
-                    <option *ngFor="let d of depositos" [value]="d.depositoId">
-                        {{d.nomeDeposito | uppercase}}
-                    </option>
-                </select>
-
-                <div class="text-danger" *ngIf="f['depositoId'].touched && f['depositoId'].invalid">
-                    Selecione um deposito para o produto.
-                </div>
-            </div>
-        </div>
-        <!-- linha de separação -->
-
-        <hr>
-        <!-- quinta linha -->
-        <div class="col text-center">
-            <button type="submit" class="btn btn-success btn-lg" (click)="abrirFormularioCredenciais(produto)">
-              <strong>Realizar cadastro</strong> 
-            </button>
-          
-            <a href="#" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
-        </div>
-          
-        
     </form>
+    
 </div>
 
 <div class="formulario-credenciais text-center" *ngIf="cadastrarproduto && cadastrarproduto === cadastrarproduto">
