@@ -29,6 +29,7 @@ export class OcorrenciaComponent implements OnInit {
   expression: string = ''; 
   ocorr: any;
   tipoOcorrencias: any[] = [];
+  fornecedorOcorrencias: any [] = [];
   
 
 
@@ -43,7 +44,8 @@ export class OcorrenciaComponent implements OnInit {
 
   form = new FormGroup({
 
-    tipoOcorrenciaId: new FormControl('',[])
+    tipoOcorrenciaId: new FormControl('',[]),
+    fornecedorOcorrenciaId: new FormControl('',[])
     
     
   });

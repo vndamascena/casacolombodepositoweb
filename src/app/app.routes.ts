@@ -7,6 +7,7 @@ import { HistoricoVendasComponent } from './historico-vendas/historico-vendas.co
 import { HistoricoBaixaOcorrenciaComponent } from './ocorrencias/historico-baixa-ocorrencia/historico-baixa-ocorrencia.component';
 import { OcorrenciaComponent } from './ocorrencias/ocorrencia/ocorrencia.component';
 import { CadastraOcorrenciaComponent } from './ocorrencias/cadastra-ocorrencia/cadastra-ocorrencia.component';
+import { AutenticarUsuarioComponent } from './usuarios/autenticar-usuario/autenticar-usuario.component';
 
 export const routes: Routes = [
 
@@ -14,13 +15,16 @@ export const routes: Routes = [
         path: 'consulta-produtos',
         component: ConsultaProdutosComponent
     },
-    {path: 'inicio', 
+    {
+        path: 'inicio',
         component: InicioComponent
     },
-    {path: 'edicao-produtos/:id', 
+    {
+        path: 'edicao-produtos/:id',
         component: EdicaoProdutosComponent
     },
-    {path: 'cadastrar-produtos',
+    {
+        path: 'cadastrar-produtos',
         component: CadastrarProdutosComponent
     },
     {
@@ -39,10 +43,14 @@ export const routes: Routes = [
         path: "cadastra-ocorrencia",
         component: CadastraOcorrenciaComponent
     },
+    {
+        path: 'autenticar-usuario',
+        component: AutenticarUsuarioComponent
+    },
 
     {
         path: '', pathMatch: 'full', //url raiz
-        redirectTo: 'consulta-produtos'
+        redirectTo: 'autenticar-usuario'
     }
 
 

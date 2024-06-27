@@ -24,6 +24,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
   tipoOcorrencias: any[] = [];
   ocorr: any = {};
   cadastrarOcorrencia: any;
+  fornecedores: any[] = [];
 
 
   constructor(
@@ -49,7 +50,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
     observacao: new FormControl('', [
       
     ]),
-    fornecedo: new FormControl('', [
+    fornecedoOcorrenciaId: new FormControl('', [
       
     ]),
 
@@ -73,6 +74,17 @@ export class CadastraOcorrenciaComponent implements OnInit {
           console.log(e.error);
         }
       });
+       // executando o endpoint de consulta de fornecedores na API
+    this.httpClient.get(environment.ocorrencApi + "/fornecedorOcorrencia")
+    .subscribe({
+      next: (data) => {
+        this.fornecedores = data as any[];
+      },
+      error: (e) => {
+        console.log(e.error);
+      }
+    });
+
   
   }
 
@@ -94,6 +106,8 @@ export class CadastraOcorrenciaComponent implements OnInit {
 
   onSubmit(): void {
     
+    
+
     
     if (this.matricula && this.senha) {
       // Configuração dos parâmetros da solicitação PUT

@@ -57,7 +57,8 @@
                     <!-- primeira coluna -->
                     <div class="col-md-4">
                         <label><strong>Codígo do produto</strong></label>
-                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="codProduto" />
+                        <input type="text" class="form-control" placeholder="Digite aqui"
+                            formControlName="codProduto" />
                     </div>
 
                     <div class="col-md-8">
@@ -77,12 +78,20 @@
                     <!-- primeira coluna -->
                     <div class="col-md-4">
                         <label><strong>N° da nota</strong></label>
-                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="numeroNota" />
+                        <input type="text" class="form-control" placeholder="Digite aqui"
+                            formControlName="numeroNota" />
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-4">
                         <label><strong>Fornecedor</strong></label>
-                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="fornecedo" />
+                        <select class="form-select" formControlName="fornecedoOcorrenciaId">
+                            <option value="">Selecione um fornecedor</option>
+                            <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase }}</option>
+                        </select>
+                        <div class="text-danger"
+                            *ngIf="f['fornecedoOcorrenciaId'].touched && f['fornecedoOcorrenciaId'].invalid">
+                            Selecione um fornecedor para o produto.
+                        </div>
                     </div>
                 </div>
 
@@ -93,7 +102,8 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label><strong>Observação</strong></label>
-                        <textarea class="form-control" placeholder="Digite aqui" formControlName="observacao"></textarea>
+                        <textarea class="form-control" placeholder="Digite aqui"
+                            formControlName="observacao"></textarea>
                     </div>
                 </div>
 
@@ -122,7 +132,8 @@
                 <!-- quinta linha -->
                 <div class="row text-center">
                     <div class="col">
-                        <button type="submit" class="btn btn-success btn-lg" (click)="abrirFormularioCredenciais(ocorr)">
+                        <button type="submit" class="btn btn-success btn-lg"
+                            (click)="abrirFormularioCredenciais(ocorr)">
                             <strong>Realizar cadastro</strong>
                         </button>
                         <a href="/ocorrencia" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
@@ -134,7 +145,8 @@
     </div>
 </form>
 
-<div class="formulario-credenciais text-center" *ngIf="cadastrarOcorrencia && cadastrarOcorrencia === cadastrarOcorrencia">
+<div class="formulario-credenciais text-center"
+    *ngIf="cadastrarOcorrencia && cadastrarOcorrencia === cadastrarOcorrencia">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
     <h4>Confirme o cadastro</h4>
     <div class="mb-3">
@@ -148,7 +160,8 @@
     </div>
     <button type="button" class="btn btn-outline-light" (click)="onSubmit()" style="font-weight: bold;">
         Confirmar
-      </button>
+    </button>
 </div>
-<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "timer" [fullScreen] = "true">
-    <p style="color: white" > Aguarde a realização do cadastro... </p></ngx-spinner>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+    <p style="color: white"> Aguarde a realização do cadastro... </p>
+</ngx-spinner>

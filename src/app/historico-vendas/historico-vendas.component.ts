@@ -43,10 +43,6 @@ export class HistoricoVendasComponent implements OnInit {
     this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`)
       .subscribe({
         next: (vendasData) => {
-<<<<<<< HEAD
-          this.vendas = vendasData;
-          this.vendas.forEach(venda => this.loadUserName(venda));
-=======
           this.vendas = vendasData.map(venda => {
             venda.dataVenda = this.convertToBrazilTime(new Date(venda.dataVenda));
             return venda;
@@ -56,7 +52,6 @@ export class HistoricoVendasComponent implements OnInit {
           this.vendas.forEach(venda => this.loadUserName(venda));
           this.filterData();
           
->>>>>>> 809de1a1817721fb5482147e51c1197702c2bcce
          
 
         },
@@ -85,17 +80,7 @@ export class HistoricoVendasComponent implements OnInit {
     return brazilTime;
   }
 
-  loadUserName(venda: any): void {
-    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
-      .subscribe({
-        next: (userData) => {
-          venda.nome = userData.nome;
-        },
-        error: (error) => {
-          console.error('Erro ao carregar o nome do usuário:', error);
-        }
-      });
-  }
+
 
 
 
