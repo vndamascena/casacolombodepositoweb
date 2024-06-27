@@ -8,12 +8,16 @@ import { HistoricoBaixaOcorrenciaComponent } from './ocorrencias/historico-baixa
 import { OcorrenciaComponent } from './ocorrencias/ocorrencia/ocorrencia.component';
 import { CadastraOcorrenciaComponent } from './ocorrencias/cadastra-ocorrencia/cadastra-ocorrencia.component';
 import { AutenticarUsuarioComponent } from './usuarios/autenticar-usuario/autenticar-usuario.component';
+import { AuthenticationGuard } from './_guards/Authentication.guards';
 
 export const routes: Routes = [
 
+
+    
     {
         path: 'consulta-produtos',
-        component: ConsultaProdutosComponent
+        component: ConsultaProdutosComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'inicio',
@@ -21,27 +25,35 @@ export const routes: Routes = [
     },
     {
         path: 'edicao-produtos/:id',
-        component: EdicaoProdutosComponent
+        component: EdicaoProdutosComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'cadastrar-produtos',
-        component: CadastrarProdutosComponent
+        component: CadastrarProdutosComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'historico-vendas',
-        component: HistoricoVendasComponent
+        component: HistoricoVendasComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'historico-baixa-ocorrencia',
-        component: HistoricoBaixaOcorrenciaComponent
+        component: HistoricoBaixaOcorrenciaComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'ocorrencia',
-        component: OcorrenciaComponent
+        component: OcorrenciaComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: "cadastra-ocorrencia",
-        component: CadastraOcorrenciaComponent
+        component: CadastraOcorrenciaComponent,
+        canActivate: [AuthenticationGuard]
+
+        
     },
     {
         path: 'autenticar-usuario',

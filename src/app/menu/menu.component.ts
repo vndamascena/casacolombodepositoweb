@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, ActivatedRoute,Router, RouterModule, NavigationEnd } from '@angular/router';
+import { RouterLink, ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,26 +13,38 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit {
 
-  showMenu: boolean = true; // Variável para controlar a exibição do menu
-
-  constructor(private router: Router) { }
+  autent: boolean = false; // Variável para controlar a exibição do menu
+  matricula: string = "";
+  senha: string = "";
 
   ngOnInit(): void {
-    // Inscrever-se para detectar alterações na rota
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        // Verificar se a rota atual é a página de autenticação de usuário
-        this.showMenu = !event.url.includes('autenticar-usuario');
-      }
-    });
+    //ler o conteudo da local storage
+    const data = localStorage.getItem('auth_usuario');
+    //verificando se existe um usuário autenticado
+    if (data != null) {
+      this.autent = true;
+      //ler os dados do usuário
+      //this.matricula = JSON.parse(data).nome;
+      //this.senha = JSON.parse(data).matricula;
+    }
+  }
+  //função para fazer o logout do usuário
+  logout(): void {
+    if (window.confirm('Deseja realmente sair do sistema?')) {
+      //apagar os dados da local storage
+      localStorage.removeItem('auth_usuario');
+      //redirecionar para a página de login do sistema
+      window.location.href = '/login-usuarios';
+    }
   }
 
 
-  
 
-  
+
+
+
+
 
 }
-
