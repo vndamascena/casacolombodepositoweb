@@ -25,11 +25,9 @@ export class OcorrenciaComponent implements OnInit {
   ocorrencias: any[] = [];
   ocorrencia: any = {};
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
-  grupoOcorrencias: any = {};
+  ocorrenciaFiltrados: any[] = [];
   expression: string = ''; 
   ocorr: any;
-  tipoOcorrencias: any[] = [];
-  fornecedorOcorrencias: any [] = [];
   
 
 
@@ -42,18 +40,7 @@ export class OcorrenciaComponent implements OnInit {
     private formBiulder: FormBuilder,
   ) { }
 
-  form = new FormGroup({
-
-    tipoOcorrenciaId: new FormControl('',[]),
-    fornecedorOcorrenciaId: new FormControl('',[])
-    
-    
-  });
-  get f(): any {
-    return this.form.controls;
-
-  }
-
+ 
  
 
   ngOnInit(): void {
@@ -65,6 +52,7 @@ export class OcorrenciaComponent implements OnInit {
 
     const ocorrencId = this.route.snapshot.queryParams['id'];
 
+   
     if (ocorrencId) {
       this.httpClient.get<any[]>(environment.ocorrencApi + 'ocorrencia/${ocorrencId}')
 
@@ -159,7 +147,7 @@ export class OcorrenciaComponent implements OnInit {
   isDateOlderThanThreeDays(dateString: string): boolean {
     const date = new Date(dateString);
     const now = new Date();
-    const threeDaysAgo = new Date(now.setDate(now.getDate() - 1));
+    const threeDaysAgo = new Date(now.setDate(now.getDate() - 9));
     return date < threeDaysAgo;
   }
 
@@ -223,6 +211,28 @@ export class OcorrenciaComponent implements OnInit {
 
     }
   }
+
+  filtrarOcorrencias(): void {
+    if (this.expression.trim() === '') {
+      // Se a expressão de pesquisa estiver vazia, recarrega todas as ocorrências
+      this.ngOnInit();
+    } else {
+      // Filtra as ocorrências com base na expressão de pesquisa
+      const lowerCaseExpression = this.expression.toLowerCase();
+      this.ocorrencias = this.ocorrencias.filter(o =>
+        o.tipoOcorrencia.nome.toLowerCase().includes(lowerCaseExpression) ||
+        o.fornecedorOcorrencia.nome.toLowerCase().includes(lowerCaseExpression) ||
+        o.loja.nome.toLowerCase().includes(lowerCaseExpression) ||
+        o.id.toString().includes(lowerCaseExpression) ||
+        Object.values(o).some(value =>
+          typeof value === 'string' && value.toLowerCase().includes(lowerCaseExpression)
+        )
+      );
+    }
+  }
+  
+
+
 
 
 }

@@ -11,6 +11,12 @@
         </a>
         <div class="container">
             <h1 class="titulo">Ocorrências</h1>
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
+                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
+                    (input)="filtrarOcorrencias()">
+                <div class="overlay" (click)="filtrarOcorrencias()"></div>
+            </div>
 
         </div>
 
@@ -49,25 +55,18 @@
 <div class="table-responsive">
 
 
-    <div class="container mt-2 ">
-
-        <div class="row mb-2 align-items-end">
-            <div class="col-md-2">
-                <label for="startDate">Data Inicial:</label>
-                <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'"
-                    (ngModelChange)="startDate = $event">
-            </div>
-            <div class="col-md-2">
-                <label for="endDate">Data Final:</label>
-                <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'"
-                    (ngModelChange)="endDate = $event">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary" (click)="filterData()">Filtrar</button>
-            </div>
+    <div class="row mb-2 align-items-end">
+        <div class="col-md-2">
+            <label for="startDate">Data Inicial:</label>
+            <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDate = $event; filterData()">
         </div>
+        <div class="col-md-2">
+            <label for="endDate">Data Final:</label>
+            <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDate = $event; filterData()">
+        </div>
+       
     </div>
-
+    
     <table class="table">
         <!-- Cabeçalho da tabela -->
         <thead>
@@ -79,6 +78,7 @@
                 <th width="70">N° nota</th>
                 <th>Fornecedor</th>
                 <th>Observação</th>
+                <th>Loja</th>
                 <th>Data</th>
                 <th>Operação</th>
             </tr>
@@ -93,6 +93,7 @@
                 <td>{{ocorrencia.numeroNota}}</td>
                 <td width="100">{{ocorrencia.fornecedorOcorrencia.nome}}</td>
                 <td class="observacao">{{ocorrencia.observacao}}</td>
+                <td>{{ocorrencia.loja.nome}}</td>
                 <td [ngClass]="{'text-danger': isDateOlderThanThreeDays(ocorrencia.dataTime)}">
                     {{ocorrencia.dataTime | date:'dd/MM/yyyy - HH:mm'}}
                 </td>   

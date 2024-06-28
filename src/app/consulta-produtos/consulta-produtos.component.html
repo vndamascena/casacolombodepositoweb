@@ -70,9 +70,10 @@
                     <th>Lu - Pei</th>
                     <th>Marca</th>
                     <th>Preço M²</th>
+                    <th>Peças CX</th>
                     <th>M² CX</th>
                     <th>Preço CX</th>
-                    <th>Peças CX</th>
+                    
                     <th style="color: #07612b; font-weight: bold;">Qtd CX</th>
                     <th>Operação</th>
                 </tr>
@@ -100,10 +101,11 @@
                             </td>
                         <td >{{ produto.marca | uppercase}}</td>
                         <td>R${{ produto.precoMetroQ }}</td>
+                        <td>{{ produto.pecasCaixa}}</td>
                         <td>{{ produto.metroQCaixa }}M²</td>
                         <td>R${{ produto.precoCaixa }}</td>
 
-                        <td>{{ produto.pecasCaixa}}</td>
+                        
                         <td style="color: #07612b; font-weight: bold;">{{ produto.quantidade }}</td>
 
                         <!-- Botão de editar -->

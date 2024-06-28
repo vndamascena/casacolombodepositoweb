@@ -25,6 +25,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
   ocorr: any = {};
   cadastrarOcorrencia: any;
   fornecedores: any[] = [];
+  lojas: any[] =[];
 
 
   constructor(
@@ -39,6 +40,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
   form = new FormGroup({
 
     tipoOcorrenciaId: new FormControl('',[Validators.required,]),
+    lojaId: new FormControl('',[Validators.required,]),
     produto: new FormControl('', [
       //campo 'nome'
       Validators.required,
@@ -50,7 +52,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
     observacao: new FormControl('', [
       
     ]),
-    fornecedoOcorrenciaId: new FormControl('', [
+    fornecedorOcorrenciaId: new FormControl('', [
       
     ]),
 
@@ -79,6 +81,16 @@ export class CadastraOcorrenciaComponent implements OnInit {
     .subscribe({
       next: (data) => {
         this.fornecedores = data as any[];
+      },
+      error: (e) => {
+        console.log(e.error);
+      }
+    });
+
+    this.httpClient.get(environment.ocorrencApi + "/loja")
+    .subscribe({
+      next: (data) => {
+        this.lojas = data as any[];
       },
       error: (e) => {
         console.log(e.error);

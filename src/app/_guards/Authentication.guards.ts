@@ -10,7 +10,7 @@ export class AuthenticationGuard {
 
     canActivate() {
         // Verificar se existe um usuário autenticado na local storage
-        const auth = localStorage.getItem('auth_usuario');
+        const auth = sessionStorage.getItem('auth_usuario');
         if (auth != null) {
             return true; // Permite a navegação
         } else {
@@ -20,10 +20,5 @@ export class AuthenticationGuard {
         }
     }
 
-    // Método para limpar Local Storage ao fechar a página
-    clearLocalStorageOnUnload() {
-        window.addEventListener('beforeunload', () => {
-            localStorage.removeItem('auth_usuario');
-        });
-    }
+   
 }

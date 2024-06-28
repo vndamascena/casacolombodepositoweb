@@ -21,7 +21,7 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     //ler o conteudo da local storage
-    const data = localStorage.getItem('auth_usuario');
+    const data = sessionStorage.getItem('auth_usuario');
     //verificando se existe um usuário autenticado
     if (data != null) {
       this.autent = true;
@@ -31,20 +31,13 @@ export class MenuComponent implements OnInit {
     }
   }
   //função para fazer o logout do usuário
-  logout(): void {
-    if (window.confirm('Deseja realmente sair do sistema?')) {
+  //logout(): void {
+    //if (window.confirm('Deseja realmente sair do sistema?')) {
       //apagar os dados da local storage
-      localStorage.removeItem('auth_usuario');
+      //sessionStorage.removeItem('auth_usuario');
       //redirecionar para a página de login do sistema
-      window.location.href = '/login-usuarios';
-    }
-  }
-
-
-
-
-
-
-
+      //window.location.href = '/login-usuarios';
+    //}
+  //}
 
 }

@@ -55,17 +55,13 @@
     <div class="row mb-2 align-items-end">
       <div class="col-md-2">
         <label for="startDate">Data Inicial:</label>
-        <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'"
-          (ngModelChange)="startDate = $event">
-      </div>
-      <div class="col-md-2">
+        <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDate = $event; filterData()">
+    </div>
+    <div class="col-md-2">
         <label for="endDate">Data Final:</label>
-        <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'"
-          (ngModelChange)="endDate = $event">
-      </div>
-      <div class="col-md-2">
-        <button class="btn btn-primary" (click)="filterData()">Filtrar</button>
-      </div>
+        <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDate = $event; filterData()">
+    </div>
+     
     </div>
   </div>
 

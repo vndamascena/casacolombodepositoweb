@@ -10,7 +10,13 @@
 
         </a>
         <div class="container">
-            <h1 class="titulo">Ocorrências</h1>
+            <h1 class="titulo">Baixa de ocorrências</h1>
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
+                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
+                    (input)="filtrarOcorrencias()">
+                <div class="overlay" (click)="filtrarOcorrencias()"></div>
+            </div>
 
         </div>
 
@@ -54,16 +60,11 @@
         <div class="row mb-2 align-items-end">
             <div class="col-md-2">
                 <label for="startDate">Data Inicial:</label>
-                <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'"
-                    (ngModelChange)="startDate = $event">
+                <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDate = $event; filterData()">
             </div>
             <div class="col-md-2">
                 <label for="endDate">Data Final:</label>
-                <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'"
-                    (ngModelChange)="endDate = $event">
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary" (click)="filterData()">Filtrar</button>
+                <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDate = $event; filterData()">
             </div>
         </div>
     </div>
@@ -79,6 +80,7 @@
                 <th width="70">N° nota</th>
                 <th>Fornecedor</th>
                 <th>Observação</th>
+                <th>Loja</th>
                 <th>Data da baixa</th>
                 
             </tr>
@@ -91,8 +93,9 @@
                 <td>{{ocorrencia.codProduto}}</td>
                 <td>{{ocorrencia.produto}}</td>
                 <td>{{ocorrencia.numeroNota}}</td>
-                <td width="100">{{ocorrencia.fornecedo}}</td>
+                <td width="100">{{ocorrencia.fornecedorOcorrenciaNome}}</td>
                 <td class="observacao">{{ocorrencia.observacao}}</td>
+                <td>{{ocorrencia.lojaNome}}</td>
                 <td>
                     {{ocorrencia.dataTime | date:'dd/MM/yyyy - HH:mm'}}
                 </td>   

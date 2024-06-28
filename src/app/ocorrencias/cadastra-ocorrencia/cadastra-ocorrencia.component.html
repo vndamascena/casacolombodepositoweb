@@ -84,13 +84,24 @@
 
                     <div class="col-md-4">
                         <label><strong>Fornecedor</strong></label>
-                        <select class="form-select" formControlName="fornecedoOcorrenciaId">
+                        <select class="form-select" formControlName="fornecedorOcorrenciaId">
                             <option value="">Selecione um fornecedor</option>
                             <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase }}</option>
                         </select>
                         <div class="text-danger"
-                            *ngIf="f['fornecedoOcorrenciaId'].touched && f['fornecedoOcorrenciaId'].invalid">
+                            *ngIf="f['fornecedorOcorrenciaId'].touched && f['fornecedorOcorrenciaId'].invalid">
                             Selecione um fornecedor para o produto.
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label><strong>Loja</strong></label>
+                        <select class="form-select" formControlName="lojaId">
+                            <option value="">Selecione uma loja</option>
+                            <option *ngFor="let l of lojas" [value]="l.id">{{ l.nome | uppercase }}</option>
+                        </select>
+                        <div class="text-danger"
+                            *ngIf="f['lojaId'].touched && f['lojaId'].invalid">
+                            Selecione uma loja para a ocorrência.
                         </div>
                     </div>
                 </div>

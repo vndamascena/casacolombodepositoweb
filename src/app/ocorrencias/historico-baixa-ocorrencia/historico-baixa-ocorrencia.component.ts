@@ -26,6 +26,8 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
   ocorrencia: any = {};
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
   ocorrenciaApiUrl: string = 'http://localhost:5096/api/TipoOcorrencia';
+  fornOcrApiUrl: string = 'http://localhost:5096/api/fornecedorocorrencia';
+  lojaApiurl: string = 'http://localhost:5096/api/loja';
   grupoOcorrencias: any = {};
   expression: string = ''; 
 
@@ -62,6 +64,8 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
             this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
             this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
             this.ocorrencias.forEach(ocorrencia => this.loadTipoOcorrencia(ocorrencia));
+            this.ocorrencias.forEach(ocorrencia => this.loadFornecedorOcorrencia(ocorrencia));
+            this.ocorrencias.forEach(ocorrencia => this.loadLoja(ocorrencia));
             
            
 
@@ -74,7 +78,7 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
 
     
 
-
+ 
 
 
   }
@@ -120,6 +124,29 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
         }
       });
   }
+  loadFornecedorOcorrencia(ocorrencia: any): void {
+    this.httpClient.get<any>(`${this.fornOcrApiUrl}/${ocorrencia.fornecedorOcorrenciaId}`)
+      .subscribe({
+        next: (fornecedorOcorrenciaData) => {
+          ocorrencia.fornecedorOcorrenciaNome = fornecedorOcorrenciaData.nome;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar o tipo de ocorrência:', error);
+        }
+      });
+  }
+
+  loadLoja(ocorrencia: any): void {
+    this.httpClient.get<any>(`${this.lojaApiurl}/${ocorrencia.lojaId}`)
+      .subscribe({
+        next: (lojaData) => {
+          ocorrencia.lojaNome = lojaData.nome;
+        },
+        error: (error) => {
+          console.error('Erro ao carregar o tipo de ocorrência:', error);
+        }
+      });
+  }
 
   filterData(): void {
 
@@ -153,6 +180,24 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
         }
       });
 
+    }
+  }
+
+  filtrarOcorrencias(): void {
+    if (this.expression.trim() === '') {
+      // Se a expressão de pesquisa estiver vazia, recarrega todas as ocorrências
+      this.ngOnInit();
+    } else {
+      // Filtra as ocorrências com base na expressão de pesquisa
+      const lowerCaseExpression = this.expression.toLowerCase();
+      this.ocorrencias = this.ocorrencias.filter(o =>
+        o.tipoOcorrencia.nome.toLowerCase().includes(lowerCaseExpression) ||
+        o.fornecedorOcorrencia.nome.toLowerCase().includes(lowerCaseExpression) ||
+        o.id.toString().includes(lowerCaseExpression) ||
+        Object.values(o).some(value =>
+          typeof value === 'string' && value.toLowerCase().includes(lowerCaseExpression)
+        )
+      );
     }
   }
 
