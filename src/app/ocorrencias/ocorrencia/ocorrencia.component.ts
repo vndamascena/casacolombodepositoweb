@@ -158,7 +158,7 @@ export class OcorrenciaComponent implements OnInit {
     const pstDate = new Date(date);
 
     // Calcula a diferença entre PST (UTC-8) e BRT (UTC-3)
-    const timeZoneOffset = pstDate.getTimezoneOffset() + (-1 * 60);
+    const timeZoneOffset = pstDate.getTimezoneOffset() + (1 * 60);
 
     // Ajusta a data para o fuso horário do Brasil
     const brazilTime = new Date(pstDate.getTime() + timeZoneOffset * 60000);

@@ -1,0 +1,58 @@
+.line {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(4, 105, 45);
+}
+.titulo {
+    text-align: center; /* Centraliza o texto */
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    /* Alinha verticalmente os itens */
+    margin-right: -10px;
+    /* Espaçamento entre os itens */
+}
+
+.navbar-brand {
+    margin-right: 50px;
+    /* Adiciona margem à direita do logo */
+}
+
+.nav-item{
+    margin-right: -30px;
+}
+.input-group {
+    position: relative;
+    width: 100%;
+}
+.col .btn {
+    margin: 10px 20px; /* Adiciona 10px de margem vertical e 20px de margem horizontal */
+  }
+
+  .formulario-credenciais {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+
+
+.formulario-credenciais .btn-close {
+    position: absolute; /* Define a posição absoluta para o botão de fechar */
+    top: 1px; /* Ajusta a posição do topo */
+    right: 01px; /* Ajusta a posição da direita */
+    z-index: 9999; /* Garante que o botão esteja acima da imagem */
+        
+}

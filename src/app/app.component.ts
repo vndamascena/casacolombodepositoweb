@@ -7,6 +7,8 @@ import { CadastrarProdutosComponent } from './cadastrar-produtos/cadastrar-produ
 import { HistoricoVendasComponent } from './historico-vendas/historico-vendas.component';
 import { OcorrenciaComponent } from './ocorrencias/ocorrencia/ocorrencia.component';
 import { HistoricoBaixaOcorrenciaComponent } from './ocorrencias/historico-baixa-ocorrencia/historico-baixa-ocorrencia.component';
+import { CadastraFornecedorComponent } from './fornecedores/cadastra-fornecedor/cadastra-fornecedor.component';
+import { ConsultaFornecedorComponent } from './fornecedores/consulta-fornecedor/consulta-fornecedor.component';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -14,8 +16,8 @@ import { HistoricoBaixaOcorrenciaComponent } from './ocorrencias/historico-baixa
 
     RouterOutlet,
     MenuComponent, ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
-    OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent
-  ],
+    OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent
+    ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

@@ -1,0 +1,123 @@
+.scrollable-container {
+    max-height: 250px; /* Altura máxima da div para exibição com rolagem */
+    overflow-y: auto; /* Adiciona rolagem vertical quando o conteúdo excede a altura máxima */
+    position: relative; /* Para posicionar o fundo piscante */
+  }
+  
+  .blinking-background {
+    animation: blink 1s infinite; /* Aplica a animação de piscar com duração de 1 segundo e repetição infinita */
+    background-color: rgba(255, 0, 0, 0.786); /* Cor vermelha com transparência */
+  }
+  
+  @keyframes blink {
+    0% {
+      background-color: rgba(255, 0, 0, 0.786); /* Cor vermelha com transparência no início */
+    }
+    50% {
+      background-color: transparent; /* Fundo transparente na metade da animação */
+    }
+    100% {
+      background-color: rgba(255, 0, 0, 0.786); /* Cor vermelha com transparência no final */
+    }
+  }
+  
+  .scrollable-content {
+    padding-right: 15px; /* Adiciona espaço para a barra de rolagem não sobrepor o conteúdo */
+  }
+  
+  body {
+    background-color: #f0f0f0; /* Cor de fundo mais suave */
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.navbar {
+    background-color: #ffffff;
+    margin-bottom: 0;
+    padding: 12px;
+}
+
+.navbar-brand img {
+    width: 100%;
+    max-width: 1850px;
+    height: auto;
+}
+
+.line {
+    height: 3px;
+    background-color: rgb(4, 105, 45);
+    margin: 0 auto 20px;
+}
+
+.container-fluid {
+    padding: 0 20px; /* Pequeno padding para não colar os itens nas bordas */
+}
+
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.card {
+    border: 1px solid #086b1d;
+    border-radius: 5px;
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+    flex: 1;
+    font-size: 1.2em; /* Ajuste de tamanho de texto */
+    min-width: 30%;
+    box-sizing: border-box;
+    background-color: #59e12f; /* Fundo branco para contrastar com a cor de fundo */
+    box-shadow: 0 4px 8px rgba(214, 10, 10, 0.1); /* Sombra suave */
+    transition: transform 0.2s; /* Animação suave ao passar o mouse */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Aumenta ligeiramente o card ao passar o mouse */
+}
+
+.card.large {
+    min-width: 45%;
+}
+
+.scrollable-container {
+    max-height: 250px; /* Altura máxima da div para exibição com rolagem */
+    overflow-y: auto; /* Adiciona rolagem vertical quando o conteúdo excede a altura máxima */
+}
+
+.blinking-background {
+    animation: blink 1s infinite; /* Aplica a animação de piscar com duração de 1 segundo e repetição infinita */
+    background-color: rgba(187, 15, 15, 0.786); /* Cor vermelha com transparência */
+}
+
+@keyframes blink {
+    0% {
+        background-color: rgba(255, 0, 0, 0.786); /* Cor vermelha com transparência no início */
+    }
+    50% {
+        background-color: transparent; /* Fundo transparente na metade da animação */
+    }
+    100% {
+        background-color: rgba(255, 0, 0, 0.786); /* Cor vermelha com transparência no final */
+    }
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 10px;
+}
+
+.buttons button {
+    flex: 1;
+    min-width: 45%;
+    margin: 0 10px;
+    padding: 20px;
+    font-size: 1.5em; /* Aumenta o tamanho do texto */
+}
+
+

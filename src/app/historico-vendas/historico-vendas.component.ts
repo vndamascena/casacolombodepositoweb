@@ -170,6 +170,6 @@ export class HistoricoVendasComponent implements OnInit {
         )
       );
     }
-  }
+  } 
 
 }

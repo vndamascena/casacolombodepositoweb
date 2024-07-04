@@ -101,7 +101,6 @@ User
 
 .form-control.lupa {
     padding-right: 45px; /* Ajusta o espaço para a imagem e o elemento de sobreposição */
-    background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
     background-repeat: no-repeat;
     background-position: right; /* Ajusta a posição da imagem */
     background-size: 70px; /* Define o tamanho da imagem */

@@ -9,6 +9,8 @@ import { OcorrenciaComponent } from './ocorrencias/ocorrencia/ocorrencia.compone
 import { CadastraOcorrenciaComponent } from './ocorrencias/cadastra-ocorrencia/cadastra-ocorrencia.component';
 import { AutenticarUsuarioComponent } from './usuarios/autenticar-usuario/autenticar-usuario.component';
 import { AuthenticationGuard } from './_guards/Authentication.guards';
+import { CadastraFornecedorComponent } from './fornecedores/cadastra-fornecedor/cadastra-fornecedor.component';
+import { ConsultaFornecedorComponent } from './fornecedores/consulta-fornecedor/consulta-fornecedor.component';
 
 export const routes: Routes = [
 
@@ -51,14 +53,21 @@ export const routes: Routes = [
     {
         path: "cadastra-ocorrencia",
         component: CadastraOcorrenciaComponent,
-        canActivate: [AuthenticationGuard]
-
-        
+        canActivate: [AuthenticationGuard]  
+    },
+    {
+        path: 'cadastra-fornecedor',
+        component:CadastraFornecedorComponent 
+    },
+    {
+        path: 'consulta-fornecedor',
+        component:ConsultaFornecedorComponent 
     },
     {
         path: 'autenticar-usuario',
         component: AutenticarUsuarioComponent
     },
+   
 
     {
         path: '', pathMatch: 'full', //url raiz
