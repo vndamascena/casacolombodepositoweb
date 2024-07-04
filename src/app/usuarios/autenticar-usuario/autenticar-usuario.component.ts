@@ -14,7 +14,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
   styleUrls: ['./autenticar-usuario.component.css']
 })
 export class AutenticarUsuarioComponent {
-  userApiUrl: string = 'http://localhost:5233/api/usuarios';
+  userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
 
   constructor(
     private httpClient: HttpClient,
