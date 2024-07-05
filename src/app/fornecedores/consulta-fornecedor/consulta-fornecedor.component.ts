@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -10,8 +10,9 @@ import { environment } from '../../../environments/environment.development';
   selector: 'app-consulta-fornecedor',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, ReactiveFormsModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './consulta-fornecedor.component.html',
-  styleUrl: './consulta-fornecedor.component.css'
+  styleUrls: ['./consulta-fornecedor.component.css']
 })
 export class ConsultaFornecedorComponent implements OnInit {
 
@@ -19,7 +20,7 @@ export class ConsultaFornecedorComponent implements OnInit {
   mensagem: string = '';
   fornecedores: any[] = []; // Array de objetos para armazenar produtos
   expression: string = ''; // String para armazenar a expressão de pesquisa
-
+  fornecedor: any = {}
   p: number = 1;
   fornecedorForm: any;
 
@@ -29,9 +30,9 @@ export class ConsultaFornecedorComponent implements OnInit {
   form: FormGroup = this.formBuilder.group({
     id: [''],
     nome: ['', Validators.required],
+    vendedor: [''],
     forneProdu: [''],
     tipo: [''],
-    vendedor: [''],
     telVen: [''],
     telFor: ['']
   });
@@ -44,7 +45,7 @@ export class ConsultaFornecedorComponent implements OnInit {
     private router: Router,
     private formBuilder: FormBuilder,
 
-  ) { }
+  ) {   }
 
 
 
@@ -54,27 +55,16 @@ export class ConsultaFornecedorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
-
-   
-
-
-
-    this.httpClient.get(environment.ocorrencApi + '/fornecedorocorrencia')
+    this.httpClient.get<any[]>(environment.ocorrencApi + '/fornecedorocorrencia')
       .subscribe({
         next: (fornecedorData) => {
-
-
-          this.fornecedores = fornecedorData as any[];
-          this.form.patchValue(fornecedorData);
-
-
+          console.log(fornecedorData); // Verifique a estrutura dos dados aqui
+          this.fornecedores = fornecedorData;
         },
         error: (error) => {
-          console.error('Erro ao carregar os produtos:', error);
+          console.error('Erro ao carregar os fornecedores:', error);
         }
       });
-
   }
 
   //função para obter os dados do fornecedor através do ID

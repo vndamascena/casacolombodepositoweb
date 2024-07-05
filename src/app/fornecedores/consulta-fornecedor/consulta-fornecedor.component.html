@@ -75,12 +75,12 @@
         <ng-container
             *ngFor="let fornecedor of fornecedores | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
             <tr [ngStyle]="{'background-color': getColor(i)}">
-                <td>{{ fornecedor.nome }}</td>
-                <td>{{ fornecedor.vendedor }}</td>
-                <td>{{ fornecedor.forneProdu }}</td>
-                <td>{{ fornecedor.tipo }}</td>
-                <td>{{ fornecedor.telVen }}</td>
-                <td>{{ fornecedor.telFor }}</td>
+                <td>{{ fornecedor.nome || '-' }}</td>
+                <td>{{ fornecedor.vendedor || '-' }}</td>
+                <td>{{ fornecedor.forneProdu || '-' }}</td>
+                <td>{{ fornecedor.tipo || '-' }}</td>
+                <td>{{ fornecedor.telVen || '-' }}</td>
+                <td>{{ fornecedor.telFor || '-' }}</td>
                 <td>
                     <button class="btn btn-outline-success btn-sm" (click)="onEdite(fornecedor.id)"
                         data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">
@@ -92,7 +92,7 @@
 
             </tr>
         </ng-container>
-
+      
     </table>
 
 
@@ -133,40 +133,46 @@
                                 <div class="row">
                                     <div class="col-md-10">
                                         <label><strong>Fornecedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="nome" />
                                     </div>
                                     <div class="col-md-10">
                                         <label><strong>Fornecedor / Produto</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="forneProdu" />
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="forneProdu" />
                                     </div>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-md-10">
                                         <label><strong>Tipo</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="tipo" />
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="tipo" />
                                     </div>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-md-10">
                                         <label><strong>Vendedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="vendedor" />
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="vendedor" />
                                     </div>
                                     <div class="col-md-10">
                                         <label><strong>Tel - Vendedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="telVen" />
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="telVen" />
                                     </div>
                                     <div class="col-md-10">
                                         <label><strong>Tel - Fornecedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui" formControlName="telFor" />
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="telFor" />
                                     </div>
                                 </div>
                                 <hr>
                             </div>
                         </div>
                     </div>
-                </form>    
+                </form>
 
             </div>
             <div class="modal-footer">

@@ -23,7 +23,8 @@ export const routes: Routes = [
     },
     {
         path: 'inicio',
-        component: InicioComponent
+        component: InicioComponent,
+        canActivate: [AuthenticationGuard]  
     },
     {
         path: 'edicao-produtos/:id',
@@ -57,11 +58,13 @@ export const routes: Routes = [
     },
     {
         path: 'cadastra-fornecedor',
-        component:CadastraFornecedorComponent 
+        component:CadastraFornecedorComponent,
+        canActivate: [AuthenticationGuard]  
     },
     {
         path: 'consulta-fornecedor',
-        component:ConsultaFornecedorComponent 
+        component:ConsultaFornecedorComponent,
+        canActivate: [AuthenticationGuard]  
     },
     {
         path: 'autenticar-usuario',
