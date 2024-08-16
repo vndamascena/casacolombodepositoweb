@@ -87,8 +87,11 @@
                         <td><img [src]="getFullImageUrl(produto.imagemUrl)" alt="{{ produto.nome }}" width="50"
                                 (click)="expandirImagem(produto.imagemUrl)"></td>
                         <td>
-                            <button class="btn  btn-outline-success" (click)="toggleDetalhes(produto)">+</button>
+                            <button type="button" class="btn btn-outline-success"  (click)="toggleDetalhes(produto)">
+                                <i class="bi bi-zoom-in  custom-icon"> </i> 
+                              </button>
                         </td>
+                        
                         
                         
 

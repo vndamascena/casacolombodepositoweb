@@ -11,6 +11,10 @@ import { AutenticarUsuarioComponent } from './usuarios/autenticar-usuario/autent
 import { AuthenticationGuard } from './_guards/Authentication.guards';
 import { CadastraFornecedorComponent } from './fornecedores/cadastra-fornecedor/cadastra-fornecedor.component';
 import { ConsultaFornecedorComponent } from './fornecedores/consulta-fornecedor/consulta-fornecedor.component';
+import { ConsultaEntregaComponent } from './entrega-titulo/consulta-entrega/consulta-entrega.component';
+import { CadastraEntregaComponent } from './entrega-titulo/cadastra-entrega/cadastra-entrega.component';
+import { HistoricoEntregaComponent } from './entrega-titulo/historico-entrega/historico-entrega.component';
+
 
 export const routes: Routes = [
 
@@ -67,8 +71,24 @@ export const routes: Routes = [
         canActivate: [AuthenticationGuard]  
     },
     {
+        path: 'cadastra-entrega',
+        component:CadastraEntregaComponent,
+        canActivate: [AuthenticationGuard]  
+    },
+   
+    {
+        path: 'consulta-entrega',
+        component:ConsultaEntregaComponent,
+        canActivate: [AuthenticationGuard]  
+    },
+    {
         path: 'autenticar-usuario',
         component: AutenticarUsuarioComponent
+    },
+    {
+        path: 'historico-entrega',
+        component:HistoricoEntregaComponent,
+        canActivate: [AuthenticationGuard]  
     },
    
 

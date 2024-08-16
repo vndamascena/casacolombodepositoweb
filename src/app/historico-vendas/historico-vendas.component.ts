@@ -157,14 +157,13 @@ export class HistoricoVendasComponent implements OnInit {
     }
   }
 
-  // Método para filtrar os produtos com base na expressão de pesquisa
   filtrarProdutos(): void {
     if (this.expression.trim() === '') {
       // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos
       this.ngOnInit();
     } else {
       // Filtra os produtos com base na expressão de pesquisa
-      this.produtos = this.produtos.filter(p =>
+      this.vendas = this.vendas.filter(p =>
         Object.values(p).some(value =>
           typeof value === 'string' && value.toLowerCase().includes(this.expression.toLowerCase())
         )

@@ -73,6 +73,7 @@
         <!-- Cabeçalho da tabela -->
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Usuário</th>
                 <th width="100">Ocorrência</th>
                 <th width="70">Código</th>
@@ -88,6 +89,7 @@
         <!-- Corpo da tabela -->
         <ng-container *ngFor="let ocorrencia of ocorrencias | paginate: { itemsPerPage: 10, currentPage: p } let i = index">
             <tr [ngStyle]="{'background-color': getColor(i)}">
+                <td>{{ocorrencia.ocorrenciaId}}</td>
                 <td width="100">{{ocorrencia.nome| uppercase}}</td>
                 <td>{{ocorrencia.tipoOcorrenciaNome}}</td>
                 <td>{{ocorrencia.codProduto}}</td>
@@ -97,7 +99,7 @@
                 <td class="observacao">{{ocorrencia.observacao}}</td>
                 <td>{{ocorrencia.lojaNome}}</td>
                 <td>
-                    {{ocorrencia.dataTime | date:'dd/MM/yyyy - HH:mm'}}
+                    {{ocorrencia.dataTime | date:'dd/MM/yyyy'}}
                 </td>   
                 
             </tr>
@@ -109,7 +111,7 @@
     <tfoot>
         <tr>
             <td colspan="14">
-                <strong> Quantidade ocorrência: </strong>
+                <strong> Quantidade ocorrência: {{ ocorrencias.length }}</strong>
             </td>
         </tr>
     </tfoot>

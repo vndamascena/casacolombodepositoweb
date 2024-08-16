@@ -1,0 +1,244 @@
+<div class="container mt-3 ">
+
+   
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+
+
+        <div class="container">
+      
+      
+            <a class="navbar-brand" href="consulta-produtos">
+                <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+      
+            </a>
+            <div class="container">
+                <br>
+                
+                  <h2 class="text-center titulo"><strong>CADASTRAR ENTREGA</strong></h2>
+                  
+                  <h4 class="text-center titulo ">Preencha os campos para realizar o cadastramento.</h4>
+            </div>
+      
+      
+            <div class="collapse navbar-collapse" id="navbarNav">
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <br>
+                        <a class="nav-link black-text" routerLink="/consulta-entrega">
+                            <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <br>
+                        <a class="nav-link black-text" routerLink="/cadastra-entrega">
+                            <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+                        </a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <br>
+                        <a class="nav-link black-text" routerLink="/historico-entrega">
+                            <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110" > 
+                        </a>
+                    </li>
+      
+      
+                </ul>
+            </div>
+      
+        </div>
+      </nav>
+
+
+    <div class="line"></div>
+    <br>
+
+
+    <div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
+        <strong>{{mensagem}}</strong>
+        <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+    </div>
+    <form [formGroup]="form">
+        <!-- Contêiner centralizado -->
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-9">
+
+                    <!-- primeira linha -->
+                    <div class="row">
+                        <!-- primeira coluna -->
+                        <div class="col-md-5">
+                            <label><strong>Upload de Imagem</strong></label>
+                            <input type="file" class="form-control" id="fileInput" (change)="processFile($event)" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>N° nota</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"
+                                formControlName="numeroNota" />
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Nome do Cliente</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"
+                                formControlName="nomeCliente" />
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- linha de separação -->
+                    <hr>
+
+                    <!-- segunda linha -->
+                    <div class="row">
+                        <div class="col-md-1">
+
+                        </div>
+
+                        <!-- primeira coluna -->
+                        <div class="col-md-4">
+                            <label><strong>Valor</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="valor" />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Loja</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"formControlName="loja" />
+                            
+
+                        </div>
+                       
+
+                        <div class="col-md-4">
+                            <label><strong>Vendedor</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"formControlName="vendedor" />
+                            
+
+                        </div>
+                       
+
+                    </div>
+
+                    <!-- linha de separação -->
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-1">
+
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Observação</strong></label>
+                            <textarea class="box-area" placeholder="Digite aqui"
+                                formControlName="observacao"></textarea>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Data</strong></label>
+                            <input type="date" class="form-control" formControlName="dataEntrega" (change)="onDateChange($event)" />
+                            
+                        </div>
+
+
+
+                        <div class="col-md-3">
+                            <label><strong>Dia da Semana</strong></label>
+                            <input type="text"  class="form-control" placeholder="Digite aqui" formControlName="diaSemana" readonly />
+
+
+                            <label><strong>Período</strong></label>
+                            <div *ngFor="let turno of periodo">
+                                <input type="radio" [value]="turno" formControlName="periodo" /> {{ turno }}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                    <hr>
+                    <!-- quinta linha -->
+                    <div class="row text-center">
+                        <div class="col">
+                            <button type="submit" class="btn btn-success btn-lg"
+                                (click)="abrirFormularioCredenciais(entrega)">
+                                <strong>Realizar cadastro</strong>
+                            </button>
+                            <a href="consulta-entrega" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+
+<div class="formulario-credenciais text-center" *ngIf="cadastrarEntrega && cadastrarEntrega === cadastrarEntrega">
+    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+    <h4>Confirme o cadastro</h4>
+    <div class="mb-3">
+        <label for="matriculaInput" class="form-label"></label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+            [(ngModel)]="matricula">
+    </div>
+    <div class="mb-3">
+        <label for="senhaInput" class="form-label"></label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+    </div>
+    <button type="button" class="btn btn-outline-light" (click)="onSubmit()" style="font-weight: bold;"
+        data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">
+        Confirmar
+    </button>
+</div>
+
+<!-- Atualize o ID do input para ser único -->
+
+
+
+<!-- Se você estiver usando modais, ajuste os IDs dos inputs de acordo -->
+<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Insira a imagem da nota
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" *ngIf="entrega">
+                <form [formGroup]="form">
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <!-- Atualize o ID do input para ser único -->
+                                <div class="col-md-12">
+                                    <label><strong>Upload de Imagem</strong></label>
+                                    <input type="file" class="form-control" id="fileInputModal"
+                                        (change)="onFileSelected($event)" />
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" (click)="uploadImagem()">
+                    Confirmar edição
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+    <p style="color: white"> Aguarde a realização do cadastro... </p>
+</ngx-spinner>

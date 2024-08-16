@@ -1,7 +1,7 @@
-import { CommonModule} from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormsModule, Validators} from '@angular/forms';
+import { FormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -34,9 +34,9 @@ export class ConsultaProdutosComponent implements OnInit {
   produto: any = {}; // Objeto para armazenar os detalhes do produto atual
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
   p: number = 1;
-  
-  
-  
+
+
+
 
   // Construtor para inicializar os atributos da classe
   constructor(
@@ -49,20 +49,20 @@ export class ConsultaProdutosComponent implements OnInit {
   ngOnInit(): void {
     // Recupera o ID do produto da URL
     const productId = this.route.snapshot.queryParams['id'];
-    
+
     // Verifica se o ID do produto está presente na URL
     if (productId) {
       this.httpClient.get(environment.apiUrl + '/produto/${productId}')
-    
+
         .subscribe({
           next: (produtoData) => {
-            
+
             this.produto = produtoData;
-            
-            
+
+
             // Carrega os lotes do produto após obter os dados do produto
-            this.carregarLotes(this.produto); 
-            
+            this.carregarLotes(this.produto);
+
           },
           error: (error) => {
             console.error('Erro ao carregar o produto:', error);
@@ -70,11 +70,11 @@ export class ConsultaProdutosComponent implements OnInit {
         });
     } else {
       // Se não houver ID do produto na URL, exibe todos os produtos
-      this.httpClient.get(environment.apiUrl +'/produto')
+      this.httpClient.get(environment.apiUrl + '/produto')
         .subscribe({
           next: (produtosData) => {
             this.produtos = produtosData as any[];
-           
+
           },
           error: (error) => {
             console.error('Erro ao carregar os produtos:', error);
@@ -93,7 +93,7 @@ export class ConsultaProdutosComponent implements OnInit {
 
   // Método para expandir a imagem na mesma página
   expandirImagem(imagemUrl: string): void {
-    
+
     this.imagemAmpliadaUrl = `${environment.apiUrl + '/produto'}${imagemUrl}`;
 
     // Adiciona uma classe para mostrar a imagem ampliada
@@ -112,7 +112,7 @@ export class ConsultaProdutosComponent implements OnInit {
   }
 
 
-  
+
   mostrarInformacoes(produto: any): void {
     const informacoes = `                                      INDICAÇÕES DE USO
 
@@ -138,14 +138,17 @@ export class ConsultaProdutosComponent implements OnInit {
     window.alert(informacoes);
   }
 
-    abrirFormularioCredenciais(lote: any): void {
-      this.loteSelecionado= lote;
-    }
-    fecharFormularioCredenciais(): void {
-      this.loteSelecionado = null;
-      this.matricula = '';
-      this.senha = '';
-    }
+  abrirFormularioCredenciais(lote: any): void {
+    this.loteSelecionado = lote;
+  }
+  fecharFormularioCredenciais(): void {
+    this.loteSelecionado = null;
+    this.matricula = '';
+    this.senha = '';
+  }
+  
+
+
 
 
 
@@ -154,44 +157,44 @@ export class ConsultaProdutosComponent implements OnInit {
     this.loteSelecionado = lote;
 
     if (this.loteSelecionado) {
-        // Verifica se a quantidade vendida é maior que 0
-        if (this.loteSelecionado.quantidadeVendida > 0) {
-            // Configuração dos parâmetros da solicitação POST
-            const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
-            this.spinner.show();
+      // Verifica se a quantidade vendida é maior que 0
+      if (this.loteSelecionado.quantidadeVendida > 0) {
+        // Configuração dos parâmetros da solicitação POST
+        const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
+        this.spinner.show();
 
-            this.httpClient.post<any>(environment.apiUrl + '/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
-                .subscribe({
-                    next: (response) => {
-                        // Atualiza a quantidade do lote no cliente
-                        this.loteSelecionado.quantidadeLote -= this.loteSelecionado.quantidadeVendida;
-                        this.loteSelecionado.quantidadeVendida = 0;
-                        this.spinner.hide();
-                        
-                        this.mensagem = response.message; // exibir mensagem de sucesso
-                       
-                        this.fecharFormularioCredenciais();
-                        
-                    },
-                    error: (error) => {
-                        
-                        alert('Erro ao confirmar venda. Usuário e senha incorreto, tente novamente.');
-                        this.spinner.hide();
-                    }
-                });
-        } else {
-            alert('Por favor, selecione uma quantidade válida para vender.');
-            this.spinner.hide();
-        }
-    } else {
-        alert('Por favor, selecione um lote para venda.');
+        this.httpClient.post<any>(environment.apiUrl + '/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
+          .subscribe({
+            next: (response) => {
+              // Atualiza a quantidade do lote no cliente
+              this.loteSelecionado.quantidadeLote -= this.loteSelecionado.quantidadeVendida;
+              this.loteSelecionado.quantidadeVendida = 0;
+              this.spinner.hide();
+
+              this.mensagem = response.message; // exibir mensagem de sucesso
+
+              this.fecharFormularioCredenciais();
+
+            },
+            error: (error) => {
+
+              alert('Erro ao confirmar venda. Usuário e senha incorreto, tente novamente.');
+              this.spinner.hide();
+            }
+          });
+      } else {
+        alert('Por favor, selecione uma quantidade válida para vender.');
         this.spinner.hide();
+      }
+    } else {
+      alert('Por favor, selecione um lote para venda.');
+      this.spinner.hide();
     }
-}
-  
-  
-  
-  
+  }
+
+
+
+
 
 
 
@@ -208,7 +211,7 @@ export class ConsultaProdutosComponent implements OnInit {
         )
       );
     }
-  } 
+  }
 
   // Método para alternar a exibição dos detalhes do produto
   toggleDetalhes(produto: any): void {
@@ -217,24 +220,24 @@ export class ConsultaProdutosComponent implements OnInit {
       this.carregarLotes(produto); // Carrega os lotes do produto se ainda não estiverem carregados
     }
   }
-  
 
-  
+
+
   carregarLotes(produto: any): void {
     // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
     if (produto.lotes && produto.lotes.length > 0) {
-        // Se os lotes já estiverem presentes no objeto do produto,
-        // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
-       
+      // Se os lotes já estiverem presentes no objeto do produto,
+      // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
+
     } else {
-        this.httpClient.get<any[]>(`${environment.apiUrl}/produto/${produto.id}/lotes`)
-            .subscribe((lotesData) => {
-                produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
-                
-            }, (error) => {
-                console.error('Erro ao carregar os lotes:', error);
-            });
+      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/${produto.id}/lotes`)
+        .subscribe((lotesData) => {
+          produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
+
+        }, (error) => {
+          console.error('Erro ao carregar os lotes:', error);
+        });
     }
-}
+  }
 
 }

@@ -130,11 +130,7 @@ td {
     
   }
 
-  .table {
-    width: 1289px; /* Ajuste a largura da tabela conforme necessário */
-    border: 1px solid #cccccc; /* Ajuste a espessura da borda conforme necessário */
-    
-  }
+  
   
   .table th {
     padding: 1px; /* Ajuste o preenchimento das células conforme necessário */

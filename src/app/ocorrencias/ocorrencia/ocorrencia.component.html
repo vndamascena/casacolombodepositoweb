@@ -71,6 +71,7 @@
         <!-- Cabeçalho da tabela -->
         <thead>
             <tr>
+                <th>Id</th>
                 <th>Usuário</th>
                 <th width="100">Ocorrência</th>
                 <th width="70">Código</th>
@@ -86,6 +87,7 @@
         <!-- Corpo da tabela -->
         <ng-container *ngFor="let ocorrencia of ocorrencias | paginate: { itemsPerPage: 10, currentPage: p }">
             <tr>
+                <td>{{ocorrencia.id}}</td>
                 <td width="100">{{ocorrencia.nome| uppercase}}</td>
                 <td>{{ocorrencia.tipoOcorrencia.nome}}</td>
                 <td>{{ocorrencia.codProduto}}</td>
@@ -93,7 +95,7 @@
                 <td>{{ocorrencia.numeroNota}}</td>
                 <td width="100">{{ocorrencia.fornecedorOcorrencia.nome}}</td>
                 <td class="observacao">{{ocorrencia.observacao}}</td>
-                <td>{{ocorrencia.loja.nome}}</td>
+                <td width="70">{{ocorrencia.loja.nome}}</td>
                 <td [ngClass]="{'text-danger': isDateOlderThanThreeDays(ocorrencia.dataTime)}">
                     {{ocorrencia.dataTime | date:'dd/MM/yyyy - HH:mm'}}
                 </td>   
@@ -111,7 +113,7 @@
     <tfoot>
         <tr>
             <td colspan="14">
-                <strong> Quantidade ocorrência: </strong>
+                <strong> Quantidade ocorrência: {{ ocorrencias.length }} </strong>
             </td>
         </tr>
     </tfoot>

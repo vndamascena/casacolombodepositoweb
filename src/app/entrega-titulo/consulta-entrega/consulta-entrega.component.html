@@ -1,0 +1,401 @@
+<div class="container mt-3">
+
+
+  <nav class="navbar navbar-expand-lg navbar-dark"
+    style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+
+
+    <div class="container">
+
+
+      <a class="navbar-brand" href="consulta-produtos">
+        <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+
+      </a>
+      <div class="container">
+        <br>
+
+        <h2 class="text-center titulo"><strong>CONSULTA ENTREGAS</strong></h2>
+
+        <h4 class="text-center titulo ">Clique no dia desejado para consulta.</h4>
+      </div>
+
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <br>
+            <a class="nav-link black-text" routerLink="/consulta-entrega">
+              <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
+            </a>
+          </li>
+          <li class="nav-item">
+            <br>
+            <a class="nav-link black-text" routerLink="/cadastra-entrega">
+              <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <br>
+            <a class="nav-link black-text" routerLink="/historico-entrega">
+              <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
+            </a>
+          </li>
+
+
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <div class="line my-3"></div>
+
+  <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+  </div>
+
+
+
+  <div class="container">
+    <div class="card mb-3" *ngFor="let dia of dias">
+      <h1 (click)="toggleTable(dia)" class="section-header text-center" style="color: white; cursor: pointer;">{{
+        dia.nome }}: {{dia.entregas.length }}</h1>
+      <div *ngIf="dia.exibir" class="table-responsive">
+        <hr>
+        <div>
+          <h4 class="section-header text-center" style="color: white; cursor: pointer;"
+            (click)="toggleSection(dia, 'filaEntrega')">Fila de entrega: {{ dia.entregas.length || 0 }}</h4>
+          <div *ngIf="dia.filaEntrega">
+            <div *ngFor="let periodo of ['Horário comercial','Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
+              <hr>
+              <h5>{{ periodo }}</h5>
+              <table class="table" *ngIf="getEntregasPorPeriodo(dia.entregas, periodo).length > 0">
+                <thead>
+                  <tr>
+                    <th>✓</th>
+                    <th>Nota</th>
+                    <th>Loja</th>
+                    <th>Usuario</th>
+                    <th style="width: 8%;">N° Nota</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Vendedor</th>
+                    <th>Observação</th>
+                    <th>Motorista</th>
+                    <th style="width: 10%;">Data de entrega</th>
+                    <th>Operação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="let entrega of getEntregasPorPeriodo(dia.entregas, periodo) | paginate: { itemsPerPage: 10, currentPage: p } let i = index">
+                    <tr [ngStyle]="{'background-color': getColor(i)}">
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                        <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
+                          (click)="abrirFormularioImpressao(entrega)">
+                      </td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}"><img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
+                          style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl)">
+                      </td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{entrega.loja}}</td>
+                      <td style="white-space: nowrap;" [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.nome }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.numeroNota }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.nomeCliente }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.valor }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.vendedor }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.observacao }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                        <div *ngIf="!isEditingFor(entrega.id) && entrega.motorista; else selecionarMotoristaPendencia;">
+                          <span (click)="startEditing(entrega.id)">{{ entrega.motorista | uppercase }}</span>
+                        </div>
+                        <ng-template #selecionarMotoristaPendencia>
+                          <select [(ngModel)]="entrega.motorista" (change)="onMotoristaChange(entrega)">
+                            <option *ngFor="let motorista of motoristas" [ngValue]="motorista">{{ motorista }}
+                            </option>
+                          </select>
+                        </ng-template>
+                      </td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.dataEntrega | date: 'dd/MM/yyyy' }}</td>
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                          [attr.data-bs-target]="'#opcoes' + entrega.id">+</button>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <div>
+          <h4 class="section-header text-center" style="color: white; cursor: pointer;"
+            (click)="toggleSection(dia, 'pendentes')">Pendentes: {{dia.pendencias.length || 0}}</h4>
+          <div *ngIf="dia.pendentes">
+            <div *ngFor="let periodo of ['Horário comercial','Manhã', 'Tarde', 'Diferênciado' ]" style="color: white;">
+              <hr>
+              <h5>{{ periodo }}</h5>
+              <table class="table"
+                *ngIf="getPendenciasPorPeriodo(dia.pendencias, periodo).length > 0">
+                <thead>
+                  <tr>
+                    <th>Nota</th>
+                    <th style="width: 7%;">Loja</th>
+                    <th>Usuario</th>
+                    <th style="width: 8%;">N° Nota</th>
+                    <th>Cliente</th>
+                    <th>Valor</th>
+                    <th>Vendedor</th>
+                    <th>Observação</th>
+                    <th>Motorista</th>
+                    <th style="width: 8%;">Dia</th>
+                    <th> Data de entrega </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="let pendente of getPendenciasPorPeriodo(dia.pendencias, periodo) | paginate: { itemsPerPage: 10, currentPage: p }let i = index">
+                    <tr [ngStyle]="{'background-color': getColor(i)}">
+                      <td><img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
+                          style="width: 30px;" (click)="expandirImagem(pendente.imagemUrl)">
+                      </td>
+                      <td>{{pendente.loja}}</td>
+                      <td>{{ pendente.nome }}</td>
+                      <td>{{ pendente.numeroNota }}</td>
+                      <td>{{ pendente.nomeCliente }}</td>
+                      <td>{{ pendente.valor }}</td>
+                      <td>{{ pendente.vendedor }}</td>
+                      <td>{{ pendente.observacaoPendencia | uppercase}}</td>
+                      <td>
+                        <div
+                          *ngIf="!isEditingFor(pendente.id) && pendente.motorista; else selecionarMotoristaPendencia;">
+                          <span (click)="startEditing(pendente.id)">{{ pendente.motorista | uppercase }}</span>
+                        </div>
+                        <ng-template #selecionarMotoristaPendencia>
+                          <select [(ngModel)]="pendente.motorista" (change)="onMotoristaChange(pendente)">
+                            <option *ngFor="let motorista of motoristas" [value]="motorista">{{ motorista }}</option>
+                          </select>
+                        </ng-template>
+                      </td>
+                      <td>{{ pendente.dataEntregaProximaEntrega    }}</td>
+                      <td>{{ pendente.diaSemanaPendencia | date: 'dd/MM/yyyy'  }}</td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+  <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+
+  <div class="imagem-container">
+    <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
+
+  </div>
+
+</div>
+
+<div *ngFor="let entrega of entregas">
+  <div class="modal fade" [attr.id]="'opcoes' + entrega.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+            Entrega do dia {{ entrega.dataEntrega | date: 'dd/MM/yyyy' }}
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Verifique os dados e escolha uma ação</p>
+          <hr />
+          <div class="row">
+            <div class="col-md-4">N° Nota:</div>
+            <div class="col-md-7">{{entrega.numeroNota}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Loja:</div>
+            <div class="col-md-7">{{entrega.loja}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Cliente:</div>
+            <div class="col-md-7">{{entrega.nomeCliente}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Valor:</div>
+            <div class="col-md-7">{{entrega.valor}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Vendedor:</div>
+            <div class="col-md-7">{{entrega.vendedor}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Motorista:</div>
+            <div class="col-md-7">{{entrega.motorista}}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Data da entrega:</div>
+            <div class="col-md-7">{{entrega.dataEntrega}}</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" (click)="abrirFormularioBaixaEntrega(entrega)"
+            data-bs-dismiss="modal">Concluir</button>
+          <button type="button" class="btn btn-warning" (click)="abrirFormularioPendencia(entrega)"
+            data-bs-dismiss="modal">Pendente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+  <p style="color: white"> Aguarde... </p>
+</ngx-spinner>
+
+<div *ngIf="currentForm === 'impressao'" class="formulario-credenciais text-center">
+  <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+  <h4>Confirme impressão</h4>
+  <div class="mb-3">
+    <label for="matriculaInput" class="form-label">Matrícula</label>
+    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+      [(ngModel)]="matricula">
+  </div>
+  <div class="mb-3">
+    <label for="senhaInput" class="form-label">Senha</label>
+    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+  </div>
+  <button class="btn btn-outline-light" (click)="Impressao(ent)" style="font-weight: bold;">Confirmar</button>
+</div>
+
+
+<div *ngIf="entregaEditando && entregaEditando === entregaEditando" class="formulario-credenciais text-center">
+  <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciaisMotorista()">&times;</button>
+
+  <h4>Confirme a troca de motorista</h4>
+  <div class="mb-3">
+    <label for="matriculaInput" class="form-label">Matrícula</label>
+    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+      [(ngModel)]="matricula">
+  </div>
+  <div class="mb-3">
+    <label for="senhaInput" class="form-label">Senha</label>
+    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+  </div>
+
+  <button class="btn btn-outline-light" (click)="salvarCredenciais()" style="font-weight: bold;">Confirmar</button>
+</div>
+
+<div *ngIf="currentForm === 'baixaEntrega'" class="formulario-credenciais text-center">
+  <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+  <h4>Confirmar a entrega</h4>
+  <div class="mb-3">
+    <label for="matriculaInputBaixaEntrega" class="form-label">Matrícula</label>
+    <input type="text" class="form-control" id="matriculaInputBaixaEntrega" placeholder="Digite sua matrícula"
+      [(ngModel)]="matricula">
+  </div>
+  <div class="mb-3">
+    <label for="senhaInputBaixaEntrega" class="form-label">Senha</label>
+    <input type="password" class="form-control" id="senhaInputBaixaEntrega" placeholder="Digite sua senha"
+      [(ngModel)]="senha">
+  </div>
+  <button class="btn btn-outline-light" (click)="concluirEntrega(baixaEntrega)" style="font-weight: bold;"
+    data-bs-toggle="modal" data-bs-target="#uploadImagem">Confirmar</button>
+</div>
+
+<div *ngIf="currentForm === 'pendencia'" class="formulario-credenciais-pendencia text-center">
+  <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+  <h4>Confirme a pendência</h4>
+  <div class="mb-3">
+    <label for="matriculaInputPendencia" class="form-label">Matrícula</label>
+    <input type="text" class="form-control" id="matriculaInputPendencia" placeholder="Digite sua matrícula"
+      [(ngModel)]="matricula">
+  </div>
+  <div class="mb-3">
+    <label for="senhaInputPendencia" class="form-label">Senha</label>
+    <input type="password" class="form-control" id="senhaInputPendencia" placeholder="Digite sua senha"
+      [(ngModel)]="senha">
+  </div>
+
+  <form [formGroup]="formi">
+    <div>
+      <div class="row">
+        <label><strong>Observação</strong></label>
+        <textarea class="box-area" placeholder="Digite aqui" formControlName="observacaoPendencia"></textarea>
+      </div>
+      <div class="row">
+        <label><strong>Data</strong></label>
+        <input type="date" class="form-control" formControlName="dataEntregaProximaEntrega" (change)="onDateChange($event)" />
+
+      </div>
+
+      <div class="row">
+        <label><strong>Dia da Semana</strong></label>
+        <input type="text" class="form-control"  placeholder="Digite aqui" formControlName="diaSemanaPendencia" readonly />
+  
+      </div>
+
+    </div>
+   
+  </form>
+  <br>
+
+  <button class="btn btn-outline-light" (click)="onPendente(pendenciaEntrega)"
+    style="font-weight: bold;">Confirmar</button>
+</div>
+
+
+<!-- Se você estiver usando modais, ajuste os IDs dos inputs de acordo -->
+<div class="modal fade" id="uploadImagem" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+          Insira a imagem da nota
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" *ngIf="entrega">
+        <form [formGroup]="form">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <!-- Atualize o ID do input para ser único -->
+                <div class="col-md-12">
+                  <label><strong>Upload de Imagem</strong></label>
+                  <input type="file" class="form-control" id="fileInputModal" (change)="onFileSelected($event)" />
+                </div>
+                <hr>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-success" (click)="uploadImagem()">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
