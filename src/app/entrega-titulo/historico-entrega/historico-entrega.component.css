@@ -95,7 +95,7 @@ td {
   }
 
   .table {
-    width: 1295px; /* Ajuste a largura da tabela conforme necessário */
+    /*width: 1295px; /* Ajuste a largura da tabela conforme necessário */
     border: 1px solid #cccccc; /* Ajuste a espessura da borda conforme necessário */
     
   }
@@ -144,7 +144,7 @@ td {
   color: black; /* Define a cor do texto como preto */
 }
 .nav-item{
-  margin-right: -5px;
+  margin-right: -23px;
 }
 .input-group {
   position: relative;

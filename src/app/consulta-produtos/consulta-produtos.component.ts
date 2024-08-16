@@ -34,6 +34,7 @@ export class ConsultaProdutosComponent implements OnInit {
   produto: any = {}; // Objeto para armazenar os detalhes do produto atual
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
   p: number = 1;
+  originalProdutos: any[] = [];
 
 
 
@@ -62,6 +63,7 @@ export class ConsultaProdutosComponent implements OnInit {
 
             // Carrega os lotes do produto após obter os dados do produto
             this.carregarLotes(this.produto);
+            this.originalProdutos = [...this.produtos];
 
           },
           error: (error) => {
@@ -74,6 +76,7 @@ export class ConsultaProdutosComponent implements OnInit {
         .subscribe({
           next: (produtosData) => {
             this.produtos = produtosData as any[];
+            this.originalProdutos = [...this.produtos];
 
           },
           error: (error) => {
@@ -201,18 +204,26 @@ export class ConsultaProdutosComponent implements OnInit {
   // Método para filtrar os produtos com base na expressão de pesquisa
   filtrarProdutos(): void {
     if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos
-      this.ngOnInit();
+      // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
+      this.originalProdutos = [...this.produtos];
     } else {
-      // Filtra os produtos com base na expressão de pesquisa
-      this.produtos = this.produtos.filter(p =>
-        Object.values(p).some(value =>
-          typeof value === 'string' && value.toLowerCase().includes(this.expression.toLowerCase())
-        )
+      // Filtra os produtos com base na expressão de pesquisa na lista original
+      this.produtos = this.originalProdutos.filter(p =>
+        Object.values(p).some(value => {
+          // Verifica se o valor é string ou número
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(this.expression.toLowerCase());
+          } else if (typeof value === 'number') {
+            // Converte o número para string e verifica se contém a expressão de pesquisa
+            return value.toString().includes(this.expression);
+          }
+          return false;
+        })
       );
     }
   }
 
+  
   // Método para alternar a exibição dos detalhes do produto
   toggleDetalhes(produto: any): void {
     produto.mostrarDetalhes = !produto.mostrarDetalhes;

@@ -23,7 +23,7 @@ export class HistoricoVendasComponent implements OnInit {
   endDate: Date = new Date();
   p: number = 1;
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
-
+  originalVendas: any[] = [];
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -51,6 +51,7 @@ export class HistoricoVendasComponent implements OnInit {
           this.vendas.sort((a, b) => b.dataVenda - a.dataVenda);
           this.vendas.forEach(venda => this.loadUserName(venda));
           this.filterData();
+          this.originalVendas = [...this.vendas];
           
          
 
@@ -159,16 +160,23 @@ export class HistoricoVendasComponent implements OnInit {
 
   filtrarProdutos(): void {
     if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos
-      this.ngOnInit();
+      // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
+      this.originalVendas = [...this.vendas];
     } else {
-      // Filtra os produtos com base na expressão de pesquisa
-      this.vendas = this.vendas.filter(p =>
-        Object.values(p).some(value =>
-          typeof value === 'string' && value.toLowerCase().includes(this.expression.toLowerCase())
-        )
+      // Filtra os produtos com base na expressão de pesquisa na lista original
+      this.vendas= this.originalVendas.filter(p =>
+        Object.values(p).some(value => {
+          // Verifica se o valor é string ou número
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(this.expression.toLowerCase());
+          } else if (typeof value === 'number') {
+            // Converte o número para string e verifica se contém a expressão de pesquisa
+            return value.toString().includes(this.expression);
+          }
+          return false;
+        })
       );
     }
-  } 
+  }
 
 }
