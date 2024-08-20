@@ -31,6 +31,9 @@ export class AutenticarUsuarioComponent {
     return this.form.controls;
   }
   onSubmit(): void {
+
+    this.spinner.show();
+
     this.httpClient.post(this.userApiUrl + "/autenticaradmin", this.form.value)
       .subscribe({
         next: (data) => {
@@ -39,6 +42,7 @@ export class AutenticarUsuarioComponent {
           this.router.navigate(['/consulta-produtos']).then(() => {
             window.location.reload();
           });
+          this.spinner.hide();
         },
         error: (e) => {
           alert('Erro ao autenticar. Usuário e senha incorreto, tente novamente.');

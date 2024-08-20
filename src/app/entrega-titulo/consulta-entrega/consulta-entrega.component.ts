@@ -527,6 +527,7 @@ export class ConsultaEntregaComponent implements OnInit {
           
           // Agora que temos o idBaixaEntrega, podemos chamar o uploadImagem
           this.uploadImagem();
+        
         },
         error: (error) => {
           alert('Erro ao concluir ocorrência. Usuário e senha incorretos, tente novamente.');
@@ -547,12 +548,12 @@ export class ConsultaEntregaComponent implements OnInit {
 
  uploadImagem(): void {
   if (!this.imagemFile) {
-    alert('Por favor, selecione uma imagem para a entrega cadastrada.');
+    alert('Por favor, selecione uma imagem para a entrega concluida.');
     return;
   }
 
   if (this.idBaixaEntrega === null || this.idBaixaEntrega === undefined) {
-    alert('O ID da entrega não está disponível. Por favor, cadastre a entrega primeiro.');
+    alert('O ID da baixaEntrega não está disponível. Por favor, conclua a entrega primeiro.');
     console.log('ID da baixa de entrega está nulo ou indefinido:', this.idBaixaEntrega); 
     return;
   }
@@ -568,15 +569,16 @@ export class ConsultaEntregaComponent implements OnInit {
         console.log('Imagem enviada com sucesso:', data);
         this.mensagem = 'Imagem enviada com sucesso!';
         this.spinner.hide();
+        window.location.reload();
 
-        // Reset file input and state
+        
         const fileInput = document.getElementById('fileInput') as HTMLInputElement;
         if (fileInput) {
           fileInput.value = '';
         }
 
         this.imagemFile = null;
-        this.idBaixaEntrega = null; // Reset idBaixaEntrega after upload
+        this.idBaixaEntrega = null; 
       },
       error: (e) => {
         console.log('Erro ao enviar a imagem:', e.error);
