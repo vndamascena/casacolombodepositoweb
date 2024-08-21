@@ -23,6 +23,7 @@
 
 .navbar-nav .dropdown-menu .dropdown-item:hover {
     background-color: #87c746; /* Cor do fundo ao passar o mouse */
+    color: #ffffff;
 }
 
 /* Mostrar o dropdown no hover (desktop) */

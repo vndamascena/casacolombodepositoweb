@@ -63,17 +63,17 @@
 
   <div class="container">
     <div class="card mb-3" *ngFor="let dia of dias">
-      <h1 (click)="toggleTable(dia)" class="section-header text-center" style="color: white; cursor: pointer;">{{
-        dia.nome }}: {{dia.entregas.length }}</h1>
+      <h1 (click)="toggleTable(dia)" class="section-header text-center" style=" cursor: pointer;"><strong>{{
+        dia.nome }}: {{dia.entregas.length }} </strong></h1>
       <div *ngIf="dia.exibir" class="table-responsive">
         <hr>
         <div>
-          <h4 class="section-header text-center" style="color: white; cursor: pointer;"
-            (click)="toggleSection(dia, 'filaEntrega')">Fila de entrega: {{ dia.entregas.length || 0 }}</h4>
+          <h4 class="section-header text-center" style=" cursor: pointer;"
+            (click)="toggleSection(dia, 'filaEntrega')"><strong>Fila de entrega: {{ dia.entregas.length || 0 }}</strong></h4>
           <div *ngIf="dia.filaEntrega">
             <div *ngFor="let periodo of ['Horário comercial','Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
               <hr>
-              <h5>{{ periodo }}</h5>
+              <h5><strong>{{ periodo }}</strong></h5>
               <table class="table" *ngIf="getEntregasPorPeriodo(dia.entregas, periodo).length > 0">
                 <thead>
                   <tr>
@@ -134,12 +134,12 @@
         </div>
         <hr>
         <div>
-          <h4 class="section-header text-center" style="color: white; cursor: pointer;"
-            (click)="toggleSection(dia, 'pendentes')">Pendentes: {{dia.pendencias.length || 0}}</h4>
+          <h4 class="section-header text-center" style=" cursor: pointer;"
+            (click)="toggleSection(dia, 'pendentes')"><strong> Pendentes: {{dia.pendencias.length || 0}}</strong> </h4>
           <div *ngIf="dia.pendentes">
             <div *ngFor="let periodo of ['Horário comercial','Manhã', 'Tarde', 'Diferênciado' ]" style="color: white;">
               <hr>
-              <h5>{{ periodo }}</h5>
+              <h5><strong>{{ periodo }}</strong></h5>
               <table class="table"
                 *ngIf="getPendenciasPorPeriodo(dia.pendencias, periodo).length > 0">
                 <thead>
