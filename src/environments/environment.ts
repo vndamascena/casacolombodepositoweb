@@ -4,5 +4,5 @@ export const environment = {
      
     ocorrencApi: 'https://colombo01-001-site1.gtempurl.com/api',
     
-    entregatitulo: 'http://localhost:5265/api',
+    entregatitulo: 'https://colombo01-001-site4.gtempurl.com/api',
 };

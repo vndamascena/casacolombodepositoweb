@@ -11,9 +11,9 @@
 }
 
 .navbar-nav .dropdown-menu .dropdown-item {
-    color: #036822; /* Cor do texto */
-    background-color: #ffffff; /* Cor do fundo */
     
+    background-color: #ffffff; /* Cor do fundo ao passar o mouse */
+    color: #036822;
     
   
   
@@ -22,8 +22,8 @@
 }
 
 .navbar-nav .dropdown-menu .dropdown-item:hover {
-    background-color: #87c746; /* Cor do fundo ao passar o mouse */
-    color: #ffffff;
+    color: #ffffff; /* Cor do texto */
+    background-color: #87c746;/* Cor do fundo */
 }
 
 /* Mostrar o dropdown no hover (desktop) */
