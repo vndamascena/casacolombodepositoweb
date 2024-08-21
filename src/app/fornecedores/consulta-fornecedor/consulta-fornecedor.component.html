@@ -47,7 +47,11 @@
 <div class="line"></div>
 <br>
 
-
+<div class="col text-center"><strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+     nextLabel="Próximo"></pagination-controls>
+    </strong>
+</div>
 <div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
     <strong>{{mensagem}}</strong>
     <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
