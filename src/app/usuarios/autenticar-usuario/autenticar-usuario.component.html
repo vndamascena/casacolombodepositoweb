@@ -1,37 +1,37 @@
-<br>
-
-<div class="row mt-3">
-  <div class="col-md-4 offset-md-4">
-    <div class="card">
-      <div class="card-body">
-        <div class="text-center">
-          <img src="/assets/CASA COLOMBO.jpg" />
-          <div class="mt-2">
-            <h4>Autenticar Usuário</h4>
-            <p>Entre com as credenciais de acesso.</p>
+<div class="background">
+  <div class="row mt-3">
+    <div class="col-md-4 offset-md-4">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-center">
+            <img src="/assets/CASA COLOMBO.jpg" />
+            <div class="mt-2">
+              <h4>Autenticar Usuário</h4>
+              <p>Entre com as credenciais de acesso.</p>
+            </div>
           </div>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label>Usuário:</label>
+              <input type="text" class="form-control" formControlName="matricula" placeholder="Digite usuário aqui" />
+            </div>
+            <div class="mb-3">
+              <label>Senha:</label>
+              <input type="password" class="form-control" formControlName="senha" placeholder="Digite sua senha aqui" />
+            </div>
+            <div class="mb-3 d-grid">
+              <input type="submit" class="btn btn-success" value="Acessar Sistema" />
+            </div>
+            <div class="mb-3 text-center">
+              <small>Sistema Casa Colomo v2.0</small>
+            </div>
+          </form>
         </div>
-        <form [formGroup]="form" (ngSubmit)="onSubmit()">
-          <div class="mb-3">
-            <label>Usuário:</label>
-            <input type="text" class="form-control" formControlName="matricula" placeholder="Digite usuário aqui" />
-          </div>
-          <div class="mb-3">
-            <label>Senha:</label>
-            <input type="password" class="form-control" formControlName="senha" placeholder="Digite sua senha aqui" />
-          </div>
-          <div class="mb-3 d-grid">
-            <input type="submit" class="btn btn-primary" value="Acessar Sistema" />
-          </div>
-          <div class="mb-3 text-center">
-            <small>Sistema Casa Colomo v2.0</small>
-          </div>
-        </form>
       </div>
     </div>
   </div>
-</div>
 
-<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
-  <p style="color: white"> Aguarde... </p>
-</ngx-spinner>
+  <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+    <p style="color: white"> Aguarde... </p>
+  </ngx-spinner>
+</div>
