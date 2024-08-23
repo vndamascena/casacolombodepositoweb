@@ -346,12 +346,13 @@ td {
   display: none;
   position: absolute;
   /* Define a posição fixa para a imagem expandida */
-  top: 80%;
+  top: 50%;
   /* Ajusta a posição verticalmente */
   left: 50%;
   /* Ajusta a posição horizontalmente */
   transform: translate(-50%, -50%);
-
+  max-width: 90%;
+  max-height: 90%;
   /* Centraliza a imagem na tela */
   z-index: 1000;
   /* Garante que a imagem esteja acima de outros elementos */

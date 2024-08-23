@@ -7,8 +7,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
-import * as Tesseract from 'tesseract.js';
-import * as pdfjsLib from 'pdfjs-dist';
+
 
 @Component({
   selector: 'app-consulta-entrega',
@@ -365,9 +364,9 @@ export class ConsultaEntregaComponent implements OnInit {
 
 
 
-  controlarZoom(event: WheelEvent) {
-    event.preventDefault();
-    const incremento = event.deltaY < 0 ? 0.1 : -0.1;
+  controlarZoom(evento: WheelEvent) {
+    evento.preventDefault();
+    const incremento = evento.deltaY < 0 ? 0.1 : -0.1;
     this.zoomLevel = this.calcularNovoZoom(incremento);
   }
 
@@ -398,10 +397,26 @@ export class ConsultaEntregaComponent implements OnInit {
     if (imagemAmpliada) {
       imagemAmpliada.classList.remove('mostrar');
     }
+    this.zoomLevel = 'scale(1)'; // Reset zoom level when closing
   }
 
-
-
+  exibirMenuImpressao(event: MouseEvent): void {
+    event.preventDefault(); // Evita o menu de contexto padrão
+    const imagem = event.target as HTMLImageElement;
+    if (imagem) {
+      const printWindow = window.open('', '', 'width=800,height=600');
+      if (printWindow) {
+        printWindow.document.write(`<img src="${imagem.src}" style="width:100%;">`);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.onafterprint = () => {
+          printWindow.close(); // Fecha a janela após a impressão
+          this.fecharImagemAmpliada(); // Fecha a imagem ampliada
+        };
+        printWindow.print();
+      }
+    }
+  }
 
 
 

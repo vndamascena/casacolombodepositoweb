@@ -148,6 +148,7 @@ export class CadastraEntregaComponent implements OnInit {
       } else {
         alert('Por favor, selecione um arquivo de imagem ou HTML.');
       }
+      this.imagemFile = file;
     }
   }
   
@@ -242,7 +243,7 @@ export class CadastraEntregaComponent implements OnInit {
 
     if (this.entregaId === null || this.entregaId === undefined) {
       alert('O ID da entrega não está disponível. Por favor, cadastre a entrega primeiro.');
-      console.log('Entrega ID está nulo ou indefinido:', this.entregaId); // Adicione este log
+      console.log('Entrega ID está nulo ou indefinido:', this.entregaId);
       return;
     }
 
@@ -263,12 +264,9 @@ export class CadastraEntregaComponent implements OnInit {
             fileInput.value = '';
           }
 
-
           this.imagemFile = null;
           this.spinner.hide();
           window.location.reload();
-
-
         },
         error: (e) => {
           console.log('Erro ao enviar a imagem:', e.error);
@@ -277,5 +275,4 @@ export class CadastraEntregaComponent implements OnInit {
         }
       });
   }
-
 }

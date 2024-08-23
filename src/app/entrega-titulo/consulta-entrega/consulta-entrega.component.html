@@ -99,9 +99,16 @@
                         <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
                           (click)="abrirFormularioImpressao(entrega)">
                       </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}"><img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
-                          style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl)">
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                        <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
+                          style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl)" (contextmenu)="exibirMenuImpressao($event)">
                       </td>
+                      <div *ngIf="imagemAmpliadaUrl" class="imagem-ampliada" (click)="fecharImagemAmpliada()">
+                        <img [src]="imagemAmpliadaUrl"
+                             [ngStyle]="{'transform': zoomLevel}"
+                             (wheel)="controlarZoom($event)"
+                             (contextmenu)="exibirMenuImpressao($event)">
+                      </div>
                       <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{entrega.loja}}</td>
                       <td style="white-space: nowrap;" [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.nome }}</td>
                       <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.numeroNota }}</td>
