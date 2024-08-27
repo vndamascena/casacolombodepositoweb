@@ -181,7 +181,7 @@ export class CadastraEntregaComponent implements OnInit {
     console.log('nome:', nome);
   
     // Captura o vendedor
-    const vendedorMatch = text.match(/Vendedor.\s*([^\n]+)/);
+    const vendedorMatch = text.match(/Vendedor\s*([^\|]+)/i);
     const vendedor = vendedorMatch ? vendedorMatch[1].trim() : '';
     console.log('vendedor:', vendedor);
   
@@ -205,21 +205,19 @@ export class CadastraEntregaComponent implements OnInit {
     const observacao = observacaoMatch ? observacaoMatch[1].trim() : '';
     console.log('observação:', observacao);
   
-    const lojaMatch = text.match(/Casa Colombo\s*(\w+)/);
+    const lojaMatch = text.match(/Vendedor\s*[^|]*\|\s*(\w+)/);
     let loja = lojaMatch ? lojaMatch[1].trim() : '';
-  
+    
     // Define o tipo de índice para o mapeamento de lojas
     const mapeamentoLojas: { [key: string]: string } = {
       '3C01': 'JC - 01', '3c01': 'JC - 01',
       '3c02': 'JC - 02',
       '3c03': 'VA - 01',  'VA': 'VA - 01',
-      
-     
-      
       // Adicione outros códigos e nomes aqui, se necessário
     };
+    
     console.log('loja:', loja);
-  
+    
     // Substitui o código da loja pelo nome correspondente
     loja = mapeamentoLojas[loja] || loja;
   

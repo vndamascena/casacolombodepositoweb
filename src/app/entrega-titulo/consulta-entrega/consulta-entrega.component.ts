@@ -364,9 +364,10 @@ export class ConsultaEntregaComponent implements OnInit {
 
 
 
-  controlarZoom(evento: WheelEvent) {
-    evento.preventDefault();
-    const incremento = evento.deltaY < 0 ? 0.1 : -0.1;
+ 
+  controlarZoom(event: WheelEvent) {
+    event.preventDefault();
+    const incremento = event.deltaY < 0 ? 0.1 : -0.1;
     this.zoomLevel = this.calcularNovoZoom(incremento);
   }
 
@@ -384,20 +385,20 @@ export class ConsultaEntregaComponent implements OnInit {
     return `${environment.entregatitulo}/entrega${imagemUrl}`;
   }
 
-  expandirImagem(imagemUrl: string): void {
-    this.imagemAmpliadaUrl = `${environment.entregatitulo}/entrega${imagemUrl}`;
+  expandirImagem(imagemUrl: string, dia: any): void {
+    dia.imagemAmpliadaUrl = `${environment.entregatitulo}/entrega${imagemUrl}`;
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
       imagemAmpliada.classList.add('mostrar');
     }
   }
-
-  fecharImagemAmpliada(): void {
+  
+  fecharImagemAmpliada(dia: any): void {
+    dia.imagemAmpliadaUrl = null;
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
       imagemAmpliada.classList.remove('mostrar');
     }
-    this.zoomLevel = 'scale(1)'; // Reset zoom level when closing
   }
 
   exibirMenuImpressao(event: MouseEvent): void {
@@ -411,7 +412,7 @@ export class ConsultaEntregaComponent implements OnInit {
         printWindow.focus();
         printWindow.onafterprint = () => {
           printWindow.close(); // Fecha a janela após a impressão
-          this.fecharImagemAmpliada(); // Fecha a imagem ampliada
+          
         };
         printWindow.print();
       }
