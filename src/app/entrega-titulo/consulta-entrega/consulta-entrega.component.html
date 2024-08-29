@@ -62,20 +62,86 @@
 
 
   <div class="container">
-    <div class="card mb-3" *ngFor="let dia of dias">
-      <h1 (click)="toggleTable(dia)" class="section-header text-center" style=" cursor: pointer;">
-        <strong>{{ dia.nome }}: {{dia.entregas.length }} </strong>
+
+
+
+
+    <div class="card mb-3 pendente-entrega">
+      <h1 class="section-header text-center" style="cursor: pointer;" (click)="togglePendencias()">
+        <strong>Pendentes: {{ getAllPendencias().length || 0 }}</strong>
       </h1>
-      <div *ngIf="dia.exibir" class="table-responsive">
+      <!-- Tabela de pendências que será exibida apenas quando pendencia for true -->
+      <div *ngIf="pendenciaEntrega" class="table-responsive">
+        <hr>
+        <div *ngFor="let periodo of ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
+          <h5><strong>{{ periodo }}</strong></h5>
+          <table class="table" *ngIf="getPendenciasPorPeriodo(getAllPendencias(), periodo).length > 0">
+            <thead>
+              <tr>
+                <th>Nota</th>
+                <th style="width: 7%;">Loja</th>
+                <th>Usuario</th>
+                <th style="width: 8%;">N° Nota</th>
+                <th>Cliente</th>
+                <th>Valor</th>
+                <th>Vendedor</th>
+                <th>Observação</th>
+                <th>Motorista</th>
+                <th style="width: 8%;">Dia</th>
+                <th>Data de entrega</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 10, currentPage: p }">
+                <tr>
+                  <td>
+                    <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" 
+                    class="img-fluid" style="width: 30px;" >
+                  </td>
+                  <td>{{pendente.loja}}</td>
+                  <td>{{ pendente.nome }}</td>
+                  <td>{{ pendente.numeroNota }}</td>
+                  <td>{{ pendente.nomeCliente }}</td>
+                  <td>{{ pendente.valor }}</td>
+                  <td>{{ pendente.vendedor }}</td>
+                  <td>{{ pendente.observacaoPendencia | uppercase }}</td>
+                  <td>
+                    <div *ngIf="!isEditingFor(pendente.id) && pendente.motorista; else selecionarMotoristaPendencia;">
+                      <span (click)="startEditing(pendente.id)">{{ pendente.motorista | uppercase }}</span>
+                    </div>
+                    <ng-template #selecionarMotoristaPendencia>
+                      <select [(ngModel)]="pendente.motorista" (change)="onMotoristaChange(pendente)">
+                        <option *ngFor="let motorista of motoristas" [value]="motorista">{{ motorista }}</option>
+                      </select>
+                    </ng-template>
+                  </td>
+                  <td>{{ pendente.dataEntregaProximaEntrega }}</td>
+                  <td>{{ pendente.diaSemanaPendencia | date: 'dd/MM/yyyy' }}</td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+
+
+    <div class="card mb-3" *ngFor="let data of datas">
+      <h1 (click)="toggleTable(data)" class="section-header text-center" style="cursor: pointer;">
+        <strong>  {{ data.nome }}: {{ data.entregas.length }} </strong>
+      </h1>
+      <div *ngIf="data.exibir" class="table-responsive">
         <hr>
         <div>
-          <h4 class="section-header text-center" style="cursor: pointer;" (click)="toggleSection(dia, 'filaEntrega')">
-            <strong>Fila de entrega: {{ dia.entregas.length || 0 }}</strong></h4>
-          <div *ngIf="dia.filaEntrega">
+          <h4 class="section-header text-center" style="cursor: pointer;" (click)="toggleSection(data, 'filaEntrega')">
+            <strong>Fila de entrega: {{ data.entregas.length || 0 }}</strong>
+          </h4>
+          <div *ngIf="data.filaEntrega">
             <div *ngFor="let periodo of ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
               <hr>
               <h5><strong>{{ periodo }}</strong></h5>
-              <table class="table" *ngIf="getEntregasPorPeriodo(dia.entregas, periodo).length > 0">
+              <table class="table" *ngIf="getEntregasPorPeriodo(data.entregas, periodo).length > 0">
                 <thead>
                   <tr>
                     <th>✓</th>
@@ -93,33 +159,32 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <ng-container
-                    *ngFor="let entrega of getEntregasPorPeriodo(dia.entregas, periodo) | paginate: { itemsPerPage: 10, currentPage: p }">
+                  <ng-container *ngFor="let entrega of getEntregasPorPeriodo(data.entregas, periodo)">
                     <tr>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
                         <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
                           (click)="abrirFormularioImpressao(entrega)">
                       </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
                         <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
-                          style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, dia)">
+                          style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
                       </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{entrega.loja}}
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{entrega.loja}}
                       </td>
                       <td style="white-space: nowrap;"
-                        [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.nome }}
+                        [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.nome }}
                       </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
                         entrega.numeroNota }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
                         entrega.nomeCliente }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{ entrega.valor
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.valor
                         }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
                         entrega.vendedor }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
                         entrega.observacao }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
                         <div *ngIf="!isEditingFor(entrega.id) && entrega.motorista; else selecionarMotoristaPendencia;">
                           <span (click)="startEditing(entrega.id)">{{ entrega.motorista | uppercase }}</span>
                         </div>
@@ -129,9 +194,9 @@
                           </select>
                         </ng-template>
                       </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">{{
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
                         entrega.dataEntrega | date: 'dd/MM/yyyy' }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, dia.pendencias)}">
+                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
                         <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
                           [attr.data-bs-target]="'#opcoes' + entrega.id">+</button>
                       </td>
@@ -142,86 +207,23 @@
             </div>
           </div>
         </div>
-
+    
         <!-- Exibição da imagem ampliada dentro do dia -->
-        <div class="imagem-ampliada" *ngIf="dia.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
-          <button class="btn-close" (click)="fecharImagemAmpliada(dia)">&times;</button>
+        <div class="imagem-ampliada" *ngIf="data.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+          <button class="btn-close" (click)="fecharImagemAmpliada(data)">&times;</button>
           <div class="imagem-container">
-            <img [src]="dia.imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
+            <img [src]="data.imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
               (contextmenu)="exibirMenuImpressao($event)" />
-          </div>
-        </div>
-
-        <hr>
-        <div>
-          <h4 class="section-header text-center" style=" cursor: pointer;" (click)="toggleSection(dia, 'pendentes')">
-            <strong>Pendentes: {{dia.pendencias.length || 0}}</strong></h4>
-          <div *ngIf="dia.pendentes">
-            <div *ngFor="let periodo of ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
-              <hr>
-              <h5><strong>{{ periodo }}</strong></h5>
-              <table class="table" *ngIf="getPendenciasPorPeriodo(dia.pendencias, periodo).length > 0">
-                <thead>
-                  <tr>
-                    <th>Nota</th>
-                    <th style="width: 7%;">Loja</th>
-                    <th>Usuario</th>
-                    <th style="width: 8%;">N° Nota</th>
-                    <th>Cliente</th>
-                    <th>Valor</th>
-                    <th>Vendedor</th>
-                    <th>Observação</th>
-                    <th>Motorista</th>
-                    <th style="width: 8%;">Dia</th>
-                    <th>Data de entrega</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container
-                    *ngFor="let pendente of getPendenciasPorPeriodo(dia.pendencias, periodo) | paginate: { itemsPerPage: 10, currentPage: p }">
-                    <tr>
-
-                      <td>
-                        <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
-                          style="width: 30px;" (click)="expandirImagem(pendente.imagemUrl, dia)">
-                      </td>
-                      <td>{{pendente.loja}}</td>
-                      <td>{{ pendente.nome }}</td>
-                      <td>{{ pendente.numeroNota }}</td>
-                      <td>{{ pendente.nomeCliente }}</td>
-                      <td>{{ pendente.valor }}</td>
-                      <td>{{ pendente.vendedor }}</td>
-                      <td>{{ pendente.observacaoPendencia | uppercase }}</td>
-                      <td>
-                        <div
-                          *ngIf="!isEditingFor(pendente.id) && pendente.motorista; else selecionarMotoristaPendencia;">
-                          <span (click)="startEditing(pendente.id)">{{ pendente.motorista | uppercase }}</span>
-                        </div>
-                        <ng-template #selecionarMotoristaPendencia>
-                          <select [(ngModel)]="pendente.motorista" (change)="onMotoristaChange(pendente)">
-                            <option *ngFor="let motorista of motoristas" [value]="motorista">{{ motorista }}</option>
-                          </select>
-                        </ng-template>
-                      </td>
-                      <td>{{ pendente.dataEntregaProximaEntrega }}</td>
-                      <td>{{ pendente.diaSemanaPendencia | date: 'dd/MM/yyyy' }}</td>
-                    </tr>
-                  </ng-container>
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
 
 
 
 
-
-  <div *ngFor="let entrega of entregas">
+    <div *ngFor="let entrega of entregas">
     <div class="modal fade" [attr.id]="'opcoes' + entrega.id" tabindex="-1" aria-labelledby="exampleModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">

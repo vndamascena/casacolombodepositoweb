@@ -26,6 +26,7 @@ export class ConsultaEntregaComponent implements OnInit {
   pendencias: any[] = [];
   pendencia: any = {};
   ent: any;
+  datas: any [] = []
   imagemFile: File | null = null;
   imagemAmpliadaUrl: string | null = null;
   zoomLevel: string = 'scale(1)';
@@ -104,6 +105,15 @@ export class ConsultaEntregaComponent implements OnInit {
     return index % 2 === 0 ? '#8bc546' : '#ffffff';
   }
 
+
+  getAllPendencias() {
+    return this.dias.reduce((acc, dia) => acc.concat(dia.pendencias), []);
+  }
+  togglePendencias() {
+    this.pendenciaEntrega = !this.pendenciaEntrega;
+  }
+ 
+
   ngOnInit(): void {
     const currentDate = new Date();
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -122,6 +132,7 @@ export class ConsultaEntregaComponent implements OnInit {
             });
             this.entregas.sort((a, b) => b.dataTime - a.dataTime);
             this.categorizarEntregasPorDia();
+            
             this.buscarPendencias();
             
             // Requisição para obter dados de impressão
@@ -190,18 +201,43 @@ export class ConsultaEntregaComponent implements OnInit {
     }
   }
   
+  
+
+
+
+ 
+
+  formatarData(dataString: string): string {
+    const partes = dataString.split('-'); // Divide a string no formato 'yyyy-MM-dd'
+    const ano = parseInt(partes[0], 10);
+    const mes = parseInt(partes[1], 10) - 1; // Meses são baseados em zero
+    const dia = parseInt(partes[2], 10);
+    const data = new Date(ano, mes, dia);
+    
+    const diaFormatado = String(data.getDate()).padStart(2, '0');
+    const mesFormatado = String(data.getMonth() + 1).padStart(2, '0');
+    const anoFormatado = data.getFullYear();
+    
+    return `${diaFormatado}/${mesFormatado}/${anoFormatado}`;
+  }
+
+
   // Nova função para verificar pendências e exibir alerta
   verificarPendencias(): void {
     const diasComPendencias = this.dias
       .filter(dia => dia.pendencias.length > 0)
-      .map(dia => dia.nome);
-  
+      .map(dia => {
+        // Para cada pendência, obtenha a data e formate
+        const pendencia = dia.pendencias[0]; // Supondo que todas as pendências têm a mesma data
+        const dataFormatada = this.formatarData(pendencia.dataEntrega);
+        return `${dia.nome} (Data: ${dataFormatada})`;
+      });
+    
     if (diasComPendencias.length > 0) {
       const mensagem = `Possui entregas pendentes para os dias: ${diasComPendencias.join(', ')}. Favor verificar.`;
       alert(mensagem);
     }
   }
-  
 
 
   startEditing(id: string) {
@@ -336,17 +372,46 @@ export class ConsultaEntregaComponent implements OnInit {
       });
   }
 
-
   categorizarEntregasPorDia(): void {
-    this.dias.forEach(dia => dia.entregas = []);
+    // Primeiro, criamos um objeto para armazenar as entregas por data de entrega
+    const entregasPorData: { [key: string]: any[] } = {};
+  
     this.entregas.forEach(entrega => {
-      const diaSemanaIndex = this.getDayOfWeekIndex(entrega.diaSemana);
-      if (diaSemanaIndex !== -1) {
-        this.dias[diaSemanaIndex].entregas.push(entrega);
+      const dataEntregaStr = entrega.dataEntrega; // Obtém a data de entrega no formato de string
+      const dataEntrega = new Date(dataEntregaStr); // Converte a string em um objeto Date
+      const dataEntregaBrasileira = this.convertToBrazilTime(dataEntrega); // Ajusta a data para o fuso horário brasileiro
+      
+      // Define os dias da semana
+      const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const diaDaSemana = diasDaSemana[dataEntregaBrasileira.getDay()]; // Obtém o dia da semana
+      
+      // Converte a data para o formato brasileiro
+      const dia = String(dataEntregaBrasileira.getDate()).padStart(2, '0');
+      const mes = String(dataEntregaBrasileira.getMonth() + 1).padStart(2, '0');
+      const ano = dataEntregaBrasileira.getFullYear();
+  
+      // Formata a data com o dia da semana
+      const dataStr = `${diaDaSemana}, ${dia}/${mes}/${ano}`;
+  
+      if (!entregasPorData[dataStr]) {
+        entregasPorData[dataStr] = [];
       }
+      entregasPorData[dataStr].push(entrega);
+    });
+  
+    // Agora, atualizamos a estrutura de dados 'datas' para refletir as novas categorias
+    this.datas = Object.keys(entregasPorData).map(dataStr => {
+      return {
+        nome: dataStr, // Usamos a string de data com o dia da semana como nome
+        entregas: entregasPorData[dataStr],
+        pendencias: [], // Iniciais pendências vazias, você pode atualizar isso conforme necessário
+        exibir: false,
+        filaEntrega: false,
+        saiuEntrega: false,
+        pendentes: false
+      };
     });
   }
-
   categorizarPendenciasPorDia(): void {
     this.dias.forEach(dia => dia.pendencias = []);
     this.pendencias.forEach(pendencia => {
@@ -700,8 +765,7 @@ onDateChange(event: any): void {
     this.pendenciaEntrega = null;
   }
 
-  isNotaPendente(numeroNota: string, pendencias: any[]): boolean {
-    return pendencias.some(pendente => pendente.numeroNota === numeroNota);
-  }
-
+ isNotaPendente(numeroNota: string, pendencias: any[]): boolean {
+  return pendencias.some(pendente => pendente.numeroNota === numeroNota);
+}
 }

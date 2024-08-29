@@ -76,7 +76,7 @@ td {
 }
 
 .text-red {
-  color: red; /* Cor do texto */
+  color: red;/* Cor do texto */
   background-color: #ffe6e6; /* Cor de fundo vermelha clara */
 }
 
@@ -338,7 +338,6 @@ td {
 
   right: 10px;
 }
-
 
 
 .imagem-ampliada {
