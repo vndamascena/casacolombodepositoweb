@@ -42,16 +42,17 @@ export class ConsultaEntregaComponent implements OnInit {
     { nome: 'Sábado', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
   ];
   motoristas: string[] = ['JORGE(JOCA)', 'DOUGLAS(TOGURO)', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
+  pagamentos: string [] =['PAGO', 'REC NO LOCAL', 'CARTEIRA'];
   isEditing: string | null = null;
   entregaEditando: any = null;
   erroValidacao: string = '';
   baixaEntrega: any;
   pendenciaEntrega: any;
-  currentForm: 'impressao' | 'motorista' | 'baixaEntrega' | 'pendencia' | null = null;
+  currentForm: 'impressao' | 'motorista' | 'baixaEntrega' | 'pendencia' |'pagamento'| null = null;
   idBaixaEntrega: number | null = null; 
-  diasSemana: string[] = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-  diasSemanaPendencia: string[] = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-
+  cadastrarPagamentos: any;
+  
+  
 
 
   formi = new FormGroup ({
@@ -69,6 +70,7 @@ export class ConsultaEntregaComponent implements OnInit {
     dataEntregaProximaEntrega:new FormControl(''),
     diaSemanaPendencia: new FormControl(''),
     loja: new FormControl(''),
+    
 
   });
 
@@ -91,6 +93,7 @@ export class ConsultaEntregaComponent implements OnInit {
     dataEntregaProximaEntrega:[''],
     diaSemanaPendencia: [''],
     loja: [''],
+    pagamento:[''],
 
   });
 
@@ -130,25 +133,24 @@ export class ConsultaEntregaComponent implements OnInit {
               this.loadUserName(entrega);
               return entrega;
             });
-            this.entregas.sort((a, b) => b.dataTime - a.dataTime);
+            this.verificarStatusDePagamento();
+            // Ordena por dataEntrega em ordem crescente
+            this.entregas.sort((a, b) => new Date(a.dataEntrega).getTime() - new Date(b.dataEntrega).getTime());
             this.categorizarEntregasPorDia();
-            
+  
             this.buscarPendencias();
-            
+  
             // Requisição para obter dados de impressão
             this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/impressao`)
               .subscribe({
                 next: (impressaoData) => {
-                  // Coleta todos os entregaId presentes na resposta da API de Impressão
                   const impressaoIds = impressaoData.map(i => i.entregaId);
   
-                  // Marca os checkboxes com base na presença do ID na lista de Impressao
                   this.entregas.forEach(entrega => {
                     entrega.confirmado = impressaoIds.includes(entrega.id);
                     entrega.disabled = entrega.confirmado; // Desabilita o checkbox se estiver marcado
                   });
   
-                  // Verifica e exibe pendências
                   this.verificarPendencias();
                 },
                 error: (error) => {
@@ -169,24 +171,23 @@ export class ConsultaEntregaComponent implements OnInit {
               this.loadUserName(entrega);
               return entrega;
             });
-            this.entregas.sort((a, b) => b.dataTime - a.dataTime);
+            this.verificarStatusDePagamento();
+            // Ordena por dataEntrega em ordem crescente
+            this.entregas.sort((a, b) => new Date(a.dataEntrega).getTime() - new Date(b.dataEntrega).getTime());
             this.categorizarEntregasPorDia();
             this.buscarPendencias();
-            
+  
             // Requisição para obter dados de impressão
             this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/impressao`)
               .subscribe({
                 next: (impressaoData) => {
-                  // Coleta todos os entregaId presentes na resposta da API de Impressão
                   const impressaoIds = impressaoData.map(i => i.entregaId);
   
-                  // Marca os checkboxes com base na presença do ID na lista de Impressao
                   this.entregas.forEach(entrega => {
                     entrega.confirmado = impressaoIds.includes(entrega.id);
                     entrega.disabled = entrega.confirmado; // Desabilita o checkbox se estiver marcado
                   });
   
-                  // Verifica e exibe pendências
                   this.verificarPendencias();
                 },
                 error: (error) => {
@@ -240,6 +241,107 @@ export class ConsultaEntregaComponent implements OnInit {
   }
 
 
+  verificarStatusDePagamento(): void {
+    this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/pagamento`)
+      .subscribe({
+        next: (pagamentosData) => {
+          // Itera sobre as entregas e verifica se o pagamento já foi confirmado
+          this.entregas.forEach(entrega => {
+            const pagamento = pagamentosData.find(p => p.entregaId === entrega.id);
+  
+            if (pagamento) {
+              entrega.pagamento = pagamento.statusDePagamento;  // Atualiza o status de pagamento
+              entrega.pagamentoConfirmado = true;  // Marca como confirmado
+  
+              // Carrega o nome do usuário associado ao pagamento
+              this.httpClient.get<any>(`${this.userApiUrl}?matricula=${pagamento.usuarioId}`)
+                .subscribe({
+                  next: (userData) => {
+                    entrega.nomeUsuarioPagamento = userData.nome; // Atualiza o nome do usuário associado ao pagamento
+                  },
+                  error: (error) => {
+                    console.error('Erro ao carregar o nome do usuário:', error);
+                  }
+                });
+            }
+          });
+        },
+        error: (error) => {
+          console.error('Erro ao verificar status de pagamento:', error);
+        }
+      });
+  }
+  
+ 
+  abrirFormularioCredenciais(entrega: any): void {
+    this.cadastrarPagamentos = entrega;
+    this.currentForm = 'pagamento';  // Atualiza o estado para exibir o formulário
+  }
+
+  fecharFormularioCredenciais(): void {
+    this.cadastrarPagamentos = null;
+    this.matricula = '';
+    this.senha = '';
+    this.currentForm = null;  // Fecha o formulário
+  }
+
+  onPagamentoChange(entrega: any) {
+    if (entrega.pagamento !== entrega.pagamentoAtual) {
+      entrega.pagamentoAtual = entrega.pagamento;
+      this.cadastrarPagamentos = entrega;
+      this.abrirFormularioCredenciais(entrega);
+    }
+  }
+
+  salvarPagamento(): void {
+    if (this.cadastrarPagamentos && this.matricula && this.senha) {
+      const entregaId = this.cadastrarPagamentos.id;
+      
+      if (!entregaId) {
+        console.error('Erro: ID da entrega não encontrado.');
+        alert('Erro ao processar o pagamento: ID da entrega não encontrado.');
+        return;
+      }
+  
+      const params = { matricula: this.matricula, senha: this.senha, id: entregaId };
+  
+      const body = {
+        statusDePagamento: this.cadastrarPagamentos.pagamento
+      };
+  
+      this.spinner.show();
+      console.log('Dados enviados:', params);
+      console.log('Corpo da requisição:', body);
+  
+      this.httpClient.post(`${environment.entregatitulo}/entrega/pagamento`, body, { params })
+        .subscribe({
+          next: (response) => {
+            console.log('Resposta do servidor:', response);
+            this.mensagem = 'Pagamento salvo com sucesso!';
+  
+            // Atualiza o estado da entrega para impedir futuras alterações
+            this.cadastrarPagamentos.pagamentoConfirmado = true;
+            
+            this.fecharFormularioCredenciais();
+            this.spinner.hide();
+          },
+          error: (error) => {
+            console.error('Erro ao concluir pagamento:', error);
+            let errorMessage = 'Erro desconhecido';
+            if (error.error && error.error.message) {
+              errorMessage = error.error.message;
+            }
+            alert(`Erro ao concluir pagamento: ${errorMessage}`);
+            this.spinner.hide();
+          }
+        });
+    } else {
+      alert('Preencha todos os campos de credenciais.');
+    }
+  }
+
+
+
   startEditing(id: string) {
     this.entregaEditando = this.entregas.find(e => e.id === id);
   }
@@ -261,6 +363,9 @@ export class ConsultaEntregaComponent implements OnInit {
       }
     }
   }
+
+ 
+
 
   validarUsuario(matricula: string, senha: string): Promise<boolean> {
     console.log('Iniciando validação de usuário...');
@@ -324,6 +429,8 @@ export class ConsultaEntregaComponent implements OnInit {
       console.error('Erro ao salvar motorista: dados de motorista ausentes');
     }
   }
+
+  
 
   fecharFormularioCredenciaisMotorista(): void {
     this.entregaEditando = null;
@@ -764,6 +871,8 @@ onDateChange(event: any): void {
     this.baixaEntrega = null;
     this.pendenciaEntrega = null;
   }
+
+
 
  isNotaPendente(numeroNota: string, pendencias: any[]): boolean {
   return pendencias.some(pendente => pendente.numeroNota === numeroNota);

@@ -210,9 +210,9 @@ export class CadastraEntregaComponent implements OnInit {
     
     // Define o tipo de índice para o mapeamento de lojas
     const mapeamentoLojas: { [key: string]: string } = {
-      '3C01': 'JC - 01', '3c01': 'JC - 01',
-      '3c02': 'JC - 02',
-      '3c03': 'VA - 01',  'VA': 'VA - 01',
+      'JCO1': 'JC1',
+      'JCO2': 'JC2',
+      'VA': 'VA',
       // Adicione outros códigos e nomes aqui, se necessário
     };
     

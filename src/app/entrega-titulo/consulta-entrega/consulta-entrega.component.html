@@ -1,4 +1,4 @@
-<div class="container mt-3">
+<div class="container mt-3" style="padding: 0; margin: 0;">
 
 
   <nav class="navbar navbar-expand-lg navbar-dark"
@@ -6,7 +6,7 @@
 
 
 
-    <div class="container">
+    <div class="container-fluid" >
 
 
       <a class="navbar-brand" href="consulta-produtos">
@@ -61,7 +61,7 @@
 
 
 
-  <div class="container">
+  <div class="container" style="padding: 0; margin: 0;">
 
 
 
@@ -133,81 +133,94 @@
       </h1>
       <div *ngIf="data.exibir" class="table-responsive">
         <hr>
+        <!-- Remover o cabeçalho da "Fila de entrega" -->
         <div>
-          <h4 class="section-header text-center" style="cursor: pointer;" (click)="toggleSection(data, 'filaEntrega')">
-            <strong>Fila de entrega: {{ data.entregas.length || 0 }}</strong>
-          </h4>
-          <div *ngIf="data.filaEntrega">
-            <div *ngFor="let periodo of ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
-              <hr>
-              <h5><strong>{{ periodo }}</strong></h5>
-              <table class="table" *ngIf="getEntregasPorPeriodo(data.entregas, periodo).length > 0">
-                <thead>
+          <div *ngFor="let periodo of ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
+            <hr>
+            <h5><strong>{{ periodo }}</strong></h5>
+            <table class="table" *ngIf="getEntregasPorPeriodo(data.entregas, periodo).length > 0">
+              <thead>
+                <tr>
+                  <th>✓</th>
+                  <th>Nota</th>
+                  <th>Loja</th>
+                  <th>Pagamento</th>
+                  <th>Usuario</th>
+                  <th style="width: 8%;">N° Nota</th>
+                  <th>Cliente</th>
+                  <th>Valor</th>
+                  <th>Vendedor</th>
+                  <th>Observação</th>
+                  <th>Motorista</th>
+                  <th>Operação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let entrega of getEntregasPorPeriodo(data.entregas, periodo)">
                   <tr>
-                    <th>✓</th>
-                    <th>Nota</th>
-                    <th>Loja</th>
-                    <th>Usuario</th>
-                    <th style="width: 8%;">N° Nota</th>
-                    <th>Cliente</th>
-                    <th>Valor</th>
-                    <th>Vendedor</th>
-                    <th>Observação</th>
-                    <th>Motorista</th>
-                    <th style="width: 10%;">Data de entrega</th>
-                    <th>Operação</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <ng-container *ngFor="let entrega of getEntregasPorPeriodo(data.entregas, periodo)">
-                    <tr>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
-                        <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
-                          (click)="abrirFormularioImpressao(entrega)">
-                      </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
-                        <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
-                          style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
-                      </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{entrega.loja}}
-                      </td>
-                      <td style="white-space: nowrap;"
-                        [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.nome }}
-                      </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                        entrega.numeroNota }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                        entrega.nomeCliente }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.valor
-                        }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                        entrega.vendedor }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                        entrega.observacao }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
-                        <div *ngIf="!isEditingFor(entrega.id) && entrega.motorista; else selecionarMotoristaPendencia;">
-                          <span (click)="startEditing(entrega.id)">{{ entrega.motorista | uppercase }}</span>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+                      <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
+                        (click)="abrirFormularioImpressao(entrega)">
+                    </td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+                      <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
+                        style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
+                    </td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{entrega.loja}}
+                    </td>
+                    <td>
+                      <!-- Exibir o select enquanto o pagamento não estiver confirmado -->
+                      <ng-container *ngIf="!entrega.pagamentoConfirmado; else pagamentoConfirmado">
+                        <select 
+                          [(ngModel)]="entrega.pagamento" 
+                          (change)="onPagamentoChange(entrega)">
+                          <option *ngFor="let pagamento of pagamentos" [ngValue]="pagamento">{{ pagamento }}</option>
+                        </select>
+                      </ng-container>
+                    
+                      <!-- Exibir o texto do método de pagamento após a confirmação -->
+                      <ng-template #pagamentoConfirmado>
+                        <div>
+                          <span><strong> {{ entrega.pagamento }}</strong></span>
+                          <br>
+                          <span><strong>{{ entrega.nomeUsuarioPagamento || 'Nome não disponível' }}</strong></span> 
                         </div>
-                        <ng-template #selecionarMotoristaPendencia>
-                          <select [(ngModel)]="entrega.motorista" (change)="onMotoristaChange(entrega)">
-                            <option *ngFor="let motorista of motoristas" [ngValue]="motorista">{{ motorista }}</option>
-                          </select>
-                        </ng-template>
-                      </td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                        entrega.dataEntrega | date: 'dd/MM/yyyy' }}</td>
-                      <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
-                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
-                          [attr.data-bs-target]="'#opcoes' + entrega.id">+</button>
-                      </td>
-                    </tr>
-                  </ng-container>
-                </tbody>
-              </table>
-            </div>
+                      </ng-template>
+                    </td>
+                    <td style="white-space: nowrap;"
+                      [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.nome }}
+                    </td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
+                      entrega.numeroNota }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
+                      entrega.nomeCliente }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.valor }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
+                      entrega.vendedor }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
+                      entrega.observacao }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+                      <div *ngIf="!isEditingFor(entrega.id) && entrega.motorista; else selecionarMotoristaPendencia;">
+                        <span (click)="startEditing(entrega.id)">{{ entrega.motorista | uppercase }}</span>
+                      </div>
+                      <ng-template #selecionarMotoristaPendencia>
+                        <select [(ngModel)]="entrega.motorista" (change)="onMotoristaChange(entrega)">
+                          <option *ngFor="let motorista of motoristas" [ngValue]="motorista">{{ motorista }}</option>
+                        </select>
+                      </ng-template>
+                    </td>
+                   
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+                      <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#opcoes' + entrega.id">+</button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
           </div>
         </div>
-    
+      
         <!-- Exibição da imagem ampliada dentro do dia -->
         <div class="imagem-ampliada" *ngIf="data.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
           <button class="btn-close" (click)="fecharImagemAmpliada(data)">&times;</button>
@@ -218,11 +231,21 @@
         </div>
       </div>
     </div>
+    <div *ngIf="currentForm === 'pagamento'" class="formulario-credenciais text-center">
+      <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+      <h4>Confirme o pagamento</h4>
+      <div class="mb-3">
+        <label for="matriculaInput" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula" [(ngModel)]="matricula">
+      </div>
+      <div class="mb-3">
+        <label for="senhaInput" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+      </div>
+      <button class="btn btn-outline-light" (click)="salvarPagamento()" style="font-weight: bold;">Confirmar</button>
+    </div>
 
-
-
-
-
+  
     <div *ngFor="let entrega of entregas">
     <div class="modal fade" [attr.id]="'opcoes' + entrega.id" tabindex="-1" aria-labelledby="exampleModalLabel"
       aria-hidden="true">
