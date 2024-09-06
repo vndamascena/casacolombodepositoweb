@@ -206,6 +206,7 @@ export class ConsultaProdutosComponent implements OnInit {
     if (this.expression.trim() === '') {
       // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
       this.originalProdutos = [...this.produtos];
+      window.location.reload();
     } else {
       // Filtra os produtos com base na expressão de pesquisa na lista original
       this.produtos = this.originalProdutos.filter(p =>

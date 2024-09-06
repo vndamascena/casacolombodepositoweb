@@ -6,7 +6,7 @@
 
 
 
-    <div class="container-fluid" >
+    <div class="container-fluid">
 
 
       <a class="navbar-brand" href="consulta-produtos">
@@ -18,7 +18,11 @@
 
         <h2 class="text-center titulo"><strong>CONSULTA ENTREGAS</strong></h2>
 
-        <h4 class="text-center titulo ">Clique no dia desejado para consulta.</h4>
+        <!--<div class="input-group mb-3 barra-pesquisa">
+          <input type="text" class="form-control lupa" placeholder="Digite para pesquisar a entrega"
+            aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarEntregas()">
+          <div class="overlay" (click)="filtrarEntregas()"></div>
+        </div>-->
       </div>
 
 
@@ -92,11 +96,12 @@
               </tr>
             </thead>
             <tbody>
-              <ng-container *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 10, currentPage: p }">
+              <ng-container
+                *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 10, currentPage: p }">
                 <tr>
                   <td>
-                    <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" 
-                    class="img-fluid" style="width: 30px;" >
+                    <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
+                      style="width: 30px;" (click)="expandirImagem(pendente.imagemUrl)">
                   </td>
                   <td>{{pendente.loja}}</td>
                   <td>{{ pendente.nome }}</td>
@@ -123,19 +128,31 @@
           </table>
         </div>
       </div>
+      <!-- Exibição da imagem ampliada dentro do dia ou pendente -->
+      <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+        <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+        <div class="imagem-container">
+          <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
+            (contextmenu)="exibirMenuImpressao($event)" />
+        </div>
+      </div>
+
     </div>
-    
+
 
 
     <div class="card mb-3" *ngFor="let data of datas">
+
       <h1 (click)="toggleTable(data)" class="section-header text-center" style="cursor: pointer;">
-        <strong>  {{ data.nome }}: {{ data.entregas.length }} </strong>
+        <strong> {{ data.nome }}: {{ data.entregas.length }} </strong>
+
       </h1>
       <div *ngIf="data.exibir" class="table-responsive">
         <hr>
         <!-- Remover o cabeçalho da "Fila de entrega" -->
         <div>
           <div *ngFor="let periodo of ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado']" style="color: white;">
+
             <hr>
             <h5><strong>{{ periodo }}</strong></h5>
             <table class="table" *ngIf="getEntregasPorPeriodo(data.entregas, periodo).length > 0">
@@ -144,73 +161,80 @@
                   <th>✓</th>
                   <th>Nota</th>
                   <th>Loja</th>
-                  <th>Pagamento</th>
-                  <th>Usuario</th>
-                  <th style="width: 8%;">N° Nota</th>
-                  <th>Cliente</th>
-                  <th>Valor</th>
+                  <th style="width: 4%;">Pagamento</th>
+                  <!--<th>Usuario</th>-->
+                  <th style="width: 6%;">N° Nota</th>
+                  <th style="width: 24%;">Cliente</th>
+                  <th style="width: 6%;">Valor</th>
                   <th>Vendedor</th>
-                  <th>Observação</th>
+                  <th style="width: 34%;">Observação</th>
                   <th>Motorista</th>
-                  <th>Operação</th>
+                  <th>Op </th>
                 </tr>
               </thead>
               <tbody>
-                <ng-container *ngFor="let entrega of getEntregasPorPeriodo(data.entregas, periodo)">
+                <ng-container *ngFor="let entrega of getEntregasPorPeriodo(data.entregas, periodo) ;let i = index">
                   <tr>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">
                       <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
                         (click)="abrirFormularioImpressao(entrega)">
                     </td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">
                       <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
                         style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
                     </td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{entrega.loja}}
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">{{entrega.loja}}
                     </td>
-                    <td>
+                    <td td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">
                       <!-- Exibir o select enquanto o pagamento não estiver confirmado -->
                       <ng-container *ngIf="!entrega.pagamentoConfirmado; else pagamentoConfirmado">
-                        <select 
-                          [(ngModel)]="entrega.pagamento" 
-                          (change)="onPagamentoChange(entrega)">
+                        <select [(ngModel)]="entrega.pagamento" (change)="onPagamentoChange(entrega)">
                           <option *ngFor="let pagamento of pagamentos" [ngValue]="pagamento">{{ pagamento }}</option>
                         </select>
                       </ng-container>
-                    
+
                       <!-- Exibir o texto do método de pagamento após a confirmação -->
                       <ng-template #pagamentoConfirmado>
                         <div>
                           <span><strong> {{ entrega.pagamento }}</strong></span>
                           <br>
-                          <span><strong>{{ entrega.nomeUsuarioPagamento || 'Nome não disponível' }}</strong></span> 
+                          <span><strong>{{ entrega.nomeUsuarioPagamento || 'Nome não disponível' }}</strong></span>
                         </div>
                       </ng-template>
                     </td>
-                    <td style="white-space: nowrap;"
-                      [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.nome }}
-                    </td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                      entrega.numeroNota }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                      entrega.nomeCliente }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{ entrega.valor }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                      entrega.vendedor }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">{{
-                      entrega.observacao }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+                    <!--<td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}
+                      " [ngStyle]="{'background-color': getColor(i)}">{{ entrega.nome| uppercase }}
+                    </td>-->
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">{{ entrega.numeroNota }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">{{entrega.nomeCliente | uppercase }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">{{ entrega.valor}}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">{{ entrega.vendedor }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">{{entrega.observacao }}</td>
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">
                       <div *ngIf="!isEditingFor(entrega.id) && entrega.motorista; else selecionarMotoristaPendencia;">
-                        <span (click)="startEditing(entrega.id)">{{ entrega.motorista | uppercase }}</span>
+                        <span (click)="startEditing(entrega.id)">{{ entrega.motorista }}</span>
                       </div>
                       <ng-template #selecionarMotoristaPendencia>
-                        <select [(ngModel)]="entrega.motorista" (change)="onMotoristaChange(entrega)">
+                        <select [(ngModel)]="entrega.motorista" (change)="onMotoristaChange(entrega)"
+                          [ngStyle]="{'background-color': getColor(i)}">
                           <option *ngFor="let motorista of motoristas" [ngValue]="motorista">{{ motorista }}</option>
                         </select>
                       </ng-template>
                     </td>
-                   
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}">
+
+                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
+                      [ngStyle]="{'background-color': getColor(i)}">
                       <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
                         [attr.data-bs-target]="'#opcoes' + entrega.id">+</button>
                     </td>
@@ -220,7 +244,7 @@
             </table>
           </div>
         </div>
-      
+
         <!-- Exibição da imagem ampliada dentro do dia -->
         <div class="imagem-ampliada" *ngIf="data.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
           <button class="btn-close" (click)="fecharImagemAmpliada(data)">&times;</button>
@@ -236,7 +260,8 @@
       <h4>Confirme o pagamento</h4>
       <div class="mb-3">
         <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula" [(ngModel)]="matricula">
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+          [(ngModel)]="matricula">
       </div>
       <div class="mb-3">
         <label for="senhaInput" class="form-label">Senha</label>
@@ -245,195 +270,195 @@
       <button class="btn btn-outline-light" (click)="salvarPagamento()" style="font-weight: bold;">Confirmar</button>
     </div>
 
-  
+
     <div *ngFor="let entrega of entregas">
-    <div class="modal fade" [attr.id]="'opcoes' + entrega.id" tabindex="-1" aria-labelledby="exampleModalLabel"
-      aria-hidden="true">
+      <div class="modal fade" [attr.id]="'opcoes' + entrega.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+                Entrega do dia {{ entrega.dataEntrega | date: 'dd/MM/yyyy' }}
+              </h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Verifique os dados e escolha uma ação</p>
+              <hr />
+              <div class="row">
+                <div class="col-md-4">N° Nota:</div>
+                <div class="col-md-7">{{entrega.numeroNota}}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">Loja:</div>
+                <div class="col-md-7">{{entrega.loja}}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">Cliente:</div>
+                <div class="col-md-7">{{entrega.nomeCliente}}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">Valor:</div>
+                <div class="col-md-7">{{entrega.valor}}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">Vendedor:</div>
+                <div class="col-md-7">{{entrega.vendedor}}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">Motorista:</div>
+                <div class="col-md-7">{{entrega.motorista}}</div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">Data da entrega:</div>
+                <div class="col-md-7">{{entrega.dataEntrega}}</div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-success" (click)="abrirFormularioBaixaEntrega(entrega)"
+                data-bs-dismiss="modal">Concluir</button>
+              <button type="button" class="btn btn-warning" (click)="abrirFormularioPendencia(entrega)"
+                data-bs-dismiss="modal">Pendente</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+      <p style="color: white"> Aguarde... </p>
+    </ngx-spinner>
+
+    <div *ngIf="currentForm === 'impressao'" class="formulario-credenciais text-center">
+      <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+      <h4>Confirme impressão</h4>
+      <div class="mb-3">
+        <label for="matriculaInput" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+          [(ngModel)]="matricula">
+      </div>
+      <div class="mb-3">
+        <label for="senhaInput" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+      </div>
+      <button class="btn btn-outline-light" (click)="Impressao(ent)" style="font-weight: bold;">Confirmar</button>
+    </div>
+
+
+    <div *ngIf="entregaEditando && entregaEditando === entregaEditando" class="formulario-credenciais text-center">
+      <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciaisMotorista()">&times;</button>
+
+      <h4>Confirme a troca de motorista</h4>
+      <div class="mb-3">
+        <label for="matriculaInput" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+          [(ngModel)]="matricula">
+      </div>
+      <div class="mb-3">
+        <label for="senhaInput" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+      </div>
+
+      <button class="btn btn-outline-light" (click)="salvarCredenciais()" style="font-weight: bold;">Confirmar</button>
+    </div>
+
+    <div *ngIf="currentForm === 'baixaEntrega'" class="formulario-credenciais text-center">
+      <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+      <h4>Confirmar a entrega</h4>
+      <div class="mb-3">
+        <label for="matriculaInputBaixaEntrega" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInputBaixaEntrega" placeholder="Digite sua matrícula"
+          [(ngModel)]="matricula">
+      </div>
+      <div class="mb-3">
+        <label for="senhaInputBaixaEntrega" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInputBaixaEntrega" placeholder="Digite sua senha"
+          [(ngModel)]="senha">
+      </div>
+      <button class="btn btn-outline-light" (click)="concluirEntrega(baixaEntrega)" style="font-weight: bold;"
+        data-bs-toggle="modal" data-bs-target="#uploadImagem">Confirmar</button>
+    </div>
+
+    <div *ngIf="currentForm === 'pendencia'" class="formulario-credenciais-pendencia text-center">
+      <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+      <h4>Confirme a pendência</h4>
+      <div class="mb-3">
+        <label for="matriculaInputPendencia" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInputPendencia" placeholder="Digite sua matrícula"
+          [(ngModel)]="matricula">
+      </div>
+      <div class="mb-3">
+        <label for="senhaInputPendencia" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInputPendencia" placeholder="Digite sua senha"
+          [(ngModel)]="senha">
+      </div>
+
+      <form [formGroup]="formi">
+        <div>
+          <div class="row">
+            <label><strong>Observação</strong></label>
+            <textarea class="box-area" placeholder="Digite aqui" formControlName="observacaoPendencia"></textarea>
+          </div>
+          <div class="row">
+            <label><strong>Data</strong></label>
+            <input type="date" class="form-control" formControlName="dataEntregaProximaEntrega"
+              (change)="onDateChange($event)" />
+
+          </div>
+
+          <div class="row">
+            <label><strong>Dia da Semana</strong></label>
+            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="diaSemanaPendencia"
+              readonly />
+
+          </div>
+
+        </div>
+
+      </form>
+      <br>
+
+      <button class="btn btn-outline-light" (click)="onPendente(pendenciaEntrega)"
+        style="font-weight: bold;">Confirmar</button>
+    </div>
+
+
+    <!-- Se você estiver usando modais, ajuste os IDs dos inputs de acordo -->
+    <div class="modal fade" id="uploadImagem" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
-              Entrega do dia {{ entrega.dataEntrega | date: 'dd/MM/yyyy' }}
+              Insira a imagem da nota
             </h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
-            <p>Verifique os dados e escolha uma ação</p>
-            <hr />
-            <div class="row">
-              <div class="col-md-4">N° Nota:</div>
-              <div class="col-md-7">{{entrega.numeroNota}}</div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">Loja:</div>
-              <div class="col-md-7">{{entrega.loja}}</div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">Cliente:</div>
-              <div class="col-md-7">{{entrega.nomeCliente}}</div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">Valor:</div>
-              <div class="col-md-7">{{entrega.valor}}</div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">Vendedor:</div>
-              <div class="col-md-7">{{entrega.vendedor}}</div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">Motorista:</div>
-              <div class="col-md-7">{{entrega.motorista}}</div>
-            </div>
-            <div class="row">
-              <div class="col-md-4">Data da entrega:</div>
-              <div class="col-md-7">{{entrega.dataEntrega}}</div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="button" class="btn btn-success" (click)="abrirFormularioBaixaEntrega(entrega)"
-              data-bs-dismiss="modal">Concluir</button>
-            <button type="button" class="btn btn-warning" (click)="abrirFormularioPendencia(entrega)"
-              data-bs-dismiss="modal">Pendente</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
-    <p style="color: white"> Aguarde... </p>
-  </ngx-spinner>
-
-  <div *ngIf="currentForm === 'impressao'" class="formulario-credenciais text-center">
-    <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
-    <h4>Confirme impressão</h4>
-    <div class="mb-3">
-      <label for="matriculaInput" class="form-label">Matrícula</label>
-      <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-        [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-      <label for="senhaInput" class="form-label">Senha</label>
-      <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <button class="btn btn-outline-light" (click)="Impressao(ent)" style="font-weight: bold;">Confirmar</button>
-  </div>
-
-
-  <div *ngIf="entregaEditando && entregaEditando === entregaEditando" class="formulario-credenciais text-center">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciaisMotorista()">&times;</button>
-
-    <h4>Confirme a troca de motorista</h4>
-    <div class="mb-3">
-      <label for="matriculaInput" class="form-label">Matrícula</label>
-      <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-        [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-      <label for="senhaInput" class="form-label">Senha</label>
-      <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-
-    <button class="btn btn-outline-light" (click)="salvarCredenciais()" style="font-weight: bold;">Confirmar</button>
-  </div>
-
-  <div *ngIf="currentForm === 'baixaEntrega'" class="formulario-credenciais text-center">
-    <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
-    <h4>Confirmar a entrega</h4>
-    <div class="mb-3">
-      <label for="matriculaInputBaixaEntrega" class="form-label">Matrícula</label>
-      <input type="text" class="form-control" id="matriculaInputBaixaEntrega" placeholder="Digite sua matrícula"
-        [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-      <label for="senhaInputBaixaEntrega" class="form-label">Senha</label>
-      <input type="password" class="form-control" id="senhaInputBaixaEntrega" placeholder="Digite sua senha"
-        [(ngModel)]="senha">
-    </div>
-    <button class="btn btn-outline-light" (click)="concluirEntrega(baixaEntrega)" style="font-weight: bold;"
-      data-bs-toggle="modal" data-bs-target="#uploadImagem">Confirmar</button>
-  </div>
-
-  <div *ngIf="currentForm === 'pendencia'" class="formulario-credenciais-pendencia text-center">
-    <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
-    <h4>Confirme a pendência</h4>
-    <div class="mb-3">
-      <label for="matriculaInputPendencia" class="form-label">Matrícula</label>
-      <input type="text" class="form-control" id="matriculaInputPendencia" placeholder="Digite sua matrícula"
-        [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-      <label for="senhaInputPendencia" class="form-label">Senha</label>
-      <input type="password" class="form-control" id="senhaInputPendencia" placeholder="Digite sua senha"
-        [(ngModel)]="senha">
-    </div>
-
-    <form [formGroup]="formi">
-      <div>
-        <div class="row">
-          <label><strong>Observação</strong></label>
-          <textarea class="box-area" placeholder="Digite aqui" formControlName="observacaoPendencia"></textarea>
-        </div>
-        <div class="row">
-          <label><strong>Data</strong></label>
-          <input type="date" class="form-control" formControlName="dataEntregaProximaEntrega"
-            (change)="onDateChange($event)" />
-
-        </div>
-
-        <div class="row">
-          <label><strong>Dia da Semana</strong></label>
-          <input type="text" class="form-control" placeholder="Digite aqui" formControlName="diaSemanaPendencia"
-            readonly />
-
-        </div>
-
-      </div>
-
-    </form>
-    <br>
-
-    <button class="btn btn-outline-light" (click)="onPendente(pendenciaEntrega)"
-      style="font-weight: bold;">Confirmar</button>
-  </div>
-
-
-  <!-- Se você estiver usando modais, ajuste os IDs dos inputs de acordo -->
-  <div class="modal fade" id="uploadImagem" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
-            Insira a imagem da nota
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body" *ngIf="entrega">
-          <form [formGroup]="form">
-            <div class="container">
-              <div class="row justify-content-center">
-                <div class="col-md-8">
-                  <!-- Atualize o ID do input para ser único -->
-                  <div class="col-md-12">
-                    <label><strong>Upload de Imagem</strong></label>
-                    <input type="file" class="form-control" id="fileInputModal" (change)="onFileSelected($event)" />
+          <div class="modal-body" *ngIf="entrega">
+            <form [formGroup]="form">
+              <div class="container">
+                <div class="row justify-content-center">
+                  <div class="col-md-8">
+                    <!-- Atualize o ID do input para ser único -->
+                    <div class="col-md-12">
+                      <label><strong>Upload de Imagem</strong></label>
+                      <input type="file" class="form-control" id="fileInputModal" (change)="onFileSelected($event)" />
+                    </div>
+                    <hr>
                   </div>
-                  <hr>
                 </div>
               </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancelar
-          </button>
-          <button type="button" class="btn btn-success" (click)="uploadImagem()">
-            Confirmar
-          </button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancelar
+            </button>
+            <button type="button" class="btn btn-success" (click)="uploadImagem()">
+              Confirmar
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>

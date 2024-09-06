@@ -34,13 +34,18 @@
   border-radius: 30px;
   padding: 4px;
   color: #036822;
+  
 }
+
 
 .card {
   background-color: #036822;
   border-radius: 45px;
-  padding: 10px;
-  box-shadow: 0 4px 8px rgba(38, 242, 55, 0.2);
+  padding: 8px;
+  box-shadow: 0 38px 58px rgba(38, 242, 55, 0.2);
+  width: 110%;
+  margin-left: -58px;
+  margin-right: auto;
 }
 
 h1,
@@ -53,51 +58,63 @@ h4 {
   width: 100%;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #343a40;
-  color: white;
-}
-
-
-
-tfoot {
-  background-color: #085db3;
-  color: white;
-}
-
-th,
-td {
-  vertical-align: middle;
-}
-
 .text-red {
   color: red;/* Cor do texto */
   background-color: #ffe6e6; /* Cor de fundo vermelha clara */
 }
 
-.table th {
-  padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
-  border: 3px solid #ccc; /* Ajuste a espessura da borda das células conforme necessário */
-  background-color: #00ff3c59;
-  color: #fff;
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+
+.table th,
+.table td {
+  border: 1px solid #dddddd;
+  padding: 8px;
+  /* Impede a quebra de linha no texto */
+  width: 150px;
+  /* Define uma largura fixa para todas as células */
   text-align: center;
-  white-space: nowrap;
+}
+
+
+
+td {
+  vertical-align: middle;
+}
+
+.table {
+  /*width: 1295px; /* Ajuste a largura da tabela conforme necessário */
+  border: 1px solid #99e358;
+  /* Ajuste a espessura da borda conforme necessário */
+
+}
+
+.table th {
+  padding: 1px;
+  /* Ajuste o preenchimento das células conforme necessário */
+  border: 3px solid #ccc;
+  /* Ajuste a espessura da borda das células conforme necessário */
+  background-color: #03682b;
+  color: #fff;
+
 }
 
 .table td {
-  padding: 0px;
+  padding: 1px;
+  /* Ajuste o preenchimento das células conforme necessário */
   border: 1px solid #cccccc;
-  text-align: center;
+  /* Ajuste a espessura da borda das células conforme necessário */
+
+
 }
 
 .inner-table {
   padding: 4px;
   border: none;
+  /* Remove a borda da tabela interna */
 }
 
 @media (max-width: 768px) {
@@ -329,9 +346,11 @@ td {
 
 }
 
+
 .imagem-ampliada img.zoom-out {
   cursor: zoom-out;
 }
+
 
 .controles-zoom {
   position: absolute;
@@ -370,6 +389,11 @@ td {
   z-index: 9999;
   /* Garante que o botão esteja acima da imagem */
 }
+
+
+
+
+
 
 
 .formulario-credenciais-pendencia {

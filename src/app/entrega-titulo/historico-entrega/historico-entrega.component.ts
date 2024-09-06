@@ -6,6 +6,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-historico-entrega',
@@ -157,7 +158,7 @@ export class HistoricoEntregaComponent implements OnInit {
     }
   }
 
-  // Método para filtrar os produtos com base na expressão de pesquisa
+  
   filtrarEntregas(): void {
     if (this.expression.trim() === '') {
       // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
@@ -230,4 +231,33 @@ export class HistoricoEntregaComponent implements OnInit {
     }
   }
 
+
+  exportarParaExcel() {
+    // Crie uma matriz com todos os dados da tabela, ignorando a paginação
+    const dadosTabela = this.baixaEntregas.map(entrega => ({
+      Nota: entrega.numeroNota,
+      Usuário: entrega.nome,
+      'N° Nota': entrega.numeroNota,
+      Cliente: entrega.nomeCliente,
+      Valor: entrega.valor,
+      Vendedor: entrega.vendedor,
+      Observação: entrega.observacao,
+      Motorista: entrega.motorista,
+      'Data de entrega': new Date(entrega.dataTime).toLocaleDateString('pt-BR')
+    }));
+  
+    // Crie uma nova planilha
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dadosTabela);
+  
+    // Crie um novo arquivo de trabalho
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+  
+    // Adicione a planilha ao arquivo de trabalho
+    XLSX.utils.book_append_sheet(wb, ws, 'Entregas');
+  
+    // Gera o arquivo Excel
+    XLSX.writeFile(wb, 'Entregas.xlsx');
+  }
+
+  
 }

@@ -29,6 +29,7 @@ export class ConsultaEntregaComponent implements OnInit {
   datas: any [] = []
   imagemFile: File | null = null;
   imagemAmpliadaUrl: string | null = null;
+  imagemAmpliadaUrlPendencia:string |null = null;
   zoomLevel: string = 'scale(1)';
   matricula: string = '';
   senha: string = '';
@@ -41,7 +42,7 @@ export class ConsultaEntregaComponent implements OnInit {
     { nome: 'Sexta-feira', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
     { nome: 'Sábado', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
   ];
-  motoristas: string[] = ['JORGE(JOCA)', 'DOUGLAS(TOGURO)', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
+  motoristas: string[] = ['JORGE', 'DOUGLAS', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
   pagamentos: string [] =['PAGO', 'REC NO LOCAL', 'CARTEIRA'];
   isEditing: string | null = null;
   entregaEditando: any = null;
@@ -51,6 +52,11 @@ export class ConsultaEntregaComponent implements OnInit {
   currentForm: 'impressao' | 'motorista' | 'baixaEntrega' | 'pendencia' |'pagamento'| null = null;
   idBaixaEntrega: number | null = null; 
   cadastrarPagamentos: any;
+  originalEntregas: any[] = [];
+  expression: string = '';
+  originalPendencias: any[] = [];
+  
+
   
   
 
@@ -104,10 +110,35 @@ export class ConsultaEntregaComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private formBiulder: FormBuilder,
   ) { }
-  getColor(index: number): string {
-    return index % 2 === 0 ? '#8bc546' : '#ffffff';
+ 
+// Método para filtrar os produtos com base na expressão de pesquisa
+filtrarEntregas(): void {
+  if (this.expression.trim() === '') {
+    // Se a expressão de pesquisa estiver vazia, recarrega todas as entregas para o estado original
+    this.datas.forEach(data => {
+      data.entregas = data.entregas.map((entrega: { id: any; }) => {
+        return this.originalEntregas.find(e => e.id === entrega.id) || entrega;
+      });
+    });
+  } else {
+    // Filtra as entregas com base na expressão de pesquisa na lista original
+    this.datas.forEach(data => {
+      data.entregas = this.originalEntregas.filter(p =>
+        Object.values(p).some(value => {
+          // Verifica se o valor é string ou número
+          if (typeof value === 'string') {
+            return value.toLowerCase().includes(this.expression.toLowerCase());
+          } else if (typeof value === 'number') {
+            // Converte o número para string e verifica se contém a expressão de pesquisa
+            return value.toString().includes(this.expression);
+          }
+          return false;
+        })
+        
+      );
+    });
   }
-
+}
 
   getAllPendencias() {
     return this.dias.reduce((acc, dia) => acc.concat(dia.pendencias), []);
@@ -131,6 +162,8 @@ export class ConsultaEntregaComponent implements OnInit {
             this.entregas = ocorrenciasData.map(entrega => {
               entrega.dataTime = this.convertToBrazilTime(new Date(entrega.dataTime));
               this.loadUserName(entrega);
+              this.originalEntregas = [...this.entregas];
+
               return entrega;
             });
             this.verificarStatusDePagamento();
@@ -176,7 +209,8 @@ export class ConsultaEntregaComponent implements OnInit {
             this.entregas.sort((a, b) => new Date(a.dataEntrega).getTime() - new Date(b.dataEntrega).getTime());
             this.categorizarEntregasPorDia();
             this.buscarPendencias();
-  
+            this.originalEntregas = [...this.entregas];
+
             // Requisição para obter dados de impressão
             this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/impressao`)
               .subscribe({
@@ -205,7 +239,9 @@ export class ConsultaEntregaComponent implements OnInit {
   
 
 
-
+  getColor(index: number): string {
+    return index % 2 === 0 ? '#b6e18f' : '#ffffff';
+  }
  
 
   formatarData(dataString: string): string {
@@ -557,21 +593,24 @@ export class ConsultaEntregaComponent implements OnInit {
     return `${environment.entregatitulo}/entrega${imagemUrl}`;
   }
 
-  expandirImagem(imagemUrl: string, dia: any): void {
-    dia.imagemAmpliadaUrl = `${environment.entregatitulo}/entrega${imagemUrl}`;
+  expandirImagem(imagemUrl: string, dia: any = null): void {
+    const target = dia || this; // Verifica se é dia de entrega ou pendente
+    target.imagemAmpliadaUrl = this.getFullImageUrl(imagemUrl);
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
       imagemAmpliada.classList.add('mostrar');
     }
   }
   
-  fecharImagemAmpliada(dia: any): void {
-    dia.imagemAmpliadaUrl = null;
+  fecharImagemAmpliada(dia: any = null): void {
+    const target = dia || this;
+    target.imagemAmpliadaUrl = null;
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
       imagemAmpliada.classList.remove('mostrar');
     }
   }
+  
 
   exibirMenuImpressao(event: MouseEvent): void {
     event.preventDefault(); // Evita o menu de contexto padrão

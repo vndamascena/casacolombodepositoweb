@@ -24,6 +24,9 @@ export class HistoricoVendasComponent implements OnInit {
   p: number = 1;
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
   originalVendas: any[] = [];
+  originalCombinedData: any[] = [];
+  lotes: any[] = [];
+  combinedData: any[] = []; 
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -31,42 +34,67 @@ export class HistoricoVendasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
-    
     const currentDate = new Date();
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-    
-
-    
 
     this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`)
       .subscribe({
         next: (vendasData) => {
           this.vendas = vendasData.map(venda => {
-            venda.dataVenda = this.convertToBrazilTime(new Date(venda.dataVenda));
+            venda.dataVenda = new Date(venda.dataVenda); // Certifique-se de que a data seja convertida para Date
             return venda;
           });
-          
-          this.vendas.sort((a, b) => b.dataVenda - a.dataVenda);
-          this.vendas.forEach(venda => this.loadUserName(venda));
-          this.filterData();
-          this.originalVendas = [...this.vendas];
-          
-         
 
+          this.httpClient.get<any[]>(`${environment.apiUrl}/Produto/lotes`)
+            .subscribe({
+              next: (lotesData) => {
+                // Aplique o filtro antes de mapear os lotes
+                this.lotes = lotesData
+                .filter(lote => {
+                  console.log('Filtrando lote:', lote.codigo, lote.numeroLote); 
+                  return lote.codigo.trim().toLowerCase() !== 'xxx' && lote.numeroLote.trim().toLowerCase() !== 'xxx';
+                })
+                .map(lote => {
+                  lote.dataEntrada = new Date(lote.dataEntrada);
+                  return lote;
+                });
+
+                // Combine os dados de vendas e lotes
+                this.combinedData = [
+                  ...this.vendas.map(venda => ({
+                    ...venda,
+                    data: venda.dataVenda, // Usa dataVenda para a ordenação
+                    tipo: 'dataVenda' // Adiciona um campo para diferenciar
+                  })),
+                  ...this.lotes.map(lote => ({
+                    ...lote,
+                    data: lote.dataEntrada, // Usa dataEntrada para a ordenação
+                    tipo: 'dataEntrada' // Adiciona um campo para diferenciar
+                  }))
+                ];
+
+                // Carrega os nomes dos usuários para todos os itens combinados
+                this.combinedData.forEach(item => this.loadUserName(item));
+                this.originalCombinedData = [...this.combinedData];
+                
+
+                // Ordena os dados combinados por data de forma decrescente (do mais recente para o mais antigo)
+                this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
+              },
+              error: (error) => {
+                console.error('Erro ao carregar os lotes:', error);
+              }
+            });
         },
         error: (error) => {
           console.error('Erro ao carregar o histórico de vendas:', error);
         }
       });
-
   }
 
-  getColor(index: number): string {
-    return index % 2 === 0 ? '#8bc546' : '#ffffff';
-  }
  
+  
 
   convertToBrazilTime(date: Date): Date {
     // Cria um novo objeto Date baseado na data original
@@ -160,23 +188,37 @@ export class HistoricoVendasComponent implements OnInit {
 
   filtrarProdutos(): void {
     if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
-      this.originalVendas = [...this.vendas];
+      // Se a expressão de pesquisa estiver vazia, recarrega todos os dados combinados da lista original
+      this.combinedData = [...this.originalCombinedData];
+      
+      // Ordena os dados combinados por data de forma decrescente (do mais recente para o mais antigo)
+      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
+      
+      window.location.reload();
+      
     } else {
-      // Filtra os produtos com base na expressão de pesquisa na lista original
-      this.vendas= this.originalVendas.filter(p =>
-        Object.values(p).some(value => {
-          // Verifica se o valor é string ou número
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(this.expression.toLowerCase());
-          } else if (typeof value === 'number') {
-            // Converte o número para string e verifica se contém a expressão de pesquisa
-            return value.toString().includes(this.expression);
+      const searchTerm = this.expression.toLowerCase();
+      
+      // Filtrar a tabela com base no termo de pesquisa
+      this.combinedData = this.originalCombinedData.filter(item => {
+        // Itera sobre todos os valores do item (registro da tabela)
+        return Object.keys(item).some(key => {
+          const value = item[key];
+          
+          // Verifica se o valor é válido (não nulo, não indefinido)
+          if (value !== null && value !== undefined) {
+            // Converte o valor para string, independentemente do tipo, e compara com o termo de pesquisa
+            return value.toString().toLowerCase().includes(searchTerm);
           }
+          
           return false;
-        })
-      );
+        });
+      });
+      
+      // Ordena os dados filtrados por data de forma decrescente (do mais recente para o mais antigo)
+      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
     }
   }
+  
 
 }

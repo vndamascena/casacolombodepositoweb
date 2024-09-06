@@ -1,112 +1,97 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
-
-
-
   <div class="container">
-
-
-      <a class="navbar-brand" href="consulta-produtos">
-          <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
-
-      </a>
-      <div class="container">
-        <h1 class="titulo">Pisos e Revestimentos</h1>
-        <div class="input-group mb-3 barra-pesquisa">
-            <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
-                aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
-                (input)="filtrarProdutos()">
-            <div class="overlay" (click)="filtrarProdutos()"></div>
-        </div>
-    </div>
-
-
-      <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav">
-              <li class="nav-item">
-                  <a class="nav-link black-text" routerLink="/consulta-produtos">
-                      <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link black-text" routerLink="/cadastrar-produtos">
-                      <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link black-text" routerLink="/historico-vendas">
-                      <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110" > 
-                  </a>
-              </li>
-
-
-          </ul>
+    <a class="navbar-brand" href="consulta-produtos">
+      <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+    </a>
+    <div class="container">
+      <h1 class="titulo">Pisos e Revestimentos</h1>
+      <div class="input-group mb-3 barra-pesquisa">
+        <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
+               aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
+               (input)="filtrarProdutos()">
+        <div class="overlay" (click)="filtrarProdutos()"></div>
       </div>
-
+    </div>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link black-text" routerLink="/consulta-produtos">
+            <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link black-text" routerLink="/cadastrar-produtos">
+            <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link black-text" routerLink="/historico-vendas">
+            <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
+          </a>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
+
 <div class="line"></div>
 <br>
 
-
-
 <div class="table-responsive">
-
-
-  <div class="container mt-2 ">
-    <h2>Histórico de Vendas</h2>
+  <div class="container mt-2">
+    <h2>Entrada e saída</h2>
     <div class="row mb-2 align-items-end">
       <div class="col-md-2">
         <label for="startDate">Data Inicial:</label>
         <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDate = $event; filterData()">
-    </div>
-    <div class="col-md-2">
+      </div>
+      <div class="col-md-2">
         <label for="endDate">Data Final:</label>
         <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDate = $event; filterData()">
-    </div>
-     
+      </div>
     </div>
   </div>
 
   <table class="table">
     <!-- Cabeçalho da tabela -->
-    <thead  >
+    <thead>
       <tr>
         <th>Usuário</th>
         <th>Nome do Produto</th>
+        <th>Marca</th>
         <th>Código</th>
         <th>Número do Lote</th>
         <th>Quantidade</th>
-        <th>Data da Venda</th>
+        <th>Data</th>
       </tr>
     </thead>
     <!-- Corpo da tabela -->
-    <ng-container *ngFor="let venda of vendas | paginate: { itemsPerPage: 12, currentPage: p }; let i = index">
-      <tr [ngStyle]="{'background-color': getColor(i)}">
-        <td>{{ venda.nome }}</td>
-        <td>{{ venda.nomeProduto }}</td>
-        <td>{{ venda.codigo }}</td>
-        <td>{{ venda.numeroLote }}</td>
-        <td>{{ venda.quantidade }}</td>
-        <td>{{ venda.dataVenda | date:'dd/MM/yyyy - HH:mm' }}</td>
-      </tr>
-    </ng-container>
-    
+    <tbody>
+      <ng-container *ngFor="let item of combinedData | paginate: { itemsPerPage: 12, currentPage: p }" >
+        <tr >
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.nome }}</td>
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.nomeProduto }}</td>
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{item.marca}}</td>
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.codigo }}</td>
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.numeroLote }}</td>
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.quantidade || item.qtdEntrada }}</td>
+          <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.dataVenda ? (item.dataVenda | date:'dd/MM/yyyy') : (item.dataEntrada | date:'dd/MM/yyyy') }}</td>
+        </tr>
+      </ng-container>
+    </tbody>
   </table>
-
 
   <tfoot>
     <tr>
       <td colspan="14">
-       <strong> Quantidade vendas: {{ vendas.length }}</strong>
+        <strong> Quantidade vendas: {{ vendas.length }}</strong>
       </td>
     </tr>
   </tfoot>
 </div>
 
-<div class="col text-center"><strong>
-  <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" 
-  nextLabel="Próximo"></pagination-controls></strong>
-
-
-
+<div class="col text-center">
+  <strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+  </strong>
 </div>
