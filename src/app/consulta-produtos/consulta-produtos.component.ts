@@ -23,7 +23,7 @@ export class ConsultaProdutosComponent implements OnInit {
   loteSelecionado: any;
   matricula: string = ''; // Propriedade para armazenar a matrícula do usuário
   senha: string = ''; // Propriedade para armazenar a senha do usuário
-  produtos: any[] = []; // Array de objetos para armazenar produtos
+  produtosPiso: any[] = []; // Array de objetos para armazenar produtos
   expression: string = ''; // String para armazenar a expressão de pesquisa
   imagemAmpliadaUrl: string | null = null; // URL da imagem ampliada
   produtosFiltrados: any[] = []; // Array para armazenar produtos filtrados
@@ -31,7 +31,7 @@ export class ConsultaProdutosComponent implements OnInit {
   mensagem: string = '';
 
 
-  produto: any = {}; // Objeto para armazenar os detalhes do produto atual
+  produtoPiso: any = {}; // Objeto para armazenar os detalhes do produto atual
   lotes: any[] = []; // Array para armazenar os lotes do produto atual
   p: number = 1;
   originalProdutos: any[] = [];
@@ -50,43 +50,46 @@ export class ConsultaProdutosComponent implements OnInit {
   ngOnInit(): void {
     // Recupera o ID do produto da URL
     const productId = this.route.snapshot.queryParams['id'];
-
+    this.spinner.show();
     // Verifica se o ID do produto está presente na URL
     if (productId) {
-      this.httpClient.get(environment.apiUrl + '/produto/${productId}')
+      this.httpClient.get(environment.apiUrl + '/produtoPiso/${productId}')
 
         .subscribe({
           next: (produtoData) => {
 
-            this.produto = produtoData;
+            this.produtoPiso = produtoData;
 
 
             // Carrega os lotes do produto após obter os dados do produto
-            this.carregarLotes(this.produto);
-            this.originalProdutos = [...this.produtos];
+            this.carregarLotes(this.produtoPiso);
+            this.originalProdutos = [...this.produtosPiso];
 
           },
           error: (error) => {
             console.error('Erro ao carregar o produto:', error);
+            this.spinner.hide();
           }
         });
     } else {
       // Se não houver ID do produto na URL, exibe todos os produtos
-      this.httpClient.get(environment.apiUrl + '/produto')
+      this.httpClient.get(environment.apiUrl + '/produtoPiso')
         .subscribe({
           next: (produtosData) => {
-            this.produtos = produtosData as any[];
-            this.originalProdutos = [...this.produtos];
+            this.produtosPiso = produtosData as any[];
+            this.originalProdutos = [...this.produtosPiso];
+            this.spinner.hide();
 
           },
           error: (error) => {
             console.error('Erro ao carregar os produtos:', error);
+            this.spinner.hide();
           }
         });
     }
   }
   getFullImageUrl(imagemUrl: string): string {
-    return `${environment.apiUrl + '/produto'}${imagemUrl}`;
+    return `${environment.apiUrl + '/produtoPiso'}${imagemUrl}`;
   }
 
   // Método para redirecionar para a página de edição do produto
@@ -97,7 +100,7 @@ export class ConsultaProdutosComponent implements OnInit {
   // Método para expandir a imagem na mesma página
   expandirImagem(imagemUrl: string): void {
 
-    this.imagemAmpliadaUrl = `${environment.apiUrl + '/produto'}${imagemUrl}`;
+    this.imagemAmpliadaUrl = `${environment.apiUrl + '/produtoPiso'}${imagemUrl}`;
 
     // Adiciona uma classe para mostrar a imagem ampliada
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
@@ -166,7 +169,7 @@ export class ConsultaProdutosComponent implements OnInit {
         const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.loteSelecionado.id } };
         this.spinner.show();
 
-        this.httpClient.post<any>(environment.apiUrl + '/produto/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
+        this.httpClient.post<any>(environment.apiUrl + '/produtoPiso/venda', { quantidadeVendida: this.loteSelecionado.quantidadeVendida }, options)
           .subscribe({
             next: (response) => {
               // Atualiza a quantidade do lote no cliente
@@ -205,11 +208,11 @@ export class ConsultaProdutosComponent implements OnInit {
   filtrarProdutos(): void {
     if (this.expression.trim() === '') {
       // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
-      this.originalProdutos = [...this.produtos];
+      this.originalProdutos = [...this.produtosPiso];
       window.location.reload();
     } else {
       // Filtra os produtos com base na expressão de pesquisa na lista original
-      this.produtos = this.originalProdutos.filter(p =>
+      this.produtosPiso = this.originalProdutos.filter(p =>
         Object.values(p).some(value => {
           // Verifica se o valor é string ou número
           if (typeof value === 'string') {
@@ -242,7 +245,7 @@ export class ConsultaProdutosComponent implements OnInit {
       // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
 
     } else {
-      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/${produto.id}/lotes`)
+      this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/${produto.id}/lotes`)
         .subscribe((lotesData) => {
           produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
 

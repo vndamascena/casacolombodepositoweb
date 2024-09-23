@@ -38,7 +38,7 @@ export class HistoricoVendasComponent implements OnInit {
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-    this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`)
+    this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`)
       .subscribe({
         next: (vendasData) => {
           this.vendas = vendasData.map(venda => {
@@ -46,7 +46,7 @@ export class HistoricoVendasComponent implements OnInit {
             return venda;
           });
 
-          this.httpClient.get<any[]>(`${environment.apiUrl}/Produto/lotes`)
+          this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/lotes`)
             .subscribe({
               next: (lotesData) => {
                 // Aplique o filtro antes de mapear os lotes
@@ -137,7 +137,7 @@ export class HistoricoVendasComponent implements OnInit {
      
       end.setDate(end.getDate() + 1);
 
-      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`).subscribe({
+      this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`).subscribe({
         next: (vendasData) => {
           this.vendas = vendasData.map(venda => {
             venda.dataVenda = this.convertToBrazilTime(new Date(venda.dataVenda));
@@ -176,7 +176,7 @@ export class HistoricoVendasComponent implements OnInit {
       // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
 
     } else {
-      this.httpClient.get<any[]>(`${environment.apiUrl}/produto/${produto.id}/lotes`)
+      this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/${produto.id}/lotes`)
         .subscribe((lotesData) => {
           produto.lotes = Array.isArray(lotesData) ? lotesData : []; // Garante que lotesData seja um array
 

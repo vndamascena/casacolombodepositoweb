@@ -243,7 +243,7 @@ export class HistoricoEntregaComponent implements OnInit {
       Vendedor: entrega.vendedor,
       Observação: entrega.observacao,
       Motorista: entrega.motorista,
-      'Data de entrega': new Date(entrega.dataTime).toLocaleDateString('pt-BR')
+      DataEntregaBaixa: entrega.dataEntregaBaixa
     }));
   
     // Crie uma nova planilha

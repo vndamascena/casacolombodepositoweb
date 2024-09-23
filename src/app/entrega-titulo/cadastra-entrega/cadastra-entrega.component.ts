@@ -49,11 +49,38 @@ export class CadastraEntregaComponent implements OnInit {
     diaSemana: new FormControl(''),
     periodo: new FormControl('Horário comercial'),
     dataEntrega: new FormControl(''),
-    loja: new FormControl('')
+    loja: new FormControl(''),
+    dataVenda: new FormControl('')
   });
 
+  atualizarValor(): void {
+    const valorControl = this.form.get('valor');
 
+  if (valorControl) {
+    let valorValue = valorControl.value;
 
+    // Verifica se o valor é uma string
+    if (typeof valorValue === 'string') {
+      // Substitui vírgulas por pontos para enviar o valor corretamente ao backend
+      let valorNumerico = parseFloat(valorValue.replace(',', '.')) || 0;
+
+      if (!isNaN(valorNumerico)) {
+        // Formata o valor para exibição no frontend com vírgula
+        const valorFormatado = valorNumerico.toFixed(2).replace('.', ',');
+        valorControl.setValue(valorFormatado);
+
+        // Se necessário, envie o valor numérico ao backend com ponto como separador decimal
+       
+      } else {
+        valorControl.setValue('0,00');
+      }
+    } else {
+      valorControl.setValue('0,00');
+    }
+  } else {
+    console.error("O controle 'valor' é nulo.");
+  }
+}
 
 
 
@@ -189,6 +216,12 @@ export class CadastraEntregaComponent implements OnInit {
     const docMatch = text.match(/(?:N° DOC:|POC:|DOC:|OC:|oc\.|N DOC:|ie: N° DOC:|i"POC:|Casa Colombo oficial\s*\|,\s*|oc\.\s*|)\s*(\d{6,})(?:[^\d]*(?:\d{2}[\/]?\d{2}[\/]?\d{4}))/i);
     const DOC = docMatch ? docMatch[1].trim() : '';
     console.log('doc:', DOC);
+
+
+     // Captura a data logo após o número do documento
+     const dataMatch = text.match(/(?:N° DOC:|POC:|DOC:|OC:|oc\.|N DOC:|ie: N° DOC:|i"POC:|Casa Colombo oficial\s*\|,\s*|oc\.\s*|)\s*\d{6,}[^\d]*(\d{2}\/\d{2}\/\d{4})/i);
+     const data = dataMatch ? dataMatch[1].trim() : '';
+     console.log('data:', data);
   
     // Captura o valor líquido
     const valorLiquidoLinhaMatch = text.match(/Valor Liquido\s*([^\n]*)/);
@@ -226,6 +259,7 @@ export class CadastraEntregaComponent implements OnInit {
       nomeCliente: nome,
       vendedor: vendedor,
       numeroNota: DOC,
+      dataVenda: data,
       valor: valorLiquido,
       observacao: observacao,
       loja: loja,

@@ -84,13 +84,14 @@
             <tr>
                 <th>Nota</th>
                 <th>Usuário</th>
-                <th>N° Nota</th>
-                <th style="width: 24%;">Cliente</th>
-                <th>Valor</th>
+                <th style="width: 6%;">N° Nota</th>
+                <th style="width: 23%;">Cliente</th>
+                <th style="white-space: nowrap;">Data venda</th>
+                <th style="width: 6%;">Valor</th>
                 <th>Vendedor</th>
-                <th style="width: 34%;">Observação</th>
+                <th style="width: 28%;">Observação</th>
                 <th>Motorista</th>
-                <th>Data de entrega</th>
+                <th style="width: 8%;">Data entrega</th>
                 
             </tr>
         </thead>
@@ -102,11 +103,12 @@
                 <td>{{ baixaEntrega.nome | uppercase }}</td>
                 <td>{{ baixaEntrega.numeroNota }}</td>
                 <td>{{ baixaEntrega.nomeCliente | uppercase}}</td>
-                <td>{{ baixaEntrega.valor }}</td>
+                <td>{{ baixaEntrega.dataVenda }}</td>
+                <td>R$ {{ baixaEntrega.valor }}</td>
                 <td>{{ baixaEntrega.vendedor }}</td>
                 <td>{{ baixaEntrega.observacao | uppercase }}</td>
                 <td>{{ baixaEntrega.motorista}}</td>
-                <td>{{ baixaEntrega.dataTime | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ baixaEntrega.dataEntregaBaixa | date: 'dd/MM/yyyy' }}</td>
             </tr>
         </ng-container>
     </table>

@@ -93,7 +93,7 @@ export class CadastrarProdutosComponent implements OnInit {
           console.log(e.error);
         }
       });
-    this.httpClient.get(environment.apiUrl + "/fornecedor")
+    this.httpClient.get(environment.apiUrl + "/fornecedorGeral")
       .subscribe({
         next: (data) => {
           this.fornecedores = data as any[];
@@ -136,7 +136,7 @@ export class CadastrarProdutosComponent implements OnInit {
       const options = { params: { matricula: this.matricula, senha: this.senha } };
       this.spinner.show();
 
-      this.httpClient.post(environment.apiUrl + "/produto", this.form.value, options)
+      this.httpClient.post(environment.apiUrl + "/produtoPiso", this.form.value, options)
         .subscribe({
           next: (data: any) => {
             this.mensagem = data.message; 
@@ -185,7 +185,7 @@ export class CadastrarProdutosComponent implements OnInit {
     this.spinner.show();
   
     // Ajuste na URL para incluir o produtoId como parâmetro na URL
-    this.httpClient.post(environment.apiUrl + `/produto/upload?produtoId=${this.produtoId}`, formData)
+    this.httpClient.post(environment.apiUrl + `/produtoPiso/upload?produtoId=${this.produtoId}`, formData)
       .subscribe({
         next: (data: any) => {
           console.log('Imagem enviada com sucesso:', data);

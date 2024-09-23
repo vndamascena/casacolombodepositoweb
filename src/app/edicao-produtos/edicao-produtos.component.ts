@@ -93,7 +93,7 @@ export class EdicaoProdutosComponent implements OnInit {
     });
 
 
-    this.httpClient.get(`${environment.apiUrl}/produto/${productId}`)
+    this.httpClient.get(`${environment.apiUrl}/produtoPiso/${productId}`)
     .subscribe({
       next: (data: any) => {
         this.produto = data;
@@ -130,7 +130,7 @@ export class EdicaoProdutosComponent implements OnInit {
       // Configuração dos parâmetros da solicitação PUT
       const options = { params: { matricula: this.matricula, senha: this.senha } };
 
-      this.httpClient.put(`${environment.apiUrl}/produto`, formDataWithId, options)
+      this.httpClient.put(`${environment.apiUrl}/produtoPiso`, formDataWithId, options)
         .subscribe({
           next: (data: any) => {
             this.mensagem = data.message;
@@ -190,7 +190,7 @@ excluirLote(produtoId: string, loteId: string): void {
     this.lotes.removeAt(this.lotes.length - 1);
     
   
-  this.httpClient.delete(`${environment.apiUrl}/produto/${produtoId}/lotes/${loteId}`)
+  this.httpClient.delete(`${environment.apiUrl}/produtoPiso/${produtoId}/lotes/${loteId}`)
     .subscribe({
       next: () => {
         console.log('Lote excluído com sucesso!');
@@ -209,7 +209,7 @@ excluirLote(produtoId: string, loteId: string): void {
 
   // Função para atualizar a lista de lotes após a exclusão
   atualizarListaLotes(produtoId: string): void {
-    this.httpClient.get(`${environment.apiUrl}/produto/${produtoId}`)
+    this.httpClient.get(`${environment.apiUrl}/produtoPiso/${produtoId}`)
       .subscribe({
         next: (data: any) => {
           console.log('Data recebida:', data);

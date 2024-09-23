@@ -12,6 +12,10 @@ import { ConsultaFornecedorComponent } from './fornecedores/consulta-fornecedor/
 import { CadastraEntregaComponent } from './entrega-titulo/cadastra-entrega/cadastra-entrega.component';
 import { ConsultaEntregaComponent } from './entrega-titulo/consulta-entrega/consulta-entrega.component';
 import { HistoricoEntregaComponent } from './entrega-titulo/historico-entrega/historico-entrega.component';
+import { HistoricoVendaProdutoGeralComponent } from './produtoGeral/historico-venda-produto-geral/historico-venda-produto-geral.component';
+import { CadastrarProdutoGeralComponent } from './produtoGeral/cadastrar-produto-geral/cadastrar-produto-geral.component';
+import { ConsultarProdutoGeralComponent } from './produtoGeral/consultar-produto-geral/consultar-produto-geral.component';
+import { EdicaoProdutoGeralComponent } from './produtoGeral/edicao-produto-geral/edicao-produto-geral.component';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +25,8 @@ import { HistoricoEntregaComponent } from './entrega-titulo/historico-entrega/hi
     RouterOutlet,
     MenuComponent, ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
     OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
-    CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent
+    CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
+    CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent
     ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

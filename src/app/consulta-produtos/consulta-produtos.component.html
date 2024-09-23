@@ -89,7 +89,7 @@
             <!-- Corpo da tabela -->
 
             <tbody>
-                <ng-container *ngFor="let produto of produtos | paginate: { itemsPerPage: 10, currentPage: p }">
+                <ng-container *ngFor="let produto of produtosPiso | paginate: { itemsPerPage: 10, currentPage: p }">
                     <tr>
                         <!-- Colunas para exibir os detalhes básicos do produto -->
                         <td><img [src]="getFullImageUrl(produto.imagemUrl)" alt="{{ produto.nome }}" width="50"
@@ -176,13 +176,15 @@
         </table>
         <tfoot>
             <tr>
-                <td colspan="14"><strong> Quantidade de produtos: {{ produtos.length }}</strong>
+                <td colspan="14"><strong> Quantidade de produtos: {{ produtosPiso.length }}</strong>
                    
                 </td>
             </tr>
         </tfoot>
     </div>
-
+    <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+        <p style="color: white"> Aguarde... </p>
+      </ngx-spinner>
 </div>
 
 
@@ -219,5 +221,3 @@
     </button>
 </div>
 
-<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "timer" [fullScreen] = "true">
-    <p style="color: white" > Carregando... </p></ngx-spinner>

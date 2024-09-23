@@ -93,7 +93,7 @@
                 <td>{{ocorrencia.codProduto}}</td>
                 <td>{{ocorrencia.produto}}</td>
                 <td>{{ocorrencia.numeroNota}}</td>
-                <td width="100">{{ocorrencia.fornecedorOcorrencia.nome}}</td>
+                <td width="100">{{ocorrencia.fornecedorGeral.nome}}</td>
                 <td class="observacao">{{ocorrencia.observacao}}</td>
                 <td width="70">{{ocorrencia.loja.nome}}</td>
                 <td [ngClass]="{'text-danger': isDateOlderThanThreeDays(ocorrencia.dataTime)}">

@@ -77,7 +77,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
         }
       });
        // executando o endpoint de consulta de fornecedores na API
-    this.httpClient.get(environment.ocorrencApi + "/fornecedorOcorrencia")
+    this.httpClient.get(environment.ocorrencApi + "/fornecedorGeral")
     .subscribe({
       next: (data) => {
         this.fornecedores = data as any[];

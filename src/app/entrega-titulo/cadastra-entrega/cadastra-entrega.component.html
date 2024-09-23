@@ -95,14 +95,12 @@
 
                     <!-- segunda linha -->
                     <div class="row">
-                        <div class="col-md-1">
-
-                        </div>
+                        
 
                         <!-- primeira coluna -->
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label><strong>Valor</strong></label>
-                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="valor" />
+                            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="valor" (input)="atualizarValor()" />
                         </div>
                         <div class="col-md-2">
                             <label><strong>Loja</strong></label>
@@ -118,6 +116,14 @@
                             
 
                         </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Data Venda</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"formControlName="dataVenda" />
+                            
+
+                        </div>
+                        
                        
 
                     </div>

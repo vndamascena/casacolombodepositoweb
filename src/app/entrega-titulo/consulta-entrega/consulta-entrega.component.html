@@ -70,7 +70,7 @@
 
 
 
-    <div class="card mb-3 pendente-entrega">
+    <div class="card mb-3 ">
       <h1 class="section-header text-center" style="cursor: pointer;" (click)="togglePendencias()">
         <strong>Pendentes: {{ getAllPendencias().length || 0 }}</strong>
       </h1>
@@ -83,34 +83,43 @@
             <thead>
               <tr>
                 <th>Nota</th>
-                <th style="width: 7%;">Loja</th>
+                <th>Loja</th>
+                <th style="width: 4%;">Pagamento</th>
                 <th>Usuario</th>
                 <th style="width: 8%;">N° Nota</th>
-                <th>Cliente</th>
-                <th>Valor</th>
+                <th style="width: 18%;">Cliente</th>
+                <th style="white-space: nowrap;">Data venda</th>
+                <th style="width: 6%;">Valor</th>
                 <th>Vendedor</th>
-                <th>Observação</th>
+                <th style="width: 32%;">Observação</th>
                 <th>Motorista</th>
-                <th style="width: 8%;">Dia</th>
-                <th>Data de entrega</th>
+                <th style="width: 8%;">Prox Ent</th>
+                <th>Dia</th>
+                <th>Op</th>
               </tr>
             </thead>
             <tbody>
               <ng-container
-                *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 10, currentPage: p }">
+                *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 10, currentPage: p };let i = index">
                 <tr>
-                  <td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">
                     <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
                       style="width: 30px;" (click)="expandirImagem(pendente.imagemUrl)">
                   </td>
-                  <td>{{pendente.loja}}</td>
-                  <td>{{ pendente.nome }}</td>
-                  <td>{{ pendente.numeroNota }}</td>
-                  <td>{{ pendente.nomeCliente }}</td>
-                  <td>{{ pendente.valor }}</td>
-                  <td>{{ pendente.vendedor }}</td>
-                  <td>{{ pendente.observacaoPendencia | uppercase }}</td>
-                  <td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{pendente.loja}}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">
+                    <span><strong>{{ getStatusPagamento(pendente.entregaId) }}</strong></span>
+                    <br>
+                    <span><strong>{{ getNomeUsuarioPagamento(pendente.entregaId) }}</strong></span>
+                  </td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.nome }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.numeroNota }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.nomeCliente }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.dataVenda }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i), 'white-space': 'nowrap'}">R$ {{ formatarValor(pendente.valor) }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.vendedor }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.observacaoPendencia | uppercase }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">
                     <div *ngIf="!isEditingFor(pendente.id) && pendente.motorista; else selecionarMotoristaPendencia;">
                       <span (click)="startEditing(pendente.id)">{{ pendente.motorista | uppercase }}</span>
                     </div>
@@ -120,8 +129,13 @@
                       </select>
                     </ng-template>
                   </td>
-                  <td>{{ pendente.dataEntregaProximaEntrega }}</td>
-                  <td>{{ pendente.diaSemanaPendencia | date: 'dd/MM/yyyy' }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.diaSemanaPendencia | date: 'dd/MM/yyyy'}}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.dataEntregaProximaEntrega }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}" >
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                      [attr.data-bs-target]="'#opcoes' + pendente.entregaId">+</button>
+                  </td>
+
                 </tr>
               </ng-container>
             </tbody>
@@ -164,7 +178,8 @@
                   <th style="width: 4%;">Pagamento</th>
                   <!--<th>Usuario</th>-->
                   <th style="width: 6%;">N° Nota</th>
-                  <th style="width: 24%;">Cliente</th>
+                  <th style="width: 18%;">Cliente</th>
+                  <th style="white-space: nowrap;">Data venda</th>
                   <th style="width: 6%;">Valor</th>
                   <th>Vendedor</th>
                   <th style="width: 34%;">Observação</th>
@@ -176,21 +191,17 @@
                 <ng-container *ngFor="let entrega of getEntregasPorPeriodo(data.entregas, periodo) ;let i = index">
                   <tr>
 
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">
+                    <td [ngStyle]="{'background-color': getColor(i)}">
                       <input type="checkbox" [checked]="entrega.confirmado" [disabled]="entrega.disabled"
                         (click)="abrirFormularioImpressao(entrega)">
                     </td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">
+                    <td [ngStyle]="{'background-color': getColor(i)}">
                       <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
                         style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
                     </td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">{{entrega.loja}}
+                    <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.loja}}
                     </td>
-                    <td td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">
+                    <td [ngStyle]="{'background-color': getColor(i)}">
                       <!-- Exibir o select enquanto o pagamento não estiver confirmado -->
                       <ng-container *ngIf="!entrega.pagamentoConfirmado; else pagamentoConfirmado">
                         <select [(ngModel)]="entrega.pagamento" (change)="onPagamentoChange(entrega)">
@@ -210,18 +221,13 @@
                     <!--<td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}
                       " [ngStyle]="{'background-color': getColor(i)}">{{ entrega.nome| uppercase }}
                     </td>-->
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">{{ entrega.numeroNota }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">{{entrega.nomeCliente | uppercase }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">{{ entrega.valor}}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">{{ entrega.vendedor }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">{{entrega.observacao }}</td>
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">
+                    <td [ngStyle]="{'background-color': getColor(i)}">{{ entrega.numeroNota }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.nomeCliente | uppercase }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i)}">{{ entrega.dataVenda }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i), 'white-space': 'nowrap'}">R$ {{ formatarValor(entrega.valor) }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i)}">{{ entrega.vendedor }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.observacao }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i)}">
                       <div *ngIf="!isEditingFor(entrega.id) && entrega.motorista; else selecionarMotoristaPendencia;">
                         <span (click)="startEditing(entrega.id)">{{ entrega.motorista }}</span>
                       </div>
@@ -233,8 +239,7 @@
                       </ng-template>
                     </td>
 
-                    <td [ngClass]="{'text-red': isNotaPendente(entrega.numeroNota, data.pendencias)}"
-                      [ngStyle]="{'background-color': getColor(i)}">
+                    <td [ngStyle]="{'background-color': getColor(i)}">
                       <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
                         [attr.data-bs-target]="'#opcoes' + entrega.id">+</button>
                     </td>
@@ -377,9 +382,25 @@
         <input type="password" class="form-control" id="senhaInputBaixaEntrega" placeholder="Digite sua senha"
           [(ngModel)]="senha">
       </div>
+      <form [formGroup]="formi">
+        <div>
+          <div class="row">
+            <label><strong>Data</strong></label>
+            <input type="date" class="form-control" formControlName="dataEntregaBaixa"
+              (change)="onDateChange($event)" />
+          </div>
+    
+          <div class="row">
+            <label><strong>Dia da Semana</strong></label>
+            <input type="text" class="form-control" placeholder="Digite aqui" formControlName="diaSemanaBaixa"
+              readonly />
+          </div>
+        </div>
+      </form>
       <button class="btn btn-outline-light" (click)="concluirEntrega(baixaEntrega)" style="font-weight: bold;"
         data-bs-toggle="modal" data-bs-target="#uploadImagem">Confirmar</button>
     </div>
+    
 
     <div *ngIf="currentForm === 'pendencia'" class="formulario-credenciais-pendencia text-center">
       <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>

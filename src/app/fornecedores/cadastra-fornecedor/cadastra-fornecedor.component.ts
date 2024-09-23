@@ -68,7 +68,7 @@ export class CadastraFornecedorComponent  {
       
       console.log('Form Data:', formData);
     // Se o FormArray 'lotes' não estiver vazio, envia o formulário para o servidor
-    this.httpClient.post(environment.ocorrencApi  + "/fornecedorocorrencia", this.form.value)
+    this.httpClient.post(environment.ocorrencApi  + "/fornecedorGeral", this.form.value)
       .subscribe({
         next: (data: any) => {
           this.mensagem = data.message; // exibir mensagem de sucesso

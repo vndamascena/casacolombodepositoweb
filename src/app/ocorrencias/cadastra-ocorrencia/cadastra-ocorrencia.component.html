@@ -84,7 +84,7 @@
 
                     <div class="col-md-4">
                         <label><strong>Fornecedor</strong></label>
-                        <select class="form-select" formControlName="fornecedorOcorrenciaId">
+                        <select class="form-select" formControlName="fornecedorGeralId">
                             <option value="">Selecione um fornecedor</option>
                             <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase }}</option>
                         </select>

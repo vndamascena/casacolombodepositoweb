@@ -55,7 +55,7 @@ export class ConsultaFornecedorComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.httpClient.get<any[]>(environment.ocorrencApi + '/fornecedorocorrencia')
+    this.httpClient.get<any[]>(environment.ocorrencApi + '/fornecedorGeral')
       .subscribe({
         next: (fornecedorData) => {
           console.log(fornecedorData); // Verifique a estrutura dos dados aqui
@@ -72,7 +72,7 @@ export class ConsultaFornecedorComponent implements OnInit {
 
 
     //fazendo uma consulta na API do produto através do ID
-    this.httpClient.get(environment.ocorrencApi + "/fornecedorocorrencia/" + id)
+    this.httpClient.get(environment.ocorrencApi + "/fornecedorGeral/" + id)
       .subscribe({
         next: (data: any) => {
           this.fornecedores = (data);
@@ -110,7 +110,7 @@ export class ConsultaFornecedorComponent implements OnInit {
     const formDataWithId = this.form.value;
 
     
-      this.httpClient.put(`${environment.ocorrencApi}/fornecedorocorrencia`, formDataWithId )
+      this.httpClient.put(`${environment.ocorrencApi}/fornecedorGeral`, formDataWithId )
         .subscribe({
           next: (data: any) => {
            

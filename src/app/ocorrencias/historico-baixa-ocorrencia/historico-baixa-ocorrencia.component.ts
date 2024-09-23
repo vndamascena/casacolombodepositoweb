@@ -125,10 +125,10 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
       });
   }
   loadFornecedorOcorrencia(ocorrencia: any): void {
-    this.httpClient.get<any>(`${this.fornOcrApiUrl}/${ocorrencia.fornecedorOcorrenciaId}`)
+    this.httpClient.get<any>(`${this.fornOcrApiUrl}/${ocorrencia.fornecedorGeralId}`)
       .subscribe({
-        next: (fornecedorOcorrenciaData) => {
-          ocorrencia.fornecedorOcorrenciaNome = fornecedorOcorrenciaData.nome;
+        next: (fornecedorGeralData) => {
+          ocorrencia.fornecedorGeralNome = fornecedorGeralData.nome;
         },
         error: (error) => {
           console.error('Erro ao carregar o tipo de ocorrência:', error);

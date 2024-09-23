@@ -1,0 +1,203 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+
+
+    <div class="container">
+
+
+        <a class="navbar-brand" href="consulta-produtos">
+            <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+
+        </a>
+        <div class="container">
+            <h1 class="titulo">Pisos e Revestimentos</h1>
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
+                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
+                    (input)="filtrarProdutos()">
+                <div class="overlay" (click)="filtrarProdutos()"></div>
+            </div>
+        </div>
+
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link black-text" routerLink="/consultar-produtoGeral">
+                        <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link black-text" routerLink="/cadastrar-produtoGeral">
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link black-text" routerLink="#">
+                        <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
+<div class="line"></div>
+<br>
+<div class="col text-center">
+
+
+
+
+</div>
+
+
+<div class="container mt-1"></div>
+<!-- Título da página -->
+
+
+
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<!-- Botão para cadastro de produto -->
+
+<!-- Tabela para exibir a consulta de produtos -->
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <!-- cabeçalho da tabela -->
+        <thead>
+            <tr>
+                <th>Foto</th>
+                <th>Detalhes</th>
+                <th>Codígo</th>
+                <th>Un</th>
+                <th>Nome do produto</th>
+                <th>Marca</th>
+                <th style="color: #07612b; font-weight: bold;">Qtd</th>
+                <th>Operação</th>
+            </tr>
+        </thead>
+        <!-- Corpo da tabela -->
+
+        <tbody>
+            <ng-container *ngFor="let produtoGeral of produtoGerals | paginate: { itemsPerPage: 10, currentPage: p }">
+                <tr>
+                    <!-- Colunas para exibir os detalhes básicos do produto -->
+                    <td><img [src]="getFullImageUrlGeral(produtoGeral.imagemUrlGeral)" alt="{{ produtoGeral.nome }}" width="50"
+                            (click)="expandirImagemGeral(produtoGeral.imagemUrlGeral)"></td>
+                    <td>
+                        <button type="button" class="btn btn-outline-success" (click)="toggleDetalhes(produtoGeral)">
+                            <i class="bi bi-zoom-in  custom-icon"> </i>
+                        </button>
+                    </td>
+                    <td>{{ produtoGeral.codigoSistema}}</td>
+                    <td>{{ produtoGeral.un| uppercase}}</td>
+                    <td>{{ produtoGeral.nomeProduto | uppercase }}</td>
+                    <td>{{ produtoGeral.marcaProduto | uppercase}}</td>
+                    <td style="color: #07612b; font-weight: bold;">{{ produtoGeral.quantidadeProd }}</td>
+
+                    <!-- Botão de editar -->
+                    <td>
+                        <button class="btn btn-sm btn-outline-success me-2" (click)="editarProdutoGeral(produtoGeral.id)">
+                            <strong>Editar</strong>
+                        </button>
+                    </td>
+                </tr>
+                <!-- Linha para exibir os detalhes adicionais -->
+                <tr *ngIf="produtoGeral.mostrarDetalhes">
+                    <td colspan="13">
+                        <!-- Tabela para os detalhes dos lotes -->
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Deposito</th>
+                                   
+                                    <th style="color: #07612b; font-weight: bold;">Quantidade</th>
+
+                                    
+                                    <th>Quantidade Vendida</th>
+                                    <th>Confirmar Venda</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Use um ngFor para iterar sobre os lotes -->
+                                <tr *ngFor="let quantidadeProdutoDeposito of produtoGeral.quantidadeProdutoDepositos; let primeiro = first">
+                                    <td>{{  quantidadeProdutoDeposito.nomeDeposito }}</td>
+                                    
+                                    <td>{{ quantidadeProdutoDeposito.quantidade}}</td>
+                                    
+                                    <!-- Coluna para quantidade vendida -->
+                                    <td>
+                                        <input type="number" min="-100" [(ngModel)]="quantidadeProdutoDeposito.quantidadeVendida"
+                                            style="width: 50px;">
+                                    </td>
+                                    <!-- Botão de vender -->
+                                    <td>
+                                        <button class="btn btn-success"
+                                            (click)="abrirFormularioCredenciais(quantidadeProdutoDeposito)">Vender
+                                        </button>
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+        <!-- rodapé da tabela -->
+    </table>
+    <tfoot>
+        <tr>
+            <td colspan="14"><strong> Quantidade de produtos: {{ produtoGerals.length }}</strong>
+
+            </td>
+        </tr>
+    </tfoot>
+</div>
+
+
+
+
+<div class="col text-center"><strong>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls>
+    </strong>
+
+
+
+</div>
+
+
+
+<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrlGeral">
+    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+    <img [src]="imagemAmpliadaUrlGeral" alt="Imagem Ampliada">
+</div>
+
+<div class="formulario-credenciais text-center"
+    *ngIf="quantidadeProdutoDepositoSelecionado && quantidadeProdutoDepositoSelecionado === quantidadeProdutoDepositoSelecionado">
+    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+    <h4>Confirme a sua venda</h4>
+    <div class="mb-3">
+        <label for="matriculaInput" class="form-label">Matrícula</label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+            [(ngModel)]="matricula">
+    </div>
+    <div class="mb-3">
+        <label for="senhaInput" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+    </div>
+    <button class="btn btn-outline-light" (click)="confirmarVenda(quantidadeProdutoDepositoSelecionado)"
+        style="font-weight: bold;">Confirmar
+    </button>
+</div>
+
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+    <p style="color: white"> Carregando... </p>
+</ngx-spinner>

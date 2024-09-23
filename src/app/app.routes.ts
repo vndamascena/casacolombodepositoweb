@@ -14,6 +14,10 @@ import { ConsultaFornecedorComponent } from './fornecedores/consulta-fornecedor/
 import { ConsultaEntregaComponent } from './entrega-titulo/consulta-entrega/consulta-entrega.component';
 import { CadastraEntregaComponent } from './entrega-titulo/cadastra-entrega/cadastra-entrega.component';
 import { HistoricoEntregaComponent } from './entrega-titulo/historico-entrega/historico-entrega.component';
+import { CadastrarProdutoGeralComponent } from './produtoGeral/cadastrar-produto-geral/cadastrar-produto-geral.component';
+import { ConsultarProdutoGeralComponent } from './produtoGeral/consultar-produto-geral/consultar-produto-geral.component';
+import { EdicaoProdutoGeralComponent } from './produtoGeral/edicao-produto-geral/edicao-produto-geral.component';
+import { HistoricoVendaProdutoGeralComponent } from './produtoGeral/historico-venda-produto-geral/historico-venda-produto-geral.component';
 
 
 export const routes: Routes = [
@@ -90,7 +94,26 @@ export const routes: Routes = [
         component:HistoricoEntregaComponent,
         canActivate: [AuthenticationGuard]  
     },
-   
+    {
+        path: 'cadastrar-produtoGeral',
+        component: CadastrarProdutoGeralComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'consultar-produtoGeral',
+        component: ConsultarProdutoGeralComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'edicao-produtoGeral/:id',
+        component: EdicaoProdutoGeralComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'historico-venda-produtoGeral',
+        component: HistoricoVendaProdutoGeralComponent,
+        canActivate: [AuthenticationGuard]
+    },
 
     {
         path: '', pathMatch: 'full', //url raiz

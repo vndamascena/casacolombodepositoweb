@@ -33,6 +33,8 @@ export class ConsultaEntregaComponent implements OnInit {
   zoomLevel: string = 'scale(1)';
   matricula: string = '';
   senha: string = '';
+  dataEntregaBaixa: string = '';
+  diaSemanaBaixa: string = '';
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
   dias: any[] = [
     { nome: 'Segunda-feira', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
@@ -76,6 +78,8 @@ export class ConsultaEntregaComponent implements OnInit {
     dataEntregaProximaEntrega:new FormControl(''),
     diaSemanaPendencia: new FormControl(''),
     loja: new FormControl(''),
+    diaSemanaBaixa: new FormControl(''),
+    dataEntregaBaixa: new FormControl(''),
     
 
   });
@@ -100,6 +104,8 @@ export class ConsultaEntregaComponent implements OnInit {
     diaSemanaPendencia: [''],
     loja: [''],
     pagamento:[''],
+    diaSemanaBaixa:[''],
+    dataEntregaBaixa:['']
 
   });
 
@@ -152,6 +158,18 @@ filtrarEntregas(): void {
     const currentDate = new Date();
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+     // Definir a data atual
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Definir o dia da semana atual
+  const dayOfWeek = this.getDayOfWeek(new Date());
+
+  // Inicializar o formulário com a data e o dia da semana atuais
+  this.formi.patchValue({
+    dataEntregaBaixa: today,
+    diaSemanaBaixa: dayOfWeek
+  });
   
     const ocorrencId = this.route.snapshot.queryParams['id'];
     if (ocorrencId) {
@@ -259,6 +277,20 @@ filtrarEntregas(): void {
   }
 
 
+
+
+
+
+  getStatusPagamento(entregaId: number): string {
+    const entrega = this.entregas.find(e => e.id === entregaId);
+    return entrega ? entrega.pagamento : 'Pagamento não encontrado';
+  }
+  
+  getNomeUsuarioPagamento(entregaId: number): string {
+    const entrega = this.entregas.find(e => e.id === entregaId);
+    return entrega && entrega.nomeUsuarioPagamento ? entrega.nomeUsuarioPagamento : 'Nome não disponível';
+  }
+
   // Nova função para verificar pendências e exibir alerta
   verificarPendencias(): void {
     const diasComPendencias = this.dias
@@ -269,13 +301,15 @@ filtrarEntregas(): void {
         const dataFormatada = this.formatarData(pendencia.dataEntrega);
         return `${dia.nome} (Data: ${dataFormatada})`;
       });
+      
     
     if (diasComPendencias.length > 0) {
-      const mensagem = `Possui entregas pendentes para os dias: ${diasComPendencias.join(', ')}. Favor verificar.`;
+      const mensagem = `Você possui entregas pendentes, favor verificar.`;
       alert(mensagem);
     }
   }
 
+  
 
   verificarStatusDePagamento(): void {
     this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/pagamento`)
@@ -300,6 +334,7 @@ filtrarEntregas(): void {
                   }
                 });
             }
+            
           });
         },
         error: (error) => {
@@ -307,7 +342,38 @@ filtrarEntregas(): void {
         }
       });
   }
+
   
+  formatarValor(valor: string): string {
+    // Remove espaços
+    valor = valor.trim();
+
+    // Detecta se o separador decimal é vírgula ou ponto
+    const separadorDecimal = valor.includes(',') ? ',' : '.';
+    const separadorMilhar = separadorDecimal === ',' ? '.' : ',';
+
+    // Normaliza o valor, removendo o separador de milhar
+    const valorSemMilhar = valor.replace(new RegExp(`\\${separadorMilhar}`, 'g'), '');
+
+    // Substitui o separador decimal por ponto
+    const valorComPonto = valorSemMilhar.replace(separadorDecimal, '.');
+
+    // Converte para número e formata com separador decimal e milhar
+    const valorNumerico = parseFloat(valorComPonto);
+
+    if (isNaN(valorNumerico)) {
+      return '0,00';
+    }
+
+    // Formata com separador de milhar e vírgula como separador decimal
+    const partes = valorNumerico.toFixed(2).split('.');
+    const inteiro = partes[0];
+    const decimal = partes[1];
+    
+    const inteiroComMilhar = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    
+    return `${inteiroComMilhar},${decimal}`;
+  }
  
   abrirFormularioCredenciais(entrega: any): void {
     this.cadastrarPagamentos = entrega;
@@ -495,19 +561,17 @@ filtrarEntregas(): void {
     this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/pendenciaEntrega`)
       .subscribe({
         next: (pendenciasData) => {
-          // Iterar sobre os dias da semana
           pendenciasData.forEach(pendencia => {
-            // Encontre o dia da semana correspondente
             const diaSemanaIndex = this.getDayOfWeekIndex(pendencia.diaSemana);
-            
+  
             if (diaSemanaIndex !== -1) {
-              // Adicione a pendência ao dia correspondente
               this.dias[diaSemanaIndex].pendencias = this.dias[diaSemanaIndex].pendencias || [];
               this.dias[diaSemanaIndex].pendencias.push(pendencia);
               this.loadUserName(pendencia);
-
             }
           });
+  
+          this.categorizarEntregasPorDia();  // Atualiza a categorização após buscar pendências
         },
         error: (error) => {
           console.error('Erro ao carregar as pendências:', error);
@@ -516,45 +580,54 @@ filtrarEntregas(): void {
   }
 
   categorizarEntregasPorDia(): void {
-    // Primeiro, criamos um objeto para armazenar as entregas por data de entrega
     const entregasPorData: { [key: string]: any[] } = {};
   
     this.entregas.forEach(entrega => {
-      const dataEntregaStr = entrega.dataEntrega; // Obtém a data de entrega no formato de string
-      const dataEntrega = new Date(dataEntregaStr); // Converte a string em um objeto Date
-      const dataEntregaBrasileira = this.convertToBrazilTime(dataEntrega); // Ajusta a data para o fuso horário brasileiro
-      
-      // Define os dias da semana
-      const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-      const diaDaSemana = diasDaSemana[dataEntregaBrasileira.getDay()]; // Obtém o dia da semana
-      
-      // Converte a data para o formato brasileiro
-      const dia = String(dataEntregaBrasileira.getDate()).padStart(2, '0');
-      const mes = String(dataEntregaBrasileira.getMonth() + 1).padStart(2, '0');
-      const ano = dataEntregaBrasileira.getFullYear();
+      const isPendente = this.isEntregaPendente(entrega.id, this.getAllPendencias());
   
-      // Formata a data com o dia da semana
-      const dataStr = `${diaDaSemana}, ${dia}/${mes}/${ano}`;
+      if (!isPendente) {
+        const dataEntregaStr = entrega.dataEntrega;
+        const dataEntrega = new Date(dataEntregaStr);
+        const dataEntregaBrasileira = this.convertToBrazilTime(dataEntrega);
   
-      if (!entregasPorData[dataStr]) {
-        entregasPorData[dataStr] = [];
+        const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        const diaDaSemana = diasDaSemana[dataEntregaBrasileira.getDay()];
+  
+        const dia = String(dataEntregaBrasileira.getDate()).padStart(2, '0');
+        const mes = String(dataEntregaBrasileira.getMonth() + 1).padStart(2, '0');
+        const ano = dataEntregaBrasileira.getFullYear();
+  
+        const dataStr = `${diaDaSemana}, ${dia}/${mes}/${ano}`;
+  
+        if (!entregasPorData[dataStr]) {
+          entregasPorData[dataStr] = [];
+        }
+        entregasPorData[dataStr].push(entrega);
       }
-      entregasPorData[dataStr].push(entrega);
     });
   
-    // Agora, atualizamos a estrutura de dados 'datas' para refletir as novas categorias
     this.datas = Object.keys(entregasPorData).map(dataStr => {
       return {
         nome: dataStr, // Usamos a string de data com o dia da semana como nome
         entregas: entregasPorData[dataStr],
-        pendencias: [], // Iniciais pendências vazias, você pode atualizar isso conforme necessário
+        pendencias: [], // Inicial pendências vazias, você pode atualizar isso conforme necessário
         exibir: false,
         filaEntrega: false,
         saiuEntrega: false,
         pendentes: false
       };
     });
+    // Adiciona as pendências na seção de pendências
+    this.datas.forEach(dia => {
+      dia.pendencias = this.getAllPendencias().filter((pendencia: { dataEntrega: string | number | Date; }) => {
+        const dataEntrega = new Date(pendencia.dataEntrega);
+        const diaDaSemana = this.convertToBrazilTime(dataEntrega).getDay();
+  
+        return diaDaSemana === this.dias.findIndex(d => d.nome === dia.nome);
+      });
+    });
   }
+  
   categorizarPendenciasPorDia(): void {
     this.dias.forEach(dia => dia.pendencias = []);
     this.pendencias.forEach(pendencia => {
@@ -735,9 +808,11 @@ filtrarEntregas(): void {
   concluirEntrega(baixaEntregaa: any): void {
     this.ent = baixaEntregaa;
     const params = { matricula: this.matricula, senha: this.senha, id: this.ent.id };
-    const body = {}; // Corpo da requisição, se necessário pode ser ajustado
+    const body = {diaSemanaBaixa: this.formi.value.diaSemanaBaixa,
+      dataEntregaBaixa: this.formi.value.dataEntregaBaixa
+     };
     
-  
+  console.log('Dados enviados:', body);
     console.log('Dados enviados:', params);
   
     this.httpClient.post<any>(`${environment.entregatitulo}/entrega/baixaEntrega`, body, { params })
@@ -820,6 +895,7 @@ updateDayOfWeek(dateString: string): void {
   const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
   const dayOfWeek = daysOfWeek[date.getUTCDay()]; // Use getUTCDay() para evitar problemas de fuso horário
   this.formi.get('diaSemana')?.setValue(dayOfWeek);
+  this.formi.get('diaSemanaBaixa')?.setValue(dayOfWeek);
   this.formi.get('diaSemanaPendencia')?.setValue(dayOfWeek);
 }
 onDateChange(event: any): void {
@@ -830,7 +906,10 @@ onDateChange(event: any): void {
 }
 
 
-
+getDayOfWeek(date: Date): string {
+  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+  return daysOfWeek[date.getDay()];
+}
 
   onPendente(pendenciaEntregaa: any): void {
     this.ent = pendenciaEntregaa;
@@ -915,5 +994,8 @@ onDateChange(event: any): void {
 
  isNotaPendente(numeroNota: string, pendencias: any[]): boolean {
   return pendencias.some(pendente => pendente.numeroNota === numeroNota);
+}
+isEntregaPendente(Id: string, pendencias: any[]): boolean {
+  return pendencias.some(pendente => pendente.entregaId === Id);
 }
 }

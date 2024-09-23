@@ -132,6 +132,16 @@ td {
     text-align: center;
     margin-right: 10px;
   }
+  .card {
+    background-color: #036822;
+    border-radius: 45px;
+    padding: 8px;
+    box-shadow: 0 38px 58px rgba(38, 242, 55, 0.2);
+    width: 110%;
+    margin-left: -33px;
+    margin-right: auto;
+  }
+  
 
   .barra-pesquisa {
     width: 100%;
@@ -174,7 +184,16 @@ td {
     text-align: center;
     margin: 0 auto;
   }
-
+  .card {
+    background-color: #036822;
+    border-radius: 45px;
+    padding: 8px;
+    box-shadow: 0 38px 58px rgba(38, 242, 55, 0.2);
+    width: 100%;
+    margin-left: -2px;
+    margin-right: auto;
+  }
+  
   .navbar-brand,
   .titulo-container {
     width: 100%;
