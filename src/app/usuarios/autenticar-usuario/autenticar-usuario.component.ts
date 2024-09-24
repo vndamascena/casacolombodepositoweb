@@ -46,6 +46,7 @@ export class AutenticarUsuarioComponent {
         },
         error: (e) => {
           alert('Erro ao autenticar. Usuário e senha incorreto, tente novamente.');
+          this.spinner.hide();
         }
       });
   }

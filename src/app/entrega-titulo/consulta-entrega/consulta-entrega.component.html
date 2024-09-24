@@ -158,8 +158,7 @@
     <div class="card mb-3" *ngFor="let data of datas">
 
       <h1 (click)="toggleTable(data)" class="section-header text-center" style="cursor: pointer;">
-        <strong> {{ data.nome }}: {{ data.entregas.length }} </strong>
-
+        <strong> {{ data.nome }}:  {{ data.contagemUnica }} </strong>
       </h1>
       <div *ngIf="data.exibir" class="table-responsive">
         <hr>

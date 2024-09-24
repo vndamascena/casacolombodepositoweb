@@ -26,10 +26,10 @@ export class ConsultaEntregaComponent implements OnInit {
   pendencias: any[] = [];
   pendencia: any = {};
   ent: any;
-  datas: any [] = []
+  datas: any[] = []
   imagemFile: File | null = null;
   imagemAmpliadaUrl: string | null = null;
-  imagemAmpliadaUrlPendencia:string |null = null;
+  imagemAmpliadaUrlPendencia: string | null = null;
   zoomLevel: string = 'scale(1)';
   matricula: string = '';
   senha: string = '';
@@ -45,25 +45,25 @@ export class ConsultaEntregaComponent implements OnInit {
     { nome: 'Sábado', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
   ];
   motoristas: string[] = ['JORGE', 'DOUGLAS', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
-  pagamentos: string [] =['PAGO', 'REC NO LOCAL', 'CARTEIRA'];
+  pagamentos: string[] = ['PAGO', 'REC NO LOCAL', 'CARTEIRA'];
   isEditing: string | null = null;
   entregaEditando: any = null;
   erroValidacao: string = '';
   baixaEntrega: any;
   pendenciaEntrega: any;
-  currentForm: 'impressao' | 'motorista' | 'baixaEntrega' | 'pendencia' |'pagamento'| null = null;
-  idBaixaEntrega: number | null = null; 
+  currentForm: 'impressao' | 'motorista' | 'baixaEntrega' | 'pendencia' | 'pagamento' | null = null;
+  idBaixaEntrega: number | null = null;
   cadastrarPagamentos: any;
   originalEntregas: any[] = [];
   expression: string = '';
   originalPendencias: any[] = [];
-  
-
-  
-  
 
 
-  formi = new FormGroup ({
+
+
+
+
+  formi = new FormGroup({
     numeroNota: new FormControl('', [Validators.required]),
     nomeCliente: new FormControl(''),
     valor: new FormControl(''),
@@ -75,12 +75,12 @@ export class ConsultaEntregaComponent implements OnInit {
     periodo: new FormControl('Horário comercial'),
     dataEntrega: new FormControl(''),
     observacaoPendencia: new FormControl(''),
-    dataEntregaProximaEntrega:new FormControl(''),
+    dataEntregaProximaEntrega: new FormControl(''),
     diaSemanaPendencia: new FormControl(''),
     loja: new FormControl(''),
     diaSemanaBaixa: new FormControl(''),
     dataEntregaBaixa: new FormControl(''),
-    
+
 
   });
 
@@ -99,13 +99,13 @@ export class ConsultaEntregaComponent implements OnInit {
     vendedor: [''],
     motorista: [''],
     motoristaAtual: [''],
-    observacaoPendencia:[''],
-    dataEntregaProximaEntrega:[''],
+    observacaoPendencia: [''],
+    dataEntregaProximaEntrega: [''],
     diaSemanaPendencia: [''],
     loja: [''],
-    pagamento:[''],
-    diaSemanaBaixa:[''],
-    dataEntregaBaixa:['']
+    pagamento: [''],
+    diaSemanaBaixa: [''],
+    dataEntregaBaixa: ['']
 
   });
 
@@ -116,35 +116,35 @@ export class ConsultaEntregaComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private formBiulder: FormBuilder,
   ) { }
- 
-// Método para filtrar os produtos com base na expressão de pesquisa
-filtrarEntregas(): void {
-  if (this.expression.trim() === '') {
-    // Se a expressão de pesquisa estiver vazia, recarrega todas as entregas para o estado original
-    this.datas.forEach(data => {
-      data.entregas = data.entregas.map((entrega: { id: any; }) => {
-        return this.originalEntregas.find(e => e.id === entrega.id) || entrega;
+
+  // Método para filtrar os produtos com base na expressão de pesquisa
+  filtrarEntregas(): void {
+    if (this.expression.trim() === '') {
+      // Se a expressão de pesquisa estiver vazia, recarrega todas as entregas para o estado original
+      this.datas.forEach(data => {
+        data.entregas = data.entregas.map((entrega: { id: any; }) => {
+          return this.originalEntregas.find(e => e.id === entrega.id) || entrega;
+        });
       });
-    });
-  } else {
-    // Filtra as entregas com base na expressão de pesquisa na lista original
-    this.datas.forEach(data => {
-      data.entregas = this.originalEntregas.filter(p =>
-        Object.values(p).some(value => {
-          // Verifica se o valor é string ou número
-          if (typeof value === 'string') {
-            return value.toLowerCase().includes(this.expression.toLowerCase());
-          } else if (typeof value === 'number') {
-            // Converte o número para string e verifica se contém a expressão de pesquisa
-            return value.toString().includes(this.expression);
-          }
-          return false;
-        })
-        
-      );
-    });
+    } else {
+      // Filtra as entregas com base na expressão de pesquisa na lista original
+      this.datas.forEach(data => {
+        data.entregas = this.originalEntregas.filter(p =>
+          Object.values(p).some(value => {
+            // Verifica se o valor é string ou número
+            if (typeof value === 'string') {
+              return value.toLowerCase().includes(this.expression.toLowerCase());
+            } else if (typeof value === 'number') {
+              // Converte o número para string e verifica se contém a expressão de pesquisa
+              return value.toString().includes(this.expression);
+            }
+            return false;
+          })
+
+        );
+      });
+    }
   }
-}
 
   getAllPendencias() {
     return this.dias.reduce((acc, dia) => acc.concat(dia.pendencias), []);
@@ -152,25 +152,25 @@ filtrarEntregas(): void {
   togglePendencias() {
     this.pendenciaEntrega = !this.pendenciaEntrega;
   }
- 
+
 
   ngOnInit(): void {
     const currentDate = new Date();
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-     // Definir a data atual
-  const today = new Date().toISOString().split('T')[0];
-  
-  // Definir o dia da semana atual
-  const dayOfWeek = this.getDayOfWeek(new Date());
+    // Definir a data atual
+    const today = new Date().toISOString().split('T')[0];
 
-  // Inicializar o formulário com a data e o dia da semana atuais
-  this.formi.patchValue({
-    dataEntregaBaixa: today,
-    diaSemanaBaixa: dayOfWeek
-  });
-  
+    // Definir o dia da semana atual
+    const dayOfWeek = this.getDayOfWeek(new Date());
+
+    // Inicializar o formulário com a data e o dia da semana atuais
+    this.formi.patchValue({
+      dataEntregaBaixa: today,
+      diaSemanaBaixa: dayOfWeek
+    });
+
     const ocorrencId = this.route.snapshot.queryParams['id'];
     if (ocorrencId) {
       // Requisição para obter dados das entregas
@@ -188,20 +188,20 @@ filtrarEntregas(): void {
             // Ordena por dataEntrega em ordem crescente
             this.entregas.sort((a, b) => new Date(a.dataEntrega).getTime() - new Date(b.dataEntrega).getTime());
             this.categorizarEntregasPorDia();
-  
+
             this.buscarPendencias();
-  
+
             // Requisição para obter dados de impressão
             this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/impressao`)
               .subscribe({
                 next: (impressaoData) => {
                   const impressaoIds = impressaoData.map(i => i.entregaId);
-  
+
                   this.entregas.forEach(entrega => {
                     entrega.confirmado = impressaoIds.includes(entrega.id);
                     entrega.disabled = entrega.confirmado; // Desabilita o checkbox se estiver marcado
                   });
-  
+
                   this.verificarPendencias();
                 },
                 error: (error) => {
@@ -234,12 +234,12 @@ filtrarEntregas(): void {
               .subscribe({
                 next: (impressaoData) => {
                   const impressaoIds = impressaoData.map(i => i.entregaId);
-  
+
                   this.entregas.forEach(entrega => {
                     entrega.confirmado = impressaoIds.includes(entrega.id);
                     entrega.disabled = entrega.confirmado; // Desabilita o checkbox se estiver marcado
                   });
-  
+
                   this.verificarPendencias();
                 },
                 error: (error) => {
@@ -253,14 +253,14 @@ filtrarEntregas(): void {
         });
     }
   }
-  
-  
+
+
 
 
   getColor(index: number): string {
     return index % 2 === 0 ? '#b6e18f' : '#ffffff';
   }
- 
+
 
   formatarData(dataString: string): string {
     const partes = dataString.split('-'); // Divide a string no formato 'yyyy-MM-dd'
@@ -268,11 +268,11 @@ filtrarEntregas(): void {
     const mes = parseInt(partes[1], 10) - 1; // Meses são baseados em zero
     const dia = parseInt(partes[2], 10);
     const data = new Date(ano, mes, dia);
-    
+
     const diaFormatado = String(data.getDate()).padStart(2, '0');
     const mesFormatado = String(data.getMonth() + 1).padStart(2, '0');
     const anoFormatado = data.getFullYear();
-    
+
     return `${diaFormatado}/${mesFormatado}/${anoFormatado}`;
   }
 
@@ -285,7 +285,7 @@ filtrarEntregas(): void {
     const entrega = this.entregas.find(e => e.id === entregaId);
     return entrega ? entrega.pagamento : 'Pagamento não encontrado';
   }
-  
+
   getNomeUsuarioPagamento(entregaId: number): string {
     const entrega = this.entregas.find(e => e.id === entregaId);
     return entrega && entrega.nomeUsuarioPagamento ? entrega.nomeUsuarioPagamento : 'Nome não disponível';
@@ -301,15 +301,15 @@ filtrarEntregas(): void {
         const dataFormatada = this.formatarData(pendencia.dataEntrega);
         return `${dia.nome} (Data: ${dataFormatada})`;
       });
-      
-    
+
+
     if (diasComPendencias.length > 0) {
       const mensagem = `Você possui entregas pendentes, favor verificar.`;
       alert(mensagem);
     }
   }
 
-  
+
 
   verificarStatusDePagamento(): void {
     this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/pagamento`)
@@ -318,11 +318,11 @@ filtrarEntregas(): void {
           // Itera sobre as entregas e verifica se o pagamento já foi confirmado
           this.entregas.forEach(entrega => {
             const pagamento = pagamentosData.find(p => p.entregaId === entrega.id);
-  
+
             if (pagamento) {
               entrega.pagamento = pagamento.statusDePagamento;  // Atualiza o status de pagamento
               entrega.pagamentoConfirmado = true;  // Marca como confirmado
-  
+
               // Carrega o nome do usuário associado ao pagamento
               this.httpClient.get<any>(`${this.userApiUrl}?matricula=${pagamento.usuarioId}`)
                 .subscribe({
@@ -334,7 +334,7 @@ filtrarEntregas(): void {
                   }
                 });
             }
-            
+
           });
         },
         error: (error) => {
@@ -343,7 +343,7 @@ filtrarEntregas(): void {
       });
   }
 
-  
+
   formatarValor(valor: string): string {
     // Remove espaços
     valor = valor.trim();
@@ -369,12 +369,12 @@ filtrarEntregas(): void {
     const partes = valorNumerico.toFixed(2).split('.');
     const inteiro = partes[0];
     const decimal = partes[1];
-    
+
     const inteiroComMilhar = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    
+
     return `${inteiroComMilhar},${decimal}`;
   }
- 
+
   abrirFormularioCredenciais(entrega: any): void {
     this.cadastrarPagamentos = entrega;
     this.currentForm = 'pagamento';  // Atualiza o estado para exibir o formulário
@@ -398,32 +398,32 @@ filtrarEntregas(): void {
   salvarPagamento(): void {
     if (this.cadastrarPagamentos && this.matricula && this.senha) {
       const entregaId = this.cadastrarPagamentos.id;
-      
+
       if (!entregaId) {
         console.error('Erro: ID da entrega não encontrado.');
         alert('Erro ao processar o pagamento: ID da entrega não encontrado.');
         return;
       }
-  
+
       const params = { matricula: this.matricula, senha: this.senha, id: entregaId };
-  
+
       const body = {
         statusDePagamento: this.cadastrarPagamentos.pagamento
       };
-  
+
       this.spinner.show();
       console.log('Dados enviados:', params);
       console.log('Corpo da requisição:', body);
-  
+
       this.httpClient.post(`${environment.entregatitulo}/entrega/pagamento`, body, { params })
         .subscribe({
           next: (response) => {
             console.log('Resposta do servidor:', response);
             this.mensagem = 'Pagamento salvo com sucesso!';
-  
+
             // Atualiza o estado da entrega para impedir futuras alterações
             this.cadastrarPagamentos.pagamentoConfirmado = true;
-            
+
             this.fecharFormularioCredenciais();
             this.spinner.hide();
           },
@@ -466,7 +466,7 @@ filtrarEntregas(): void {
     }
   }
 
- 
+
 
 
   validarUsuario(matricula: string, senha: string): Promise<boolean> {
@@ -532,7 +532,7 @@ filtrarEntregas(): void {
     }
   }
 
-  
+
 
   fecharFormularioCredenciaisMotorista(): void {
     this.entregaEditando = null;
@@ -563,14 +563,14 @@ filtrarEntregas(): void {
         next: (pendenciasData) => {
           pendenciasData.forEach(pendencia => {
             const diaSemanaIndex = this.getDayOfWeekIndex(pendencia.diaSemana);
-  
+
             if (diaSemanaIndex !== -1) {
               this.dias[diaSemanaIndex].pendencias = this.dias[diaSemanaIndex].pendencias || [];
               this.dias[diaSemanaIndex].pendencias.push(pendencia);
               this.loadUserName(pendencia);
             }
           });
-  
+
           this.categorizarEntregasPorDia();  // Atualiza a categorização após buscar pendências
         },
         error: (error) => {
@@ -578,56 +578,71 @@ filtrarEntregas(): void {
         }
       });
   }
+  contarEntregasPorCliente(entregas: any[]): any[] {
+    const clientesContabilizados: { [key: string]: boolean } = {};
+    const entregasUnicas: any[] = [];
 
-  categorizarEntregasPorDia(): void {
-    const entregasPorData: { [key: string]: any[] } = {};
-  
-    this.entregas.forEach(entrega => {
-      const isPendente = this.isEntregaPendente(entrega.id, this.getAllPendencias());
-  
-      if (!isPendente) {
-        const dataEntregaStr = entrega.dataEntrega;
-        const dataEntrega = new Date(dataEntregaStr);
-        const dataEntregaBrasileira = this.convertToBrazilTime(dataEntrega);
-  
-        const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-        const diaDaSemana = diasDaSemana[dataEntregaBrasileira.getDay()];
-  
-        const dia = String(dataEntregaBrasileira.getDate()).padStart(2, '0');
-        const mes = String(dataEntregaBrasileira.getMonth() + 1).padStart(2, '0');
-        const ano = dataEntregaBrasileira.getFullYear();
-  
-        const dataStr = `${diaDaSemana}, ${dia}/${mes}/${ano}`;
-  
-        if (!entregasPorData[dataStr]) {
-          entregasPorData[dataStr] = [];
-        }
-        entregasPorData[dataStr].push(entrega);
+    entregas.forEach(entrega => {
+      if (!clientesContabilizados[entrega.nomeCliente]) {
+        clientesContabilizados[entrega.nomeCliente] = true;
+        entregasUnicas.push(entrega);
       }
     });
-  
+
+    return entregasUnicas;
+  }
+  categorizarEntregasPorDia(): void {
+    const entregasPorData: { [key: string]: any[] } = {};
+
+    this.entregas.forEach(entrega => {
+        const isPendente = this.isEntregaPendente(entrega.id, this.getAllPendencias());
+
+        if (!isPendente) {
+            const dataEntregaStr = entrega.dataEntrega;
+            const dataEntrega = new Date(dataEntregaStr);
+            const dataEntregaBrasileira = this.convertToBrazilTime(dataEntrega);
+
+            const diasDaSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            const diaDaSemana = diasDaSemana[dataEntregaBrasileira.getDay()];
+
+            const dia = String(dataEntregaBrasileira.getDate()).padStart(2, '0');
+            const mes = String(dataEntregaBrasileira.getMonth() + 1).padStart(2, '0');
+            const ano = dataEntregaBrasileira.getFullYear();
+
+            const dataStr = `${diaDaSemana}, ${dia}/${mes}/${ano}`;
+
+            if (!entregasPorData[dataStr]) {
+                entregasPorData[dataStr] = [];
+            }
+            entregasPorData[dataStr].push(entrega);
+        }
+    });
+
     this.datas = Object.keys(entregasPorData).map(dataStr => {
-      return {
-        nome: dataStr, // Usamos a string de data com o dia da semana como nome
-        entregas: entregasPorData[dataStr],
-        pendencias: [], // Inicial pendências vazias, você pode atualizar isso conforme necessário
-        exibir: false,
-        filaEntrega: false,
-        saiuEntrega: false,
-        pendentes: false
-      };
+        const entregasUnicasPorCliente = this.contarEntregasPorCliente(entregasPorData[dataStr]);
+        
+        return {
+            nome: dataStr,
+            entregas: entregasPorData[dataStr],
+            contagemUnica: entregasUnicasPorCliente.length,
+            pendencias: [],
+            exibir: false,
+            filaEntrega: false,
+            saiuEntrega: false,
+            pendentes: false
+        };
     });
     // Adiciona as pendências na seção de pendências
     this.datas.forEach(dia => {
       dia.pendencias = this.getAllPendencias().filter((pendencia: { dataEntrega: string | number | Date; }) => {
         const dataEntrega = new Date(pendencia.dataEntrega);
         const diaDaSemana = this.convertToBrazilTime(dataEntrega).getDay();
-  
+
         return diaDaSemana === this.dias.findIndex(d => d.nome === dia.nome);
       });
     });
   }
-  
+
   categorizarPendenciasPorDia(): void {
     this.dias.forEach(dia => dia.pendencias = []);
     this.pendencias.forEach(pendencia => {
@@ -645,7 +660,7 @@ filtrarEntregas(): void {
 
 
 
- 
+
   controlarZoom(event: WheelEvent) {
     event.preventDefault();
     const incremento = event.deltaY < 0 ? 0.1 : -0.1;
@@ -674,7 +689,7 @@ filtrarEntregas(): void {
       imagemAmpliada.classList.add('mostrar');
     }
   }
-  
+
   fecharImagemAmpliada(dia: any = null): void {
     const target = dia || this;
     target.imagemAmpliadaUrl = null;
@@ -683,7 +698,7 @@ filtrarEntregas(): void {
       imagemAmpliada.classList.remove('mostrar');
     }
   }
-  
+
 
   exibirMenuImpressao(event: MouseEvent): void {
     event.preventDefault(); // Evita o menu de contexto padrão
@@ -696,7 +711,7 @@ filtrarEntregas(): void {
         printWindow.focus();
         printWindow.onafterprint = () => {
           printWindow.close(); // Fecha a janela após a impressão
-          
+
         };
         printWindow.print();
       }
@@ -808,13 +823,14 @@ filtrarEntregas(): void {
   concluirEntrega(baixaEntregaa: any): void {
     this.ent = baixaEntregaa;
     const params = { matricula: this.matricula, senha: this.senha, id: this.ent.id };
-    const body = {diaSemanaBaixa: this.formi.value.diaSemanaBaixa,
+    const body = {
+      diaSemanaBaixa: this.formi.value.diaSemanaBaixa,
       dataEntregaBaixa: this.formi.value.dataEntregaBaixa
-     };
-    
-  console.log('Dados enviados:', body);
+    };
+
+    console.log('Dados enviados:', body);
     console.log('Dados enviados:', params);
-  
+
     this.httpClient.post<any>(`${environment.entregatitulo}/entrega/baixaEntrega`, body, { params })
       .subscribe({
         next: (response: any) => {
@@ -823,13 +839,13 @@ filtrarEntregas(): void {
           // Captura o idBaixaEntrega gerado na resposta
           this.idBaixaEntrega = response.idBaixaEntrega;
           console.log('ID da baixa de entrega gerado:', this.idBaixaEntrega);
-  
+
           this.spinner.hide();
           this.fecharFormularios();
-          
+
           // Agora que temos o idBaixaEntrega, podemos chamar o uploadImagem
           this.uploadImagem();
-        
+
         },
         error: (error) => {
           alert('Erro ao concluir ocorrência. Usuário e senha incorretos, tente novamente.');
@@ -838,8 +854,8 @@ filtrarEntregas(): void {
         }
       });
   }
-  
-  
+
+
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
@@ -848,77 +864,78 @@ filtrarEntregas(): void {
   }
 
 
- uploadImagem(): void {
-  if (!this.imagemFile) {
-    alert('Por favor, selecione uma imagem para a entrega concluida.');
-    return;
-  }
+  uploadImagem(): void {
+    if (!this.imagemFile) {
+      alert('Por favor, selecione uma imagem para a entrega concluida.');
+      return;
+    }
 
-  if (this.idBaixaEntrega === null || this.idBaixaEntrega === undefined) {
-    alert('O ID da baixaEntrega não está disponível. Por favor, conclua a entrega primeiro.');
-    console.log('ID da baixa de entrega está nulo ou indefinido:', this.idBaixaEntrega); 
-    return;
-  }
+    if (this.idBaixaEntrega === null || this.idBaixaEntrega === undefined) {
+      alert('O ID da baixaEntrega não está disponível. Por favor, conclua a entrega primeiro.');
+      console.log('ID da baixa de entrega está nulo ou indefinido:', this.idBaixaEntrega);
+      return;
+    }
 
-  const formData = new FormData();
-  formData.append('imageFile', this.imagemFile as Blob);
+    const formData = new FormData();
+    formData.append('imageFile', this.imagemFile as Blob);
 
-  this.spinner.show();
+    this.spinner.show();
 
-  this.httpClient.post(`${environment.entregatitulo}/entrega/uploadEntrega?idBaixaEntrega=${this.idBaixaEntrega}`, formData)
-    .subscribe({
-      next: (data: any) => {
-        console.log('Imagem enviada com sucesso:', data);
-        this.mensagem = 'Imagem enviada com sucesso!';
-        this.spinner.hide();
-        window.location.reload();
+    this.httpClient.post(`${environment.entregatitulo}/entrega/uploadEntrega?idBaixaEntrega=${this.idBaixaEntrega}`, formData)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Imagem enviada com sucesso:', data);
+          this.mensagem = 'Imagem enviada com sucesso!';
+          this.spinner.hide();
+          window.location.reload();
 
-        
-        const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-        if (fileInput) {
-          fileInput.value = '';
+
+          const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+          if (fileInput) {
+            fileInput.value = '';
+          }
+
+          this.imagemFile = null;
+          this.idBaixaEntrega = null;
+        },
+        error: (e) => {
+          console.log('Erro ao enviar a imagem:', e.error);
+          alert('Erro ao enviar a imagem. Tente novamente.');
+          this.spinner.hide();
         }
-
-        this.imagemFile = null;
-        this.idBaixaEntrega = null; 
-      },
-      error: (e) => {
-        console.log('Erro ao enviar a imagem:', e.error);
-        alert('Erro ao enviar a imagem. Tente novamente.');
-        this.spinner.hide();
-      }
-    });
-}
-  
-updateDayOfWeek(dateString: string): void {
-  const date = new Date(dateString + 'T00:00:00'); // Adicione a hora para garantir que a data esteja correta
-  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-  const dayOfWeek = daysOfWeek[date.getUTCDay()]; // Use getUTCDay() para evitar problemas de fuso horário
-  this.formi.get('diaSemana')?.setValue(dayOfWeek);
-  this.formi.get('diaSemanaBaixa')?.setValue(dayOfWeek);
-  this.formi.get('diaSemanaPendencia')?.setValue(dayOfWeek);
-}
-onDateChange(event: any): void {
-  const selectedDate = event.target.value;
-  if (selectedDate) {
-    this.updateDayOfWeek(selectedDate);
+      });
   }
-}
+
+  updateDayOfWeek(dateString: string): void {
+    const date = new Date(dateString + 'T00:00:00'); // Adicione a hora para garantir que a data esteja correta
+    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    const dayOfWeek = daysOfWeek[date.getUTCDay()]; // Use getUTCDay() para evitar problemas de fuso horário
+    this.formi.get('diaSemana')?.setValue(dayOfWeek);
+    this.formi.get('diaSemanaBaixa')?.setValue(dayOfWeek);
+    this.formi.get('diaSemanaPendencia')?.setValue(dayOfWeek);
+  }
+  onDateChange(event: any): void {
+    const selectedDate = event.target.value;
+    if (selectedDate) {
+      this.updateDayOfWeek(selectedDate);
+    }
+  }
 
 
-getDayOfWeek(date: Date): string {
-  const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-  return daysOfWeek[date.getDay()];
-}
+  getDayOfWeek(date: Date): string {
+    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    return daysOfWeek[date.getDay()];
+  }
 
   onPendente(pendenciaEntregaa: any): void {
     this.ent = pendenciaEntregaa;
     const params = { matricula: this.matricula, senha: this.senha, id: this.ent.id };
-    
-    const body = { observacaoPendencia: this.formi.value.observacaoPendencia, 
+
+    const body = {
+      observacaoPendencia: this.formi.value.observacaoPendencia,
       diaSemanaPendencia: this.formi.value.diaSemanaPendencia,
       dataentregaProximaEntrega: this.formi.value.dataEntregaProximaEntrega
-     };
+    };
     this.spinner.show();
 
 
@@ -926,33 +943,33 @@ getDayOfWeek(date: Date): string {
     console.log('observação', body)
 
     this.httpClient.post<any>(`${environment.entregatitulo}/entrega/pendenciaEntrega`, body, { params })
-        .subscribe({
-            next: (response) => {
-                // this.spinner.hide();
-                this.mensagem = response.message; // exibir mensagem de sucesso
-               
-                this.fecharFormularios();
-                this.spinner.hide();
-                
-            },
-            error: (error) => {
-                // this.spinner.hide();
-                console.error('Erro ao concluir ocorrência:', error); // Log do erro completo para depuração
+      .subscribe({
+        next: (response) => {
+          // this.spinner.hide();
+          this.mensagem = response.message; // exibir mensagem de sucesso
 
-                let errorMessage = 'Erro desconhecido';
+          this.fecharFormularios();
+          this.spinner.hide();
 
-                if (error.error && error.error.message) {
-                    errorMessage = error.error.message;
-                } else {
-                    // Exibe o objeto inteiro como string se nenhuma das anteriores funcionar
-                    errorMessage = JSON.stringify(error.error);
-                }
+        },
+        error: (error) => {
+          // this.spinner.hide();
+          console.error('Erro ao concluir ocorrência:', error); // Log do erro completo para depuração
 
-                alert(`Erro ao concluir ocorrência: ${errorMessage}`);
-                this.spinner.hide();
-            }
-        });
-}
+          let errorMessage = 'Erro desconhecido';
+
+          if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          } else {
+            // Exibe o objeto inteiro como string se nenhuma das anteriores funcionar
+            errorMessage = JSON.stringify(error.error);
+          }
+
+          alert(`Erro ao concluir ocorrência: ${errorMessage}`);
+          this.spinner.hide();
+        }
+      });
+  }
 
 
   abrirFormularioImpressao(entregaa: any): void {
@@ -992,10 +1009,10 @@ getDayOfWeek(date: Date): string {
 
 
 
- isNotaPendente(numeroNota: string, pendencias: any[]): boolean {
-  return pendencias.some(pendente => pendente.numeroNota === numeroNota);
-}
-isEntregaPendente(Id: string, pendencias: any[]): boolean {
-  return pendencias.some(pendente => pendente.entregaId === Id);
-}
+  isNotaPendente(numeroNota: string, pendencias: any[]): boolean {
+    return pendencias.some(pendente => pendente.numeroNota === numeroNota);
+  }
+  isEntregaPendente(Id: string, pendencias: any[]): boolean {
+    return pendencias.some(pendente => pendente.entregaId === Id);
+  }
 }

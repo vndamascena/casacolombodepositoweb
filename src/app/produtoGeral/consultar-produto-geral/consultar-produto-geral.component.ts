@@ -140,9 +140,9 @@ export class ConsultarProdutoGeralComponent implements OnInit {
 
 
 
-  confirmarVenda(lote: any): void {
+  confirmarVenda(deposito: any): void {
     // Verifica se um lote foi selecionado
-    this.quantidadeProdutoDepositoSelecionado = lote;
+    this.quantidadeProdutoDepositoSelecionado = deposito;
 
     if (this.quantidadeProdutoDepositoSelecionado) {
       // Verifica se a quantidade vendida é maior que 0
