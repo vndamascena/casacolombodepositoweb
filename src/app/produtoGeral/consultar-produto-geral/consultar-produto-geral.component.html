@@ -110,35 +110,31 @@
                 <!-- Linha para exibir os detalhes adicionais -->
                 <tr *ngIf="produtoGeral.mostrarDetalhes">
                     <td colspan="13">
-                        <!-- Tabela para os detalhes dos lotes -->
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Deposito</th>
-                                   
-                                    <th style="color: #07612b; font-weight: bold;">Quantidade</th>
-
-                                    
-                                    <th>Quantidade Vendida</th>
-                                    <th>Confirmar Venda</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Use um ngFor para iterar sobre os lotes -->
-                                <tr *ngFor="let quantidadeProdutoDeposito of produtoGeral.quantidadeProdutoDepositos; let primeiro = first">
-                                    <td>{{  quantidadeProdutoDeposito.nomeDeposito }}</td>
-                                    
-                                    <td>{{ quantidadeProdutoDeposito.quantidade}}</td>
+                      <!-- Tabela para os detalhes dos depósitos -->
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Depósito</th>
+                            <th style="color: #07612b; font-weight: bold;">Quantidade</th>
+                            <th>Quantidade Vendida</th>
+                            <th>Confirmar Venda</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Use um ngFor para iterar sobre os depósitos -->
+                          <tr *ngFor="let produtoDeposito of ProdutoDepositos; let primeiro = first">
+                            <td>{{ produtoDeposito.nomeDeposito }}</td>
+                            <td>{{ produtoDeposito.quantidade }}</td>
                                     
                                     <!-- Coluna para quantidade vendida -->
                                     <td>
-                                        <input type="number" min="-100" [(ngModel)]="quantidadeProdutoDeposito.quantidadeVendida"
+                                        <input type="number" min="-100" [(ngModel)]="produtoDeposito.quantidadeVendida"
                                             style="width: 50px;">
                                     </td>
                                     <!-- Botão de vender -->
                                     <td>
                                         <button class="btn btn-success"
-                                            (click)="abrirFormularioCredenciais(quantidadeProdutoDeposito)">Vender
+                                            (click)="abrirFormularioCredenciais(produtoDeposito)">Vender
                                         </button>
                                     </td>
 
@@ -181,7 +177,7 @@
 </div>
 
 <div class="formulario-credenciais text-center"
-    *ngIf="quantidadeProdutoDepositoSelecionado && quantidadeProdutoDepositoSelecionado === quantidadeProdutoDepositoSelecionado">
+    *ngIf="ProdutoDepositoSelecionado && ProdutoDepositoSelecionado === ProdutoDepositoSelecionado">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
     <h4>Confirme a sua venda</h4>
     <div class="mb-3">
@@ -193,7 +189,7 @@
         <label for="senhaInput" class="form-label">Senha</label>
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
-    <button class="btn btn-outline-light" (click)="confirmarVenda(quantidadeProdutoDepositoSelecionado)"
+    <button class="btn btn-outline-light" (click)="confirmarVenda(ProdutoDepositoSelecionado)"
         style="font-weight: bold;">Confirmar
     </button>
 </div>

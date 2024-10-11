@@ -15,7 +15,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   styleUrl: './consultar-produto-geral.component.css'
 })
 export class ConsultarProdutoGeralComponent implements OnInit {
-  quantidadeProdutoDepositoSelecionado: any;
+  ProdutoDepositoSelecionado: any;
   matricula: string = ''; // Propriedade para armazenar a matrícula do usuário
   senha: string = ''; // Propriedade para armazenar a senha do usuário
   produtoGerals: any[] = []; // Array de objetos para armazenar produtos
@@ -24,10 +24,10 @@ export class ConsultarProdutoGeralComponent implements OnInit {
   produtoGeralFiltrados: any[] = []; // Array para armazenar produtos filtrados
   termoPesquisa: string = ''; // String para armazenar o termo de pesquisa
   mensagem: string = '';
- 
+
 
   produtoGeral: any = {}; // Objeto para armazenar os detalhes do produto atual
-  quantidadeProdutoDepositos: any[] = []; // Array para armazenar os deposito do produto atual
+  ProdutoDepositos: any[] = []; // Array para armazenar os deposito do produto atual
   p: number = 1;
   originalProdutoGerals: any[] = [];
 
@@ -45,21 +45,20 @@ export class ConsultarProdutoGeralComponent implements OnInit {
   ngOnInit(): void {
     // Recupera o ID do produto da URL
     const productId = this.route.snapshot.queryParams['id'];
-
+  
     // Verifica se o ID do produto está presente na URL
     if (productId) {
-      this.httpClient.get(environment.apiUrl + '/produtoGeral/${productId}')
-
+      this.httpClient.get(`${environment.apiUrl}/produtoGeral/${productId}`)
         .subscribe({
-          next: (produtoGeralData) => {
-
+          next: (produtoGeralData: any) => {
+            // Atribua os dados do produto geral ao objeto produtoGeral
             this.produtoGeral = produtoGeralData;
-
-
-            // Carrega os lotes do produto após obter os dados do produto
-            this.carregarDepositos(this.produtoGeral);
+  
+            // Certifique-se de que o array de depósitos esteja presente
+            this.ProdutoDepositos = produtoGeralData.produtoDeposito || [];
+  
+            // Atribui os produtos gerais à lista original (se aplicável)
             this.originalProdutoGerals = [...this.produtoGerals];
-
           },
           error: (error) => {
             console.error('Erro ao carregar o produto:', error);
@@ -67,12 +66,11 @@ export class ConsultarProdutoGeralComponent implements OnInit {
         });
     } else {
       // Se não houver ID do produto na URL, exibe todos os produtos
-      this.httpClient.get(environment.apiUrl + '/produtoGeral')
+      this.httpClient.get(`${environment.apiUrl}/produtoGeral`)
         .subscribe({
           next: (produtosGeralData) => {
             this.produtoGerals = produtosGeralData as any[];
             this.originalProdutoGerals = [...this.produtoGerals];
-
           },
           error: (error) => {
             console.error('Erro ao carregar os produtos:', error);
@@ -80,22 +78,7 @@ export class ConsultarProdutoGeralComponent implements OnInit {
         });
     }
   }
-  carregarDepositos(produtoGeral: any): void {
-    // Verificamos se o produto possui a propriedade "lotes" e se ela não está vazia
-    if (produtoGeral.quantidadeProdutoDepositos && produtoGeral.quantidadeProdutoDepositos.length > 0) {
-      // Se os lotes já estiverem presentes no objeto do produto,
-      // não precisamos fazer mais nada, pois eles já foram carregados anteriormente
-
-    } else {
-      this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral/${produtoGeral.id}/quantidadeDeposito`)
-        .subscribe((quantidadeProdutoDepositosData) => {
-          produtoGeral.quantidadeProdutoDepositos = Array.isArray(quantidadeProdutoDepositosData) ? quantidadeProdutoDepositosData : []; // Garante que lotesData seja um array
-
-        }, (error) => {
-          console.error('Erro ao carregar os deposito', error);
-        });
-    }
-  }
+  
 
   getFullImageUrlGeral(imagemUrlGeral: string): string {
     return `${environment.apiUrl + '/produtoGeral'}${imagemUrlGeral}`;
@@ -126,15 +109,15 @@ export class ConsultarProdutoGeralComponent implements OnInit {
     }
   }
 
-  abrirFormularioCredenciais(quantidadeProdutoDeposito: any): void {
-    this.quantidadeProdutoDepositoSelecionado = quantidadeProdutoDeposito;
+  abrirFormularioCredenciais(ProdutoDeposito: any): void {
+    this.ProdutoDepositoSelecionado = ProdutoDeposito;
   }
   fecharFormularioCredenciais(): void {
-    this.quantidadeProdutoDepositoSelecionado = null;
+    this.ProdutoDepositoSelecionado = null;
     this.matricula = '';
     this.senha = '';
   }
-  
+
 
 
 
@@ -142,21 +125,21 @@ export class ConsultarProdutoGeralComponent implements OnInit {
 
   confirmarVenda(deposito: any): void {
     // Verifica se um lote foi selecionado
-    this.quantidadeProdutoDepositoSelecionado = deposito;
+    this.ProdutoDepositoSelecionado = deposito;
 
-    if (this.quantidadeProdutoDepositoSelecionado) {
+    if (this.ProdutoDepositoSelecionado) {
       // Verifica se a quantidade vendida é maior que 0
-      if (this.quantidadeProdutoDepositoSelecionado.quantidadeVendida > 0) {
+      if (this.ProdutoDepositoSelecionado.quantidadeVendida > 0) {
         // Configuração dos parâmetros da solicitação POST
-        const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.quantidadeProdutoDepositoSelecionado.id } };
+        const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.ProdutoDepositoSelecionado.id } };
         this.spinner.show();
 
-        this.httpClient.post<any>(environment.apiUrl + '/produtoGeral/venda', { quantidadeVendida: this.quantidadeProdutoDepositoSelecionado.quantidadeVendida }, options)
+        this.httpClient.post<any>(environment.apiUrl + '/produtoGeral/venda', { quantidadeVendida: this.ProdutoDepositoSelecionado.quantidadeVendida }, options)
           .subscribe({
             next: (response) => {
               // Atualiza a quantidade do lote no cliente
-              this.quantidadeProdutoDepositoSelecionado.quantidadeLote -= this.quantidadeProdutoDepositoSelecionado.quantidadeVendida;
-              this.quantidadeProdutoDepositoSelecionado.quantidadeVendida = 0;
+              this.ProdutoDepositoSelecionado.quantidadeLote -= this.ProdutoDepositoSelecionado.quantidadeVendida;
+              this.ProdutoDepositoSelecionado.quantidadeVendida = 0;
               this.spinner.hide();
 
               this.mensagem = response.message; // exibir mensagem de sucesso
@@ -209,12 +192,13 @@ export class ConsultarProdutoGeralComponent implements OnInit {
     }
   }
 
-  
-  // Método para alternar a exibição dos detalhes do produto
+
   toggleDetalhes(produtoGeral: any): void {
     produtoGeral.mostrarDetalhes = !produtoGeral.mostrarDetalhes;
-    if (produtoGeral.mostrarDetalhes && !produtoGeral.lotes) {
-      this.carregarDepositos(produtoGeral); // Carrega os lotes do produto se ainda não estiverem carregados
+  
+    if (produtoGeral.mostrarDetalhes && produtoGeral.produtoDeposito) {
+      // Atribui o array de depósitos ao ProdutoDepositos
+      this.ProdutoDepositos = produtoGeral.produtoDeposito;
     }
   }
 

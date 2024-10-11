@@ -78,15 +78,9 @@ export class EdicaoProdutosComponent implements OnInit {
       metroQCaixa: [''],
       precoMetroQ: [''],
       precoCaixa: [''],
-      categoriaId: ['',[
-        Validators.required
-      ]],
-      fornecedorId: ['',[
-        Validators.required
-      ]],
-      depositoId: ['',[
-        Validators.required
-      ]],
+      categoriaId: ['',[Validators.required ]],
+      fornecedorId: ['',[Validators.required]],
+      depositoId: ['',[Validators.required]],
       imagemUrl: [''],
       lote: this.formBuilder.array([]),
 
