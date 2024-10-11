@@ -102,18 +102,22 @@
 
 
 
-                              
+
                                 <div class="col-md-2">
                                     <label for="quantidade{{i}}"><strong>Quantidade</strong></label>
-                                    <input type="text" class="form-control" formControlName="quantidade" id="quantidade{{i}}" />
-                                  </div>
-                                  <div class="col-md-4">
+                                    <input type="text" class="form-control" formControlName="quantidade"
+                                        id="quantidade{{i}}" />
+                                </div>
+                                <div class="col-md-4">
                                     <label for="nomeDeposito{{i}}"><strong>Depósito</strong></label>
-                                    <input type="text" class="form-control" formControlName="nomeDeposito" id="nomeDeposito{{i}}" />
-                                  </div>
-
-
-
+                                    <select class="form-control" formControlName="nomeDeposito" id="nomeDeposito{{i}}">
+                                        <option *ngFor="let deposito of depositos" [value]="deposito.nome"
+                                            [selected]="deposito.nome === produtoDeposito.value.nomeDeposito">
+                                            {{ deposito.nome }}
+                                        </option>
+                                    </select>
+                                </div>
+                               
 
 
 
@@ -136,8 +140,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
 
 
+                    </div>
+                    <br>
+                 
+                      
 
                     <!-- linha de separação -->
                     <hr>
@@ -184,7 +193,7 @@
                         <div class="col">
                             <button type="submit" class="btn btn-success btn-lg"
                                 (click)="abrirFormularioCredenciais(produtoGeral)">
-                                <strong>Realizar cadastro</strong>
+                                <strong>Realizar edição</strong>
                             </button>
                             <a href="consultar-produtoGeral" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
                         </div>
@@ -199,7 +208,7 @@
 
 <div class="formulario-credenciais text-center" *ngIf="editarprodutoGeral && editarprodutoGeral === editarprodutoGeral">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Confirme o cadastro</h4>
+    <h4>Confirme </h4>
     <div class="mb-3">
         <label for="matriculaInput" class="form-label"></label>
         <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"

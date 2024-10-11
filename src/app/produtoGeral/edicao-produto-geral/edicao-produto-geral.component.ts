@@ -28,7 +28,9 @@ export class EdicaoProdutoGeralComponent implements OnInit{
   editarprodutoGeral: any;
   imagemFile: File | null = null; 
   produtoGeralId: number | null = null; 
-  
+  depositos: any[] = [];
+ 
+
   
 
   constructor(
@@ -61,7 +63,7 @@ export class EdicaoProdutoGeralComponent implements OnInit{
 
   ngOnInit(): void {
     const productId = this.route.snapshot.params['id'];
-    
+  
     this.form = this.formBuilder.group({
       nomeProduto: ['', Validators.required],
       marcaProduto: [''],
@@ -74,22 +76,36 @@ export class EdicaoProdutoGeralComponent implements OnInit{
   
     // Busca os dados do produto
     this.httpClient.get(`${environment.apiUrl}/produtoGeral/${productId}`)
-    .subscribe({
-      next: (data: any) => {
-        console.log('Dados recebidos do produto:', data);
-        this.produtoGeral = data;
-        this.form.patchValue(data); // Atualiza os outros campos do formulário
-        
-        
-        if (data.produtoDeposito && Array.isArray(data.produtoDeposito)) {
-          this.setProdutoDeposito(data.produtoDeposito); // Atualiza o FormArray
+      .subscribe({
+        next: (data: any) => {
+          console.log('Dados recebidos do produto:', data);
+          this.produtoGeral = data;
+          this.form.patchValue(data); // Atualiza os outros campos do formulário
+          
+          if (data.produtoDeposito && Array.isArray(data.produtoDeposito)) {
+            this.setProdutoDeposito(data.produtoDeposito); // Atualiza o FormArray
+          }
+        },
+        error: (error) => {
+          console.error('Erro ao recuperar detalhes do produto:', error);
         }
-      },
-      error: (error) => {
-        console.error('Erro ao recuperar detalhes do produto:', error);
-      }
-    });
+      });
+  
+    // Busca a lista de depósitos
+    this.httpClient.get(environment.apiUrl + "/depositos")
+      .subscribe({
+        next: (data: any) => {
+          this.depositos = data as any[]; // Armazena os depósitos no array
+          console.log('Lista de depósitos:', this.depositos); // Adiciona o console.log aqui
+        },
+        error: (e) => {
+          console.log('Erro ao buscar depósitos:', e.error);
+        }
+      });
+
+     
   }
+  
   
   
   onSubmit(): void {
