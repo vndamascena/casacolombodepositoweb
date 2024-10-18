@@ -28,7 +28,9 @@ export class CadastrarProdutoGeralComponent implements OnInit{
   cadastrarprodutoGeral: any;
   imagemFile: File | null = null; 
   produtoGeralId: number | null = null; 
-  depositos: string[] = ['CASTELO', 'JC1', 'JC2', 'VA', 'DEP DA 8', 'DEP DA 5-A', 'DEP DA 5-B'];
+  depositos: any[] = [];
+
+ 
 
   constructor(
     private formBuilder: FormBuilder,
@@ -48,10 +50,10 @@ export class CadastrarProdutoGeralComponent implements OnInit{
     codigoSistema: new FormControl(''),
    
    
-    quantidadeProdutoDeposito: new FormArray([
+   produtoDeposito: new FormArray([
       new FormGroup({
         quantidade: new FormControl(''),
-        nomeDeposito: new FormControl(''),
+        depositoId: new FormControl(''),
        
         
       })
@@ -69,8 +71,8 @@ export class CadastrarProdutoGeralComponent implements OnInit{
     return this.form.controls;
   }
 
-  get quantidadeProdutoDepositos() {
-    return this.form.get('quantidadeProdutoDeposito') as FormArray;
+  get produtoDepositos() {
+    return this.form.get('produtoDeposito') as FormArray;
   }
   
 
@@ -93,6 +95,15 @@ export class CadastrarProdutoGeralComponent implements OnInit{
           console.log(e.error);
         }
       });
+      this.httpClient.get(environment.apiUrl + "/Depositos")
+      .subscribe({
+        next: (data) => {
+          this.depositos = data as any[];
+        },
+        error: (e) => {
+          console.log(e.error);
+        }
+      });
   }
 
   abrirFormularioCredenciais(produtoGeral: any): void {
@@ -105,17 +116,21 @@ export class CadastrarProdutoGeralComponent implements OnInit{
     this.senha = '';
   }
   onSubmit(): void {
-    const depositoArray = this.form.get('quantidadeProdutoDeposito') as FormArray;
-
+    const depositoArray = this.form.get('produtoDeposito') as FormArray;
+  
     if (depositoArray && depositoArray.length === 0) {
       console.error('A lista de depositos não pode estar vazia.');
       return;
     }
-    
+  
     if (this.matricula && this.senha) {
       const options = { params: { matricula: this.matricula, senha: this.senha } };
       this.spinner.show();
-
+  
+      // Log dos dados que estão sendo enviados
+      console.log('Dados enviados para a API:', this.form.value);
+      console.log('Opções de autenticação:', options);
+  
       this.httpClient.post(environment.apiUrl + "/produtoGeral", this.form.value, options)
         .subscribe({
           next: (data: any) => {
@@ -124,11 +139,11 @@ export class CadastrarProdutoGeralComponent implements OnInit{
             this.form.reset(); 
             this.fecharFormularioCredenciais();
             this.spinner.hide();
-           
+            
             this.uploadImagem();
           },
           error: (e) => {
-            console.log(e.error);
+            console.log('Erro ao cadastrar produto:', e.error);
             alert('Falha ao cadastrar o produto. Verifique os campos preenchidos');
             this.spinner.hide();
           }
@@ -190,19 +205,20 @@ export class CadastrarProdutoGeralComponent implements OnInit{
       });
   }
 
-  adicionarQuantidadeProdutoDeposito(): void {
-    const adicionarQuantidadeProdutoDeposito = new FormGroup({
-      nomeDeposito: new FormControl(''),
+  adicionarProdutoDeposito(): void {
+    const produtoDeposito = new FormGroup({
+      // Adicionar validação se necessário
       quantidade: new FormControl(''),
-      
+      depositoId: new FormControl('')
     });
-    this.quantidadeProdutoDepositos.push(adicionarQuantidadeProdutoDeposito);
+    this.produtoDepositos.push(produtoDeposito);
+    console.log(this.produtoDepositos.value); // Verificar se o array está sendo atualizado
   }
 
   
 
-  excluirQuantidadeProdutoDeposito(Id: string): void {
-    this.quantidadeProdutoDepositos.removeAt(this.quantidadeProdutoDepositos.length - 1);
+  excluirProdutoDeposito(Id: string): void {
+    this.produtoDepositos.removeAt(this.produtoDepositos.length - 1);
   }
 
 }

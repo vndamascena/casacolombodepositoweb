@@ -86,8 +86,8 @@
                     <hr>
 
                     <!-- Exibição dos lotes -->
-                    <div class="row" formArrayName="quantidadeProdutoDeposito">
-                        <div class="col-md-12" *ngFor="let quantidadeProdutoDeposito of quantidadeProdutoDepositos.controls; let i=index" [formGroupName]="i">
+                    <div class="row" formArrayName="produtoDeposito">
+                        <div class="col-md-12" *ngFor="let produtoDeposito of produtoDepositos.controls; let i=index" [formGroupName]="i">
                             <div class="row">
                                
                                 
@@ -106,8 +106,11 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="nomeDeposito{{i}}"><strong>Depósito</strong></label>
-                                    <select class="form-control" class="form-select" formControlName="nomeDeposito" id="nomeDeposito{{i}}">
-                                        <option *ngFor="let deposito of depositos" [value]="deposito">{{ deposito }}</option>
+                                    <select class="form-control" formControlName="depositoId" id="nome{{i}}">
+                                        <option *ngFor="let deposito of depositos" [value]="deposito.id"
+                                            [selected]="deposito.id === produtoDepositos.value.depositoId">
+                                            {{ deposito.nome }}
+                                        </option>
                                     </select>
                                 </div>
                                
@@ -118,17 +121,17 @@
                                 <div class="col-md-2">
                                     <!-- Passando o ID do lote corretamente para a função deleteLote -->
                                     <button type="button" class="btn btn-danger mt-4"
-                                        (click)="excluirQuantidadeProdutoDeposito(produtoGeral.id)"><strong>Excluir</strong></button>
+                                        (click)="excluirProdutoDeposito(produtoGeral.id)"><strong>Excluir</strong></button>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-md-12">
                             <div class="row">
-                                
+
                                 <div class="col-md-3">
                                     <button type="button" class="btn btn-success mt-2"
-                                        (click)="adicionarQuantidadeProdutoDeposito()"><strong>Adicionar</strong></button>
+                                        (click)="adicionarProdutoDeposito()"><strong>Adicionar</strong></button>
                                 </div>
                             </div>
                         </div>

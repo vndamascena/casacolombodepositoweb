@@ -17,21 +17,18 @@ import { environment } from '../../../environments/environment.development';
   templateUrl: './edicao-produto-geral.component.html',
   styleUrl: './edicao-produto-geral.component.css'
 })
-export class EdicaoProdutoGeralComponent implements OnInit{
+export class EdicaoProdutoGeralComponent implements OnInit {
 
   categorias: any[] = [];
   fornecedorGeral: any[] = [];
-  produtoGeral: any = {}; 
+  produtoGeral: any = {};
   mensagem: string = '';
-  matricula: string = ''; 
+  matricula: string = '';
   senha: string = '';
   editarprodutoGeral: any;
-  imagemFile: File | null = null; 
-  produtoGeralId: number | null = null; 
+  imagemFile: File | null = null;
+  produtoGeralId: number | null = null;
   depositos: any[] = [];
- 
-
-  
 
   constructor(
     private formBuilder: FormBuilder,
@@ -42,14 +39,13 @@ export class EdicaoProdutoGeralComponent implements OnInit{
   ) { }
 
   form: FormGroup = this.formBuilder.group({
-    nomeProduto:[''],
+    nomeProduto: [''],
     marcaProduto: [''],
     un: [''],
     codigoSistema: [''],
     produtoDeposito: this.formBuilder.array([]),
     categoriaId: [''],
     fornecedorGeralId: [''],
-    
   });
 
   get f(): any {
@@ -59,11 +55,10 @@ export class EdicaoProdutoGeralComponent implements OnInit{
   get produtoDepositos() {
     return this.form.get('produtoDeposito') as FormArray;
   }
-  
 
   ngOnInit(): void {
     const productId = this.route.snapshot.params['id'];
-  
+
     this.form = this.formBuilder.group({
       nomeProduto: ['', Validators.required],
       marcaProduto: [''],
@@ -73,7 +68,7 @@ export class EdicaoProdutoGeralComponent implements OnInit{
       categoriaId: ['', Validators.required],
       fornecedorGeralId: ['', Validators.required],
     });
-  
+
     // Busca os dados do produto
     this.httpClient.get(`${environment.apiUrl}/produtoGeral/${productId}`)
       .subscribe({
@@ -90,7 +85,7 @@ export class EdicaoProdutoGeralComponent implements OnInit{
           console.error('Erro ao recuperar detalhes do produto:', error);
         }
       });
-  
+
     // Busca a lista de depósitos
     this.httpClient.get(environment.apiUrl + "/depositos")
       .subscribe({
@@ -102,17 +97,16 @@ export class EdicaoProdutoGeralComponent implements OnInit{
           console.log('Erro ao buscar depósitos:', e.error);
         }
       });
-
-     
   }
-  
-  
-  
+
   onSubmit(): void {
     const productId = this.route.snapshot.params['id'];
     const formDataWithId = { ...this.form.value, id: productId };
 
     if (this.matricula && this.senha) {
+      // Adiciona log para verificar os dados que estão sendo enviados
+      console.log('Dados que serão enviados para a API:', formDataWithId);
+      
       // Configuração dos parâmetros da solicitação PUT
       const options = { params: { matricula: this.matricula, senha: this.senha } };
 
@@ -134,29 +128,29 @@ export class EdicaoProdutoGeralComponent implements OnInit{
     }
   }
 
-  setProdutoDeposito(ProdutoDepositos: any[]): void {
-    console.log('produtodepositos:', ProdutoDepositos);
-    const produtoDepositoArray = this.form.get('produtoDeposito') as FormArray; 
-    ProdutoDepositos.forEach(ProdutoDeposito => {
-      produtoDepositoArray.push(this.formBuilder.group({
-        id: [ProdutoDeposito.id],
-        nomeDeposito: [ProdutoDeposito.nomeDeposito],
-        quantidade: [ProdutoDeposito.quantidade],
-      }));
+  setProdutoDeposito(produtoDepositos: any[]): void {
+    const produtoDepositoArray = this.form.get('produtoDeposito') as FormArray;
+    produtoDepositoArray.clear(); // Limpa o array para evitar duplicação
+
+    produtoDepositos.forEach(produtoDeposito => {
+        produtoDepositoArray.push(this.formBuilder.group({
+            depositoId: [produtoDeposito.depositoId],  // ID do depósito, necessário para a submissão
+            quantidade: [produtoDeposito.quantidade],
+           // Quantidade do produto nesse depósito
+        }));
     });
-  
-    // Verificação no console para garantir que os dados foram adicionados corretamente
-    console.log('FormArray ProdutoDeposito atualizado:', produtoDepositoArray.value);
-  }
-  
+
+    console.log('FormArray ProdutoDeposito após carregar dados:', produtoDepositoArray.value);
+}
+
   adicionarProdutoDeposito(): void {
     const novoDeposito = this.formBuilder.group({
-      nomeDeposito: [''],
-      quantidade: [''],
+      depositoId: [],
+      quantidade: [],
     });
     this.produtoDepositos.push(novoDeposito);
   }
-  
+
   excluirProdutoDeposito(Id: string): void {
     this.produtoDepositos.removeAt(this.produtoDepositos.length - 1);
   }
@@ -170,7 +164,4 @@ export class EdicaoProdutoGeralComponent implements OnInit{
     this.matricula = '';
     this.senha = '';
   }
-
 }
-
-

@@ -110,14 +110,14 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="nomeDeposito{{i}}"><strong>Depósito</strong></label>
-                                    <select class="form-control" formControlName="nomeDeposito" id="nomeDeposito{{i}}">
-                                        <option *ngFor="let deposito of depositos" [value]="deposito.nome"
-                                            [selected]="deposito.nome === produtoDeposito.value.nomeDeposito">
+                                    <select class="form-control" formControlName="depositoId" id="nome{{i}}">
+                                        <option *ngFor="let deposito of depositos" [value]="deposito.id"
+                                            [selected]="deposito.id === produtoDeposito.value.depositoId">
                                             {{ deposito.nome }}
                                         </option>
                                     </select>
                                 </div>
-                               
+
 
 
 
@@ -219,7 +219,7 @@
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
     <button type="button" class="btn btn-outline-light" (click)="onSubmit()" style="font-weight: bold;"
-        data-bs-toggle="modal" data-bs-target="#cadastrarproduto">
+        data-bs-toggle="modal" data-bs-target="#editarprodutoGeral">
         Confirmar
     </button>
 </div>
