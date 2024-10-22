@@ -63,9 +63,8 @@
 
 <div class="col-md-3">
     <label><strong>Upload de relatório</strong></label>
-    <input type="file" class="form-control" id="fileInput"  />
-</div>
-
+    <input type="file" class="form-control" id="fileInput" (change)="onFileSelected($event)" />
+  </div>
 
 <!-- Tabela para exibir a consulta de produtos -->
 <div class="table-responsive">
@@ -124,19 +123,19 @@
                         </thead>
                         <tbody>
                           <!-- Use um ngFor para iterar sobre os depósitos -->
-                          <tr *ngFor="let produtoDeposito of ProdutoDepositos; let primeiro = first">
-                            <td>{{ produtoDeposito.nomeDeposito }}</td>
-                            <td>{{ produtoDeposito.quantidade }}</td>
+                          <tr *ngFor="let deposito of depositos; let primeiro = first">
+                            <td>{{ deposito.nomeDeposito }}</td>
+                            <td>{{ deposito.quantidade }}</td>
                                     
                                     <!-- Coluna para quantidade vendida -->
                                     <td>
-                                        <input type="number" min="-100" [(ngModel)]="produtoDeposito.quantidadeVendida"
+                                        <input type="number" min="-100" [(ngModel)]="deposito.quantidadeVendida"
                                             style="width: 50px;">
                                     </td>
                                     <!-- Botão de vender -->
                                     <td>
                                         <button class="btn btn-success"
-                                            (click)="abrirFormularioCredenciais(produtoDeposito)">Vender
+                                            (click)="abrirFormularioCredenciais(deposito)">Vender
                                         </button>
                                     </td>
 
@@ -178,10 +177,13 @@
     <img [src]="imagemAmpliadaUrlGeral" alt="Imagem Ampliada">
 </div>
 
-<div class="formulario-credenciais text-center"
-    *ngIf="ProdutoDepositoSelecionado && ProdutoDepositoSelecionado === ProdutoDepositoSelecionado">
+
+
+
+<div class="formulario-credenciais text-center" *ngIf="depositoSelecionado && depositoSelecionado === depositoSelecionado || file && file === file">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Confirme a sua venda</h4>
+    <h4 *ngIf="file">Envio de relatório venda</h4>
+    <h4 *ngIf="!file">Confirme a sua venda</h4>
     <div class="mb-3">
         <label for="matriculaInput" class="form-label">Matrícula</label>
         <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
@@ -191,10 +193,10 @@
         <label for="senhaInput" class="form-label">Senha</label>
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
-    <button class="btn btn-outline-light" (click)="confirmarVenda(ProdutoDepositoSelecionado)"
-        style="font-weight: bold;">Confirmar
-    </button>
+    <button class="btn btn-outline-light" *ngIf="file" (click)="uploadVenda()" style="font-weight: bold;">Confirmar Upload</button>
+    <button class="btn btn-outline-light" *ngIf="!file" (click)="confirmarVenda(depositoSelecionado)" style="font-weight: bold;">Confirmar Venda</button>
 </div>
+
 
 <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
     <p style="color: white"> Carregando... </p>

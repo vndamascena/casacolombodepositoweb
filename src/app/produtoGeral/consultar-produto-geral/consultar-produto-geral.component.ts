@@ -15,7 +15,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
   styleUrl: './consultar-produto-geral.component.css'
 })
 export class ConsultarProdutoGeralComponent implements OnInit {
-  ProdutoDepositoSelecionado: any;
+  depositoSelecionado: any;
   matricula: string = ''; // Propriedade para armazenar a matrícula do usuário
   senha: string = ''; // Propriedade para armazenar a senha do usuário
   produtoGerals: any[] = []; // Array de objetos para armazenar produtos
@@ -24,10 +24,11 @@ export class ConsultarProdutoGeralComponent implements OnInit {
   produtoGeralFiltrados: any[] = []; // Array para armazenar produtos filtrados
   termoPesquisa: string = ''; // String para armazenar o termo de pesquisa
   mensagem: string = '';
-
+produtoDeposito: any;
+file: File | null = null; // Para armazenar o arquivo selecionado
 
   produtoGeral: any = {}; // Objeto para armazenar os detalhes do produto atual
-  ProdutoDepositos: any[] = []; // Array para armazenar os deposito do produto atual
+  depositos: any[] = []; // Array para armazenar os deposito do produto atual
   p: number = 1;
   originalProdutoGerals: any[] = [];
 
@@ -55,7 +56,7 @@ export class ConsultarProdutoGeralComponent implements OnInit {
             this.produtoGeral = produtoGeralData;
   
             // Certifique-se de que o array de depósitos esteja presente
-            this.ProdutoDepositos = produtoGeralData.produtoDeposito || [];
+            this.depositos = produtoGeralData.produtoDeposito || [];
   
             // Atribui os produtos gerais à lista original (se aplicável)
             this.originalProdutoGerals = [...this.produtoGerals];
@@ -108,14 +109,20 @@ export class ConsultarProdutoGeralComponent implements OnInit {
       imagemAmpliada.classList.remove('mostrar');
     }
   }
-
   abrirFormularioCredenciais(ProdutoDeposito: any): void {
-    this.ProdutoDepositoSelecionado = ProdutoDeposito;
+    console.log('ProdutoDeposito:', ProdutoDeposito); // Verifica se o ProdutoDeposito possui o id correto
+    this.depositoSelecionado = { 
+      ...ProdutoDeposito, 
+      id: ProdutoDeposito.id // Certifique-se de que o ID está sendo copiado corretamente
+    };
+    console.log('depositoSelecionado:', this.depositoSelecionado); // Verifica se o id foi atribuído corretamente
   }
+  
   fecharFormularioCredenciais(): void {
-    this.ProdutoDepositoSelecionado = null;
+    this.depositoSelecionado = null;
     this.matricula = '';
     this.senha = '';
+    this.file = null;
   }
 
 
@@ -124,32 +131,32 @@ export class ConsultarProdutoGeralComponent implements OnInit {
 
 
   confirmarVenda(deposito: any): void {
-    // Verifica se um lote foi selecionado
-    this.ProdutoDepositoSelecionado = deposito;
-
-    if (this.ProdutoDepositoSelecionado) {
-      // Verifica se a quantidade vendida é maior que 0
-      if (this.ProdutoDepositoSelecionado.quantidadeVendida > 0) {
-        // Configuração dos parâmetros da solicitação POST
-        const options = { params: { matricula: this.matricula, senha: this.senha, Id: this.ProdutoDepositoSelecionado.id } };
+    this.depositoSelecionado = deposito;
+  
+    // Certifique-se de que o ID correto está sendo capturado
+    console.log('depositoSelecionado ID:', this.depositoSelecionado.id); // Agora deve mostrar o ID correto
+  
+    if (this.depositoSelecionado) {
+      if (this.depositoSelecionado.quantidadeVendida > 0) {
+        // Aqui, passe o 'id' correto para os parâmetros da requisição
+        const options = { params: { matricula: this.matricula, senha: this.senha, id: this.depositoSelecionado.id } };
+  
         this.spinner.show();
-
-        this.httpClient.post<any>(environment.apiUrl + '/produtoGeral/venda', { quantidadeVendida: this.ProdutoDepositoSelecionado.quantidadeVendida }, options)
+        console.log('dados enviados da venda', options); // Verifique os dados antes de enviar
+  
+        this.httpClient.post<any>(environment.apiUrl + '/produtoGeral/venda', 
+          { quantidadeVendida: this.depositoSelecionado.quantidadeVendida }, options)
           .subscribe({
             next: (response) => {
-              // Atualiza a quantidade do lote no cliente
-              this.ProdutoDepositoSelecionado.quantidadeLote -= this.ProdutoDepositoSelecionado.quantidadeVendida;
-              this.ProdutoDepositoSelecionado.quantidadeVendida = 0;
+              this.depositoSelecionado.quantidadeLote -= this.depositoSelecionado.quantidadeVendida;
+              this.depositoSelecionado.quantidadeVendida = 0;
               this.spinner.hide();
-
-              this.mensagem = response.message; // exibir mensagem de sucesso
-
+              
+              this.mensagem = response.message;
               this.fecharFormularioCredenciais();
-
             },
             error: (error) => {
-
-              alert('Erro ao confirmar venda. Usuário e senha incorreto, tente novamente.');
+              alert('Erro ao confirmar venda. Usuário e senha incorretos, tente novamente.');
               this.spinner.hide();
             }
           });
@@ -162,9 +169,58 @@ export class ConsultarProdutoGeralComponent implements OnInit {
       this.spinner.hide();
     }
   }
+  
+  
+
+
+  onFileSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+        this.file = fileInput.files[0];  // Armazena o arquivo na variável file
+    } else {
+        this.file = null; // Reseta o arquivo caso nada seja selecionado
+    }
+}
 
 
 
+
+uploadVenda(): void {
+  if (!this.file) {
+      alert('Por favor, selecione um arquivo antes de fazer o upload.');
+      return; // Não continua se não houver arquivo
+  }
+
+  const formData = new FormData();
+  formData.append('file', this.file); // Adiciona o arquivo ao FormData
+
+  // Adiciona as credenciais como parâmetros na URL
+  const options = {
+      params: {
+          matricula: this.matricula,
+          senha: this.senha
+      }
+  };
+
+  this.spinner.show();
+
+  this.httpClient.post<any>(`${environment.apiUrl}/produtoGeral/upload-venda`, formData, options)
+      .subscribe({
+          next: (response) => {
+              this.spinner.hide();
+              alert('Upload realizado com sucesso!');
+          },
+          error: (error) => {
+              this.spinner.hide();
+              console.error('Erro ao fazer upload:', error);
+              alert('Erro ao fazer upload. Verifique suas credenciais e o arquivo.');
+          }
+      });
+}
+
+
+  
+  
 
 
 
@@ -192,13 +248,15 @@ export class ConsultarProdutoGeralComponent implements OnInit {
     }
   }
 
+  
+
 
   toggleDetalhes(produtoGeral: any): void {
     produtoGeral.mostrarDetalhes = !produtoGeral.mostrarDetalhes;
   
     if (produtoGeral.mostrarDetalhes && produtoGeral.produtoDeposito) {
       // Atribui o array de depósitos ao ProdutoDepositos
-      this.ProdutoDepositos = produtoGeral.produtoDeposito;
+      this.depositos = produtoGeral.produtoDeposito;
     }
   }
 

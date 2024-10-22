@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './cadastrar-produto-geral.component.html',
   styleUrl: './cadastrar-produto-geral.component.css'
 })
-export class CadastrarProdutoGeralComponent implements OnInit{
+export class CadastrarProdutoGeralComponent implements OnInit {
 
   categorias: any[] = [];
   fornecedorGeral: any[] = [];
@@ -30,8 +30,6 @@ export class CadastrarProdutoGeralComponent implements OnInit{
   produtoGeralId: number | null = null; 
   depositos: any[] = [];
 
- 
-
   constructor(
     private formBuilder: FormBuilder,
     private httpClient: HttpClient,
@@ -43,26 +41,22 @@ export class CadastrarProdutoGeralComponent implements OnInit{
     nomeProduto: new FormControl('', [
       Validators.required,
       Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s@#/\$&!\.\(\,\)\-]{4,100}$/)
-
     ]),
     marcaProduto: new FormControl('', []),
     un: new FormControl(''),
     codigoSistema: new FormControl(''),
-   
-   
-   produtoDeposito: new FormArray([
-      new FormGroup({
-        quantidade: new FormControl(''),
-        depositoId: new FormControl(''),
-       
-        
-      })
-    ]),
     categoriaId: new FormControl('', [
       Validators.required
     ]),
     fornecedorGeralId: new FormControl('', [
       Validators.required
+    ]),
+    depositos: new FormArray([
+      new FormGroup({
+        
+        depositoId: new FormControl(),
+        quantidade: new FormControl(),
+      })
     ]),
     imagemUrlGeral: new FormControl(''),
   });
@@ -72,36 +66,46 @@ export class CadastrarProdutoGeralComponent implements OnInit{
   }
 
   get produtoDepositos() {
-    return this.form.get('produtoDeposito') as FormArray;
+    return this.form.get('depositos') as FormArray;
   }
-  
 
   ngOnInit(): void {
+    // Log de inicialização de chamada à API de categorias
+    console.log('Buscando categorias...');
     this.httpClient.get(environment.apiUrl + "/categoria")
       .subscribe({
         next: (data) => {
           this.categorias = data as any[];
+          console.log('Categorias recebidas:', this.categorias);
         },
         error: (e) => {
-          console.log(e.error);
+          console.log('Erro ao buscar categorias:', e.error);
         }
       });
+
+    // Log de inicialização de chamada à API de fornecedores
+    console.log('Buscando fornecedores...');
     this.httpClient.get(environment.apiUrl + "/fornecedorGeral")
       .subscribe({
         next: (data) => {
           this.fornecedorGeral = data as any[];
+          console.log('Fornecedores recebidos:', this.fornecedorGeral);
         },
         error: (e) => {
-          console.log(e.error);
+          console.log('Erro ao buscar fornecedores:', e.error);
         }
       });
-      this.httpClient.get(environment.apiUrl + "/Depositos")
+
+    // Log de inicialização de chamada à API de depósitos
+    console.log('Buscando depósitos...');
+    this.httpClient.get(environment.apiUrl + "/Depositos")
       .subscribe({
         next: (data) => {
           this.depositos = data as any[];
+          console.log('Depósitos recebidos:', this.depositos);
         },
         error: (e) => {
-          console.log(e.error);
+          console.log('Erro ao buscar depósitos:', e.error);
         }
       });
   }
@@ -115,11 +119,12 @@ export class CadastrarProdutoGeralComponent implements OnInit{
     this.matricula = '';
     this.senha = '';
   }
+
   onSubmit(): void {
-    const depositoArray = this.form.get('produtoDeposito') as FormArray;
+    const depositoArray = this.form.get('depositos') as FormArray;
   
     if (depositoArray && depositoArray.length === 0) {
-      console.error('A lista de depositos não pode estar vazia.');
+      console.error('A lista de depósitos não pode estar vazia.');
       return;
     }
   
@@ -130,21 +135,22 @@ export class CadastrarProdutoGeralComponent implements OnInit{
       // Log dos dados que estão sendo enviados
       console.log('Dados enviados para a API:', this.form.value);
       console.log('Opções de autenticação:', options);
-  
+      console.log('FormArray de produtoDeposito:', this.produtoDepositos.value);
+
       this.httpClient.post(environment.apiUrl + "/produtoGeral", this.form.value, options)
         .subscribe({
           next: (data: any) => {
             this.mensagem = data.message; 
             this.produtoGeralId = data.produtoGeralGetModel.id; 
+            console.log('Produto cadastrado com sucesso. ID:', this.produtoGeralId);
             this.form.reset(); 
             this.fecharFormularioCredenciais();
             this.spinner.hide();
-            
             this.uploadImagem();
           },
           error: (e) => {
             console.log('Erro ao cadastrar produto:', e.error);
-            alert('Falha ao cadastrar o produto. Verifique os campos preenchidos');
+            alert('Falha ao cadastrar o produto. Verifique os campos preenchidos.');
             this.spinner.hide();
           }
         });
@@ -153,10 +159,12 @@ export class CadastrarProdutoGeralComponent implements OnInit{
       this.spinner.hide();
     } 
   }
+
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
     if (file) {
       this.imagemFile = file;
+      console.log('Imagem selecionada:', file.name);
     }
   }
 
@@ -184,19 +192,15 @@ export class CadastrarProdutoGeralComponent implements OnInit{
         next: (data: any) => {
           console.log('Imagem enviada com sucesso:', data);
           this.mensagem = 'Imagem enviada com sucesso!';
-          
           this.spinner.hide();
-          
-          
+  
           const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-        if (fileInput) {
-          fileInput.value = '';
-        }
-        this.imagemFile = null;
-
-        // Resetar o formulário
-        this.form.reset(); 
-      },
+          if (fileInput) {
+            fileInput.value = '';
+          }
+          this.imagemFile = null;
+          this.form.reset(); 
+        },
         error: (e) => {
           console.log('Erro ao enviar a imagem:', e.error);
           alert('Erro ao enviar a imagem. Tente novamente.');
@@ -207,18 +211,16 @@ export class CadastrarProdutoGeralComponent implements OnInit{
 
   adicionarProdutoDeposito(): void {
     const produtoDeposito = new FormGroup({
-      // Adicionar validação se necessário
-      quantidade: new FormControl(''),
-      depositoId: new FormControl('')
+      
+      depositoId: new FormControl(''),
+      quantidade: new FormControl('')
     });
     this.produtoDepositos.push(produtoDeposito);
-    console.log(this.produtoDepositos.value); // Verificar se o array está sendo atualizado
+    console.log('Produto depósito atualizado:', this.produtoDepositos.value); 
   }
-
-  
 
   excluirProdutoDeposito(Id: string): void {
     this.produtoDepositos.removeAt(this.produtoDepositos.length - 1);
+    console.log('Produto depósito removido. Lista atual:', this.produtoDepositos.value);
   }
-
 }
