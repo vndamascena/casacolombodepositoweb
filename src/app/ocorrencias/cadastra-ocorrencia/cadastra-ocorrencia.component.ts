@@ -52,7 +52,7 @@ export class CadastraOcorrenciaComponent implements OnInit {
     observacao: new FormControl('', [
       
     ]),
-    fornecedorOcorrenciaId: new FormControl('', [
+    fornecedorGeralId: new FormControl('', [
       
     ]),
 

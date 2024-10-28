@@ -122,6 +122,26 @@ User
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
+
+
+
+.custom-file-input {
+  background-color: #036822;
+  color: #fffefe; /* Cor do texto */
+  padding: 10px; /* Ajusta o tamanho interno */
+  border: 1px solid #036822; /* Borda azul */
+  border-radius: 5px; /* Bordas arredondadas */
+  cursor: pointer; /* Muda o cursor para indicar clicável */
+}
+
+/* Para estilizar quando o usuário passa o mouse */
+.custom-file-input:hover {
+  background-color: #ffffff; /* Cor do fundo ao passar o mouse */
+    color: #036822;
+}
+
+
+
 td, th {
     vertical-align: middle;
   }
@@ -316,3 +336,5 @@ td, th {
       padding: 3px;
     }
   }
+
+  

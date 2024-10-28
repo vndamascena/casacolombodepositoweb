@@ -89,7 +89,7 @@
                             <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase }}</option>
                         </select>
                         <div class="text-danger"
-                            *ngIf="f['fornecedorOcorrenciaId'].touched && f['fornecedorOcorrenciaId'].invalid">
+                            *ngIf="f['fornecedorGeralId'].touched && f['fornecedorGeralId'].invalid">
                             Selecione um fornecedor para o produto.
                         </div>
                     </div>

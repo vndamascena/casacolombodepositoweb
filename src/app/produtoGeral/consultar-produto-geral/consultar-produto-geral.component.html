@@ -10,7 +10,7 @@
 
         </a>
         <div class="container">
-            <h1 class="titulo">Pisos e Revestimentos</h1>
+            <h1 class="titulo">Produtos</h1>
             <div class="input-group mb-3 barra-pesquisa">
                 <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
                     aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link black-text" routerLink="#">
+                    <a class="nav-link black-text" routerLink="/historico-venda-produtoGeral">
                         <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
                     </a>
                 </li>
@@ -61,10 +61,10 @@
 
 
 
-<div class="col-md-3">
-    <label><strong>Upload de relatório</strong></label>
-    <input type="file" class="form-control" id="fileInput" (change)="onFileSelected($event)" />
-  </div>
+<div class="col-md-3" style="padding: 1px;">
+    <label style="color: #036822;"><strong>Upload de relatório</strong></label>
+   <input type="file" class="form-control custom-file-input" id="fileInput" (change)="onFileSelected($event)" />
+</div>
 
 <!-- Tabela para exibir a consulta de produtos -->
 <div class="table-responsive">

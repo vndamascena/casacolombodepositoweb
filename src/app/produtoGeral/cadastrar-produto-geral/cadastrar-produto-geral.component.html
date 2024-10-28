@@ -35,7 +35,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link black-text" routerLink="#">
+                        <a class="nav-link black-text" routerLink="/historico-venda-produtoGeral">
                             <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
                         </a>
                     </li>
@@ -106,15 +106,17 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="nomeDeposito{{i}}"><strong>Depósito</strong></label>
-                                    <select class="form-control" formControlName="depositoId" id="nome{{i}}">
-                                        <option *ngFor="let deposito of depositos" [value]="deposito.id"
+                                    <select class="form-select" formControlName="depositoId" id="nome{{i}}">
+                                        <option value="">Selecione uma deposito</option>
+                                        <option *ngFor="let deposito of depositos" [value]="deposito.id" 
                                             [selected]="deposito.id === produtoDepositos.value.depositoId">
                                             {{ deposito.nome }}
                                         </option>
                                     </select>
+                                   
                                 </div>
                                
-                               
+                                
 
                             
 
