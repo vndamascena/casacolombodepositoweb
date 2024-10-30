@@ -117,34 +117,77 @@ export class ConsultaEntregaComponent implements OnInit {
     private formBiulder: FormBuilder,
   ) { }
 
-  // Método para filtrar os produtos com base na expressão de pesquisa
   filtrarEntregas(): void {
-    if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todas as entregas para o estado original
-      this.datas.forEach(data => {
-        data.entregas = data.entregas.map((entrega: { id: any; }) => {
-          return this.originalEntregas.find(e => e.id === entrega.id) || entrega;
-        });
-      });
-    } else {
-      // Filtra as entregas com base na expressão de pesquisa na lista original
-      this.datas.forEach(data => {
-        data.entregas = this.originalEntregas.filter(p =>
-          Object.values(p).some(value => {
-            // Verifica se o valor é string ou número
-            if (typeof value === 'string') {
-              return value.toLowerCase().includes(this.expression.toLowerCase());
-            } else if (typeof value === 'number') {
-              // Converte o número para string e verifica se contém a expressão de pesquisa
-              return value.toString().includes(this.expression);
-            }
-            return false;
-          })
+    console.log(`Filtrando entregas com a expressão: "${this.expression}"`);
 
-        );
-      });
+    // Se a expressão de pesquisa estiver vazia, restaura as entregas do array original
+    if (this.expression.trim() === '') {
+        this.entregas = [...this.originalEntregas]; // Restaura todas as entregas
+        this.categorizarEntregasPorDia(); // Reatribui as entregas para cada dia
+        console.log('Nenhuma expressão fornecida, todas as entregas foram restauradas.');
+        return;
     }
-  }
+
+    // Limpa as entregas antes de aplicar o filtro
+    this.datas.forEach(data => {
+        data.entregas = []; // Inicializa como vazio
+    });
+
+    // Filtra as entregas para cada dia
+    this.datas.forEach(data => {
+        const dia = this.extractDate(data.nome); // Extrai a data do nome
+
+        // Verifica se o dia é válido antes de filtrar
+        if (dia) {
+            console.log(`Verificando entregas para o dia: ${dia}`);
+
+            // Filtra as entregas que correspondem ao dia e à expressão de pesquisa
+            const entregasFiltradas = this.originalEntregas.filter(entrega => {
+                const clienteMatches = entrega.nomeCliente.toLowerCase().includes(this.expression.toLowerCase());
+                const dataMatches = entrega.dataEntrega === dia;
+
+                console.log(`Comparando entrega "${entrega.nomeCliente}" (data: ${entrega.dataEntrega}) com cliente: "${this.expression}", data: "${dia}" - Matches: ${clienteMatches && dataMatches}`);
+
+                return clienteMatches && dataMatches;
+            });
+
+            // Atribui as entregas filtradas ao dia correspondente
+            if (entregasFiltradas.length > 0) {
+                data.entregas = entregasFiltradas; 
+                console.log(`Entregas filtradas para o dia "${data.nome}": ${entregasFiltradas.length} encontradas.`);
+            } else {
+                console.log(`Nenhuma entrega encontrada para o dia "${data.nome}" com a expressão "${this.expression}".`);
+            }
+        } else {
+            console.warn(`A data para este item está undefined:`, data);
+        }
+    });
+
+    // Remove os dias que não têm entregas
+    this.datas = this.datas.filter(data => data.entregas.length > 0);
+}
+
+
+
+private extractDate(diaNome: string): string | undefined {
+    const regex = /(\d{2})\/(\d{2})\/(\d{4})/; // regex para capturar a data no formato dd/MM/yyyy
+    const match = diaNome.match(regex);
+
+    if (match) {
+        const dia = match[1]; // Dia
+        const mes = match[2]; // Mês
+        const ano = match[3]; // Ano
+        return `${ano}-${mes}-${dia}`; // Converte para YYYY-MM-DD
+    }
+
+    return undefined; // Retorna undefined se não encontrar data
+}
+
+  
+  
+  
+
+  
 
   getAllPendencias() {
     return this.dias.reduce((acc, dia) => acc.concat(dia.pendencias), []);
@@ -228,6 +271,7 @@ export class ConsultaEntregaComponent implements OnInit {
             this.categorizarEntregasPorDia();
             this.buscarPendencias();
             this.originalEntregas = [...this.entregas];
+            
 
             // Requisição para obter dados de impressão
             this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega/impressao`)
@@ -735,31 +779,7 @@ export class ConsultaEntregaComponent implements OnInit {
     return brazilTime;
   }
 
-  filterData(): void {
-    if (this.startDate && this.endDate) {
-      const start = new Date(this.startDate);
-      const end = new Date(this.endDate);
-      end.setDate(end.getDate() + 1);
-
-      this.httpClient.get<any[]>(`${environment.ocorrencApi}/ocorrencia`).subscribe({
-        next: (ocorrenciasData) => {
-          this.entregas = ocorrenciasData.map(entrega => {
-            entrega.dataTime = this.convertToBrazilTime(new Date(entrega.dataTime));
-            return entrega;
-          }).filter(entrega => {
-            const ocorrenciaDate = new Date(entrega.dataTime);
-            return ocorrenciaDate >= start && ocorrenciaDate < end;
-          });
-
-          this.entregas.sort((a, b) => b.dataTime - a.dataTime);
-          this.entregas.forEach(entrega => this.loadUserName(entrega));
-        },
-        error: (error) => {
-          console.error('Erro ao filtrar o histórico de vendas:', error);
-        }
-      });
-    }
-  }
+ 
 
   loadUserName(entregaa: any): void {
     this.httpClient.get<any>(`${this.userApiUrl}?matricula=${entregaa.usuarioId}`)
