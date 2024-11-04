@@ -243,7 +243,12 @@ export class HistoricoEntregaComponent implements OnInit {
       Vendedor: entrega.vendedor,
       Observação: entrega.observacao,
       Motorista: entrega.motorista,
-      DataEntregaBaixa: entrega.dataEntregaBaixa
+      DataEntregaBaixa: entrega.dataEntregaBaixa,
+      DataVenda: entrega.dataVenda,
+      Loja: entrega.loja,
+      Periodo: entrega.periodo,
+      DiaSemana: entrega.diaSemanaBaixa,
+
     }));
   
     // Crie uma nova planilha
