@@ -1,0 +1,134 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+
+
+    <div class="container">
+
+
+        <a class="navbar-brand" href="consulta-produtos">
+            <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+
+        </a>
+        <div class="container">
+            <br>
+            <h1 class="titulo">Histórico de títulos pagos</h1>
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Digite para pesquisar o título desejado"
+                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
+                    (input)="filtrarTitulosBaixados()">
+                <div class="overlay" (click)="filtrarTitulosBaixados()"></div>
+            </div>
+        </div>
+
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <br>
+                    <a class="nav-link black-text" routerLink="/consultar-titulo">
+                        <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <br>
+                    <a class="nav-link black-text" routerLink="/cadastro-titulo">
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <br>
+                    <a class="nav-link black-text" routerLink="/historico-titulo">
+                        <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
+<div class="line"></div>
+<br>
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div class="table-responsive">
+    <div class="container mt-2">
+        <h2>Filtrar por data</h2>
+        <div class="row mb-2 align-items-end">
+            <div class="col-md-2">
+                <label for="startDate">Data Inicial:</label>
+                <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'"
+                    (ngModelChange)="startDate = $event; filterData()">
+            </div>
+            <div class="col-md-2">
+                <label for="endDate">Data Final:</label>
+                <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'"
+                    (ngModelChange)="endDate = $event; filterData()">
+
+            </div>
+
+        </div>
+        <div class="col">
+           
+            <!--<button (click)="exportarParaExcel()" class="btn btn-primary mb-2">Exportar para Excel</button>!-->
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nota</th>
+                <th>Usuário</th>
+                <th style="width: 6%;">N° Nota</th>
+                <th style="width: 23%;">Cliente</th>
+                <th>Telefone</th>
+                <th style="white-space: nowrap;">Data venda</th>
+                <th style="width: 6%;">Valor</th>
+                <th>Vendedor</th>
+                <th style="width: 28%;">Observação</th>
+               
+                <th style="width: 8%;">Data entrega</th>
+                
+            </tr>
+        </thead>
+        <ng-container
+            *ngFor="let baixaTitulo of baixaTitulos | paginate: { itemsPerPage: 30, currentPage: p }; let i = index">
+            <tr [ngStyle]="{'background-color': getColor(i)}">
+                <td><img [src]="getFullImageUrl(baixaTitulo.imagemUrl)" alt="{{ baixaTitulo.nome }}" width="30"
+                        (click)="expandirImagem(baixaTitulo.imagemUrl)"></td>
+                <td>{{ baixaTitulo.nome | uppercase }}</td>
+                <td>{{ baixaTitulo.numeroNota }}</td>
+                <td>{{ baixaTitulo.nomeCliente | uppercase}}</td>
+                <td>{{ baixaTitulo.telefone}}</td>
+                <td>{{ baixaTitulo.dataVenda }}</td>
+                <td>R$ {{ baixaTitulo.valor }}</td>
+                <td>{{ baixaTitulo.vendedor }}</td>
+                <td>{{ baixaTitulo.observacao | uppercase }}</td>
+               
+                <td>{{ baixaTitulo.dataEntregaBaixa | date: 'dd/MM/yyyy' }}</td>
+            </tr>
+        </ng-container>
+    </table>
+    <tfoot>
+        <tr>
+            <td colspan="14">
+                <strong> Quantidade titulos pagos: {{ baixaTitulos.length }}</strong>
+            </td>
+        </tr>
+    </tfoot>
+</div>
+<div class="col text-center"><strong>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls></strong>
+</div>
+<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+    <div class="imagem-container">
+        <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
+    </div>
+</div>

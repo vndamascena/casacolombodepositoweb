@@ -18,6 +18,10 @@ import { CadastrarProdutoGeralComponent } from './produtoGeral/cadastrar-produto
 import { ConsultarProdutoGeralComponent } from './produtoGeral/consultar-produto-geral/consultar-produto-geral.component';
 import { EdicaoProdutoGeralComponent } from './produtoGeral/edicao-produto-geral/edicao-produto-geral.component';
 import { HistoricoVendaProdutoGeralComponent } from './produtoGeral/historico-venda-produto-geral/historico-venda-produto-geral.component';
+import { HistoricoTituloComponent } from './entrega-titulo/historico-titulo/historico-titulo.component';
+import { CadastroTituloComponent } from './entrega-titulo/cadastro-titulo/cadastro-titulo.component';
+import { EditarTituloComponent } from './entrega-titulo/editar-titulo/editar-titulo.component';
+import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/consultar-titulo.component';
 
 
 export const routes: Routes = [
@@ -114,7 +118,26 @@ export const routes: Routes = [
         component: HistoricoVendaProdutoGeralComponent,
         canActivate: [AuthenticationGuard]
     },
-
+    {
+        path: 'historico-titulo',
+        component:HistoricoTituloComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'cadastro-titulo',
+        component:CadastroTituloComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'editar-titulo',
+        component:EditarTituloComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'consultar-titulo',
+        component:ConsultarTituloComponent,
+        canActivate: [AuthenticationGuard]
+    },
     {
         path: '', pathMatch: 'full', //url raiz
         redirectTo: 'autenticar-usuario'

@@ -16,6 +16,10 @@ import { HistoricoVendaProdutoGeralComponent } from './produtoGeral/historico-ve
 import { CadastrarProdutoGeralComponent } from './produtoGeral/cadastrar-produto-geral/cadastrar-produto-geral.component';
 import { ConsultarProdutoGeralComponent } from './produtoGeral/consultar-produto-geral/consultar-produto-geral.component';
 import { EdicaoProdutoGeralComponent } from './produtoGeral/edicao-produto-geral/edicao-produto-geral.component';
+import { HistoricoTituloComponent } from './entrega-titulo/historico-titulo/historico-titulo.component';
+import { EditarTituloComponent } from './entrega-titulo/editar-titulo/editar-titulo.component';
+import { CadastroTituloComponent } from './entrega-titulo/cadastro-titulo/cadastro-titulo.component';
+import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/consultar-titulo.component';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +30,8 @@ import { EdicaoProdutoGeralComponent } from './produtoGeral/edicao-produto-geral
     MenuComponent, ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
     OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
     CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
-    CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent
+    CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
+    EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent
     ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

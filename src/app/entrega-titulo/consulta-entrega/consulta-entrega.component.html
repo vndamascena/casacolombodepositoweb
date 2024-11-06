@@ -116,7 +116,8 @@
                   <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.numeroNota }}</td>
                   <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.nomeCliente }}</td>
                   <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.dataVenda }}</td>
-                  <td [ngStyle]="{'background-color': getColor(i), 'white-space': 'nowrap'}">R$ {{ formatarValor(pendente.valor) }}</td>
+                  <td [ngStyle]="{'background-color': getColor(i), 'white-space': 'nowrap'}">R$ {{
+                    formatarValor(pendente.valor) }}</td>
                   <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.vendedor }}</td>
                   <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.observacaoPendencia | uppercase }}</td>
                   <td [ngStyle]="{'background-color': getColor(i)}">
@@ -129,9 +130,10 @@
                       </select>
                     </ng-template>
                   </td>
-                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.diaSemanaPendencia | date: 'dd/MM/yyyy'}}</td>
+                  <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.diaSemanaPendencia | date:
+                    'dd/MM/yyyy'}}</td>
                   <td [ngStyle]="{'background-color': getColor(i)}">{{ pendente.dataEntregaProximaEntrega }}</td>
-                  <td [ngStyle]="{'background-color': getColor(i)}" >
+                  <td [ngStyle]="{'background-color': getColor(i)}">
                     <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
                       [attr.data-bs-target]="'#opcoes' + pendente.entregaId">+</button>
                   </td>
@@ -158,7 +160,7 @@
     <div class="card mb-3" *ngFor="let data of datas">
 
       <h1 (click)="toggleTable(data)" class="section-header text-center" style="cursor: pointer;">
-        <strong> {{ data.nome }}:  {{ data.contagemUnica }} </strong>
+        <strong> {{ data.nome }}: {{ data.contagemUnica }} </strong>
       </h1>
       <div *ngIf="data.exibir" class="table-responsive">
         <hr>
@@ -223,7 +225,8 @@
                     <td [ngStyle]="{'background-color': getColor(i)}">{{ entrega.numeroNota }}</td>
                     <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.nomeCliente | uppercase }}</td>
                     <td [ngStyle]="{'background-color': getColor(i)}">{{ entrega.dataVenda }}</td>
-                    <td [ngStyle]="{'background-color': getColor(i), 'white-space': 'nowrap'}">R$ {{ formatarValor(entrega.valor) }}</td>
+                    <td [ngStyle]="{'background-color': getColor(i), 'white-space': 'nowrap'}">R$ {{
+                      formatarValor(entrega.valor) }}</td>
                     <td [ngStyle]="{'background-color': getColor(i)}">{{ entrega.vendedor }}</td>
                     <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.observacao }}</td>
                     <td [ngStyle]="{'background-color': getColor(i)}">
@@ -388,7 +391,7 @@
             <input type="date" class="form-control" formControlName="dataEntregaBaixa"
               (change)="onDateChange($event)" />
           </div>
-    
+
           <div class="row">
             <label><strong>Dia da Semana</strong></label>
             <input type="text" class="form-control" placeholder="Digite aqui" formControlName="diaSemanaBaixa"
@@ -399,7 +402,7 @@
       <button class="btn btn-outline-light" (click)="concluirEntrega(baixaEntrega)" style="font-weight: bold;"
         data-bs-toggle="modal" data-bs-target="#uploadImagem">Confirmar</button>
     </div>
-    
+
 
     <div *ngIf="currentForm === 'pendencia'" class="formulario-credenciais-pendencia text-center">
       <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
