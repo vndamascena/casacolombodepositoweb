@@ -16,12 +16,13 @@
       <div class="container">
         <br>
 
-        <h2 class="text-center titulo"><strong>CONSULTA TÍTULOS A RECEBER</strong></h2>
+        <h2 class="text-center titulo"><strong>Consultar títulos a receber</strong></h2>
 
         <div class="input-group mb-3 barra-pesquisa">
-          <input type="text" class="form-control lupa" placeholder="Digite para pesquisar a entrega"
-            aria-label="Pesquisar" aria-describedby="basic-addon1">
-          <div class="overlay"></div>
+          <input type="text" class="form-control lupa" placeholder="Digite para pesquisar o titulo."
+            aria-label="Pesquisar" aria-describedby="basic-addon1"  [(ngModel)]="expression"
+            (input)="filtrarTitulo()">
+          <div class="overlay" (click)="filtrarTitulo()"></div>
         </div>
       </div>
 
@@ -77,29 +78,33 @@
           
           <!-- Div de informações do cliente -->
           <div class="cliente">
-            <img [src]="getFullImageUrl(titulo.imagemUrl)" (click)="expandirImagem(titulo.imagemUrl)">
-            <h2>{{ titulo.nomeCliente }}</h2>
-            <p>Telefone: {{ titulo.telefone }}</p>
-            <p>Valor: R$ {{ titulo.valor }}</p>
-            <p>Data venda: {{ titulo.dataVenda }}</p>
-            <p>Vendedor: {{ titulo.vendedor }}</p>
-            <p>Loja: {{titulo.loja}}</p>
-            <p>Observação: {{ titulo.observacao }}</p>
+            <img [src]="getFullImageUrl(titulo.imagemUrl)" alt="{{ titulo.nomeCliente }}"  (click)="expandirImagem(titulo.imagemUrl)"
+            class="img-fluid">
+            <h2 [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">{{ titulo.nomeCliente }}</h2>
+            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Telefone: {{ titulo.telefone }}</p>
+            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Valor: R$ {{ titulo.valor }}</p>
+            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Data venda: {{ titulo.dataVenda }}</p>
+            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Vendedor: {{ titulo.vendedor }}</p>
+            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Loja: {{titulo.loja}}</p>
+            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Observação: {{ titulo.observacao }}</p>
           </div>
     
          
           <div class="botoes" style="text-align: center; margin-top: 10px;">
-            <button (click)="(titulo.id)">CONCLUIR</button>
-            <button (click)="(titulo.id)">EDITAR</button>
+            <button class="btn btn-sm btn-success me-2" (click)="abrirFormularioBaixaTitulo(titulo)" data-bs-dismiss="modal"> 
+              <strong>Concluir</strong></button>
+            <button class="btn btn-sm btn-warning me-2" (click)="editartitulo(titulo.id)">
+              <strong>Editar</strong>
+          </button>
           </div>
-    
+          <div class="line my-4"></div>
         </div>
       </div>
     </div>
     
 
 
-
+    
 
 
 
@@ -107,7 +112,30 @@
   
 </div>
 
-
+<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+  <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+  <div class="imagem-container">
+    <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
+      (contextmenu)="exibirMenuImpressao($event)" />
+  </div>
+</div>
 <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
   <p style="color: white"> Aguarde... </p>
 </ngx-spinner>
+
+<div *ngIf="currentForm === 'baixaTitulo'" class="formulario-credenciais text-center">
+  <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+  <h4>Confirmar a entrega</h4>
+  <div class="mb-3">
+    <label for="matriculaInputBaixaTitulo" class="form-label">Matrícula</label>
+    <input type="text" class="form-control" id="matriculaInputBaixaTitulo" placeholder="Digite sua matrícula"
+      [(ngModel)]="matricula">
+  </div>
+  <div class="mb-3">
+    <label for="senhaInputBaixaTitulo" class="form-label">Senha</label>
+    <input type="password" class="form-control" id="senhaInputBaixaTitulo" placeholder="Digite sua senha"
+      [(ngModel)]="senha">
+  </div>
+  
+  <button class="btn btn-outline-light" (click)="concluirTitulo(baixaTitulo)" style="font-weight: bold;">Confirmar</button>
+</div>

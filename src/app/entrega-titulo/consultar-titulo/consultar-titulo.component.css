@@ -37,7 +37,7 @@
 }
 
 .cliente {
-    width: 270px;
+    width: 150px;
     height: 270px;
     border: 1px solid #ccc;
     margin: 5px;
@@ -55,19 +55,118 @@
 }
 
 .cliente h2 {
-  font-size: 18px;
+  font-size: 13px;
   color: #333;
   margin: 5px 0 5px;
 }
 
 .cliente p {
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
   margin: -2px 0;
 }
 
-.cliente .valor {
-  font-weight: bold;
-  color: #2a9d8f;
-  margin-top: 5px;
+
+.col .btn {
+  margin: 10px 20px;
+  /* Adiciona 10px de margem vertical e 20px de margem horizontal */
 }
+
+.imagem-ampliada {
+  position: absolute;
+
+
+  left: 0;
+  right: 0;
+
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.9);
+
+}
+
+.imagem-ampliada.mostrar {
+  display: block;
+
+}
+
+.imagem-ampliada img {
+  max-width: 100%;
+
+  transition: transform 0.0s ease-in-out;
+
+
+
+}
+
+
+.imagem-ampliada img.zoom-out {
+  cursor: zoom-out;
+}
+
+
+.controles-zoom {
+  position: absolute;
+
+  right: 10px;
+}
+
+
+.imagem-ampliada {
+
+  display: none;
+  position: absolute;
+  /* Define a posição fixa para a imagem expandida */
+  top: 50%;
+  /* Ajusta a posição verticalmente */
+  left: 50%;
+  /* Ajusta a posição horizontalmente */
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  max-height: 90%;
+  /* Centraliza a imagem na tela */
+  z-index: 1000;
+  /* Garante que a imagem esteja acima de outros elementos */
+  background-color: rgba(255, 255, 255, 0.9);
+  /* Adiciona um fundo transparente */
+
+}
+
+.imagem-ampliada .btn-close {
+  position: absolute;
+  /* Define a posição absoluta para o botão de fechar */
+  top: 1px;
+  /* Ajusta a posição do topo */
+  right: 30px;
+  /* Ajusta a posição da direita */
+  z-index: 9999;
+  /* Garante que o botão esteja acima da imagem */
+}
+
+.formulario-credenciais {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #198754;
+  padding: 20px;
+  border: 1px solid #ccc;
+  z-index: 9999;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+
+.formulario-credenciais .btn-close {
+  position: absolute;
+  /* Define a posição absoluta para o botão de fechar */
+  top: 1px;
+  /* Ajusta a posição do topo */
+  right: 01px;
+  /* Ajusta a posição da direita */
+  z-index: 9999;
+  /* Garante que o botão esteja acima da imagem */
+
+}
+

@@ -228,7 +228,7 @@ export class CadastroTituloComponent {
     };
 
      
-     const telefoneMatch = text.match(/Compl[^\d]*TEL:\s*(\d{8,9})(?=\s*Vendedor)/);
+     const telefoneMatch = text.match(/Compl[^\d]*TEL:\s*(\d{8,12})(?=\s*Vendedor)/);
      const telefone = telefoneMatch ? telefoneMatch[1].trim() : '';
      
 console.log('telefone:', telefone);
@@ -271,7 +271,7 @@ console.log('telefone:', telefone);
 
     this.spinner.show();
 
-    this.httpClient.post(`${environment.entregatitulo}/tituloReceber/upload?Id=${this.tituloId}`, formData)
+    this.httpClient.post(`${environment.entregatitulo}/tituloReceber/upload?tituloId=${this.tituloId}`, formData)
       .subscribe({
         next: (data: any) => {
           console.log('Imagem enviada com sucesso:', data);
@@ -285,7 +285,7 @@ console.log('telefone:', telefone);
 
           this.imagemFile = null;
           this.spinner.hide();
-          window.location.reload();
+         
         },
         error: (e) => {
           console.log('Erro ao enviar a imagem:', e.error);

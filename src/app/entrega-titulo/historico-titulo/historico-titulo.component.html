@@ -11,7 +11,7 @@
         </a>
         <div class="container">
             <br>
-            <h1 class="titulo">Histórico de títulos pagos</h1>
+            <h1 class="titulo"><strong>Histórico de títulos pagos</strong></h1>
             <div class="input-group mb-3 barra-pesquisa">
                 <input type="text" class="form-control lupa" placeholder="Digite para pesquisar o título desejado"
                     aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
@@ -86,13 +86,13 @@
                 <th>Usuário</th>
                 <th style="width: 6%;">N° Nota</th>
                 <th style="width: 23%;">Cliente</th>
-                <th>Telefone</th>
+                <th style="width: 14%;">Telefone</th>
                 <th style="white-space: nowrap;">Data venda</th>
-                <th style="width: 6%;">Valor</th>
+                <th style="width: 11%">Valor</th>
                 <th>Vendedor</th>
                 <th style="width: 28%;">Observação</th>
                
-                <th style="width: 8%;">Data entrega</th>
+                <th style="white-space: nowrap;">Data baixa</th>
                 
             </tr>
         </thead>
@@ -104,13 +104,13 @@
                 <td>{{ baixaTitulo.nome | uppercase }}</td>
                 <td>{{ baixaTitulo.numeroNota }}</td>
                 <td>{{ baixaTitulo.nomeCliente | uppercase}}</td>
-                <td>{{ baixaTitulo.telefone}}</td>
+                <td style="white-space: nowrap;">{{ baixaTitulo.telefone}}</td>
                 <td>{{ baixaTitulo.dataVenda }}</td>
-                <td>R$ {{ baixaTitulo.valor }}</td>
+                <td style="white-space: nowrap;">R$ {{ baixaTitulo.valor }}</td>
                 <td>{{ baixaTitulo.vendedor }}</td>
                 <td>{{ baixaTitulo.observacao | uppercase }}</td>
                
-                <td>{{ baixaTitulo.dataEntregaBaixa | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ baixaTitulo.dataTime | date: 'dd/MM/yyyy' }}</td>
             </tr>
         </ng-container>
     </table>

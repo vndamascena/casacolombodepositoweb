@@ -129,7 +129,7 @@ export const routes: Routes = [
         canActivate: [AuthenticationGuard]
     },
     {
-        path: 'editar-titulo',
+        path: 'editar-titulo/:id',
         component:EditarTituloComponent,
         canActivate: [AuthenticationGuard]
     },
