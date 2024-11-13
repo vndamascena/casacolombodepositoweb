@@ -20,6 +20,7 @@ import { HistoricoTituloComponent } from './entrega-titulo/historico-titulo/hist
 import { EditarTituloComponent } from './entrega-titulo/editar-titulo/editar-titulo.component';
 import { CadastroTituloComponent } from './entrega-titulo/cadastro-titulo/cadastro-titulo.component';
 import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/consultar-titulo.component';
+import { EditarEntregaComponent } from './entrega-titulo/editar-entrega/editar-entrega.component';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,7 @@ import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/cons
     OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
     CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
     CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
-    EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent
+    EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent, EditarEntregaComponent
     ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
