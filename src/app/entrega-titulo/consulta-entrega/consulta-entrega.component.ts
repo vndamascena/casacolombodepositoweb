@@ -85,7 +85,7 @@ export class ConsultaEntregaComponent implements OnInit {
   });
 
 
-  form: FormGroup = this.formBiulder.group({
+  form: FormGroup = this.formBuilder.group({
     id: [''],
     numeroNota: ['', Validators.required],
     nomeCliente: [''],
@@ -108,13 +108,14 @@ export class ConsultaEntregaComponent implements OnInit {
     dataEntregaBaixa: ['']
 
   });
+  
 
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
     private router: Router,
     private spinner: NgxSpinnerService,
-    private formBiulder: FormBuilder,
+    private formBuilder: FormBuilder,
   ) { }
 
   filtrarEntregas(): void {
@@ -166,6 +167,8 @@ export class ConsultaEntregaComponent implements OnInit {
     // Remove os dias que não têm entregas
     this.datas = this.datas.filter(data => data.entregas.length > 0);
 }
+
+
 
 
 
@@ -970,6 +973,7 @@ private extractDate(diaNome: string): string | undefined {
 
           this.fecharFormularios();
           this.spinner.hide();
+          window.location.reload();
 
         },
         error: (error) => {

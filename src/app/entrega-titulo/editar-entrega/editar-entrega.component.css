@@ -1,0 +1,473 @@
+.line {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(4, 105, 45);
+  }
+  
+  .titulo {
+    text-align: center;
+    /* Centraliza o texto */
+    color: rgb(4, 105, 45);
+    /* Define a cor do texto como verde */
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  
+  }
+  
+  
+  .navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    margin-right: -10px;
+  }
+  
+  .navbar-brand {
+    margin-right: 50px;
+  }
+  
+  .nav-item {
+    margin-right: -23px;
+  }
+  
+  .section-header:hover {
+    background-color: #ffffff;
+    border-radius: 30px;
+    padding: 4px;
+    color: #036822;
+    
+  }
+  .box-area {
+    width: 100%;
+    height: 140px;
+}
+  
+  .card {
+    background-color: #036822;
+    border-radius: 45px;
+    padding: 8px;
+    box-shadow: 0 38px 58px rgba(38, 242, 55, 0.2);
+    width: 110%;
+    margin-left: -58px;
+    margin-right: auto;
+  }
+  
+  h1,
+  h4 {
+    text-align: center;
+    color: white;
+  }
+  
+  .table-responsive {
+    width: 100%;
+  }
+  
+  .text-red {
+    color: red;/* Cor do texto */
+    background-color: #ffe6e6; /* Cor de fundo vermelha clara */
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  
+  .table th,
+  .table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    /* Impede a quebra de linha no texto */
+    width: 150px;
+    /* Define uma largura fixa para todas as células */
+    text-align: center;
+  }
+  
+  
+  
+  td {
+    vertical-align: middle;
+  }
+  
+  .table {
+    /*width: 1295px; /* Ajuste a largura da tabela conforme necessário */
+    border: 1px solid #99e358;
+    /* Ajuste a espessura da borda conforme necessário */
+  
+  }
+  
+  .table th {
+    padding: 1px;
+    /* Ajuste o preenchimento das células conforme necessário */
+    border: 3px solid #ccc;
+    /* Ajuste a espessura da borda das células conforme necessário */
+    background-color: #03682b;
+    color: #fff;
+  
+  }
+  
+  .table td {
+    padding: 1px;
+    /* Ajuste o preenchimento das células conforme necessário */
+    border: 1px solid #cccccc;
+    /* Ajuste a espessura da borda das células conforme necessário */
+  
+  
+  }
+  
+  .inner-table {
+    padding: 4px;
+    border: none;
+    /* Remove a borda da tabela interna */
+  }
+  
+  @media (max-width: 768px) {
+    .navbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .navbar-brand,
+    .titulo-container {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: center;
+      margin-right: 10px;
+    }
+    .card {
+      background-color: #036822;
+      border-radius: 45px;
+      padding: 8px;
+      box-shadow: 0 38px 58px rgba(38, 242, 55, 0.2);
+      width: 110%;
+      margin-left: -33px;
+      margin-right: auto;
+    }
+    
+  
+    .barra-pesquisa {
+      width: 100%;
+      margin-right: 10px;
+    }
+  
+    .navbar-nav {
+      flex-direction: row;
+      justify-content: center;
+      width: 100%;
+      margin-top: 10px;
+    }
+  
+    .nav-item {
+      margin: 0 8px ;
+      align-items: center;
+      
+    }
+  
+    .navbar-collapse {
+      justify-content: center;
+      display: flex !important;
+    }
+  
+    .table {
+      width: 100%;
+      font-size: 12px;
+    }
+  
+    .table th, .table td {
+      padding: 3px;
+    }
+  }
+  
+  @media (max-width: 425px) {
+    .navbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: 0 auto;
+    }
+    .card {
+      background-color: #036822;
+      border-radius: 45px;
+      padding: 8px;
+      box-shadow: 0 38px 58px rgba(38, 242, 55, 0.2);
+      width: 100%;
+      margin-left: -2px;
+      margin-right: auto;
+    }
+    
+    .navbar-brand,
+    .titulo-container {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: center;
+      margin-right: 10px;
+    }
+  
+    .barra-pesquisa {
+      width: 100%;
+      margin-right: 10px;
+    }
+  
+    .navbar-nav {
+      flex-direction: row;
+      justify-content: center;
+      width: 100%;
+    }
+  
+    .nav-item {
+      margin: 0 auto;
+    }
+  
+    .navbar-collapse {
+      justify-content: center;
+      display: flex !important;
+    }
+  
+    .table {
+      width: 100%;
+      font-size: 12px;
+    }
+  
+    .table th, .table td {
+      padding: 3px;
+    }
+  }
+  @media (max-width: 375px) {
+    .navbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: 0 auto;
+    }
+  
+    .navbar-brand,
+    .titulo-container {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: center;
+      
+    }
+  
+    .barra-pesquisa {
+      width: 100%;
+     
+    }
+  
+    .navbar-nav {
+      flex-direction: row;
+      justify-content: center;
+      width: 100%;
+    }
+  
+    .nav-item {
+      margin: 0 auto;
+      
+      align-items: center;
+      
+      
+    }
+  
+    .navbar-collapse {
+      justify-content: center;
+      display: flex !important;
+    }
+  
+    .table {
+      width: 100%;
+      font-size: 12px;
+    }
+  
+    .table th, .table td {
+      padding: 3px;
+    }
+  }
+  
+  @media (max-width: 320px) {
+    .navbar {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin: 0 auto;
+      
+    }
+  
+    .navbar-brand,
+    .titulo-container {
+      width: 100%;
+      margin-bottom: 10px;
+      text-align: center;
+      margin-left: 30px;
+    }
+  
+    .barra-pesquisa {
+      width: 100%;
+      
+    }
+  
+    .navbar-nav {
+      flex-direction: row;
+      justify-content: center;
+      width: 100%;
+    }
+  
+    .nav-item {
+      margin: 0 auto;
+      
+    }
+  
+    .navbar-collapse {
+      justify-content: center;
+      display: flex !important;
+    }
+  
+    .table {
+      width: 100%;
+      font-size: 12px;
+    }
+  
+    .table th, .table td {
+      padding: 3px;
+    }
+  }
+  
+  
+  
+  .col .btn {
+    margin: 10px 20px;
+    /* Adiciona 10px de margem vertical e 20px de margem horizontal */
+  }
+  
+  .imagem-ampliada {
+    position: absolute;
+  
+  
+    left: 0;
+    right: 0;
+  
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: rgba(255, 255, 255, 0.9);
+  
+  }
+  
+  .imagem-ampliada.mostrar {
+    display: block;
+  
+  }
+  
+  .imagem-ampliada img {
+    max-width: 100%;
+  
+    transition: transform 0.0s ease-in-out;
+  
+  
+  
+  }
+  
+  
+  .imagem-ampliada img.zoom-out {
+    cursor: zoom-out;
+  }
+  
+  
+  .controles-zoom {
+    position: absolute;
+  
+    right: 10px;
+  }
+  
+  
+  .imagem-ampliada {
+  
+    display: none;
+    position: absolute;
+    /* Define a posição fixa para a imagem expandida */
+    top: 50%;
+    /* Ajusta a posição verticalmente */
+    left: 50%;
+    /* Ajusta a posição horizontalmente */
+    transform: translate(-50%, -50%);
+    max-width: 90%;
+    max-height: 90%;
+    /* Centraliza a imagem na tela */
+    z-index: 1000;
+    /* Garante que a imagem esteja acima de outros elementos */
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Adiciona um fundo transparente */
+  
+  }
+  
+  .imagem-ampliada .btn-close {
+    position: absolute;
+    /* Define a posição absoluta para o botão de fechar */
+    top: 1px;
+    /* Ajusta a posição do topo */
+    right: 30px;
+    /* Ajusta a posição da direita */
+    z-index: 9999;
+    /* Garante que o botão esteja acima da imagem */
+  }
+  
+  
+  
+  
+  
+  
+  
+  .formulario-credenciais-pendencia {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  
+  .formulario-credenciais-pendencia .btn-close {
+    position: absolute;
+    /* Define a posição absoluta para o botão de fechar */
+    top: 1px;
+    /* Ajusta a posição do topo */
+    right: 01px;
+    /* Ajusta a posição da direita */
+    z-index: 9999;
+    /* Garante que o botão esteja acima da imagem */
+  
+  }
+  
+  .formulario-credenciais {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  
+  
+  .formulario-credenciais .btn-close {
+    position: absolute;
+    /* Define a posição absoluta para o botão de fechar */
+    top: 1px;
+    /* Ajusta a posição do topo */
+    right: 01px;
+    /* Ajusta a posição da direita */
+    z-index: 9999;
+    /* Garante que o botão esteja acima da imagem */
+  
+  }
+  
