@@ -13,8 +13,7 @@
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   
   }
-  
-  
+
   .navbar-nav .nav-link {
     display: flex;
     align-items: center;
@@ -153,4 +152,17 @@ h1, h2, p {
 .delivery-status th {
     background-color: #333;
     color: white;
+}
+.quadrado {
+    width: 700px;
+    height: 100px;
+    background-color: #3498db;
+}
+
+.retangulo {
+    width: 1500px;
+    height: 170px;
+    background-color: #2ecc71;
+    
+    margin-right: 100PX;
 }

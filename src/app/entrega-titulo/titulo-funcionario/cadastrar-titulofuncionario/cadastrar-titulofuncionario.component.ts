@@ -1,42 +1,37 @@
-import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 import Tesseract from 'tesseract.js';
-
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-cadastra-entrega',
+  selector: 'app-cadastrar-titulofuncionario',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule],
-  templateUrl: './cadastra-entrega.component.html',
-  styleUrls: ['./cadastra-entrega.component.css']
+  imports: [
+
+    CommonModule, FormsModule,
+    ReactiveFormsModule, RouterModule, NgxSpinnerModule
+
+  ],
+  templateUrl: './cadastrar-titulofuncionario.component.html',
+  styleUrl: './cadastrar-titulofuncionario.component.css'
 })
-export class CadastraEntregaComponent implements OnInit {
+export class CadastrarTitulofuncionarioComponent implements OnInit {
+
 
   mensagem: string = '';
   matricula: string = '';
   senha: string = '';
-  ent: any;
-  entrega: any = {};
-  cadastrarEntrega: any;
+  tit: any;
+  titulo: any = {};
+  cadastrarTitulo: any;
   imagemFile: File | null = null;
-  diasSemana: string[] = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-  periodo: string[] = ['Horário comercial', 'Manhã', 'Tarde', 'Diferênciado'];
-  entregaId: number | null = null;
+  tituloId: number | null = null;
   showModal: boolean = false;
 
-
-  constructor(
-    private route: ActivatedRoute,
-    private formBiulder: FormBuilder,
-    private httpClient: HttpClient,
-    private router: Router,
-    private spinner: NgxSpinnerService
-  ) { }
 
   form = new FormGroup({
     numeroNota: new FormControl('', [Validators.required]),
@@ -46,70 +41,36 @@ export class CadastraEntregaComponent implements OnInit {
     observacao: new FormControl(''),
     dataCadastro: new FormControl(''),
     vendedor: new FormControl(''),
-    diaSemana: new FormControl(''),
-    periodo: new FormControl('Horário comercial'),
-    dataEntrega: new FormControl(''),
     loja: new FormControl(''),
-    dataVenda: new FormControl('')
+    dataVenda: new FormControl(''),
+    dataPrevistaPagamento: new FormControl(''),
+   
   });
 
-  atualizarValor(): void {
-    const valorControl = this.form.get('valor');
 
-  if (valorControl) {
-    let valorValue = valorControl.value;
-
-    // Verifica se o valor é uma string
-    if (typeof valorValue === 'string') {
-      // Substitui vírgulas por pontos para enviar o valor corretamente ao backend
-      let valorNumerico = parseFloat(valorValue.replace(',', '.')) || 0;
-
-      if (!isNaN(valorNumerico)) {
-        // Formata o valor para exibição no frontend com vírgula
-        const valorFormatado = valorNumerico.toFixed(2).replace('.', ',');
-        valorControl.setValue(valorFormatado);
-
-        // Se necessário, envie o valor numérico ao backend com ponto como separador decimal
-       
-      } else {
-        valorControl.setValue('0,00');
-      }
-    } else {
-      valorControl.setValue('0,00');
-    }
-  } else {
-    console.error("O controle 'valor' é nulo.");
-  }
-}
+  constructor(
+    private formBuilder: FormBuilder,
+    private httpClient: HttpClient,
+    private router: Router,
+    private spinner: NgxSpinnerService
+  ) { }
 
 
+  
 
   ngOnInit(): void {
-    this.form.get('dataCadastro')?.valueChanges.subscribe((date) => {
-      if (date) {
-        this.updateDayOfWeek(date);
-      }
+    this.configurarDataPagamento();
+  }
+  configurarDataPagamento(): void {
+    const currentDate = new Date(); // Data atual
+    const paymentDate = new Date(); 
+    paymentDate.setDate(currentDate.getDate() + 30); // Adiciona 30 dias à data atual
+  
+    this.form.patchValue({
+     
+      dataPrevistaPagamento: paymentDate.toISOString().split('T')[0] // Preenche com a data padrão de pagamento
     });
   }
-
-  onDateChange(event: any): void {
-    const selectedDate = event.target.value;
-    if (selectedDate) {
-      this.updateDayOfWeek(selectedDate);
-    }
-  }
-
-  updateDayOfWeek(dateString: string): void {
-    const date = new Date(dateString + 'T00:00:00'); // Adicione a hora para garantir que a data esteja correta
-    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-    const dayOfWeek = daysOfWeek[date.getUTCDay()]; // Use getUTCDay() para evitar problemas de fuso horário
-    this.form.get('diaSemana')?.setValue(dayOfWeek);
-  }
-
-
-
-
-
 
   onSubmit(): void {
     if (this.matricula && this.senha) {
@@ -117,17 +78,18 @@ export class CadastraEntregaComponent implements OnInit {
       const formData = this.form.value;
 
       this.spinner.show();
-      this.httpClient.post(environment.entregatitulo + "/entrega", formData, options)
+      this.httpClient.post(environment.entregatitulo + "/tituloReceberfuncionario", formData, options)
         .subscribe({
           next: (data: any) => {
             console.log('Resposta do backend:', data);
             this.mensagem = data.message;
-            this.entregaId = data.id;
-            console.log('Entrega ID recebido:', this.entregaId); // Adicione este logve se 
+            this.tituloId = data.id;
+            console.log('Entrega ID recebido:', this.tituloId); // Adicione este logve se 
             this.form.reset();
             this.fecharFormularioCredenciais();
             this.spinner.hide();
             this.uploadImagem();
+            this.configurarDataPagamento();
 
           },
           error: (e) => {
@@ -143,15 +105,50 @@ export class CadastraEntregaComponent implements OnInit {
   }
 
 
-  abrirFormularioCredenciais(entrega: any): void {
-    this.cadastrarEntrega = entrega;
+
+
+
+
+
+  atualizarValor(): void {
+    const valorControl = this.form.get('valor');
+
+    if (valorControl) {
+      let valorValue = valorControl.value;
+
+      // Verifica se o valor é uma string
+      if (typeof valorValue === 'string') {
+        // Substitui vírgulas por pontos para enviar o valor corretamente ao backend
+        let valorNumerico = parseFloat(valorValue.replace(',', '.')) || 0;
+
+        if (!isNaN(valorNumerico)) {
+          // Formata o valor para exibição no frontend com vírgula
+          const valorFormatado = valorNumerico.toFixed(2).replace('.', ',');
+          valorControl.setValue(valorFormatado);
+
+          // Se necessário, envie o valor numérico ao backend com ponto como separador decimal
+
+        } else {
+          valorControl.setValue('0,00');
+        }
+      } else {
+        valorControl.setValue('0,00');
+      }
+    } else {
+      console.error("O controle 'valor' é nulo.");
+    }
+  }
+
+  abrirFormularioCredenciais(titulo: any): void {
+    this.cadastrarTitulo = titulo;
   }
 
   fecharFormularioCredenciais(): void {
-    this.cadastrarEntrega = null;
+    this.cadastrarTitulo = null;
     this.matricula = '';
     this.senha = '';
   }
+
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
@@ -159,16 +156,16 @@ export class CadastraEntregaComponent implements OnInit {
       this.imagemFile = file;
     }
   }
-  
+
   processFile(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
       const file = input.files[0];
       const fileType = file.type;
-  
-      if (fileType.startsWith('image/jpeg') || fileType.startsWith('image/jpg') || 
-          fileType.startsWith('image/png') || fileType.startsWith('image/bmp') || 
-          fileType.startsWith('image/gif')) {
+
+      if (fileType.startsWith('image/jpeg') || fileType.startsWith('image/jpg') ||
+        fileType.startsWith('image/png') || fileType.startsWith('image/bmp') ||
+        fileType.startsWith('image/gif')) {
         this.extractTextFromImage(file);
       } else if (fileType.startsWith('text/html')) {
         this.extractTextFromHtml(file);
@@ -178,7 +175,7 @@ export class CadastraEntregaComponent implements OnInit {
       this.imagemFile = file;
     }
   }
-  
+
   extractTextFromImage(file: File): void {
     Tesseract.recognize(file, 'eng', { logger: info => console.log(info) })
       .then(({ data: { text } }) => {
@@ -186,7 +183,7 @@ export class CadastraEntregaComponent implements OnInit {
       })
       .catch(error => console.error(error));
   }
-  
+
   extractTextFromHtml(file: File): void {
     const reader = new FileReader();
     reader.onload = () => {
@@ -198,31 +195,31 @@ export class CadastraEntregaComponent implements OnInit {
     };
     reader.readAsText(file);
   }
-  
+
   preencherFormulario(text: string): void {
     console.log(text);
-  
+
     // Captura o nome do cliente
     const nomeMatch = text.match(/Nome:\s*(.*?)(?=\s*CPF|CRFICPY|cPFICNPU)/);
     const nome = nomeMatch ? nomeMatch[1].trim() : '';
     console.log('nome:', nome);
-  
+
     // Captura o vendedor
     const vendedorMatch = text.match(/Vendedor\s*([^\|]+)/i);
     const vendedor = vendedorMatch ? vendedorMatch[1].trim() : '';
     console.log('vendedor:', vendedor);
-  
+
     // Captura o número do documento antes da data
     const docMatch = text.match(/(?:N° DOC:|POC:|DOC:|OC:|oc\.|N DOC:|ie: N° DOC:|i"POC:|Casa Colombo oficial\s*\|,\s*|oc\.\s*|)\s*(\d{6,})(?:[^\d]*(?:\d{2}[\/]?\d{2}[\/]?\d{4}))/i);
     const DOC = docMatch ? docMatch[1].trim() : '';
     console.log('doc:', DOC);
 
 
-     // Captura a data logo após o número do documento
-     const dataMatch = text.match(/(?:N° DOC:|POC:|DOC:|OC:|oc\.|N DOC:|ie: N° DOC:|i"POC:|Casa Colombo oficial\s*\|,\s*|oc\.\s*|)\s*\d{6,}[^\d]*(\d{2}\/\d{2}\/\d{4})/i);
-     const data = dataMatch ? dataMatch[1].trim() : '';
-     console.log('data:', data);
-  
+    // Captura a data logo após o número do documento
+    const dataMatch = text.match(/(?:N° DOC:|POC:|DOC:|OC:|oc\.|N DOC:|ie: N° DOC:|i"POC:|Casa Colombo oficial\s*\|,\s*|oc\.\s*|)\s*\d{6,}[^\d]*(\d{2}\/\d{2}\/\d{4})/i);
+    const data = dataMatch ? dataMatch[1].trim() : '';
+    console.log('data:', data);
+
     // Captura o valor líquido
     const valorLiquidoLinhaMatch = text.match(/Valor Liquido\s*([^\n]*)/);
     let valorLiquido = '';
@@ -232,15 +229,15 @@ export class CadastraEntregaComponent implements OnInit {
       valorLiquido = valorLiquidoMatch ? valorLiquidoMatch[1].replace('.', ',').replace(',', '.') : '';
     }
     console.log('valorliquido: ', valorLiquido);
-  
+
     // Captura a observação
     const observacaoMatch = text.match(/Valor Liquido\s*R?\$?\s*[\d.,]+[^\n]*\n([^]*?)(?=ENTREGAS)/);
     const observacao = observacaoMatch ? observacaoMatch[1].trim() : '';
     console.log('observação:', observacao);
-  
+
     const lojaMatch = text.match(/Vendedor\s*[^|]*\|\s*(\w+)/);
     let loja = lojaMatch ? lojaMatch[1].trim() : '';
-    
+
     // Define o tipo de índice para o mapeamento de lojas
     const mapeamentoLojas: { [key: string]: string } = {
       'JCO1': 'JC1',
@@ -248,12 +245,20 @@ export class CadastraEntregaComponent implements OnInit {
       'VA': 'VA',
       // Adicione outros códigos e nomes aqui, se necessário
     };
-    
+
+     
+     const telefoneMatch = text.match(/Compl[^\d]*TEL:\s*(\d{8,12})(?=\s*Vendedor)/);
+     const telefone = telefoneMatch ? telefoneMatch[1].trim() : '';
+     
+console.log('telefone:', telefone);
+
+  
+
     console.log('loja:', loja);
-    
+
     // Substitui o código da loja pelo nome correspondente
     loja = mapeamentoLojas[loja] || loja;
-  
+
     // Atualiza o formulário
     this.form.patchValue({
       nomeCliente: nome,
@@ -263,19 +268,21 @@ export class CadastraEntregaComponent implements OnInit {
       valor: valorLiquido,
       observacao: observacao,
       loja: loja,
+      
     });
+    
   }
-  
+
 
   uploadImagem(): void {
     if (!this.imagemFile) {
-      alert('Por favor, selecione uma imagem para a entrega cadastrada.');
+      alert('Por favor, selecione uma imagem para o titulo cadastrada.');
       return;
     }
 
-    if (this.entregaId === null || this.entregaId === undefined) {
-      alert('O ID da entrega não está disponível. Por favor, cadastre a entrega primeiro.');
-      console.log('Entrega ID está nulo ou indefinido:', this.entregaId);
+    if (this.tituloId === null || this.tituloId === undefined) {
+      alert('O ID do título não está disponível. Por favor, cadastre a entrega primeiro.');
+      console.log('Título ID está nulo ou indefinido:', this.tituloId);
       return;
     }
 
@@ -284,7 +291,7 @@ export class CadastraEntregaComponent implements OnInit {
 
     this.spinner.show();
 
-    this.httpClient.post(`${environment.entregatitulo}/entrega/upload?entregaId=${this.entregaId}`, formData)
+    this.httpClient.post(`${environment.entregatitulo}/tituloReceberFuncionario/upload?tituloId=${this.tituloId}`, formData)
       .subscribe({
         next: (data: any) => {
           console.log('Imagem enviada com sucesso:', data);
@@ -298,7 +305,7 @@ export class CadastraEntregaComponent implements OnInit {
 
           this.imagemFile = null;
           this.spinner.hide();
-          
+         
         },
         error: (e) => {
           console.log('Erro ao enviar a imagem:', e.error);
@@ -307,4 +314,9 @@ export class CadastraEntregaComponent implements OnInit {
         }
       });
   }
+
+
+
+
+
 }

@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment.development';
+import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
   templateUrl: './inicio.component.html',
   styleUrls: ['./inicio.component.css']
 })
@@ -27,7 +30,9 @@ export class InicioComponent implements OnInit {
   produtosComBaixaQuantidade: any[]= [];
   ocorrencias: any[] = []; 
   correncia: any ={};
-
+  escala: any[] = [];
+  imagemAmpliadaUrl: string | null = null;
+  zoomLevel: string = 'scale(1)';
 
   constructor(
     private route: ActivatedRoute,
@@ -41,23 +46,9 @@ export class InicioComponent implements OnInit {
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-    this.httpClient.get<any[]>(`${environment.apiUrl}/produto/venda`)
-      .subscribe({
-        next: (vendasData) => {
-          this.vendas = vendasData.map(venda => {
-            venda.dataVenda = this.convertToBrazilTime(new Date(venda.dataVenda));
-            return venda;
-          });
-          this.findProdutoMaisVendido();
-          this.findProdutoMenosVendido();
-          
-        },
-        error: (error) => {
-          console.error('Erro ao carregar o histórico de vendas:', error);
-        }
-      });
+   
 
-    this.httpClient.get(environment.apiUrl + '/produto')
+    this.httpClient.get(environment.apiUrl + '/produtoGeral')
       .subscribe({
         next: (produtosData) => {
           this.produtos = produtosData as any[];
@@ -68,24 +59,47 @@ export class InicioComponent implements OnInit {
           console.error('Erro ao carregar os produtos:', error);
         }
       });
-      this.httpClient.get<any[]>(`${environment.apiUrl}/Ocorrencia`)
-      .subscribe({
-        next: (ocorrenciasData) => {
-          this.ocorrencias = ocorrenciasData;
-          console.log('Ocorrências encontradas:', this.ocorrencias);
-          this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
-        },
-        error: (error) => {
-          console.error('Erro ao carregar as ocorrências:', error);
-        }
-      });
+     
       
   }
 
-  getFullImageUrl(imagemUrl: string): string {
-    return `${environment.apiUrl}${imagemUrl}`;
+  controlarZoom(event: WheelEvent) {
+    event.preventDefault();
+    const incremento = event.deltaY < 0 ? 0.1 : -0.1;
+    this.zoomLevel = this.calcularNovoZoom(incremento);
   }
 
+  calcularNovoZoom(incremento: number): string {
+    const match = this.zoomLevel.match(/scale\(([^)]+)\)/);
+    if (match) {
+      const currentScale = parseFloat(match[1]);
+      const newScale = Math.max(0.1, currentScale + incremento);
+      return `scale(${newScale})`;
+    }
+    return this.zoomLevel;
+  }
+
+  getFullImageUrl(imagemUrl: string): string {
+    return `${environment.entregatitulo}/tituloreceber${imagemUrl}`;
+  }
+
+  expandirImagem(imagemUrl: string): void {
+    console.log('Imagem clicada:', imagemUrl); // Adicione esta linha
+    this.imagemAmpliadaUrl = this.getFullImageUrl(imagemUrl);
+    const imagemAmpliada = document.querySelector('.imagem-ampliada');
+    if (imagemAmpliada) {
+      imagemAmpliada.classList.add('mostrar');
+    }
+  }
+
+  fecharImagemAmpliada(dia: any = null): void {
+    const target = dia || this;
+    target.imagemAmpliadaUrl = null;
+    const imagemAmpliada = document.querySelector('.imagem-ampliada');
+    if (imagemAmpliada) {
+      imagemAmpliada.classList.remove('mostrar');
+    }
+  }
   findProdutoMaisVendido(): void {
     const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
   

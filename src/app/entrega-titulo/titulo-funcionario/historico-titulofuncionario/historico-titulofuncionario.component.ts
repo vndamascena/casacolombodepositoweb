@@ -1,20 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormsModule, FormBuilder } from '@angular/forms';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
-  selector: 'app-historico-titulo',
+  selector: 'app-historico-titulofuncionario',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './historico-titulo.component.html',
-  styleUrl: './historico-titulo.component.css'
+  templateUrl: './historico-titulofuncionario.component.html',
+  styleUrl: './historico-titulofuncionario.component.css'
 })
-export class HistoricoTituloComponent implements OnInit {
+export class HistoricoTitulofuncionarioComponent implements OnInit {
+
 
   p: number = 1;
   startDate: Date = new Date();
@@ -244,7 +245,6 @@ export class HistoricoTituloComponent implements OnInit {
         }
     }
 }
-
 
 
 }

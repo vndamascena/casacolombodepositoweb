@@ -1,0 +1,22 @@
+.error-container {
+    text-align: center;
+    padding: 50px;
+    background-color: #036822;
+    border: 1px solid #87c746; 
+    color: #ffff;
+  }
+  .error-container h1 {
+    font-size: 2em;
+    font-weight: bold;
+  }
+  .error-container p {
+    font-size: 1.2em;
+  }
+  .error-container a {
+   
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .error-container a:hover {
+    text-decoration: underline;
+  }

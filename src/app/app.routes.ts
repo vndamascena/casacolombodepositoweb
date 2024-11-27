@@ -23,12 +23,17 @@ import { CadastroTituloComponent } from './entrega-titulo/cadastro-titulo/cadast
 import { EditarTituloComponent } from './entrega-titulo/editar-titulo/editar-titulo.component';
 import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/consultar-titulo.component';
 import { EditarEntregaComponent } from './entrega-titulo/editar-entrega/editar-entrega.component';
+import { Erro401Component } from './erro-401/erro-401.component';
+import { HistoricoTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/historico-titulofuncionario/historico-titulofuncionario.component';
+import { EditarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/editar-titulofuncionario/editar-titulofuncionario.component';
+import { ConsultarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/consultar-titulofuncionario/consultar-titulofuncionario.component';
+import { CadastrarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/cadastrar-titulofuncionario/cadastrar-titulofuncionario.component';
 
 
 export const routes: Routes = [
 
 
-    
+
     {
         path: 'consulta-produtos',
         component: ConsultaProdutosComponent,
@@ -37,7 +42,7 @@ export const routes: Routes = [
     {
         path: 'inicio',
         component: InicioComponent,
-        canActivate: [AuthenticationGuard]  
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'edicao-produtos/:id',
@@ -67,32 +72,32 @@ export const routes: Routes = [
     {
         path: "cadastra-ocorrencia",
         component: CadastraOcorrenciaComponent,
-        canActivate: [AuthenticationGuard]  
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'cadastra-fornecedor',
-        component:CadastraFornecedorComponent,
-        canActivate: [AuthenticationGuard]  
+        component: CadastraFornecedorComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'consulta-fornecedor',
-        component:ConsultaFornecedorComponent,
-        canActivate: [AuthenticationGuard]  
+        component: ConsultaFornecedorComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'cadastra-entrega',
-        component:CadastraEntregaComponent,
-        canActivate: [AuthenticationGuard]  
+        component: CadastraEntregaComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'editar-entrega/:id',
-        component:EditarEntregaComponent,
+        component: EditarEntregaComponent,
         canActivate: [AuthenticationGuard]
     },
     {
         path: 'consulta-entrega',
-        component:ConsultaEntregaComponent,
-        canActivate: [AuthenticationGuard]  
+        component: ConsultaEntregaComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'autenticar-usuario',
@@ -100,8 +105,8 @@ export const routes: Routes = [
     },
     {
         path: 'historico-entrega',
-        component:HistoricoEntregaComponent,
-        canActivate: [AuthenticationGuard]  
+        component: HistoricoEntregaComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'cadastrar-produtoGeral',
@@ -125,23 +130,50 @@ export const routes: Routes = [
     },
     {
         path: 'historico-titulo',
-        component:HistoricoTituloComponent,
+        component: HistoricoTituloComponent,
         canActivate: [AuthenticationGuard]
     },
     {
         path: 'cadastro-titulo',
-        component:CadastroTituloComponent,
+        component: CadastroTituloComponent,
         canActivate: [AuthenticationGuard]
     },
     {
         path: 'editar-titulo/:id',
-        component:EditarTituloComponent,
+        component: EditarTituloComponent,
         canActivate: [AuthenticationGuard]
     },
     {
         path: 'consultar-titulo',
-        component:ConsultarTituloComponent,
+        component: ConsultarTituloComponent,
         canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'historico-titulofuncionario',
+        component: HistoricoTitulofuncionarioComponent,
+        canActivate: [AuthenticationGuard],
+        data: { roles: ['Admin'] }
+    },
+    {
+        path: 'cadastrar-titulofuncionario',
+        component: CadastrarTitulofuncionarioComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'editar-titulofuncionario/:id',
+        component: EditarTitulofuncionarioComponent,
+        canActivate: [AuthenticationGuard],
+        data: { roles: ['Admin'] }
+    },
+    {
+        path: 'consultar-titulofuncionario',
+        component: ConsultarTitulofuncionarioComponent,
+        canActivate: [AuthenticationGuard],
+        data: { roles: ['Admin'] }
+    },
+    {
+        path: 'erro-401',
+        component: Erro401Component  // Define a rota de erro 401
     },
     {
         path: '', pathMatch: 'full', //url raiz

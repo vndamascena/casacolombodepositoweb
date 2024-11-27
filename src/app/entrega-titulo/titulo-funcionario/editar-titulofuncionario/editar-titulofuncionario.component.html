@@ -1,5 +1,3 @@
-
-
 <div class="container mt-3 ">
 
    
@@ -17,9 +15,9 @@
             <div class="container">
                 <br>
     
-                <h2 class="text-center titulo"><strong>Cadastra título a receber</strong></h2>
+                <h2 class="text-center titulo"><strong>Editar títulos a receber</strong></h2>
     
-                <h4 class="text-center titulo ">Preencha os campos para realizar o cadastramento.</h4>
+                <h4 class="text-center titulo ">Realize a edição nos campos desejados .</h4>
     
     
             </div>
@@ -29,20 +27,20 @@
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <br>
-                        <a class="nav-link black-text" routerLink="/consultar-titulo">
+                        <a class="nav-link black-text" routerLink="/consultar-titulofuncionario">
                             <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
                         </a>
                     </li>
                     <li class="nav-item">
                         <br>
-                        <a class="nav-link black-text" routerLink="/cadastro-titulo">
+                        <a class="nav-link black-text" routerLink="/cadastrar-titulofuncionario">
                             <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
                         </a>
                     </li>
     
                     <li class="nav-item">
                         <br>
-                        <a class="nav-link black-text" routerLink="/historico-titulo">
+                        <a class="nav-link black-text" routerLink="/historico-titulofuncionario">
                             <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
                         </a>
                     </li>
@@ -73,12 +71,12 @@
                     <!-- primeira linha -->
                     <div class="row">
                         <!-- primeira coluna -->
-                        <div class="col-md-5">
-                            <label><strong>Upload de Imagem</strong></label>
-                            <input type="file" class="form-control" id="fileInput" (change)="processFile($event)" />
+                        
+                        <div class="col-md-2">
+                            
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <label><strong>N° nota</strong></label>
                             <input type="text" class="form-control" placeholder="Digite aqui"
                                 formControlName="numeroNota" />
@@ -100,6 +98,10 @@
                     <!-- segunda linha -->
                     <div class="row">
                         
+                        <div class="col-md-2">
+                           
+
+                        </div>
 
                         <!-- primeira coluna -->
                         <div class="col-md-3">
@@ -121,12 +123,7 @@
 
                         </div>
 
-                        <div class="col-md-3">
-                            <label><strong>Telefone</strong></label>
-                            <input type="text" class="form-control" placeholder="Digite aqui"formControlName="telefone" />
-                            
-
-                        </div>
+                       
                         
                        
 
@@ -149,10 +146,8 @@
                         <div class="col-md-4">
                             <label><strong>Data Venda</strong></label>
                             <input type="text" class="form-control" placeholder="Digite aqui"formControlName="dataVenda" />
-                            <br>
-                            <label><strong>Data do pagamento</strong></label>
-                            <input type="date"  class="form-control" placeholder="Digite aqui"formControlName="dataPrevistaPagamento" />
                             
+
                         </div>
 
 
@@ -163,9 +158,9 @@
                         <div class="col">
                             <button type="submit" class="btn btn-success btn-lg"
                                 (click)="abrirFormularioCredenciais(titulo)">
-                                <strong>Realizar cadastro</strong>
+                                <strong>Confirmar edição</strong>
                             </button>
-                            <a href="consulta-entrega" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
+                            <a href="consultar-titulo" class="btn btn-primary btn-lg"><strong>Voltar</strong></a>
                         </div>
                     </div>
 
@@ -177,7 +172,7 @@
 
 </div>
 
-<div class="formulario-credenciais text-center" *ngIf="cadastrarTitulo && cadastrarTitulo === cadastrarTitulo">
+<div class="formulario-credenciais text-center" *ngIf="tituloSelecionado && tituloSelecionado === tituloSelecionado">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
     <h4>Confirme o cadastro</h4>
     <div class="mb-3">

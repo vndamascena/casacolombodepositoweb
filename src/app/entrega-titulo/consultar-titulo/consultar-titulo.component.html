@@ -20,8 +20,7 @@
 
         <div class="input-group mb-3 barra-pesquisa">
           <input type="text" class="form-control lupa" placeholder="Digite para pesquisar o titulo."
-            aria-label="Pesquisar" aria-describedby="basic-addon1"  [(ngModel)]="expression"
-            (input)="filtrarTitulo()">
+            aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarTitulo()">
           <div class="overlay" (click)="filtrarTitulo()"></div>
         </div>
       </div>
@@ -66,76 +65,169 @@
   </div>
 
 
-  
 
-    
+  <div class="container" style="padding: 0; margin: 0;">
 
 
-    <div class="container mt-1">
-      <div class="container mt-1">
-        <!-- Itera sobre os títulos e exibe as informações de cada cliente -->
-        <div *ngFor="let titulo of titulos">
+      <div class="card mb-3" *ngFor="let cliente of clientes">
+
+        <h1 (click)="toggleTable(cliente)" class="section-header text-center" style="cursor: pointer;">
+          <strong> {{ cliente.nomeCliente }}: {{ cliente.contagemTotal }} </strong>
+        </h1>
+        <div *ngIf="cliente.exibir" class="table-responsive">
+          <hr>
           
-          <!-- Div de informações do cliente -->
-          <div class="cliente">
-            <img [src]="getFullImageUrl(titulo.imagemUrl)" alt="{{ titulo.nomeCliente }}"  (click)="expandirImagem(titulo.imagemUrl)"
-            class="img-fluid">
-            <h2 [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">{{ titulo.nomeCliente }}</h2>
-            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Telefone: {{ titulo.telefone }}</p>
-            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Valor: R$ {{ titulo.valor }}</p>
-            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Data venda: {{ titulo.dataVenda }}</p>
-            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Vendedor: {{ titulo.vendedor }}</p>
-            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Loja: {{titulo.loja}}</p>
-            <p [ngClass]="{'text-danger': isDateOlder(titulo.dataVenda)}">Observação: {{ titulo.observacao }}</p>
+          <div>
+            <div  style="color: white;">
+
+              <hr>
+             
+              <table class="table">
+                <thead>
+                  <tr>
+                   
+                    <th>Nota</th>
+                    <th style="width: 6%;">Loja</th>
+                    
+                    <!--<th>Usuario</th>-->
+                    <th style="width: 6%;">N° Nota</th>
+                    
+                    <th style="white-space: nowrap;">Data venda</th>
+                    <th style="width: 6%;">Valor</th>
+                    <th>Previsão de PG</th>
+                    <th>Vendedor</th>
+                    <th style="width: 34%;">Observação</th>
+                    
+                    <th>Op </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let titulo of cliente.titulos; let i = index">
+                    <tr [ngClass]="getRowClass(i)">
+                      <td>
+                        <img [src]="getFullImageUrl(titulo.imagemUrl)" alt="{{ titulo.nome }}" class="img-fluid" style="width: 30px;" (click)="expandirImagem(titulo.imagemUrl)">
+                      </td>
+                      <td>{{titulo.loja}}</td>
+                      <td>{{titulo.numeroNota}}</td>
+                      <td>{{titulo.dataVenda}}</td>
+                      <td>{{titulo.valor}}</td>
+                      
+                      <!-- Aplicando a classe para a cor do texto -->
+                      <td [ngClass]="getTextColorClass(i, titulo.dataVenda, titulo.dataPrevistaPagamento)">
+                        {{titulo.dataPrevistaPagamento | date: 'dd/MM/yyyy'}}
+                      </td>
+                  
+                      <td>{{titulo.vendedor}}</td>
+                      <td>{{titulo.observacao}}</td>
+                      <td>
+                        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" [attr.data-bs-target]="'#opcoes' + titulo.id">+</button>
+                      </td>
+                    </tr>
+                  </ng-container>
+                  
+                </tbody>
+              </table>
+            </div>
           </div>
-    
-         
-          <div class="botoes" style="text-align: center; margin-top: 10px;">
-            <button class="btn btn-sm btn-success me-2" (click)="abrirFormularioBaixaTitulo(titulo)" data-bs-dismiss="modal"> 
-              <strong>Concluir</strong></button>
-            <button class="btn btn-sm btn-warning me-2" (click)="editartitulo(titulo.id)">
-              <strong>Editar</strong>
-          </button>
+
+          <!-- Exibição da imagem ampliada dentro do dia -->
+          <div class="imagem-ampliada" *ngIf="cliente.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+            <button class="btn-close" (click)="fecharImagemAmpliada(cliente)">&times;</button>
+            <div class="imagem-container">
+              <img [src]="cliente.imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
+                (contextmenu)="exibirMenuImpressao($event)" />
+            </div>
           </div>
-          <div class="line my-4"></div>
         </div>
       </div>
+
+
+
+      <div *ngFor="let titulo of titulos">
+        <div class="modal fade" [attr.id]="'opcoes' + titulo.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+                  Entrega do dia {{ titulo.dataEntrega | date: 'dd/MM/yyyy' }}
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>Verifique os dados e escolha uma ação</p>
+                <hr />
+                <div class="row">
+                  <div class="col-md-4">N° Nota:</div>
+                  <div class="col-md-7">{{titulo.numeroNota}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">Loja:</div>
+                  <div class="col-md-7">{{titulo.loja}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">Cliente:</div>
+                  <div class="col-md-7">{{titulo.nomeCliente}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">Valor:</div>
+                  <div class="col-md-7">{{titulo.valor}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">Vendedor:</div>
+                  <div class="col-md-7">{{titulo.vendedor}}</div>
+                </div>
+                
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" (click)="abrirFormularioBaixaTitulo(titulo)"
+                  data-bs-dismiss="modal">Concluir</button>
+
+                <button class="btn btn-dark" [routerLink]="['/editar-titulo', titulo.id]" data-bs-dismiss="modal">
+                  Editar
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+        <p style="color: white"> Aguarde... </p>
+      </ngx-spinner>
+
+
+
+  </div>
+
+  <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+    <div class="imagem-container">
+      <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
+        (contextmenu)="exibirMenuImpressao($event)" />
     </div>
-    
-
-
-    
-
-
-
-
-  
-</div>
-
-<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
-  <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
-  <div class="imagem-container">
-    <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel"
-      (contextmenu)="exibirMenuImpressao($event)" />
   </div>
-</div>
-<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
-  <p style="color: white"> Aguarde... </p>
-</ngx-spinner>
+  <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
+    <p style="color: white"> Aguarde... </p>
+  </ngx-spinner>
 
-<div *ngIf="currentForm === 'baixaTitulo'" class="formulario-credenciais text-center">
-  <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
-  <h4>Confirmar a entrega</h4>
-  <div class="mb-3">
-    <label for="matriculaInputBaixaTitulo" class="form-label">Matrícula</label>
-    <input type="text" class="form-control" id="matriculaInputBaixaTitulo" placeholder="Digite sua matrícula"
-      [(ngModel)]="matricula">
+  <div *ngIf="currentForm === 'baixaTitulo'" class="formulario-credenciais text-center">
+    <button class="btn-close btn-close-white" (click)="fecharFormularios()">&times;</button>
+    <h4>Confirmar a entrega</h4>
+    <div class="mb-3">
+      <label for="matriculaInputBaixaTitulo" class="form-label">Matrícula</label>
+      <input type="text" class="form-control" id="matriculaInputBaixaTitulo" placeholder="Digite sua matrícula"
+        [(ngModel)]="matricula">
+    </div>
+    <div class="mb-3">
+      <label for="senhaInputBaixaTitulo" class="form-label">Senha</label>
+      <input type="password" class="form-control" id="senhaInputBaixaTitulo" placeholder="Digite sua senha"
+        [(ngModel)]="senha">
+    </div>
+
+    <button class="btn btn-outline-light" (click)="concluirTitulo(baixaTitulo)"
+      style="font-weight: bold;">Confirmar</button>
   </div>
-  <div class="mb-3">
-    <label for="senhaInputBaixaTitulo" class="form-label">Senha</label>
-    <input type="password" class="form-control" id="senhaInputBaixaTitulo" placeholder="Digite sua senha"
-      [(ngModel)]="senha">
-  </div>
-  
-  <button class="btn btn-outline-light" (click)="concluirTitulo(baixaTitulo)" style="font-weight: bold;">Confirmar</button>
-</div>

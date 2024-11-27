@@ -125,6 +125,7 @@ export class ConsultaEntregaComponent implements OnInit {
     if (this.expression.trim() === '') {
         this.entregas = [...this.originalEntregas]; // Restaura todas as entregas
         this.categorizarEntregasPorDia(); // Reatribui as entregas para cada dia
+        this.categorizarPendenciasPorDia
         console.log('Nenhuma expressão fornecida, todas as entregas foram restauradas.');
         return;
     }
@@ -751,19 +752,19 @@ private extractDate(diaNome: string): string | undefined {
     event.preventDefault(); // Evita o menu de contexto padrão
     const imagem = event.target as HTMLImageElement;
     if (imagem) {
-      const printWindow = window.open('', '', 'width=800,height=600');
-      if (printWindow) {
-        printWindow.document.write(`<img src="${imagem.src}" style="width:100%;">`);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.onafterprint = () => {
-          printWindow.close(); // Fecha a janela após a impressão
-
-        };
-        printWindow.print();
-      }
+        const printWindow = window.open('', '', 'width=800,height=600');
+        if (printWindow) {
+            const imgHTML = `<img src="${imagem.src}" style="width:100%;" onload="window.print();">`;
+            printWindow.document.write(imgHTML);
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.onafterprint = () => {
+                printWindow.close(); // Fecha a janela após a impressão
+            };
+        }
     }
-  }
+}
+
 
 
 

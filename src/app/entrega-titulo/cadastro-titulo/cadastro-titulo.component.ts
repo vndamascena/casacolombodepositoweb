@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -17,7 +17,7 @@ import { environment } from '../../../environments/environment.development';
   templateUrl: './cadastro-titulo.component.html',
   styleUrl: './cadastro-titulo.component.css'
 })
-export class CadastroTituloComponent {
+export class CadastroTituloComponent implements OnInit {
 
   mensagem: string = '';
   matricula: string = '';
@@ -40,6 +40,7 @@ export class CadastroTituloComponent {
     vendedor: new FormControl(''),
     loja: new FormControl(''),
     dataVenda: new FormControl(''),
+    dataPrevistaPagamento: new FormControl(''),
     telefone: new FormControl('')
   });
 
@@ -52,7 +53,19 @@ export class CadastroTituloComponent {
   ) { }
 
 
-
+  ngOnInit(): void {
+    this.configurarDataPagamento();
+  }
+  configurarDataPagamento(): void {
+    const currentDate = new Date(); // Data atual
+    const paymentDate = new Date(); 
+    paymentDate.setDate(currentDate.getDate() + 30); // Adiciona 30 dias à data atual
+  
+    this.form.patchValue({
+     
+      dataPrevistaPagamento: paymentDate.toISOString().split('T')[0] // Preenche com a data padrão de pagamento
+    });
+  }
 
   onSubmit(): void {
     if (this.matricula && this.senha) {
@@ -71,6 +84,7 @@ export class CadastroTituloComponent {
             this.fecharFormularioCredenciais();
             this.spinner.hide();
             this.uploadImagem();
+            this.configurarDataPagamento();
 
           },
           error: (e) => {
@@ -251,6 +265,7 @@ console.log('telefone:', telefone);
       loja: loja,
       telefone: telefone,
     });
+    
   }
 
 

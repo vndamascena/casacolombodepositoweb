@@ -8,8 +8,7 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 @Component({
   selector: 'app-autenticar-usuario',
   standalone: true,
-  imports: [FormsModule,
-    ReactiveFormsModule, CommonModule, NgxSpinnerModule],
+  imports: [FormsModule, ReactiveFormsModule, CommonModule, NgxSpinnerModule],
   templateUrl: './autenticar-usuario.component.html',
   styleUrls: ['./autenticar-usuario.component.css']
 })
@@ -20,7 +19,7 @@ export class AutenticarUsuarioComponent {
     private httpClient: HttpClient,
     private router: Router,
     private spinner: NgxSpinnerService
-  ) { }
+  ) {}
 
   form = new FormGroup({
     matricula: new FormControl('', []),
@@ -30,14 +29,37 @@ export class AutenticarUsuarioComponent {
   get formi(): any {
     return this.form.controls;
   }
-  onSubmit(): void {
 
+  onSubmit(): void {
     this.spinner.show();
 
-    this.httpClient.post(this.userApiUrl + "/autenticaradmin", this.form.value)
+    const matricula = this.form.value.matricula;
+    let endpoint: string;
+
+    // Verifica se a matrícula é para venda ou admin
+    if (matricula === 'venda') {
+      endpoint = '/autenticarvenda';  // Endpoint para autenticar usuário de venda
+    } else if (matricula === 'Admin') {
+      endpoint = '/autenticaradmin';  // Endpoint para autenticar usuário admin
+    } else {
+      // Caso a matrícula seja inválida
+      alert('Matrícula inválida');
+      this.spinner.hide();
+      return;
+    }
+
+    // Faz a requisição para o endpoint determinado
+    this.httpClient.post(this.userApiUrl + endpoint, this.form.value)
       .subscribe({
         next: (data) => {
-          console.log(data);
+          console.log('Usuário autenticado:', data); 
+          console.log('Resposta da API:', data);
+          if (matricula === 'venda') {
+            (data as any).tipo = 'venda';
+          } else if (matricula === 'Admin') {
+            (data as any).tipo = 'Admin';
+          }
+          // Salva as informações do usuário no sessionStorage
           sessionStorage.setItem('auth_usuario', JSON.stringify(data));
           this.router.navigate(['/consulta-produtos']).then(() => {
             window.location.reload();
@@ -45,10 +67,9 @@ export class AutenticarUsuarioComponent {
           this.spinner.hide();
         },
         error: (e) => {
-          alert('Erro ao autenticar. Usuário e senha incorreto, tente novamente.');
+          alert('Erro ao autenticar. Usuário e senha incorretos, tente novamente.');
           this.spinner.hide();
         }
       });
   }
-
 }

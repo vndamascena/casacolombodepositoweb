@@ -28,11 +28,12 @@ import { EditarEntregaComponent } from './entrega-titulo/editar-entrega/editar-e
   imports: [
 
     RouterOutlet,
-    MenuComponent, ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
-    OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
-    CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
-    CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
-    EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent, EditarEntregaComponent
+    MenuComponent,
+    //ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
+    //OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
+    //CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
+    //CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
+    //EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent, EditarEntregaComponent
     ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

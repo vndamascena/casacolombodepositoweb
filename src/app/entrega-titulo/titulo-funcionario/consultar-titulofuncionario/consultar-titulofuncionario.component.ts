@@ -1,26 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-import { environment } from '../../../environments/environment.development';
+import { environment } from '../../../../environments/environment.development';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-consultar-titulo',
+  selector: 'app-consultar-titulofuncionario',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule,
+  imports: [
+
+    CommonModule, FormsModule, RouterModule,
     ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule,
     NgxImageZoomModule
+
   ],
-  templateUrl: './consultar-titulo.component.html',
-  styleUrls: ['./consultar-titulo.component.css']
+  templateUrl: './consultar-titulofuncionario.component.html',
+  styleUrl: './consultar-titulofuncionario.component.css'
 })
-export class ConsultarTituloComponent implements OnInit{
-
-
+export class ConsultarTitulofuncionarioComponent implements OnInit{
 
   currentForm: 'baixaTitulo' | null = null;
   p: number = 1;
@@ -51,7 +52,7 @@ export class ConsultarTituloComponent implements OnInit{
     dataVenda: new FormControl(''),
     vendedor: new FormControl(''),
     loja: new FormControl(''),
-    telefone: new FormControl(''),
+   
     dataPrevistaPagamento: new FormControl(''),
 
 
@@ -69,7 +70,7 @@ export class ConsultarTituloComponent implements OnInit{
     dataVenda: [''],
     vendedor: [''],
     loja: [''],
-    telefone: [''],
+   
     dataPrevistaPagamento:[''],
 
 
@@ -95,7 +96,7 @@ export class ConsultarTituloComponent implements OnInit{
     
     // Cria uma nova data para 30 dias após a data de venda
     const limiteDate = new Date(dataVendaDate);
-    limiteDate.setDate(limiteDate.getDate() + 31);  // Adiciona 30 dias à data de venda
+    limiteDate.setDate(limiteDate.getDate() + 30);  // Adiciona 30 dias à data de venda
     
     // Obtém a data atual
     const currentDate = new Date();
@@ -109,7 +110,6 @@ export class ConsultarTituloComponent implements OnInit{
     // Caso contrário, mantém a cor preta
     return 'text-black';
   }
-  
   
   filtrarTitulo(): void {
     if (this.expression.trim() === '') {
@@ -134,6 +134,12 @@ export class ConsultarTituloComponent implements OnInit{
       this.categorizarTitulosPorCliente(); // Recria os clientes agrupados
     }
   }
+  
+
+  
+  
+  
+  
 
 
   convertToBrazilTime(date: Date): Date {
@@ -168,7 +174,7 @@ export class ConsultarTituloComponent implements OnInit{
 
     if (ocorrencId) {
         console.log('Buscando títulos específicos com id:', ocorrencId);
-        this.httpClient.get<any[]>(`${environment.entregatitulo}tituloreceber/${ocorrencId}`)
+        this.httpClient.get<any[]>(`${environment.entregatitulo}tituloreceberfuncionario/${ocorrencId}`)
             .subscribe({
                 next: (titulosData) => {
                     console.log('Dados recebidos do backend:', titulosData); // Log dos dados recebidos
@@ -198,7 +204,7 @@ export class ConsultarTituloComponent implements OnInit{
             });
     } else {
         console.log('Buscando todos os títulos');
-        this.httpClient.get<any[]>(`${environment.entregatitulo}/tituloreceber`)
+        this.httpClient.get<any[]>(`${environment.entregatitulo}/tituloreceberfuncionario`)
             .subscribe({
                 next: (titulosData) => {
                     console.log('Dados recebidos do backend:', titulosData); // Log dos dados recebidos
@@ -315,7 +321,7 @@ contarTitulosPorCliente(titulos: any[]): any[] {
 
     console.log('Dados enviados:', params);
 
-    this.httpClient.post<any>(`${environment.entregatitulo}/tituloreceber/baixatitulo`, {}, { params })
+    this.httpClient.post<any>(`${environment.entregatitulo}/tituloreceberfuncionario/baixatitulofuncionario`, {}, { params })
       .subscribe({
         next: (response: any) => {
           console.log('Resposta do backend:', response);
@@ -363,7 +369,7 @@ contarTitulosPorCliente(titulos: any[]): any[] {
   }
 
   getFullImageUrl(imagemUrl: string): string {
-    return `${environment.entregatitulo}/tituloreceber${imagemUrl}`;
+    return `${environment.entregatitulo}/tituloreceberfuncionario${imagemUrl}`;
   }
 
   expandirImagem(imagemUrl: string): void {
@@ -428,5 +434,7 @@ contarTitulosPorCliente(titulos: any[]): any[] {
     const referenceDate = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000); // Subtrai 15 dias
     return date < referenceDate;
 }
+
+
 
 }

@@ -29,8 +29,7 @@
             <div class="container">
                 <br>
 
-                <h2 class="text-center titulo"><strong>A persistência é o caminho para o êxito</strong></h2>
-                <h4 class="text-center titulo">A força mais potente do universo é a fé.</h4>
+                
 
 
             </div>
@@ -75,86 +74,40 @@
 
 </div>
 
-<section class="sales-history">
-    <h2>Histórico de vendas</h2>
-    <p>Estes são os produtos mais vendidos do mês</p>
-    <div class="product-list">
-        <div class="product">
-            <div class="product-image">38</div>
-            <p>Piso GERAL</p>
-            <p>Modelo 4001</p>
-        </div>
-        <div class="product">
-            <div class="product-image">38</div>
-            <p>Piso GERAL</p>
-            <p>Modelo 4001</p>
-        </div>
-        <div class="product">
-            <div class="product-image">38</div>
-            <p>Piso GERAL</p>
-            <p>Modelo 4001</p>
-        </div>
-        <div class="product">
-            <div class="product-image">38</div>
-            <p>Piso GERAL</p>
-            <p>Modelo 4001</p>
-        </div>
-        <div class="product">
-            <div class="product-image">38</div>
-            <p>Piso GERAL</p>
-            <p>Modelo 4001</p>
-        </div>
-    </div>
-</section>
 
-<!-- Occurrences Summary Section -->
-<section class="occurrences-summary">
-    <h2>Resumo de ocorrencias</h2>
-    <ul>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-    </ul>
-</section>
-
-<!-- Delivery Status Section -->
-<section class="delivery-status">
-    <h2>Status de entrega</h2>
-    <table>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <!-- cabeçalho da tabela -->
         <thead>
             <tr>
-                <th>Número da entrega</th>
-                <th>Endereço</th>
-                <th>Status</th>
+                <th>Escala</th>
+             
+                
             </tr>
         </thead>
+        <!-- Corpo da tabela -->
+
         <tbody>
-            <tr>
-                <td>267</td>
-                <td>Rua ali perto nº 1 - Bairro legal</td>
-                <td>Em Preparação</td>
-            </tr>
-            <tr>
-                <td>267</td>
-                <td>Rua ali perto nº 1 - Bairro legal</td>
-                <td>Em Preparação</td>
-            </tr>
-            <tr>
-                <td>267</td>
-                <td>Rua ali perto nº 1 - Bairro legal</td>
-                <td>Em Preparação</td>
-            </tr>
-            <tr>
-                <td>267</td>
-                <td>Rua ali perto nº 1 - Bairro legal</td>
-                <td>Em Preparação</td>
-            </tr>
-            <tr>
-                <td>267</td>
-                <td>Rua ali perto nº 1 - Bairro legal</td>
-                <td>Em Preparação</td>
-            </tr>
+            <ng-container *ngFor="let produtoGeral of escala ">
+                <tr>
+                    
+                    <td><img [src]="getFullImageUrl(produtoGeral.imagemUrl)" alt="{{ produtoGeral.nome }}" class="img-fluid" style="width: 30px;" (click)="expandirImagem(produtoGeral.imagemUrl)"></td>
+                   
+
+                  
+                   
+                </tr>
+                
+               
+            </ng-container>
         </tbody>
+       
     </table>
-</section>
+    
+</div>
+<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
+    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+    <div class="imagem-container">
+      <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
+    </div>
+  </div>
