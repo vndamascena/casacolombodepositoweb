@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, ActivatedRoute, Router, RouterModule, NavigationEnd } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -8,8 +7,8 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-menu',
   standalone: true,
   imports: [
-    RouterLink, CommonModule, FormsModule, RouterModule
-  ],
+    CommonModule, FormsModule, RouterModule
+],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.css'
 })

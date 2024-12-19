@@ -40,7 +40,7 @@ export class CadastrarProdutoGeralComponent implements OnInit {
   form = new FormGroup({
     nomeProduto: new FormControl('', [
       Validators.required,
-      Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s@#/\$&!\.\(\,\)\-]{4,100}$/)
+      Validators.pattern(/^[A-Za-zÀ-Üà-ü0-9\s@#+*/\$&!\.\(\,\)\-]{4,100}$/)
     ]),
     marcaProduto: new FormControl('', []),
     un: new FormControl(''),

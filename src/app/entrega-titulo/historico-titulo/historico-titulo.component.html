@@ -2,7 +2,7 @@
 
 
 
-    <div class="container">
+    <div class="container mt-3">
 
 
         <a class="navbar-brand" href="consulta-produtos">
@@ -25,20 +25,20 @@
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <br>
-                    <a class="nav-link black-text" routerLink="/consultar-titulofuncionario">
+                    <a class="nav-link black-text" routerLink="/consultar-titulo">
                         <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
                     </a>
                 </li>
                 <li class="nav-item">
                     <br>
-                    <a class="nav-link black-text" routerLink="/cadastrar-titulofuncionario">
+                    <a class="nav-link black-text" routerLink="/cadastro-titulo">
                         <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
                     </a>
                 </li>
 
                 <li class="nav-item">
                     <br>
-                    <a class="nav-link black-text" routerLink="/historico-titulofuncionario">
+                    <a class="nav-link black-text" routerLink="/historico-titulo">
                         <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
                     </a>
                 </li>
@@ -49,14 +49,14 @@
 
     </div>
 </nav>
-<div class="line"></div>
+<div class="line container mt-3  "></div>
 <br>
 <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
     <strong>{{mensagem}}</strong>
     <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
 </div>
-<div class="table-responsive">
-    <div class="container mt-2">
+<div class="table-responsive container mt-3">
+    <div>
         <h2>Filtrar por data</h2>
         <div class="row mb-2 align-items-end">
             <div class="col-md-2">
@@ -79,7 +79,7 @@
     </div>
 
 
-    <table class="table">
+    <table class="table container mt-3">
         <thead>
             <tr>
                 <th>Nota</th>
@@ -116,9 +116,9 @@
             </tr>
         </ng-container>
     </table>
-    <tfoot>
+    <tfoot >
         <tr>
-            <td colspan="14">
+            <td colspan="14" >
                 <strong> Quantidade titulos pagos: {{ baixaTitulos.length }}</strong>
             </td>
         </tr>

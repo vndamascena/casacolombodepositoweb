@@ -4,12 +4,23 @@
     margin: 0 auto;
     background-color: rgb(4, 105, 45);
   }
-  
+  .line2 {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(255, 255, 255);
+  }
+  .line3 {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color:  #036822;
+  }
   .titulo {
     text-align: center;
-    /* Centraliza o texto */
+   
     color: rgb(4, 105, 45);
-    /* Define a cor do texto como verde */
+   
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   
   }
@@ -28,7 +39,7 @@
     margin-right: -23px;
   }
 
-  /* General Styles */
+  
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -41,128 +52,65 @@ h1, h2, p {
     padding: 0;
 }
 
-/* Header Section */
-.header-container {
+.quadros-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #333;
-    padding: 20px;
-    color: white;
-}
-
-.logo {
-    font-size: 24px;
-}
-
-.search-bar input {
+    gap: 10px; 
+  }
+  
+  .quadro {
+    border: 1px solid #ccc;
     padding: 10px;
-    font-size: 16px;
-}
-
-.search-bar button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
-.icons button {
-    padding: 10px;
-    margin-left: 10px;
-    background-color: #007bff;
-    border: none;
-    color: white;
-    cursor: pointer;
-}
-
-/* Sales History Section */
-.sales-history {
-    padding: 40px;
-    background-color: white;
-    margin: 20px auto;
-    max-width: 1200px;
-}
-
-.sales-history h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.product-list {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.product {
-    text-align: center;
-    margin: 10px;
-}
-
-.product-image {
-    width: 100px;
-    height: 100px;
-    background-color: #ccc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 24px;
-}
-
-/* Occurrences Summary Section */
-.occurrences-summary {
-    padding: 40px;
-    background-color: white;
-    margin: 20px auto;
-    max-width: 1200px;
-}
-
-.occurrences-summary ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.occurrences-summary li {
-    height: 40px;
-    background-color: #f8f9fa;
-    margin-bottom: 10px;
-}
-
-/* Delivery Status Section */
-.delivery-status {
-    padding: 40px;
-    background-color: white;
-    margin: 20px auto;
-    max-width: 1200px;
-}
-
-.delivery-status table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.delivery-status th, .delivery-status td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.delivery-status th {
-    background-color: #333;
-    color: white;
-}
-.quadrado {
-    width: 700px;
-    height: 100px;
-    background-color: #3498db;
-}
-
-.retangulo {
-    width: 1500px;
-    height: 170px;
-    background-color: #2ecc71;
+    background-color: #036822;
     
-    margin-right: 100PX;
-}
+    color: #f4f4f4;
+  }
+  
+  .quadro-mais-menos {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px; 
+    flex: 2;
+    
+  }
+  
+  .quadro-estoque-baixo {
+    flex: 2; 
+    overflow-y: auto; 
+    max-height: 100%; 
+  }
+  .quadro-estoqueP-baixo {
+    flex: 2; 
+    overflow-y: auto; 
+    max-height: 100%; 
+    background-color: #fbfbfb;
+    color: #036822;
+    text-align: center;
+  }
+  .quadro-rolagem ul {
+    max-height: 330px; 
+    overflow-y: auto; 
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .background {
+    background-image: url('/assets/FundoLogin.png');
+   
+    
+    
+  }
+
+  
+  .hero {
+    background-image: url('/assets/capa.jpeg');
+    background-size: 100% 100%; 
+    background-position: center; 
+    background-repeat: no-repeat; 
+    width: 100%; 
+    height: calc(99vw * (600 / 1440)); 
+    margin: 0; 
+    padding: 0; 
+  }

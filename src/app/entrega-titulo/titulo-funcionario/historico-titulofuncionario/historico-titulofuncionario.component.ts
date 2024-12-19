@@ -67,7 +67,7 @@ export class HistoricoTitulofuncionarioComponent implements OnInit {
 
 
     if (tituloId) {
-      this.httpClient.get<any[]>(environment.entregatitulo + '/tituloreceber/baixatitulo/${tituloId}')
+      this.httpClient.get<any[]>(environment.entregatitulo + '/tituloreceberfuncionario/baixatitulofuncionario/${tituloId}')
 
         .subscribe({
           next: (baixaTituloData) => {
@@ -92,7 +92,7 @@ export class HistoricoTitulofuncionarioComponent implements OnInit {
         });
     } else {
       // Se não houver ID da ocorrencia na URL, exibe todos os produtos
-      this.httpClient.get<any[]>(environment.entregatitulo + '/tituloreceber/baixatitulo')
+      this.httpClient.get<any[]>(environment.entregatitulo + '/tituloreceberfuncionario/baixatitulofuncionario')
         .subscribe({
           next: (baixaTituloData) => {
             this.baixaTitulos = baixaTituloData.map(baixaTitulo => {
@@ -134,7 +134,7 @@ export class HistoricoTitulofuncionarioComponent implements OnInit {
 
 
 
-      this.httpClient.get<any[]>(environment.entregatitulo + '/tituloreceber/baixatitulo').subscribe({
+      this.httpClient.get<any[]>(environment.entregatitulo + '/tituloreceberfuncionario/baixatitulofuncionario').subscribe({
         next: (baixaTitulosData) => {
           this.baixaTitulos = baixaTitulosData.map(baixaTitulo => {
             baixaTitulo.dataTime = this.convertToBrazilTime(new Date(baixaTitulo.dataTime));
@@ -208,12 +208,12 @@ export class HistoricoTitulofuncionarioComponent implements OnInit {
   }
 
   getFullImageUrl(imagemUrl: string): string {
-    return `${environment.entregatitulo}/tituloreceber${imagemUrl}`;
+    return `${environment.entregatitulo}/tituloreceberfuncionario${imagemUrl}`;
   }
 
   expandirImagem(imagemUrl: string): void {
     console.log('Imagem clicada:', imagemUrl); // Adicione esta linha
-    this.imagemAmpliadaUrl = `${environment.entregatitulo}/tituloreceber${imagemUrl}`;
+    this.imagemAmpliadaUrl = `${environment.entregatitulo}/tituloreceberfuncionario${imagemUrl}`;
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
       imagemAmpliada.classList.add('mostrar');

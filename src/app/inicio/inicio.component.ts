@@ -16,6 +16,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 })
 export class InicioComponent implements OnInit {
 
+  isInicioComponent: boolean = true;
+
   vendas: any[] = [];
   produtos: any[] = []; // Array de objetos para armazenar produtos
   grupoVendas: any = {};
@@ -26,11 +28,12 @@ export class InicioComponent implements OnInit {
   produtoMaisVendido: any = {};
   produtoMenosVendido: any = {};
   produtoMaisVendidoImagemUrl: string = '';
-  produto: any ={};
-  produtosComBaixaQuantidade: any[]= [];
-  ocorrencias: any[] = []; 
-  correncia: any ={};
-  escala: any[] = [];
+  produto: any = {};
+  produtosPisosComBaixaQuantidade: any[] = [];
+  produtosComBaixaQuantidade: any[] = [];
+  ocorrencias: any[] = [];
+  correncia: any = {};
+  escalas: any[] = [];
   imagemAmpliadaUrl: string | null = null;
   zoomLevel: string = 'scale(1)';
 
@@ -46,21 +49,36 @@ export class InicioComponent implements OnInit {
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-   
 
-    this.httpClient.get(environment.apiUrl + '/produtoGeral')
+
+    this.httpClient.get(environment.entregatitulo + '/home/escala')
       .subscribe({
         next: (produtosData) => {
-          this.produtos = produtosData as any[];
-          
-          this.findProdutosComBaixaQuantidade();
+          this.escalas = produtosData as any[];
+
+
         },
         error: (error) => {
           console.error('Erro ao carregar os produtos:', error);
         }
       });
-     
       
+      
+    this.httpClient.get(environment.apiUrl + '/ProdutoPiso/venda')
+         .subscribe({
+      next: (vendas) => {
+        this.vendas = vendas as any[];
+        this.findProdutoMaisVendido();
+        this.findProdutoMenosVendido();
+      },
+      error: (error) => {
+        console.error('Erro ao carregar vendas:', error);
+      }
+    });
+    this.findProdutosPisosComBaixaQuantidade();
+    this.findProdutosComBaixaQuantidade();
+
+
   }
 
   controlarZoom(event: WheelEvent) {
@@ -80,7 +98,7 @@ export class InicioComponent implements OnInit {
   }
 
   getFullImageUrl(imagemUrl: string): string {
-    return `${environment.entregatitulo}/tituloreceber${imagemUrl}`;
+    return `${environment.entregatitulo}/home${imagemUrl}`;
   }
 
   expandirImagem(imagemUrl: string): void {
@@ -100,80 +118,85 @@ export class InicioComponent implements OnInit {
       imagemAmpliada.classList.remove('mostrar');
     }
   }
-  findProdutoMaisVendido(): void {
-    const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
-  
-    // Calcular a quantidade total vendida para cada produto
-    this.vendas.forEach(venda => {
-      if (venda.nomeProduto) {
-        if (!produtoQuantidades[venda.nomeProduto]) {
-          produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
-        }
-        produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
-      } else {
-        console.warn('Venda com nomeProduto undefined:', venda);
-      }
-    });
-  
-    // Transformar objeto em array para facilitar a ordenação
-    const produtosArray = Object.keys(produtoQuantidades).map(key => produtoQuantidades[key]);
-  
-    // Ordenar os produtos por quantidade vendida em ordem decrescente
-    produtosArray.sort((a, b) => b.quantidade - a.quantidade);
-  
-    // Selecionar os três primeiros produtos mais vendidos
-    const produtosMaisVendidos = produtosArray.slice(0,1);
-  
-    // Encontrar a URL da imagem para cada produto mais vendido
-    produtosMaisVendidos.forEach(produto => {
-      const produtoEncontrado = this.produtos.find(p => p.nome === produto.nomeProduto);
-      
-    });
-  
-    // Armazenar os produtos mais vendidos no atributo da classe
-    this.produtoMaisVendido = produtosMaisVendidos;
-  
-    console.log('Produtos Mais Vendidos:', this.produtoMaisVendido);
-  }
-  
-  findProdutoMenosVendido(): void {
-    const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
-  
-    // Calcular a quantidade total vendida para cada produto
-    this.vendas.forEach(venda => {
-      if (venda.nomeProduto) {
-        if (!produtoQuantidades[venda.nomeProduto]) {
-          produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
-        }
-        produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
-      } else {
-        console.warn('Venda com nomeProduto undefined:', venda);
-      }
-    });
-  
-    // Transformar objeto em array para facilitar a ordenação
-    const produtosArray = Object.keys(produtoQuantidades).map(key => produtoQuantidades[key]);
-  
-    // Ordenar os produtos por quantidade vendida em ordem crescente para encontrar o menos vendido
-    produtosArray.sort((a, b) => a.quantidade - b.quantidade);
-  
-    // Selecionar o produto menos vendido (primeiro da lista após ordenação)
-    const produtosMenosVendidos = produtosArray.slice(0, 1);
-    produtosMenosVendidos.forEach(produto => {
-      const produtoEncontrado = this.produtos.find(p => p.nome === produto.nomeProduto);
-      
-    });
-    this.produtoMenosVendido = produtosMenosVendidos;
-  
-    console.log('Produto Menos Vendido:', this.produtoMenosVendido);
-  }
 
+  findProdutoMaisVendido(): void {
+  const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+
+  // Calcular as quantidades
+  this.vendas.forEach(venda => {
+    if (venda.nomeProduto) {
+      if (!produtoQuantidades[venda.nomeProduto]) {
+        produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+      }
+      produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
+    }
+  });
+
+  // Ordenar por quantidade decrescente
+  const produtosArray = Object.values(produtoQuantidades).sort((a, b) => b.quantidade - a.quantidade);
+
+  // Top 3 com posições
+  this.produtoMaisVendido = produtosArray.slice(0, 5).map((produto, index) => ({
+    ...produto,
+    posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
+  }));
+}
+
+findProdutoMenosVendido(): void {
+  const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+
+  // Calcular as quantidades
+  this.vendas.forEach(venda => {
+    if (venda.nomeProduto) {
+      if (!produtoQuantidades[venda.nomeProduto]) {
+        produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+      }
+      produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
+    }
+  });
+
+  // Ordenar por quantidade crescente
+  const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
+
+  // Selecionar os 3 últimos colocados e adicionar posições
+ 
+  this.produtoMenosVendido = produtosArray.slice(0, 5).map((produto, index) => ({
+    ...produto,
+    posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
+  }));
+}
+
+  
+  
+
+  findProdutosPisosComBaixaQuantidade(): void {
+    this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso')
+      .subscribe({
+        next: (produtos: any[]) => {
+          this.produtosPisosComBaixaQuantidade = produtos
+            .filter(produto => produto.quantidade <= 20)
+            .sort((a, b) => a.quantidade - b.quantidade); 
+          console.log('Pisos com baixa quantidade:', this.produtosPisosComBaixaQuantidade);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar os produtos:', error);
+        }
+      });
+  }
 
   findProdutosComBaixaQuantidade(): void {
-    const produtosComBaixaQuantidade = this.produtos.filter(produto => produto.quantidade <= 20);
-    //console.log('Produtos com Baixa Quantidade:', produtosComBaixaQuantidade);
-   
-    this.produtosComBaixaQuantidade = produtosComBaixaQuantidade;
+    this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoGeral')
+      .subscribe({
+        next: (produtos: any[]) => {
+          this.produtosComBaixaQuantidade = produtos
+            .filter(produto => produto.quantidadeProd <= 20)
+            .sort((a, b) => a.quantidadeProd - b.quantidadeProd); 
+          console.log('Produtos com baixa quantidade:', this.produtosComBaixaQuantidade);
+        },
+        error: (error) => {
+          console.error('Erro ao carregar os produtos:', error);
+        }
+      });
   }
 
   convertToBrazilTime(date: Date): Date {
@@ -200,5 +223,5 @@ export class InicioComponent implements OnInit {
         }
       });
   }
-  
+
 }

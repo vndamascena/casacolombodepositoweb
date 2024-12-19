@@ -105,29 +105,28 @@ export class CadastroTituloComponent implements OnInit {
 
 
 
+  
   atualizarValor(): void {
     const valorControl = this.form.get('valor');
-
+  
     if (valorControl) {
       let valorValue = valorControl.value;
-
-      // Verifica se o valor é uma string
+  
+      // Permitir qualquer entrada no campo
       if (typeof valorValue === 'string') {
-        // Substitui vírgulas por pontos para enviar o valor corretamente ao backend
-        let valorNumerico = parseFloat(valorValue.replace(',', '.')) || 0;
-
+        
+        const valorSomenteNumeros = valorValue.replace(/[^0-9,]/g, '').replace(',', '.');
+        const valorNumerico = parseFloat(valorSomenteNumeros);
+  
         if (!isNaN(valorNumerico)) {
-          // Formata o valor para exibição no frontend com vírgula
-          const valorFormatado = valorNumerico.toFixed(2).replace('.', ',');
-          valorControl.setValue(valorFormatado);
-
-          // Se necessário, envie o valor numérico ao backend com ponto como separador decimal
-
-        } else {
-          valorControl.setValue('0,00');
+          // Formata o valor para o padrão brasileiro ao final da digitação
+          const valorFormatado = valorNumerico
+            .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            .replace('.', ','); // Garante que o separador decimal seja vírgula
+  
+          
         }
-      } else {
-        valorControl.setValue('0,00');
+       
       }
     } else {
       console.error("O controle 'valor' é nulo.");

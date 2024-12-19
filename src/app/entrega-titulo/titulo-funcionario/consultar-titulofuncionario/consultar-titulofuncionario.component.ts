@@ -24,6 +24,7 @@ import { HttpClient } from '@angular/common/http';
 export class ConsultarTitulofuncionarioComponent implements OnInit{
 
   currentForm: 'baixaTitulo' | null = null;
+  currentFormi:'concluirSelecionados' | null = null;
   p: number = 1;
   mensagem: string = '';
   startDate: Date = new Date();
@@ -38,10 +39,11 @@ export class ConsultarTitulofuncionarioComponent implements OnInit{
   senha: string = '';
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
   baixaTitulo: any;
+
   idBaixaTitulo: number | null = null;
   originalTitulos: any[] = [];
   expression: string = '';
-
+  selecionados: number[] = [];
 
   formi = new FormGroup({
     numeroNota: new FormControl('', [Validators.required]),
@@ -96,7 +98,7 @@ export class ConsultarTitulofuncionarioComponent implements OnInit{
     
     // Cria uma nova data para 30 dias após a data de venda
     const limiteDate = new Date(dataVendaDate);
-    limiteDate.setDate(limiteDate.getDate() + 30);  // Adiciona 30 dias à data de venda
+    limiteDate.setDate(limiteDate.getDate() + 31);  // Adiciona 30 dias à data de venda
     
     // Obtém a data atual
     const currentDate = new Date();
@@ -137,6 +139,13 @@ export class ConsultarTitulofuncionarioComponent implements OnInit{
   
 
   
+  getSomaValores(titulos: any[]): number {
+    return titulos.reduce((total, titulo) => {
+      // Remove o ponto (separador de milhar) e substitui a vírgula por ponto (para parseFloat funcionar)
+      const valorNumerico = parseFloat(titulo.valor.replace(/\./g, '').replace(',', '.')) || 0;
+      return total + valorNumerico;
+    }, 0);
+  }
   
   
   
@@ -283,7 +292,7 @@ contarTitulosPorCliente(titulos: any[]): any[] {
 
 
   formatarValor(valor: string): string {
-    // Remove espaços
+    
     valor = valor.trim();
 
     // Detecta se o separador decimal é vírgula ou ponto
@@ -410,6 +419,13 @@ contarTitulosPorCliente(titulos: any[]): any[] {
 
   abrirFormularioBaixaTitulo(baixatituloo: any): void {
     this.currentForm = 'baixaTitulo';
+   
+    this.baixaTitulo = baixatituloo;
+
+  }
+  abrirFormularioBaixaTituloSelecionado(baixatituloo: any): void {
+    
+    this.currentFormi = 'concluirSelecionados' ;
     this.baixaTitulo = baixatituloo;
 
   }
@@ -421,6 +437,7 @@ contarTitulosPorCliente(titulos: any[]): any[] {
     this.matricula = '';
     this.senha = '';
     this.currentForm = null;
+    this.currentFormi = null;
 
 
   }
@@ -434,6 +451,78 @@ contarTitulosPorCliente(titulos: any[]): any[] {
     const referenceDate = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000); // Subtrai 15 dias
     return date < referenceDate;
 }
+
+updateSelection(titulo: any): void {
+  if (titulo.selected) {
+    this.selecionados.push(titulo.id);
+  } else {
+    this.selecionados = this.selecionados.filter(id => id !== titulo.id);
+  }
+}
+
+toggleAllSelection(cliente: any): void {
+  cliente.titulos.forEach((titulo: any) => {
+    titulo.selected = !titulo.selected;
+    if (titulo.selected && !this.selecionados.includes(titulo.id)) {
+      this.selecionados.push(titulo.id);
+    } else if (!titulo.selected) {
+      this.selecionados = this.selecionados.filter(id => id !== titulo.id);
+    }
+  });
+}
+
+
+concluirSelecionados(): void {
+  // Obter os IDs dos títulos selecionados
+  this.selecionados = this.titulos
+    .filter(titulo => titulo.selected) // Verificar seleção no array `titulos`
+    .map(titulo => titulo.id);
+
+  if (this.selecionados.length === 0) {
+    alert('Nenhum título selecionado para concluir.');
+    return;
+  }
+
+  if (!this.matricula || !this.senha) {
+    alert('Por favor, preencha a matrícula e senha.');
+    return;
+  }
+
+  const erros: any[] = [];
+  const sucessos: any[] = [];
+
+  this.selecionados.forEach(id => {
+    const params = { matricula: this.matricula, senha: this.senha, id };
+
+    this.httpClient.post<any>(`${environment.entregatitulo}/tituloreceberfuncionario/baixatitulofuncionario`, {}, { params })
+      .subscribe({
+        next: (response: any) => {
+          console.log(`Título ID ${id} concluído com sucesso.`, response);
+          sucessos.push(id);
+
+          // Atualiza localmente o status do título
+          const titulo = this.titulos.find(t => t.id === id);
+          if (titulo) titulo.concluido = true;
+        },
+        error: (error: any) => {
+          console.error(`Erro ao concluir o título ID ${id}:`, error);
+          erros.push({ id, error });
+        }
+      });
+  });
+
+  // Exibe os resultados
+  if (sucessos.length > 0) {
+    alert(`${sucessos.length} títulos concluídos com sucesso.`);
+  }
+  if (erros.length > 0) {
+    alert(`${erros.length} títulos não foram concluídos. Verifique os erros no console.`);
+  }
+
+  this.fecharFormularios(); // Fecha o formulário
+}
+
+
 
 
 

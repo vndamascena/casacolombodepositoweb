@@ -7,6 +7,8 @@ import { NgxImageZoomModule } from 'ngx-image-zoom';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-consultar-titulo',
@@ -23,6 +25,7 @@ export class ConsultarTituloComponent implements OnInit{
 
 
   currentForm: 'baixaTitulo' | null = null;
+  currentFormi:'concluirSelecionados' | null = null;
   p: number = 1;
   mensagem: string = '';
   startDate: Date = new Date();
@@ -40,6 +43,7 @@ export class ConsultarTituloComponent implements OnInit{
   idBaixaTitulo: number | null = null;
   originalTitulos: any[] = [];
   expression: string = '';
+  selecionados: number[] = [];
 
 
   formi = new FormGroup({
@@ -87,6 +91,15 @@ export class ConsultarTituloComponent implements OnInit{
   getRowClass(i: number): string {
     return i % 2 === 0 ? 'row-even' : 'row-odd';
   }
+  getSomaValores(titulos: any[]): number {
+    return titulos.reduce((total, titulo) => {
+      // Remove o ponto (separador de milhar) e substitui a vírgula por ponto (para parseFloat funcionar)
+      const valorNumerico = parseFloat(titulo.valor.replace(/\./g, '').replace(',', '.')) || 0;
+      return total + valorNumerico;
+    }, 0);
+  }
+  
+  
 
   getTextColorClass(i: number, dataVenda: string, dataPrevistaPagamento: string): string {
     // Converte as datas do formato DD/MM/YYYY para Date
@@ -276,37 +289,7 @@ contarTitulosPorCliente(titulos: any[]): any[] {
   }
 
 
-  formatarValor(valor: string): string {
-    // Remove espaços
-    valor = valor.trim();
-
-    // Detecta se o separador decimal é vírgula ou ponto
-    const separadorDecimal = valor.includes(',') ? ',' : '.';
-    const separadorMilhar = separadorDecimal === ',' ? '.' : ',';
-
-    // Normaliza o valor, removendo o separador de milhar
-    const valorSemMilhar = valor.replace(new RegExp(`\\${separadorMilhar}`, 'g'), '');
-
-    // Substitui o separador decimal por ponto
-    const valorComPonto = valorSemMilhar.replace(separadorDecimal, '.');
-
-    // Converte para número e formata com separador decimal e milhar
-    const valorNumerico = parseFloat(valorComPonto);
-
-    if (isNaN(valorNumerico)) {
-      return '0,00';
-    }
-
-    // Formata com separador de milhar e vírgula como separador decimal
-    const partes = valorNumerico.toFixed(2).split('.');
-    const inteiro = partes[0];
-    const decimal = partes[1];
-
-    const inteiroComMilhar = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-    return `${inteiroComMilhar},${decimal}`;
-  }
-
+  
   concluirTitulo(baixaTituloo: any): void {
     this.tit = baixaTituloo;
     const params = { matricula: this.matricula, senha: this.senha, id: this.tit.id };
@@ -408,13 +391,19 @@ contarTitulosPorCliente(titulos: any[]): any[] {
 
   }
 
+  abrirFormularioBaixaTituloSelecionado(baixatituloo: any): void {
+    
+    this.currentFormi = 'concluirSelecionados' ;
+    this.baixaTitulo = baixatituloo;
 
+  }
   // Fecha todos os formulários
   fecharFormularios(): void {
 
     this.matricula = '';
     this.senha = '';
     this.currentForm = null;
+    this.currentFormi = null;
 
 
   }
@@ -428,5 +417,123 @@ contarTitulosPorCliente(titulos: any[]): any[] {
     const referenceDate = new Date(now.getTime() - 15 * 24 * 60 * 60 * 1000); // Subtrai 15 dias
     return date < referenceDate;
 }
+
+
+
+
+
+updateSelection(titulo: any): void {
+  if (titulo.selected) {
+    this.selecionados.push(titulo.id);
+  } else {
+    this.selecionados = this.selecionados.filter(id => id !== titulo.id);
+  }
+}
+
+toggleAllSelection(cliente: any): void {
+  cliente.titulos.forEach((titulo: any) => {
+    titulo.selected = !titulo.selected;
+    if (titulo.selected && !this.selecionados.includes(titulo.id)) {
+      this.selecionados.push(titulo.id);
+    } else if (!titulo.selected) {
+      this.selecionados = this.selecionados.filter(id => id !== titulo.id);
+    }
+  });
+}
+
+
+concluirSelecionados(): void {
+  // Obter os IDs dos títulos selecionados
+  this.selecionados = this.titulos
+    .filter(titulo => titulo.selected) // Verificar seleção no array `titulos`
+    .map(titulo => titulo.id);
+
+  if (this.selecionados.length === 0) {
+    alert('Nenhum título selecionado para concluir.');
+    return;
+  }
+
+  if (!this.matricula || !this.senha) {
+    alert('Por favor, preencha a matrícula e senha.');
+    return;
+  }
+
+  const erros: any[] = [];
+  const sucessos: any[] = [];
+
+  this.selecionados.forEach(id => {
+    const params = { matricula: this.matricula, senha: this.senha, id };
+
+    this.httpClient.post<any>(`${environment.entregatitulo}/tituloreceber/baixatitulo`, {}, { params })
+      .subscribe({
+        next: (response: any) => {
+          console.log(`Título ID ${id} concluído com sucesso.`, response);
+          sucessos.push(id);
+
+          // Atualiza localmente o status do título
+          const titulo = this.titulos.find(t => t.id === id);
+          if (titulo) titulo.concluido = true;
+
+          this.spinner.hide();
+          this.fecharFormularios();
+          window.location.reload();
+
+        },
+        error: (error: any) => {
+          console.error(`Erro ao concluir o título ID ${id}:`, error);
+          erros.push({ id, error });
+        }
+      });
+  });
+
+  // Exibe os resultados
+  if (sucessos.length > 0) {
+    alert(`${sucessos.length} títulos concluídos com sucesso.`);
+  }
+  if (erros.length > 0) {
+    alert(`${erros.length} títulos não foram concluídos. Verifique os erros no console.`);
+  }
+
+  this.fecharFormularios(); // Fecha o formulário
+}
+
+
+
+
+exportarParaExcel(cliente: any) { // cliente é o cliente específico selecionado
+  if (!cliente || !cliente.titulos || cliente.titulos.length === 0) {
+    alert('Não há dados para exportar para este cliente.');
+    return;
+  }
+
+  const dadosTabela = cliente.titulos.map((titulo: { numeroNota: any; nome: any; valor: any; vendedor: any; observacao: any;  dataVenda: any; loja: any; nomeCliente:any; }) => ({
+    Nota: titulo.numeroNota,
+    Usuário: titulo.nome,
+    'N° Nota': titulo.numeroNota,
+    Cliente: cliente.nomeCliente, 
+    Valor: titulo.valor,
+    Vendedor: titulo.vendedor,
+    Observação: titulo.observacao,
+   
+    DataVenda: titulo.dataVenda,
+    Loja: titulo.loja,
+    
+    
+  }));
+
+  // Crie uma nova planilha
+  const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dadosTabela);
+
+  // Crie um novo arquivo de trabalho
+  const wb: XLSX.WorkBook = XLSX.utils.book_new();
+
+  // Adicione a planilha ao arquivo de trabalho
+  XLSX.utils.book_append_sheet(wb, ws, 'Entregas');
+
+  // Gera o arquivo Excel
+  XLSX.writeFile(wb, `Entregas_${cliente.nome}.xlsx`);
+}
+
+
 
 }
