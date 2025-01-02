@@ -61,7 +61,7 @@ export class AutenticarUsuarioComponent {
           }
           // Salva as informações do usuário no sessionStorage
           sessionStorage.setItem('auth_usuario', JSON.stringify(data));
-          this.router.navigate(['/consulta-produtos']).then(() => {
+          this.router.navigate(['/inicio']).then(() => {
             window.location.reload();
           });
           this.spinner.hide();

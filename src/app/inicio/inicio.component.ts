@@ -36,7 +36,11 @@ export class InicioComponent implements OnInit {
   escalas: any[] = [];
   imagemAmpliadaUrl: string | null = null;
   zoomLevel: string = 'scale(1)';
-
+  entregasDoDia: number = 0;
+  entregasDiaSemana: number = 0;
+  ocorrenciasC: number = 0;
+  quantidadeVendidaHoje: number = 0;
+  titulosAReceber: number = 0;
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -62,21 +66,25 @@ export class InicioComponent implements OnInit {
           console.error('Erro ao carregar os produtos:', error);
         }
       });
-      
-      
+
+
     this.httpClient.get(environment.apiUrl + '/ProdutoPiso/venda')
-         .subscribe({
-      next: (vendas) => {
-        this.vendas = vendas as any[];
-        this.findProdutoMaisVendido();
-        this.findProdutoMenosVendido();
-      },
-      error: (error) => {
-        console.error('Erro ao carregar vendas:', error);
-      }
-    });
+      .subscribe({
+        next: (vendas) => {
+          this.vendas = vendas as any[];
+          this.findProdutoMaisVendido();
+          this.findProdutoMenosVendido();
+        },
+        error: (error) => {
+          console.error('Erro ao carregar vendas:', error);
+        }
+      });
     this.findProdutosPisosComBaixaQuantidade();
     this.findProdutosComBaixaQuantidade();
+    this.carregarEntregasDoDia();
+    this.carregarOcorrencias();
+    this.carregarVendasDoDia();
+    this.carregarTitulosAReceber(); 
 
 
   }
@@ -120,54 +128,54 @@ export class InicioComponent implements OnInit {
   }
 
   findProdutoMaisVendido(): void {
-  const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+    const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
 
-  // Calcular as quantidades
-  this.vendas.forEach(venda => {
-    if (venda.nomeProduto) {
-      if (!produtoQuantidades[venda.nomeProduto]) {
-        produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+    // Calcular as quantidades
+    this.vendas.forEach(venda => {
+      if (venda.nomeProduto) {
+        if (!produtoQuantidades[venda.nomeProduto]) {
+          produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+        }
+        produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
       }
-      produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
-    }
-  });
+    });
 
-  // Ordenar por quantidade decrescente
-  const produtosArray = Object.values(produtoQuantidades).sort((a, b) => b.quantidade - a.quantidade);
+    // Ordenar por quantidade decrescente
+    const produtosArray = Object.values(produtoQuantidades).sort((a, b) => b.quantidade - a.quantidade);
 
-  // Top 3 com posições
-  this.produtoMaisVendido = produtosArray.slice(0, 5).map((produto, index) => ({
-    ...produto,
-    posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
-  }));
-}
+    // Top 3 com posições
+    this.produtoMaisVendido = produtosArray.slice(0, 5).map((produto, index) => ({
+      ...produto,
+      posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
+    }));
+  }
 
-findProdutoMenosVendido(): void {
-  const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+  findProdutoMenosVendido(): void {
+    const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
 
-  // Calcular as quantidades
-  this.vendas.forEach(venda => {
-    if (venda.nomeProduto) {
-      if (!produtoQuantidades[venda.nomeProduto]) {
-        produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+    // Calcular as quantidades
+    this.vendas.forEach(venda => {
+      if (venda.nomeProduto) {
+        if (!produtoQuantidades[venda.nomeProduto]) {
+          produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+        }
+        produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
       }
-      produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
-    }
-  });
+    });
 
-  // Ordenar por quantidade crescente
-  const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
+    // Ordenar por quantidade crescente
+    const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
 
-  // Selecionar os 3 últimos colocados e adicionar posições
- 
-  this.produtoMenosVendido = produtosArray.slice(0, 5).map((produto, index) => ({
-    ...produto,
-    posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
-  }));
-}
+    // Selecionar os 3 últimos colocados e adicionar posições
 
-  
-  
+    this.produtoMenosVendido = produtosArray.slice(0, 5).map((produto, index) => ({
+      ...produto,
+      posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
+    }));
+  }
+
+
+
 
   findProdutosPisosComBaixaQuantidade(): void {
     this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso')
@@ -175,7 +183,7 @@ findProdutoMenosVendido(): void {
         next: (produtos: any[]) => {
           this.produtosPisosComBaixaQuantidade = produtos
             .filter(produto => produto.quantidade <= 20)
-            .sort((a, b) => a.quantidade - b.quantidade); 
+            .sort((a, b) => a.quantidade - b.quantidade);
           console.log('Pisos com baixa quantidade:', this.produtosPisosComBaixaQuantidade);
         },
         error: (error) => {
@@ -190,7 +198,7 @@ findProdutoMenosVendido(): void {
         next: (produtos: any[]) => {
           this.produtosComBaixaQuantidade = produtos
             .filter(produto => produto.quantidadeProd <= 20)
-            .sort((a, b) => a.quantidadeProd - b.quantidadeProd); 
+            .sort((a, b) => a.quantidadeProd - b.quantidadeProd);
           console.log('Produtos com baixa quantidade:', this.produtosComBaixaQuantidade);
         },
         error: (error) => {
@@ -224,4 +232,89 @@ findProdutoMenosVendido(): void {
       });
   }
 
+
+
+  carregarEntregasDoDia(): void {
+    this.httpClient.get<any[]>(`${environment.entregatitulo}/entrega`)
+      .subscribe((data) => {
+        const hoje = new Date().toISOString().split('T')[0]; // Data de hoje no formato yyyy-MM-dd
+        const diaSemanaAtual = this.obterDiaSemana(new Date()); // Dia da semana em português
+
+        // Filtrar entregas para a data atual
+        const entregasHoje = data.filter((entrega) => entrega.dataEntrega === hoje);
+
+        // Filtrar entregas para o dia da semana atual
+        const entregasDiaSemana = data.filter((entrega) => entrega.diaSemana === diaSemanaAtual);
+
+        // Contar entregas únicas por cliente na data atual
+        this.entregasDoDia = this.contarEntregasPorCliente(entregasHoje).length;
+
+        // Contar entregas únicas por cliente no dia da semana atual
+        this.entregasDiaSemana = this.contarEntregasPorCliente(entregasDiaSemana).length;
+      }, error => {
+        console.error('Erro ao carregar entregas:', error);
+      });
+  }
+
+
+  obterDiaSemana(data: Date): string {
+    const diasSemana = [
+      'Domingo',
+      'Segunda-feira',
+      'Terça-feira',
+      'Quarta-feira',
+      'Quinta-feira',
+      'Sexta-feira',
+      'Sábado'
+    ];
+    return diasSemana[data.getDay()];
+  }
+
+  contarEntregasPorCliente(entregas: any[]): any[] {
+    const clientesContabilizados: { [key: string]: boolean } = {};
+    const entregasUnicas: any[] = [];
+
+    entregas.forEach(entrega => {
+      if (!clientesContabilizados[entrega.nomeCliente]) {
+        clientesContabilizados[entrega.nomeCliente] = true;
+        entregasUnicas.push(entrega);
+      }
+    });
+
+    return entregasUnicas;
+  }
+  carregarOcorrencias(): void {
+    this.httpClient.get<any[]>(`${environment.ocorrencApi}/ocorrencia`)
+      .subscribe((data) => {
+        this.ocorrenciasC = data.length; // Total de ocorrências
+      }, error => {
+        console.error('Erro ao carregar ocorrências:', error);
+      });
+  }
+
+
+  carregarVendasDoDia(): void {
+    this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`)
+      .subscribe((data) => {
+        const hoje = new Date().toISOString().split('T')[0]; // Data de hoje no formato yyyy-MM-dd
+
+        // Filtrar vendas do dia atual e calcular a quantidade total vendida
+        this.quantidadeVendidaHoje = data
+          .filter(venda => venda.dataVenda.startsWith(hoje)) // Filtrar por data
+          .reduce((total, venda) => total + venda.quantidade, 0); // Somar as quantidades
+      }, error => {
+        console.error('Erro ao carregar vendas do dia:', error);
+      });
+
+
+  }
+
+  carregarTitulosAReceber(): void {
+    this.httpClient.get<any[]>(`${environment.entregatitulo}/tituloreceber`)
+      .subscribe((data) => {
+        this.titulosAReceber = data.length; // Contar a quantidade de títulos a receber
+      }, error => {
+        console.error('Erro ao carregar títulos a receber:', error);
+      });
+  }
 }

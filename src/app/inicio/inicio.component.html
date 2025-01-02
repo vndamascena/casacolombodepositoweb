@@ -1,90 +1,123 @@
-
- 
-    <div class="hero"></div>
+<div class="hero"></div>
 
 <br>
-<div class="container mt-3" >
-
-
+<div class="container mt-3">
     <nav class="navbar navbar-expand-lg navbar-dark"
         style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
 
-<h5>A casa colombo nasceu, com intuito de realizar seus sonhos da construção, reforma e decoração.
-    em 2008 Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-    Nesciunt animi fugiat consequatur architecto ipsum maxime hic, 
-    ut atque modi molestias non cum porro quibusdam facere officia possimus exercitationem nostrum. Vel!
-</h5>
+        <!-- Indicador 1 -->
+        <div class="col-md-3">
+            <a href="consulta-entrega" style="text-decoration: none;">
+                <div class="card card-style">
+                    <h5 class="card-title">Entregas do dia</h5>
+                    <h1 class="card-text">{{ entregasDoDia }}</h1>
+                </div>
+            </a>
+        </div>
+
+        <!-- Indicador 2 -->
+        <div class="col-md-3">
+            <a href="ocorrencia" style="text-decoration: none;">
+                <div class="card card-style">
+                    <h5 class="card-title">Ocorrências</h5>
+                    <h1 class="card-text">{{ ocorrenciasC }}</h1>
+                </div>
+            </a>
+        </div>
+
+        <!-- Indicador 3 -->
+        <div class="col-md-3">
+            <a href="consultar-titulo" style="text-decoration: none;">
+                <div class="card card-style">
+                    <h5 class="card-title">Títulos abertos</h5>
+                    <h1 class="card-text">{{ titulosAReceber }}</h1>
+                </div>
+            </a>
+        </div>
+
+        <!-- Indicador 4 -->
+        <div class="col-md-3">
+            <a href="historico-vendas" style="text-decoration: none;">
+                <div class="card card-style">
+                    <h5 class="card-title">Pisos vendidos</h5>
+                    <h1 class="card-text">{{ quantidadeVendidaHoje }}</h1>
+                </div>
+            </a>
+        </div>
 
     </nav>
     <div class="line container mt-3"></div>
-    
-
-
-
-
 </div>
+
 
 <br>
 
 <div class="table-responsive">
-    <table class="table table-bordered ">
+    <table class="table">
         <!-- Cabeçalho centralizado -->
-        <div style="text-align: center;">
-            <img src="/assets/escalaicon.jpeg" alt="Ícone de Consulta" width="180" height="180">
-
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="/assets/marcadeusuario.png" alt="Ícone de Consulta" width="80" height="80">
+            <h3><strong>ESCALA DE TRABALHO</strong></h3>
         </div>
-        <br>
+
         <!-- Corpo da tabela -->
-        <tbody class="d-flex justify-content-center " style="gap: 20px;">
-            
-            <ng-container *ngFor="let escala of escalas">
-                
-                <tr>
-                   
-                    <td >
-                        <img [src]="getFullImageUrl(escala.imagemUrl)" 
-                             alt="{{ escala.nome }}" 
-                             class="img-fluid"
-                             style="width: 600px; height: 600px;"
-                             (click)="expandirImagem(escala.imagemUrl)">
+        <tbody>
+            <ng-container *ngFor="let escala of escalas; let i = index">
+                <tr style="border: none;">
+                    <td style="text-align: center; border: none; padding-bottom: 20px;">
+                        <img [src]="getFullImageUrl(escala.imagemUrl)" alt="{{ escala.nome }}" class="img-fluid"
+                            [ngStyle]="i === 0 ? {'width': '600px', 'height': '600px'} : {'height': 'auto', 'width': 'auto'}"
+                            (click)="expandirImagem(escala.imagemUrl)">
                     </td>
                 </tr>
+                <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
+                    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+                    <div class="imagem-container" (wheel)="controlarZoom($event)">
+                        <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
+                    </div>
+                </div>
             </ng-container>
         </tbody>
     </table>
 </div>
 
 
+
+
+
+
+
+
 <br>
-<br>
+
 <div class="line container mt-3"></div>
+<br>
 
-<h5 class="container mt-3">A casa colombo nasceu, com intuito de realizar seus sonhos da construçaõ, reforma e decoração.
-    em 2008 Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-    Nesciunt animi fugiat consequatur architecto ipsum maxime hic, 
-    ut atque modi molestias non cum porro quibusdam facere officia possimus exercitationem nostrum. Vel!
-</h5>
-
-<div class="quadros-container container mt-3">
+<div class="quadros-container container mt-3 ">
     <!-- Coluna com Mais Vendidos e Menos Vendidos -->
-    <div class="quadro-mais-menos">
+    <div class="quadro-mais-menos ">
         <!-- Mais Vendidos -->
-        <div class="quadro quadro-mais-vendidos">
-            <h5 style="text-align: center;">Pisos mais vendidos</h5>
+        <div class="quadro quadro-mais-vendidos ">
+
+            <h5 style="text-align: center;">Pisos campeões de vendas <img src="/assets/vencedora.png"
+                    alt="Ícone de Consulta" width="40" height="40"></h5>
             <ul>
-                <li *ngFor="let produto of produtoMaisVendido">
-                    <strong>{{ produto.posicao }} - {{ produto.nomeProduto }} - {{ produto.quantidade }} vendidos</strong>
+                <li *ngFor="let produto of produtoMaisVendido" style="text-align: center;">
+                    <strong>{{ produto.posicao }} - {{ produto.nomeProduto }} - {{ produto.quantidade }}
+                        vendidos</strong>
                     <div class="line2"></div>
                 </li>
             </ul>
         </div>
 
         <!-- Menos Vendidos -->
-        <div class="quadro quadro-menos-vendidos ">
-            <h5 style="text-align: center;">Pisos menos vendidos</h5>
+        <div class="quadro quadro-menos-vendidos address-container">
+            <h5 style="text-align: center;">Pisos menos vendidos <img src="/assets/preco-baixo.png"
+                    alt="Ícone de Consulta" width="40" height="40"></h5>
             <ul>
                 <li *ngFor="let produto of produtoMenosVendido">
-                    <strong>{{ produto.posicao }} - {{ produto.nomeProduto }} - {{ produto.quantidade }} vendidos</strong>
+                    <strong>{{ produto.posicao }} - {{ produto.nomeProduto }} - {{ produto.quantidade }}
+                        vendidos</strong>
                     <div class="line2"></div>
                 </li>
             </ul>
@@ -92,32 +125,29 @@
     </div>
 
     <!-- Produtos com Estoque Baixo -->
-    <div class="quadro quadro-estoque-baixo ">
-        <h5 style="text-align: center;">Pisos com estoque baixo</h5>
+    <div class="quadro quadro-estoque-baixo address-container">
+        <h5 style="text-align: center;">Pisos com estoque baixo </h5>
         <div class="quadro-rolagem">
             <ul>
                 <li *ngFor="let produto of produtosPisosComBaixaQuantidade">
                     <strong>{{ produto.nome }} - {{ produto.quantidade }} restantes</strong>
                     <div class="line2"></div>
                 </li>
-                
+
             </ul>
         </div>
     </div>
 </div>
 <br>
-<h5 class="container mt-3">A casa colombo nasceu, com intuito de realizar seus sonhos da construçaõ, reforma e decoração.
-    em 2008 Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-    Nesciunt animi fugiat consequatur architecto ipsum maxime hic, 
-    ut atque modi molestias non cum porro quibusdam facere officia possimus exercitationem nostrum. Vel!
-</h5>
+<br>
+<h5 style="text-align: center; color:#036822 ;">Produtos com estoque baixo </h5>
 <div class="quadros-container">
-    
-   
+
+
 
     <!-- Produtos com Estoque Baixo -->
-    <div class="quadro quadro-estoqueP-baixo">
-        <h5 style="text-align: center;">Produtos com estoque baixo</h5>
+    <div class="quadro quadro-estoqueP-baixo" style="background-color:#e9ebf7;">
+
         <br>
         <div class="quadro-rolagem">
             <ul>
@@ -126,19 +156,78 @@
                     <div class="line3"></div>
                 </li>
             </ul>
-           
+
         </div>
-        
+
     </div>
-    
+
 </div>
 
 <br>
 
-<div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
-    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
-    <div class="imagem-container">
-        <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
+
+
+<div class="address-container">
+    <div class="title-container">
+
+
+        <img src="/assets/endereco.png" alt="Ícone de Consulta" width="50" height="50">
+    </div>
+
+    <div class="addresses">
+        <div class="address-box">
+            <div>Av. Santa Catarina, 418</div>
+            <div>Jardim Catarina - SG</div>
+            <div>
+                <img src="/assets/telefone-velho.png" alt="Ícone de Consulta" width="25" height="25">
+                (21) 2603-4444
+            </div>
+            <div>
+                <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
+                (21) 990338-6988
+            </div>
+        </div>
+        <div class="address-box">
+            <div>Av. Dr. Albino Imparato, 994</div>
+            <div>Jardim Catarina - SG</div>
+            <div>
+                <img src="/assets/telefone-velho.png" alt="Ícone de Consulta" width="25" height="25">
+                (21) 2601-1170
+            </div>
+            <div>
+                <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
+                (21) 98709-2120
+            </div>
+        </div>
+        <div class="address-box">
+            <div>Est. Almirante Penna, 220</div>
+            <div>Vista Alegre - SG</div>
+            <div>
+                <img src="/assets/telefone-velho.png" alt="Ícone de Consulta" width="25" height="25">
+                (21) 2023-4451
+            </div>
+            <div>
+                <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
+                (21) 98623-3919
+            </div>
+        </div>
+        <div class="address-box">
+            <div>Av. José Mendonça de Campos, 955</div>
+            <div>Colubandê - SG</div>
+            <div>
+                <img src="/assets/telefone-velho.png" alt="Ícone de Consulta" width="25" height="25">
+                (21) 2023-8225
+            </div>
+            <div>
+                <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
+                (21) 98624-2545
+            </div>
+        </div>
     </div>
 </div>
+
+
+
+
+
 
