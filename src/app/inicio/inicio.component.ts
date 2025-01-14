@@ -41,6 +41,10 @@ export class InicioComponent implements OnInit {
   ocorrenciasC: number = 0;
   quantidadeVendidaHoje: number = 0;
   titulosAReceber: number = 0;
+  pisosRecentes: any[] = [];
+  aniversariantes: { nome: string; dataNascimento: string }[] = [];
+  proximoAniversariante: { nome: string; dataNascimento: string } | null = null;
+  
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -85,8 +89,44 @@ export class InicioComponent implements OnInit {
     this.carregarOcorrencias();
     this.carregarVendasDoDia();
     this.carregarTitulosAReceber(); 
+    this.carregarPisosRecentes();
+    this.buscarAniversariantes();
 
 
+
+  }
+  buscarAniversariantes(): void {
+    const endpoint = 'https://colombo01-001-site2.gtempurl.com/api/usuarios/getall';
+    const hoje = new Date();
+    const hojeDia = hoje.getDate();
+    const hojeMes = hoje.getMonth() + 1;
+
+    this.httpClient.get<{ nome: string; dataNascimento: string | null }[]>(endpoint).subscribe(
+      (data) => {
+        this.aniversariantes = data
+          .filter(user => user.dataNascimento)
+          .map(user => ({ ...user, dataNascimento: user.dataNascimento! }))
+          .filter(user => {
+            const [, mes] = user.dataNascimento.split('-').map(Number);
+            return mes === hojeMes;
+          })
+          .sort((a, b) => {
+            const [diaA] = a.dataNascimento.split('-').map(Number);
+            const [diaB] = b.dataNascimento.split('-').map(Number);
+            return diaA - diaB; // Ordena pelo dia
+          });
+
+        // Encontra o PRÓXIMO aniversariante
+        this.proximoAniversariante = this.aniversariantes.find(user => {
+          const [dia] = user.dataNascimento.split('-').map(Number);
+          return dia >= hojeDia; // Verifica se o dia é igual ou posterior ao dia atual
+        }) || (this.aniversariantes.length > 0 ? this.aniversariantes[0] : null); // Se não encontrar nenhum posterior, pega o primeiro da lista (para o próximo mês, se for o caso)
+
+      },
+      (error) => {
+        console.error('Erro ao buscar aniversariantes:', error);
+      }
+    );
   }
 
   controlarZoom(event: WheelEvent) {
@@ -317,4 +357,50 @@ export class InicioComponent implements OnInit {
         console.error('Erro ao carregar títulos a receber:', error);
       });
   }
+
+
+  carregarPisosRecentes(): void {
+    const endpoint = `${environment.apiUrl}/produtoPiso/lotes`;
+  
+    this.httpClient.get<any[]>(endpoint).subscribe({
+      next: (lotesData) => {
+        // Filtrar lotes válidos (não "xxx")
+        const lotesValidos = lotesData.filter(lote => {
+          const isNotXXX = lote.codigo.trim().toLowerCase() !== 'xxx' && lote.numeroLote.trim().toLowerCase() !== 'xxx';
+          console.log('Filtrando lote:', lote.codigo, lote.numeroLote, 'isNotXXX:', isNotXXX);
+          return isNotXXX;
+        });
+  
+        
+        const ultimaData = lotesValidos.reduce((maisRecente, lote) => {
+          const dataEntrada = new Date(lote.dataEntrada);
+          return dataEntrada > maisRecente ? dataEntrada : maisRecente;
+        }, new Date(0)); 
+  
+        console.log('Última data de entrada identificada:', ultimaData);
+  
+       
+        this.pisosRecentes = lotesValidos
+          .filter(lote => {
+            const dataEntrada = new Date(lote.dataEntrada);
+            return dataEntrada.toDateString() === ultimaData.toDateString(); 
+          })
+          .map(lote => ({
+            nomeProduto: lote.nomeProduto,
+            qtdEntrada: lote.qtdEntrada,
+            dataEntrada: new Date(lote.dataEntrada) 
+          }))
+          .sort((a, b) => b.dataEntrada.getTime() - a.dataEntrada.getTime()); 
+  
+        console.log('Pisos recentes filtrados e ordenados:', this.pisosRecentes);
+      },
+      error: (err) => {
+        console.error('Erro ao carregar pisos:', err);
+      }
+    });
+  }
+  
+
 }
+
+

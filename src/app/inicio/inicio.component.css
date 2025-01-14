@@ -18,7 +18,7 @@
   background-color:  #036822;
 }
 .titulo {
-  text-align: center;
+  
   color: rgb(4, 105, 45);
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', 'Arial, sans-serif';
 }
@@ -27,9 +27,7 @@
   align-items: center;
   margin-right: -10px;
 }
-.navbar-brand {
-  margin-right: 50px;
-}
+
 .nav-item {
   margin-right: -23px;
 }
@@ -43,19 +41,49 @@ h1, h2, p {
   margin: 0;
   padding: 0;
 }
+.quadro-estoque-dinamico {
+  flex: 1 1 auto; 
+  background-color: #fbfbfb;
+  color: #036822;
+  text-align: center;
+  overflow-y: auto; 
+  height: auto; 
+  min-height: 0; 
+  padding-bottom: 0; 
+  margin-top: 75px;
+}
+
+.quadro-estoque-dinamico .quadro-rolagem ul {
+  padding: 0;
+  margin: 0;
+  max-height: none; 
+  overflow-y: auto; 
+}
+
+.quadro-estoque-dinamico ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column; 
+  gap: 5px; 
+}
+
+
 .quadros-container {
   display: flex;
-  gap: 10px; 
-  justify-content: center;
-  align-items: stretch;
-  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start; 
+  align-items: flex-start; 
+  flex-wrap: nowrap; 
+  flex-direction: row; 
 }
 .quadro {
   border: 1px solid #ccc;
   padding: 10px;
   background-color: #036822;
   color: #f4f4f4;
-  flex: 1 1 calc(33.33% - 20px);
+  flex: 1 1 auto;
   box-sizing: border-box;
 }
 .quadro-mais-menos {
@@ -86,19 +114,8 @@ ul {
   padding: 0;
   margin: 0;
 }
-.background {
-  background-image: url('/assets/FundoLogin.png');
-}
-.hero {
-  background-image: url('/assets/capa.jpeg');
-  background-size: 100% 100%; 
-  background-position: center; 
-  background-repeat: no-repeat; 
-  width: 100%; 
-  height: calc(105vw * (600 / 1440)); 
-  margin: 0; 
-  padding: 0; 
-}
+
+
 .address-container {
   background: linear-gradient(to bottom,#87c746 ,#036822 ,#036822 );
   color: #ffffff;
@@ -198,99 +215,45 @@ top: 1px;
 right: 0px;
 z-index: 9999; 
 }
+.navbar-brand img {
+  width: 100%; 
+  max-width: 900px; 
+  height: auto; 
+  display: block;
+}
 
-/* Media Queries */
-@media (max-width: 768px) {
-  .quadros-container {
-      flex-direction: column;
-      gap: 20px;
+@media screen and (max-width: 768px) {
+  
+
+  .navbar-brand img {
+    width: 100%; 
+    max-width: none; 
+    height: auto; 
   }
-  .titulo {
-      font-size: 1.5em;
-  }
-  .address-box {
-      font-size: 0.9em;
-  }
-  .navbar-brand {
-      margin-right: 20px;
-  }
-  .hero {
-      height: calc(90vw * (600 / 1440));
-      background-size: cover;
-  }
-  .card-style {
-      flex: 1 1 100%;
-      padding: 15px;
+
+}
+
+@media screen and (max-width: 425px) {
+  .navbar-brand img {
+    width: 100%; 
+    max-width: none; 
+    height: auto; 
   }
 }
 
-@media (max-width: 425px) {
-  .titulo {
-      font-size: 1.3em;
-      padding: 10px;
+@media screen and (max-width: 375px) {
+  .navbar-brand img {
+    width: 100%; 
+    max-width: none; 
+    height: auto; 
   }
-  .address-box {
-      font-size: 0.8em;
-      padding: 5px;
-  }
-  .hero {
-      height: calc(100vw * (400 / 1440));
-  }
-  .quadros-container {
-      flex-direction: column;
-      gap: 15px;
-  }
-  .quadro {
-      padding: 8px;
-  }
-  .card-style {
-      flex: 1 1 100%;
-      padding: 10px;
-      min-height: 100px;
-  }
+
 }
 
-@media (max-width: 375px) {
-  .titulo {
-      font-size: 1.2em;
-  }
-  .address-container {
-      padding: 10px;
-  }
-  .address-box {
-      font-size: 0.7em;
-  }
-  .quadros-container {
-      gap: 10px;
-  }
-  .quadro {
-      padding: 5px;
-  }
-  .navbar-brand {
-      margin-right: 10px;
-  }
-}
-
-@media (max-width: 320px) {
-  .titulo {
-      font-size: 1em;
-  }
-  .address-box {
-      font-size: 0.6em;
-      padding: 5px;
-  }
-  .quadros-container {
-      gap: 5px;
-  }
-  .quadro {
-      padding: 3px;
-  }
-  .hero {
-      height: calc(85vw * (400 / 1440));
-  }
-  .card-style {
-      flex: 1 1 100%;
-      padding: 5px;
-      min-height: 90px;
+@media screen and (max-width: 320px) {
+  .navbar-brand img {
+    width: 100%; 
+    max-width: none; 
+    height: auto; 
   }
 }

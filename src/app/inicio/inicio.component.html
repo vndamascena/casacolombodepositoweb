@@ -1,4 +1,11 @@
-<div class="hero"></div>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+    <div class="container" style="display: flex; justify-content: center; align-items: center;">
+      <a class="navbar-brand" href="inicio">
+        <img src="/assets/capa.jpeg" alt="Logo" class="img-responsive">
+      </a>
+    </div>
+  </nav>
+  
 
 <br>
 <div class="container mt-3">
@@ -122,33 +129,41 @@
                 </li>
             </ul>
         </div>
+
     </div>
 
-    <!-- Produtos com Estoque Baixo -->
-    <div class="quadro quadro-estoque-baixo address-container">
-        <h5 style="text-align: center;">Pisos com estoque baixo </h5>
+
+
+    <div class="quadro quadro-estoque-dinamico address-container">
+        <h5 style="text-align: center;">Ultimos pisos cadastrados</h5>
         <div class="quadro-rolagem">
             <ul>
-                <li *ngFor="let produto of produtosPisosComBaixaQuantidade">
-                    <strong>{{ produto.nome }} - {{ produto.quantidade }} restantes</strong>
+                <li *ngFor="let piso of pisosRecentes">
+                    <strong>
+                        {{ piso.nomeProduto }} - {{ piso.qtdEntrada }} caixas -
+                        {{ piso.dataEntrada | date: 'dd/MM/yyyy' }}
+                    </strong>
                     <div class="line2"></div>
                 </li>
-
             </ul>
         </div>
+
     </div>
+
+
+
 </div>
 <br>
 <br>
-<h5 style="text-align: center; color:#036822 ;">Produtos com estoque baixo </h5>
+
 <div class="quadros-container">
 
 
 
     <!-- Produtos com Estoque Baixo -->
-    <div class="quadro quadro-estoqueP-baixo" style="background-color:#e9ebf7;">
+    <div class="quadro quadro-estoque-baixo address-container">
+        <h4 style="text-align: center; ">Produtos com estoque baixo </h4>
 
-        <br>
         <div class="quadro-rolagem">
             <ul>
                 <li *ngFor="let produto of produtosComBaixaQuantidade">
@@ -160,8 +175,40 @@
         </div>
 
     </div>
+    <div class="quadro quadro-estoque-baixo address-container">
+        <h4 style="text-align: center;">Pisos com estoque baixo </h4>
+        <div class="quadro-rolagem">
+            <ul>
+                <li *ngFor="let produto of produtosPisosComBaixaQuantidade">
+                    <strong>{{ produto.nome }} - {{ produto.quantidade }} restantes</strong>
+                    <div class="line3"></div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
 
 </div>
+<br>
+<div class="quadros-container">
+    <div class="quadro quadro-estoque-baixo address-container container mt-3">
+      <h4 style="text-align: center;">Aniversariantes do mês</h4>
+      <div class="quadro-rolagem">
+         
+        <div *ngFor="let user of aniversariantes; let i = index">
+          <div *ngIf="user === proximoAniversariante">
+            <h1 style="color: rgb(203, 255, 14);">{{ user.nome }} - {{user.dataNascimento}} (Próximo)</h1>
+          </div>
+          <div *ngIf="user !== proximoAniversariante">
+            <span>{{ user.nome }} - {{user.dataNascimento}}</span>
+          </div>
+          <div class="line3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
 
 <br>
 
@@ -184,7 +231,8 @@
             </div>
             <div>
                 <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
-                (21) 990338-6988
+                <a href="https://wa.me/5521990386988" target="_blank"
+                    style="text-decoration: none; color: inherit;">(21) 99038-6988 </a>
             </div>
         </div>
         <div class="address-box">
@@ -196,7 +244,8 @@
             </div>
             <div>
                 <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
-                (21) 98709-2120
+                <a href="https://wa.me/5521987092120" target="_blank"
+                    style="text-decoration: none; color: inherit;">(21) 98709-2120</a>
             </div>
         </div>
         <div class="address-box">
@@ -208,7 +257,8 @@
             </div>
             <div>
                 <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
-                (21) 98623-3919
+                <a href="https://wa.me/5521986233919" target="_blank"
+                    style="text-decoration: none; color: inherit;">(21) 98623-3919</a>
             </div>
         </div>
         <div class="address-box">
@@ -220,14 +270,9 @@
             </div>
             <div>
                 <img src="/assets/whatsapp.png" alt="Ícone de Consulta" width="20" height="20">
-                (21) 98624-2545
+                <a href="https://wa.me/5521986242545" target="_blank"
+                    style="text-decoration: none; color: inherit;">(21) 98624-2545</a>
             </div>
         </div>
     </div>
 </div>
-
-
-
-
-
-
