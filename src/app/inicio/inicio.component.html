@@ -77,14 +77,17 @@
                             (click)="expandirImagem(escala.imagemUrl)">
                     </td>
                 </tr>
-                <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl">
-                    <button class="btn-close" (click)="fecharImagemAmpliada()">&times;</button>
+                <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (click)="fecharImagemAmpliada()" (dblclick)="fecharImagemAmpliada()" >
                     <div class="imagem-container" (wheel)="controlarZoom($event)">
                         <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
                     </div>
                 </div>
             </ng-container>
         </tbody>
+        
+        
+        
+          
     </table>
 </div>
 

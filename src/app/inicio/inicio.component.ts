@@ -150,22 +150,23 @@ export class InicioComponent implements OnInit {
   }
 
   expandirImagem(imagemUrl: string): void {
-    console.log('Imagem clicada:', imagemUrl); // Adicione esta linha
+    console.log('Imagem clicada:', imagemUrl);
     this.imagemAmpliadaUrl = this.getFullImageUrl(imagemUrl);
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
-      imagemAmpliada.classList.add('mostrar');
+        imagemAmpliada.classList.add('mostrar');
     }
-  }
+}
 
-  fecharImagemAmpliada(dia: any = null): void {
-    const target = dia || this;
-    target.imagemAmpliadaUrl = null;
-    const imagemAmpliada = document.querySelector('.imagem-ampliada');
-    if (imagemAmpliada) {
-      imagemAmpliada.classList.remove('mostrar');
-    }
-  }
+fecharImagemAmpliada(): void {
+  console.log('Imagem ampliada foi clicada. Fechando...');
+  this.imagemAmpliadaUrl = null;
+}
+
+
+
+
+
 
   findProdutoMaisVendido(): void {
     const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};

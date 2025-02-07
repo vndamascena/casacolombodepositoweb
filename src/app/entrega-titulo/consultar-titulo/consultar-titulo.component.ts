@@ -200,6 +200,7 @@ export class ConsultarTituloComponent implements OnInit{
                         }
                         return 0; // Mantém a ordem se clienteNome não for definido
                     });
+                    this.carregarTitulos(ocorrencId);
                     this.categorizarTitulosPorCliente();
 
                     this.originalTitulos = [...this.titulos];
@@ -231,6 +232,7 @@ export class ConsultarTituloComponent implements OnInit{
                         return 0; // Mantém a ordem se clienteNome não for definido
                     });
                     this.categorizarTitulosPorCliente();
+                    this.carregarTitulos(ocorrencId);
                     this.originalTitulos = [...this.titulos];
                     console.log('Títulos processados e ordenados por cliente:', this.titulos);
                 },
@@ -240,31 +242,63 @@ export class ConsultarTituloComponent implements OnInit{
             });
     }
 }
+carregarTitulos(ocorrencId: any): void {
+  const url = ocorrencId
+    ? `${environment.entregatitulo}tituloreceber/${ocorrencId}`
+    : `${environment.entregatitulo}/tituloreceber`;
+
+  this.httpClient.get<any[]>(url).subscribe({
+    next: (titulosData) => {
+      this.titulos = titulosData.map((titulo) => {
+        titulo.dataTime = this.convertToBrazilTime(new Date(titulo.dataTime));
+        this.loadUserName(titulo);
+        return titulo;
+      });
+
+      this.ordenarAgruparTitulos();
+      this.originalTitulos = [...this.titulos];
+    },
+    error: (error) => {
+      console.error('Erro ao carregar os títulos:', error);
+    },
+  });
+}
+
+ordenarAgruparTitulos(): void {
+  // Ordenar por dataVenda (mais recente primeiro) e depois por nomeCliente
+  this.titulos.sort((b, a) => {
+    const dataVendaA = new Date(a.dataVenda.split('/').reverse().join('-'));
+    const dataVendaB = new Date(b.dataVenda.split('/').reverse().join('-'));
+
+    if (dataVendaB.getTime() !== dataVendaA.getTime()) {
+      return dataVendaB.getTime() - dataVendaA.getTime(); // Ordena por dataVenda
+    } else if (a.nomeCliente && b.nomeCliente) {
+      return a.nomeCliente.localeCompare(b.nomeCliente); // Ordena por nomeCliente
+    }
+    return 0;
+  });
+
+  this.categorizarTitulosPorCliente();
+}
+
 categorizarTitulosPorCliente(): void {
   const titulosPorCliente: { [key: string]: any[] } = {};
 
-  // Agrupar os títulos por cliente
-  this.titulos.forEach(titulo => {
+  this.titulos.forEach((titulo) => {
     if (!titulosPorCliente[titulo.nomeCliente]) {
       titulosPorCliente[titulo.nomeCliente] = [];
     }
     titulosPorCliente[titulo.nomeCliente].push(titulo);
   });
 
-  // Agora, iteramos sobre os clientes para definir a contagem
-  this.clientes = Object.keys(titulosPorCliente).map(nomeCliente => {
-    return {
-      nomeCliente: nomeCliente,
-      titulos: titulosPorCliente[nomeCliente], // Todos os títulos do cliente
-      contagemTotal: titulosPorCliente[nomeCliente].length, // Contagem total de títulos do cliente
-      exibir: false
-    };
-  });
+  this.clientes = Object.keys(titulosPorCliente).map((nomeCliente) => ({
+    nomeCliente,
+    titulos: titulosPorCliente[nomeCliente],
+    contagemTotal: titulosPorCliente[nomeCliente].length,
+    exibir: false,
+  }));
 
-  // Ordenar os clientes por nome
   this.clientes.sort((a, b) => a.nomeCliente.localeCompare(b.nomeCliente));
-
-  console.log('Clientes organizados:', this.clientes);
 }
 
 contarTitulosPorCliente(titulos: any[]): any[] {

@@ -100,7 +100,7 @@
             </thead>
             <tbody>
               <ng-container
-                *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 10, currentPage: p };let i = index">
+                *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 50, currentPage: p };let i = index">
                 <tr>
                   <td [ngStyle]="{'background-color': getColor(i)}">
                     <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
