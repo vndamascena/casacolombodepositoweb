@@ -246,6 +246,7 @@ export class CadastraEntregaComponent implements OnInit {
       'JCO1': 'JC1',
       'JCO2': 'JC2',
       'VA': 'VA',
+      'CL': 'CL',
       // Adicione outros códigos e nomes aqui, se necessário
     };
     

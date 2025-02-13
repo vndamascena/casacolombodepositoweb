@@ -102,32 +102,39 @@ export class InicioComponent implements OnInit {
     const hojeMes = hoje.getMonth() + 1;
 
     this.httpClient.get<{ nome: string; dataNascimento: string | null }[]>(endpoint).subscribe(
-      (data) => {
-        this.aniversariantes = data
-          .filter(user => user.dataNascimento)
-          .map(user => ({ ...user, dataNascimento: user.dataNascimento! }))
-          .filter(user => {
-            const [, mes] = user.dataNascimento.split('-').map(Number);
-            return mes === hojeMes;
-          })
-          .sort((a, b) => {
-            const [diaA] = a.dataNascimento.split('-').map(Number);
-            const [diaB] = b.dataNascimento.split('-').map(Number);
-            return diaA - diaB; // Ordena pelo dia
-          });
+        (data) => {
+            this.aniversariantes = data
+                .filter(user => user.dataNascimento)
+                .map(user => ({ ...user, dataNascimento: user.dataNascimento! }))
+                .filter(user => {
+                    const [, mes] = user.dataNascimento.split('-').map(Number);
+                    return mes === hojeMes;
+                })
+                .sort((a, b) => {
+                    const [diaA] = a.dataNascimento.split('-').map(Number);
+                    const [diaB] = b.dataNascimento.split('-').map(Number);
+                    return diaA - diaB; // Ordena pelo dia
+                });
 
-        // Encontra o PRÓXIMO aniversariante
-        this.proximoAniversariante = this.aniversariantes.find(user => {
-          const [dia] = user.dataNascimento.split('-').map(Number);
-          return dia >= hojeDia; // Verifica se o dia é igual ou posterior ao dia atual
-        }) || (this.aniversariantes.length > 0 ? this.aniversariantes[0] : null); // Se não encontrar nenhum posterior, pega o primeiro da lista (para o próximo mês, se for o caso)
+            // Encontra o PRÓXIMO aniversariante
+            const proximo = this.aniversariantes.find(user => {
+                const [dia] = user.dataNascimento.split('-').map(Number);
+                return dia >= hojeDia; // Verifica se o dia é igual ou posterior ao dia atual
+            });
 
-      },
-      (error) => {
-        console.error('Erro ao buscar aniversariantes:', error);
-      }
+            if (proximo) {
+                this.proximoAniversariante = proximo;
+            } else {
+                // Se não houver aniversariantes restantes para o mês, não destaca ninguém
+                this.proximoAniversariante = null;
+            }
+        },
+        (error) => {
+            console.error('Erro ao buscar aniversariantes:', error);
+        }
     );
-  }
+}
+
 
   controlarZoom(event: WheelEvent) {
     event.preventDefault();

@@ -1,11 +1,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
     <div class="container" style="display: flex; justify-content: center; align-items: center;">
-      <a class="navbar-brand" href="inicio">
-        <img src="/assets/capa.jpeg" alt="Logo" class="img-responsive">
-      </a>
+        <a class="navbar-brand" href="inicio">
+            <img src="/assets/capa.jpeg" alt="Logo" class="img-responsive">
+        </a>
     </div>
-  </nav>
-  
+</nav>
+
 
 <br>
 <div class="container mt-3">
@@ -77,17 +77,18 @@
                             (click)="expandirImagem(escala.imagemUrl)">
                     </td>
                 </tr>
-                <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (click)="fecharImagemAmpliada()" (dblclick)="fecharImagemAmpliada()" >
+                <div class="imagem-ampliada" *ngIf="imagemAmpliadaUrl" (click)="fecharImagemAmpliada()"
+                    (dblclick)="fecharImagemAmpliada()">
                     <div class="imagem-container" (wheel)="controlarZoom($event)">
                         <img [src]="imagemAmpliadaUrl" alt="Imagem Ampliada" [style.transform]="zoomLevel" />
                     </div>
                 </div>
             </ng-container>
         </tbody>
-        
-        
-        
-          
+
+
+
+
     </table>
 </div>
 
@@ -196,22 +197,22 @@
 <br>
 <div class="quadros-container">
     <div class="quadro quadro-estoque-baixo address-container container mt-3">
-      <h4 style="text-align: center;">Aniversariantes do mês</h4>
-      <div class="quadro-rolagem">
-         
-        <div *ngFor="let user of aniversariantes; let i = index">
-          <div *ngIf="user === proximoAniversariante">
-            <h1 style="color: rgb(203, 255, 14);">{{ user.nome }} - {{user.dataNascimento}} (Próximo)</h1>
-          </div>
-          <div *ngIf="user !== proximoAniversariante">
-            <span>{{ user.nome }} - {{user.dataNascimento}}</span>
-          </div>
-          <div class="line3"></div>
+        <h4 style="text-align: center;">Aniversariantes do mês</h4>
+        <div class="quadro-rolagem">
+            <div *ngFor="let user of aniversariantes; let i = index">
+                <div *ngIf="user === proximoAniversariante">
+                    <h1 style="color: rgb(203, 255, 14);">{{ user.nome }} - {{user.dataNascimento}} (Próximo)</h1>
+                </div>
+                <div *ngIf="user !== proximoAniversariante">
+                    <span>{{ user.nome }} - {{user.dataNascimento}}</span>
+                </div>
+                <div class="line3"></div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  
+</div>
+
+
 
 <br>
 
