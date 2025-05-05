@@ -70,34 +70,48 @@
 
 
     <div class="card mb-3" *ngFor="let cliente of clientes">
-
-      <h1 (click)="toggleTable(cliente)" class="section-header text-center" style="cursor: pointer;">
+      <h1 (click)="abrirFormularioAutenticacao(cliente)" class="section-header text-center" style="cursor: pointer;">
         <strong> {{ cliente.nomeCliente }}: {{ cliente.contagemTotal }} </strong>
       </h1>
-      <div *ngIf="cliente.exibir" class="table-responsive">
+    
+      <div *ngIf="clienteAutenticacaoVisivel === cliente.nomeCliente" class="formulario-credenciais text-center">
+        <button class="btn-close btn-close-white" (click)="fecharFormularioAutenticacao()">&times;</button>
+        <h4>Autenticação para {{ cliente.nomeCliente }}</h4>
+        <div class="mb-3">
+          <label for="usuario{{cliente.nomeCliente}}" class="form-label">Matrícula</label>
+          <input type="text" class="form-control" id="usuario{{cliente.nomeCliente}}" placeholder="Digite a matrícula"
+            #usuarioInput>
+        </div>
+        <div class="mb-3">
+          <label for="senha{{cliente.nomeCliente}}" class="form-label">Senha</label>
+          <input type="password" class="form-control" id="senha{{cliente.nomeCliente}}" placeholder="Digite a senha"
+            #senhaInput>
+        </div>
+    
+        <button class="btn btn-outline-light"
+          (click)="autenticarCliente(cliente, usuarioInput.value, senhaInput.value)" style="font-weight: bold;">Autenticar</button>
+        <p *ngIf="mensagemErroAutenticacao === cliente.nomeCliente" class="text-danger mt-2">
+          {{ mensagemErroAutenticacaoEspecifica }}
+        </p>
+      </div>
+    
+      <div *ngIf="clienteAutenticado === cliente.nomeCliente" class="table-responsive">
         <hr>
-
         <div>
           <div style="color: white;">
-
             <hr>
-
             <table class="table">
               <thead>
                 <tr>
                   <th><input type="checkbox" (change)="toggleAllSelection(cliente)" /></th>
                   <th>Nota</th>
                   <th style="width: 6%;">Loja</th>
-
-                  <!--<th>Usuario</th>-->
                   <th style="width: 6%;">N° Nota</th>
-
                   <th style="white-space: nowrap;">Data venda</th>
                   <th style="width: 6%;">Valor</th>
                   <th>Previsão de PG</th>
                   <th>Vendedor</th>
                   <th style="width: 34%;">Observação</th>
-
                   <th>Op </th>
                 </tr>
               </thead>
@@ -115,12 +129,9 @@
                     <td>{{titulo.numeroNota}}</td>
                     <td>{{titulo.dataVenda}}</td>
                     <td>R$ {{titulo.valor}}</td>
-
-                    <!-- Aplicando a classe para a cor do texto -->
                     <td [ngClass]="getTextColorClass(i, titulo.dataVenda, titulo.dataPrevistaPagamento)">
                       {{titulo.dataPrevistaPagamento | date: 'dd/MM/yyyy'}}
                     </td>
-
                     <td>{{titulo.vendedor}}</td>
                     <td>{{titulo.observacao}}</td>
                     <td>
@@ -129,29 +140,23 @@
                     </td>
                   </tr>
                 </ng-container>
-
               </tbody>
               <tfoot>
                 <tr>
-                  
                   <td colspan="5"><strong>Total:</strong></td>
                   <td><strong>
-                    R${{ getSomaValores(cliente.titulos).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
-                  </strong>
+                      R${{ getSomaValores(cliente.titulos).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                    </strong>
                   </td>
-                  
-                  <td colspan="4"> <button class="btn btn-dark"  (click)="abrirFormularioBaixaTituloSelecionado(titulos)"
-                    data-bs-dismiss="modal"><STRONG>Concluir Selecionados</STRONG></button></td>
-
-
-
+                  <td colspan="4"> <button class="btn btn-dark"
+                      (click)="abrirFormularioBaixaTituloSelecionado(titulos)" data-bs-dismiss="modal"><STRONG>Concluir
+                        Selecionados</STRONG></button></td>
                 </tr>
               </tfoot>
             </table>
           </div>
         </div>
-
-        <!-- Exibição da imagem ampliada dentro do dia -->
+    
         <div class="imagem-ampliada" *ngIf="cliente.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
           <button class="btn-close" (click)="fecharImagemAmpliada(cliente)">&times;</button>
           <div class="imagem-container">

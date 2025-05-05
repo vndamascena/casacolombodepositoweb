@@ -175,52 +175,90 @@ fecharImagemAmpliada(): void {
 
 
 
-  findProdutoMaisVendido(): void {
-    const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+findProdutoMaisVendido(): void {
+  console.log("Buscando produtos ativos...");
 
-    // Calcular as quantidades
-    this.vendas.forEach(venda => {
-      if (venda.nomeProduto) {
-        if (!produtoQuantidades[venda.nomeProduto]) {
-          produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
-        }
-        produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
-      }
-    });
+  this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso').subscribe(produtosAtivos => {
+      console.log("Produtos ativos recebidos:", produtosAtivos);
 
-    // Ordenar por quantidade decrescente
-    const produtosArray = Object.values(produtoQuantidades).sort((a, b) => b.quantidade - a.quantidade);
+      const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
 
-    // Top 3 com posições
-    this.produtoMaisVendido = produtosArray.slice(0, 5).map((produto, index) => ({
-      ...produto,
-      posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
-    }));
-  }
+      this.vendas.forEach(venda => {
+          const nomeFormatado = venda.nomeProduto.trim().toUpperCase().replace(/\s+/g, ' ');
+
+          const produto = produtosAtivos.find(p => 
+              p.nome.trim().toUpperCase().replace(/\s+/g, ' ') === nomeFormatado
+          );
+
+          if (produto) {  
+              console.log(`Produto ativo encontrado: ${produto.nome}, Quantidade: ${venda.quantidade}`);
+
+              if (!produtoQuantidades[nomeFormatado]) {
+                  produtoQuantidades[nomeFormatado] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+              }
+              produtoQuantidades[nomeFormatado].quantidade += venda.quantidade;
+          } else {
+              console.log(`Produto ignorado: ${venda.nomeProduto}, Motivo: Produto não está na lista de ativos`);
+          }
+      });
+
+      console.log("Produtos e quantidades calculadas:", produtoQuantidades);
+
+      const produtosArray = Object.values(produtoQuantidades).sort((a, b) => b.quantidade - a.quantidade);
+
+      console.log("Produtos ordenados por mais vendidos:", produtosArray);
+
+      this.produtoMaisVendido = produtosArray.slice(0, 10).map((produto, index) => ({
+          ...produto,
+          posicao: `${index + 1}º`
+      }));
+
+      console.log("Produtos mais vendidos final:", this.produtoMaisVendido);
+  });
+}
 
   findProdutoMenosVendido(): void {
-    const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+    console.log("Buscando produtos ativos...");
 
-    // Calcular as quantidades
-    this.vendas.forEach(venda => {
-      if (venda.nomeProduto) {
-        if (!produtoQuantidades[venda.nomeProduto]) {
-          produtoQuantidades[venda.nomeProduto] = { quantidade: 0, nomeProduto: venda.nomeProduto };
-        }
-        produtoQuantidades[venda.nomeProduto].quantidade += venda.quantidade;
-      }
+    this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso').subscribe(produtosAtivos => {
+        console.log("Produtos ativos recebidos:", produtosAtivos);
+
+        const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+
+        this.vendas.forEach(venda => {
+            const nomeFormatado = venda.nomeProduto.trim().toUpperCase().replace(/\s+/g, ' ');
+
+            const produto = produtosAtivos.find(p => 
+                p.nome.trim().toUpperCase().replace(/\s+/g, ' ') === nomeFormatado
+            );
+
+            if (produto) {  
+                console.log(`Produto ativo encontrado: ${produto.nome}, Quantidade: ${venda.quantidade}`);
+
+                if (!produtoQuantidades[nomeFormatado]) {
+                    produtoQuantidades[nomeFormatado] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+                }
+                produtoQuantidades[nomeFormatado].quantidade += venda.quantidade;
+            } else {
+                console.log(`Produto ignorado: ${venda.nomeProduto}, Motivo: Produto não está na lista de ativos`);
+            }
+        });
+
+        console.log("Produtos e quantidades calculadas:", produtoQuantidades);
+
+        const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
+
+        console.log("Produtos ordenados por menos vendidos:", produtosArray);
+
+        this.produtoMenosVendido = produtosArray.slice(0, 10).map((produto, index) => ({
+            ...produto,
+            posicao: `${index + 1}º`
+        }));
+
+        console.log("Produtos menos vendidos final:", this.produtoMenosVendido);
     });
+}
 
-    // Ordenar por quantidade crescente
-    const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
-
-    // Selecionar os 3 últimos colocados e adicionar posições
-
-    this.produtoMenosVendido = produtosArray.slice(0, 5).map((produto, index) => ({
-      ...produto,
-      posicao: `${index + 1}º` // Adiciona 1º, 2º, 3º
-    }));
-  }
 
 
 
@@ -408,7 +446,24 @@ fecharImagemAmpliada(): void {
     });
   }
   
+  enderecos: string[] = [
+    "Casa Colombo"
+   
+];
 
+abrirPesquisaNoGoogle(endereco: string): void {
+    if (!endereco) {
+        console.log("Endereço não disponível");
+        return;
+    }
+
+    // Criando a URL do Google com base no endereço pesquisado
+    const url = `https://www.google.com/search?tbm=lcl&q=${encodeURIComponent(endereco)}`;
+    
+    window.open(url, '_blank');
+}
+
+  
 }
 
 

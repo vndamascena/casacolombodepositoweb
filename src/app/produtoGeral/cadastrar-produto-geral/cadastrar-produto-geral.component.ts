@@ -138,22 +138,22 @@ export class CadastrarProdutoGeralComponent implements OnInit {
       console.log('FormArray de produtoDeposito:', this.produtoDepositos.value);
 
       this.httpClient.post(environment.apiUrl + "/produtoGeral", this.form.value, options)
-        .subscribe({
-          next: (data: any) => {
-            this.mensagem = data.message; 
-            this.produtoGeralId = data.produtoGeralGetModel.id; 
-            console.log('Produto cadastrado com sucesso. ID:', this.produtoGeralId);
-            this.form.reset(); 
-            this.fecharFormularioCredenciais();
-            this.spinner.hide();
-            this.uploadImagem();
-          },
-          error: (e) => {
-            console.log('Erro ao cadastrar produto:', e.error);
-            alert('Falha ao cadastrar o produto. Verifique os campos preenchidos.');
-            this.spinner.hide();
-          }
-        });
+          .subscribe({
+            next: (data: any) => {
+              this.mensagem = data.message; 
+              this.produtoGeralId = data.produtoGeralGetModel.id; 
+              console.log('Produto cadastrado com sucesso. ID:', this.produtoGeralId);
+              this.form.reset(); 
+              this.fecharFormularioCredenciais();
+              this.spinner.hide();
+              this.uploadImagem();
+            },
+            error: (e) => {
+              console.log('Erro ao cadastrar produto:', e.error);
+              alert('Falha ao cadastrar o produto. Verifique os campos preenchidos.');
+              this.spinner.hide();
+            }
+          });
     } else {
       alert('Preencha os campos de matrícula e senha para confirmar a edição.');
       this.spinner.hide();

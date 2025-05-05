@@ -1,0 +1,242 @@
+.titulo {
+    text-align: center; /* Centraliza o texto */
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+.formulario-credenciais {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .custom-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+  }
+  
+  .custom-checkbox input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .data-solicitacao-destaque {
+    background-color: rgb(255, 247, 0);
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 12px;
+    margin-top: 4px;
+}
+  
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 22px;
+    width: 22px;
+    background-color: #534b4b;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Estilo de "recebido" agora aplicado no próprio checkbox */
+  .recebido-checkbox {
+    background-color: rgb(4, 105, 45);
+    border-color: rgb(5, 168, 5);
+  }
+  
+  /* Checado */
+  .custom-checkbox input:checked + .checkmark::after {
+    content: "";
+    position: absolute;
+    left: 8px;
+    top: 3px;
+    width: 6px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    display: block;
+  }
+  
+  /* Desabilitado continua visível */
+  .custom-checkbox input:disabled + .checkmark {
+    opacity: 1;
+  }
+  
+  
+
+.formulario-credenciais .btn-close {
+    position: absolute; /* Define a posição absoluta para o botão de fechar */
+    top: 1px; /* Ajusta a posição do topo */
+    right: 01px; /* Ajusta a posição da direita */
+    z-index: 9999; /* Garante que o botão esteja acima da imagem */
+        
+}
+.formulario {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #198754;
+    padding: 20px;
+    border: 1px solid #ccc;
+    z-index: 9999;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+
+
+.formulario .btn-close {
+    position: absolute; /* Define a posição absoluta para o botão de fechar */
+    top: 1px; /* Ajusta a posição do topo */
+    right: 01px; /* Ajusta a posição da direita */
+    z-index: 9999; /* Garante que o botão esteja acima da imagem */
+        
+}
+
+.filter-icon {
+  cursor: pointer;
+  font-size: 0.8em;
+  margin-left: 5px;
+  user-select: none;
+}
+
+.filter-dropdown {
+  position: absolute;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 5px;
+  z-index: 10;
+}
+
+.filter-dropdown div {
+  cursor: pointer;
+  padding: 3px 5px;
+}
+
+.filter-dropdown div:hover {
+  background-color: #e0e0e0;
+}
+
+.filtered {
+  background-color: #e6ffe6; /* Cor para indicar que a coluna está filtrada */
+}
+/* A rotação da seta quando o filtro está ativo */
+.rotate-arrow {
+  transform: rotate(180deg);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Cor verde normal para a setinha */
+.filtro-btn i {
+  color: green;
+  font-size: 14px;
+}
+
+/* Cor verde escuro quando o filtro está ativo */
+.active-filtro {
+  color: darkgreen;
+}
+
+/* Centraliza o texto nas células do cabeçalho */
+th {
+  text-align: center; /* Centraliza o texto horizontalmente */
+  vertical-align: middle; /* Centraliza o texto verticalmente */
+  padding: 8px; /* Adiciona um pouco de espaçamento interno para melhorar a aparência */
+}
+
+/* Garante que os botões com setas fiquem centralizados */
+th button {
+  display: inline-flex; /* Faz o botão ser um flex container */
+  justify-content: center; /* Garante que o ícone fique centralizado horizontalmente */
+  align-items: center; /* Garante que o ícone fique centralizado verticalmente */
+  background: none; /* Remove fundo do botão */
+  border: none; /* Remove a borda do botão */
+  padding: 0; /* Remove o preenchimento do botão */
+  margin-left: 4px; /* Adiciona um pequeno espaço entre o texto da loja e a seta */
+}
+
+/* Estilo do ícone da seta */
+th button i {
+  font-size: 14px; /* Define o tamanho do ícone */
+  color: green; /* Define a cor do ícone */
+  transition: transform 0.3s ease-in-out; /* Transição suave para rotação */
+}
+
+/* Quando o filtro está ativo, o ícone da seta gira */
+th button i.rotate-arrow {
+  transform: rotate(180deg); /* Rotaciona o ícone */
+}
+
+/* Estilo do ícone da seta quando o filtro está ativo */
+th button i.active-filtro {
+  color: darkgreen; /* Muda a cor do ícone para verde escuro */
+}
+/* Ajuste para o botão da lupa */
+.custom-icon {
+  font-size: 16px; /* Tamanho menor do ícone da lupa */
+  margin-right: 8px; /* Espaçamento entre o ícone e o nome do fornecedor */
+}
+
+/* A linha de nome do fornecedor e preço ao lado do ícone */
+/* Centralizar o texto nas células */
+td {
+  text-align: center;
+}
+
+/* Centralizar a coluna de nome do produto */
+td:first-child {
+  text-align: center;
+}
+
+/* A centralização de usuário e data */
+td div {
+  text-align: center;
+  font-size: 14px;
+}
+
+/* A centralização dos checkboxes */
+td label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Ajustar o tamanho do ícone da lupa */
+.custom-icon {
+  font-size: 16px;
+}
+
+/* Ajustar a cor e o estilo do nome do fornecedor e preço */
+td span {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Ajuste para a coluna de data de solicitação */
+.data-solicitacao-destaque {
+  text-align: center;
+  font-size: 12px;
+  color: gray;
+}
+
+/* Estilos para os checkboxes */
+.custom-checkbox input[type="checkbox"] {
+  margin-right: 5px;
+}
+

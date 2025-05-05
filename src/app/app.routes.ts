@@ -28,6 +28,7 @@ import { HistoricoTitulofuncionarioComponent } from './entrega-titulo/titulo-fun
 import { EditarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/editar-titulofuncionario/editar-titulofuncionario.component';
 import { ConsultarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/consultar-titulofuncionario/consultar-titulofuncionario.component';
 import { CadastrarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/cadastrar-titulofuncionario/cadastrar-titulofuncionario.component';
+import { ProdutofaltaConsultarComponent } from './produto-falta/produtofalta-consultar/produtofalta-consultar.component';
 
 
 export const routes: Routes = [
@@ -169,7 +170,13 @@ export const routes: Routes = [
         path: 'consultar-titulofuncionario',
         component: ConsultarTitulofuncionarioComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        
+    },
+    {
+
+        path: 'produtofalta-consultar',
+        component: ProdutofaltaConsultarComponent,
+        canActivate:[AuthenticationGuard]
     },
     {
         path: 'erro-401',

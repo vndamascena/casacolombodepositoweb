@@ -219,11 +219,12 @@
 
 
 <div class="address-container">
-    <div class="title-container">
-
-
-        <img src="/assets/endereco.png" alt="Ícone de Consulta" width="50" height="50">
+    <div class="title-container" *ngFor="let endereco of enderecos">
+        <img 
+            src="/assets/endereco.png"  alt="Ícone de Consulta"  width="50" height="50"
+            (click)="abrirPesquisaNoGoogle(endereco) "  style="cursor: pointer;">
     </div>
+    
 
     <div class="addresses">
         <div class="address-box">

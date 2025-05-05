@@ -103,7 +103,7 @@ export class CadastrarProdutosComponent implements OnInit {
         }
       });
 
-    this.httpClient.get(environment.apiUrl + "/deposito")
+    this.httpClient.get(environment.apiUrl + "/depositos")
       .subscribe({
         next: (data) => {
           this.depositos = data as any[];

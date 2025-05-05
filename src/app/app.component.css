@@ -4,3 +4,13 @@
     margin: 0 auto;
     background-color: rgb(4, 105, 45);
   }
+  .content {
+    min-height: calc(100vh - 100px); /* Ajuste a altura do rodapé conforme necessário */
+  }
+  
+  .footer {
+    margin-top: 20px; /* Ajuste o espaçamento conforme necessário */
+    text-align: center;
+    color: #198754;
+  }
+  

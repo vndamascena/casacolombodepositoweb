@@ -289,7 +289,79 @@ contarTitulosPorCliente(titulos: any[]): any[] {
   toggleSection(cliente: any, section: string) {
     cliente[section] = !cliente[section];
   }
+  clienteAutenticacaoVisivel: string | null = null;
+  clienteAutenticado: string | null = null;
+  mensagemErroAutenticacao: string | null = null;
+  mensagemErroAutenticacaoEspecifica: string = '';
 
+  abrirFormularioAutenticacao(cliente: any) {
+    if (this.clienteAutenticado === cliente.nomeCliente) {
+      this.clienteAutenticado = null; // Desautentica se já estava autenticado
+    } else {
+      this.clienteAutenticacaoVisivel = cliente.nomeCliente;
+      this.mensagemErroAutenticacao = null;
+      this.mensagemErroAutenticacaoEspecifica = '';
+    }
+  }
+
+  fecharFormularioAutenticacao() {
+    this.clienteAutenticacaoVisivel = null;
+    this.mensagemErroAutenticacao = null;
+    this.mensagemErroAutenticacaoEspecifica = '';
+  }
+
+  autenticarCliente(cliente: any, matriculaDigitada: string, senhaDigitada: string) {
+    const isAdmin = matriculaDigitada.toLowerCase() === 'admin' && senhaDigitada === '2525';
+    let apiUrl = `${this.userApiUrl}/autenticar`;
+
+    if (isAdmin) {
+      apiUrl = `${this.userApiUrl}/autenticaradmin`;
+    }
+
+    const body = {
+      matricula: matriculaDigitada,
+      senha: senhaDigitada
+    };
+
+    console.log('Tentando autenticar...');
+    console.log('matriculaDigitada:', matriculaDigitada);
+    
+    console.log('isAdmin:', isAdmin);
+    
+
+    this.httpClient.post<any>(apiUrl, body).subscribe(
+      (response) => {
+        console.log('Resposta da API:', response);
+        if (response && response.id) {
+          const nomeUsuarioAPI = response.nome ? response.nome.toLowerCase() : '';
+          const nomeCliente = cliente.nomeCliente.toLowerCase();
+
+          if (isAdmin || (nomeCliente.includes(nomeUsuarioAPI) && response.matricula === matriculaDigitada)) {
+            this.clienteAutenticado = cliente.nomeCliente;
+            this.clienteAutenticacaoVisivel = null;
+            console.log('Autenticação bem-sucedida. clienteAutenticado:', this.clienteAutenticado);
+          } else {
+            this.mensagemErroAutenticacao = cliente.nomeCliente;
+            this.mensagemErroAutenticacaoEspecifica = 'Credenciais inválidas para este cliente.';
+            this.clienteAutenticado = null;
+            console.log('Falha na autenticação (nome/matrícula). mensagemErro:', this.mensagemErroAutenticacaoEspecifica);
+          }
+        } else {
+          this.mensagemErroAutenticacao = cliente.nomeCliente;
+          this.mensagemErroAutenticacaoEspecifica = 'Matrícula ou senha incorretos.';
+          this.clienteAutenticado = null;
+          console.log('Falha na autenticação (resposta inválida). mensagemErro:', this.mensagemErroAutenticacaoEspecifica);
+        }
+      },
+      (error) => {
+        console.error('Erro na chamada da API:', error);
+        this.mensagemErroAutenticacao = cliente.nomeCliente;
+        this.mensagemErroAutenticacaoEspecifica = 'Erro ao verificar credenciais.';
+        this.clienteAutenticado = null;
+        console.log('Erro na chamada da API. mensagemErro:', this.mensagemErroAutenticacaoEspecifica, 'Erro:', error);
+      }
+    );
+  }
 
   formatarValor(valor: string): string {
     
