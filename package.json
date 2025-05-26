@@ -24,7 +24,7 @@
     "@fullcalendar/angular": "^6.1.17",
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
-    "@ng-bootstrap/ng-bootstrap": "^17.0.1",
+    "@ng-bootstrap/ng-bootstrap": "^18.0.0",
     "@popperjs/core": "^2.11.8",
     "@types/pdfjs-dist": "^2.10.378",
     "angularx-flatpickr": "^8.1.0",
