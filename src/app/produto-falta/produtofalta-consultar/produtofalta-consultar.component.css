@@ -5,7 +5,7 @@
 
 }
 .formulario-credenciais {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -74,6 +74,40 @@
   /* Desabilitado continua visível */
   .custom-checkbox input:disabled + .checkmark {
     opacity: 1;
+  }
+  .recebido-checkbox {
+    background-color: green;
+  }
+  
+  .separado-checkbox {
+    background-color: rgb(255, 149, 0);
+  }
+  
+  .floating-question {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    text-align: center;
+  }
+  
+  .floating-question button {
+    margin: 4px;
+    padding: 6px 12px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .floating-question .cancelar {
+    background: transparent;
+    color: #666;
   }
   
   
@@ -197,7 +231,9 @@ th button i.active-filtro {
 td {
   text-align: center;
 }
-
+.bg-laranja {
+  background-color: rgb(255, 223, 165) !important;
+}
 /* Centralizar a coluna de nome do produto */
 td:first-child {
   text-align: center;

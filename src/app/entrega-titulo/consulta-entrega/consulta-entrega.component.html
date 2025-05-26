@@ -197,7 +197,7 @@
                         (click)="abrirFormularioImpressao(entrega)">
                     </td>
                     <td [ngStyle]="{'background-color': getColor(i)}">
-                      <img [src]="getFullImageUrl(entrega.imagemUrl)" alt="{{ entrega.nome }}" class="img-fluid"
+                      <img [src]="getFullImageUrl(entrega.thumbnail)" alt="{{ entrega.nome }}" class="img-fluid"
                         style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
                     </td>
                     <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.loja}}

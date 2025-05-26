@@ -29,6 +29,12 @@ import { EditarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcio
 import { ConsultarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/consultar-titulofuncionario/consultar-titulofuncionario.component';
 import { CadastrarTitulofuncionarioComponent } from './entrega-titulo/titulo-funcionario/cadastrar-titulofuncionario/cadastrar-titulofuncionario.component';
 import { ProdutofaltaConsultarComponent } from './produto-falta/produtofalta-consultar/produtofalta-consultar.component';
+import { HistoricoProdutofaltaComponent } from './produto-falta/historico-produtofalta/historico-produtofalta.component';
+
+import { CobrancaComponent } from './financias/cobranca/cobranca.component';
+import { ComprasComponent } from './financias/compras/compras.component';
+import { FornecedorComponent } from './financias/fornecedor/fornecedor.component';
+import { DashboardComponent } from './financias/dashboard/dashboard.component';
 
 
 export const routes: Routes = [
@@ -170,13 +176,39 @@ export const routes: Routes = [
         path: 'consultar-titulofuncionario',
         component: ConsultarTitulofuncionarioComponent,
         canActivate: [AuthenticationGuard],
-        
+
     },
     {
 
         path: 'produtofalta-consultar',
         component: ProdutofaltaConsultarComponent,
-        canActivate:[AuthenticationGuard]
+        canActivate: [AuthenticationGuard]
+    },
+    {
+
+        path: 'historico-produtofalta',
+        component: HistoricoProdutofaltaComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'cobranca',
+        component: CobrancaComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'compras',
+        component: ComprasComponent,
+        canActivate: [AuthenticationGuard]
+    },
+    {
+        path: 'fornecedor',
+        component: FornecedorComponent,
+        canActivate: [AuthenticationGuard]
     },
     {
         path: 'erro-401',

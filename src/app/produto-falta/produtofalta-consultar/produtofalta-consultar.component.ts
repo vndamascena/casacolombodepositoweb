@@ -39,8 +39,8 @@ export class ProdutofaltaConsultarComponent implements OnInit {
   produtosFiltradosPesquisa: any[] = [];
   originalProdutosFalta: any[] = []; 
   filtroLoja: string | null = null;
-
-
+  selecionados: number[] = [];
+  menuFlutuante: { produto: any, lojaId: number } | null = null;
   produtosFaltaFiltrada: any[] = []; // Lista para os produtos filtrados
   filtroAtivo: string | null = null; // Controla qual filtro dropdown está visível
   filtroLojaAtivo: { [key: string]: boolean } = {};
@@ -111,24 +111,31 @@ export class ProdutofaltaConsultarComponent implements OnInit {
 
       
   }
+
+  updateSelection(produto: any): void {
+    if (produto.selected) {
+      this.selecionados.push(produto.id);
+    } else {
+      this.selecionados = this.selecionados.filter(id => id !== produto.id);
+    }
+  }
+  toggleAllSelection(): void {
+    this.produtosFaltaFiltrados.forEach(produto => {
+      produto.selected = this.selecionados;
+      this.updateSelection(produto); // Se necessário manter lógica atual
+    });
+  }
+
+  
   
   confirmarRecebimento(produto: any, lojaId: number): void {
-    const confirmado = confirm('Deseja confirmar que o produto chegou nesta loja?');
-    if (!confirmado) return;
-  
-    const dataAtual = new Date().toISOString();
+    this.menuFlutuante = null;
   
     const payload: any = {
       id: produto.id,
-      lojaId: lojaId,
-      dataSolicitacao: dataAtual,
-      jC1Recebido: false,
-      jC2Recebido: false,
-      vaRecebido: false,
-      clRecebido: false
+      lojaId: lojaId
     };
   
-    // Marca apenas a loja correta como true
     switch (lojaId) {
       case 1: payload.jC1Recebido = true; break;
       case 2: payload.jC2Recebido = true; break;
@@ -139,20 +146,31 @@ export class ProdutofaltaConsultarComponent implements OnInit {
     this.httpClient.put(`${environment.apiUrl}/produtoFalta/chegouCor`, payload)
       .subscribe({
         next: () => {
-          // Atualiza o produto localmente para refletir o recebimento (e pintar de verde)
           switch (lojaId) {
-            case 1: produto.jC1Recebido = true; break;
-            case 2: produto.jC2Recebido = true; break;
-            case 3: produto.vaRecebido = true; break;
-            case 4: produto.clRecebido = true; break;
+            case 1:
+              produto.jC1Recebido = true;
+              produto.separadoJC1 = false;
+              break;
+            case 2:
+              produto.jC2Recebido = true;
+              produto.separadoJC2 = false;
+              break;
+            case 3:
+              produto.vaRecebido = true;
+              produto.separadoVA = false;
+              break;
+            case 4:
+              produto.clRecebido = true;
+              produto.separadoCL = false;
+              break;
           }
-          console.log('Produto marcado como recebido com sucesso!');
         },
         error: (err) => {
           console.error('Erro ao marcar como recebido:', err);
         }
       });
   }
+  
   produtoPossuiLojas(produto: any, lojaId: number): boolean {
  
     switch (lojaId) {
@@ -163,7 +181,77 @@ export class ProdutofaltaConsultarComponent implements OnInit {
       default: return false;
     }
   }
-
+  produtoRecebido(produto: any, lojaId: number): boolean {
+    switch (lojaId) {
+      case 1: return produto.jC1Recebido;
+      case 2: return produto.jC2Recebido;
+      case 3: return produto.vaRecebido;
+      case 4: return produto.clRecebido;
+      default: return false;
+    }
+  }
+  
+  
+  onCheckmarkClick(produto: any, lojaId: number, event: MouseEvent): void {
+    event.stopPropagation();
+  
+    // IMPEDIR clique se o produto já foi recebido
+    if (this.produtoRecebido(produto, lojaId)) {
+      return; // Já recebido, não faz nada
+    }
+  
+    // Só abrir se o checkbox estiver marcado
+    if (!this.produtoPossuiLoja(produto, lojaId)) {
+      return;
+    }
+  
+    this.menuFlutuante = { produto, lojaId };
+  }
+  
+  
+  
+  fecharMenu(): void {
+    this.menuFlutuante = null;
+  }
+  
+  marcarSeparado(produto: any, lojaId: number): void {
+    let payload: any = {
+      id: produto.id,
+      lojaId: lojaId,
+      recebido: false // sinaliza que não é um recebimento
+    };
+  
+    // Alternar o valor de separado localmente e no payload
+    switch (lojaId) {
+      case 1:
+        produto.separadoJC1 = !produto.separadoJC1;
+        payload.separadoJC1 = produto.separadoJC1;
+        break;
+      case 2:
+        produto.separadoJC2 = !produto.separadoJC2;
+        payload.separadoJC2 = produto.separadoJC2;
+        break;
+      case 3:
+        produto.separadoVA = !produto.separadoVA;
+        payload.separadoVA = produto.separadoVA;
+        break;
+      case 4:
+        produto.separadoCL = !produto.separadoCL;
+        payload.separadoCL = produto.separadoCL;
+        break;
+    }
+  
+    // Chamada ao backend
+    this.httpClient.put(`${environment.apiUrl}/produtoFalta/chegouCor`, payload)
+      .subscribe({
+        next: () => this.fecharMenu(),
+        error: (err) => console.error('Erro ao marcar como separado:', err)
+      });
+  }
+  
+  
+  
+  
   
   getLojaPorId(id: number): string | null {
     const loja = this.lojas.find(l => l.id === id);
@@ -398,7 +486,7 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         next: (data: any) => {
           this.mensagem = data.message;
           this.router.navigate(['/produtofalta-consultar']).then(() => {
-            window.location.reload();
+            
           });
         },
         error: (error) => {
@@ -522,11 +610,12 @@ export class ProdutofaltaConsultarComponent implements OnInit {
           const produto = this.produtosFalta.find(p => p.id === this.editarProduto);
           if (produto) {
             produto.editado = true;
+            produto.dataSolicitacao = body.dataSolicitacao;
           }
   
           this.fecharFormularioCredenciais();
           this.spinner.hide();
-          window.location.reload();
+          
         },
         error: (e) => {
           console.log('Erro ao concluir produto:', e.error);
@@ -570,6 +659,61 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         }
       });
   }
+  concluirSelecionados(): void {
+    // Obter os IDs dos títulos selecionados
+    this.selecionados = this.produtosFalta
+      .filter(produto => produto.selected) // Verificar seleção no array `titulos`
+      .map(produto => produto.id);
+  
+    if (this.selecionados.length === 0) {
+      alert('Nenhum produto selecionado para concluir.');
+      return;
+    }
+  
+    if (!this.matricula || !this.senha) {
+      alert('Por favor, preencha a matrícula e senha.');
+      return;
+    }
+  
+    const erros: any[] = [];
+    const sucessos: any[] = [];
+  
+    this.selecionados.forEach(id => {
+      const params = { matricula: this.matricula, senha: this.senha, id };
+  
+      this.httpClient.post<any>(`${environment.apiUrl}/produtofalta/confirmar-baixa`, {}, { params })
+        .subscribe({
+          next: (response: any) => {
+            console.log(`produtos em falta de ID ${id} concluído com sucesso.`, response);
+            sucessos.push(id);
+  
+            // Atualiza localmente o status do título
+            const produto = this.produtosFalta.find(t => t.id === id);
+            if (produto) produto.concluido = true;
+  
+            this.spinner.hide();
+            this.fecharFormularioCredenciais();
+            window.location.reload();
+  
+          },
+          error: (error: any) => {
+            console.error(`Erro ao concluir o produtos em falta de  ID ${id}:`, error);
+            erros.push({ id, error });
+          }
+        });
+    });
+  
+    // Exibe os resultados
+    if (sucessos.length > 0) {
+      alert(`${sucessos.length} produtos em falta concluídos com sucesso.`);
+    }
+    if (erros.length > 0) {
+      alert(`${erros.length} produtos em falta não foram concluídos. Verifique os erros no console.`);
+    }
+  
+    this.fecharFormularioCredenciais(); // Fecha o formulário
+  }
+
   autorizarCompra(): void {
     if (!this.matricula || !this.senha) {
       alert('Preencha matrícula e senha');

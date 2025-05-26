@@ -21,10 +21,16 @@
 
 <div class="col-md-3 container mt-3"
     style="padding: 1px; text-align: center; display: flex; flex-direction: column; align-items: center;">
-    <label style="color: #036822;"><strong>Cadastrar produto faltante</strong></label>
-    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#cadastraProdutoFalta">
-        Cadastrar
-    </button>
+    <label style="color: #036822;"><strong>Produto faltante</strong></label>
+     <div style="display: flex; gap: 10px; margin-top: 5px;">
+        <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#cadastraProdutoFalta">
+            Cadastrar
+        </button>
+        <button class="btn btn-outline-success btn-sm">
+            Histórico
+        </button>
+    </div>
+    
     <div class="input-group mb-1 barra-pesquisa">
         <input type="text" class="form-control lupa" placeholder="Pesquisar produto cadastrado" aria-label="Pesquisar"
             aria-describedby="basic-addon1" [(ngModel)]="termoPesquisa" (input)="filtrarProdutosFalta()">
@@ -35,7 +41,7 @@
     </table>
 </div>
 <div class="container mt-1">
-    
+
 
 </div>
 
@@ -45,47 +51,47 @@
         <!-- cabeçalho da tabela -->
         <thead>
             <tr>
-
+                <th>✓</th>
                 <th>Nome do produto</th>
                 <th>Cotação</th>
                 <th>C.S</th>
                 <th>C.F</th>
                 <th>Usuario</th>
                 <th>
-                    JC1 
-                    <button (click)="toggleFiltro('JC1')" style="border: none; background: none; padding: 0; margin-left: 4px;">
-                      <i class="bi bi-caret-down-fill" 
-                          [ngClass]="{'rotate-arrow': filtroLoja === 'JC1'}">
-                      </i>
+                    JC1
+                    <button (click)="toggleFiltro('JC1')"
+                        style="border: none; background: none; padding: 0; margin-left: 4px;">
+                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'JC1'}">
+                        </i>
                     </button>
-                  </th>
-                  
-                  <th>
+                </th>
+
+                <th>
                     JC2
-                    <button (click)="toggleFiltro('JC2')" style="border: none; background: none; padding: 0; margin-left: 4px;">
-                      <i class="bi bi-caret-down-fill" 
-                          [ngClass]="{'rotate-arrow': filtroLoja === 'JC2'}">
-                      </i>
+                    <button (click)="toggleFiltro('JC2')"
+                        style="border: none; background: none; padding: 0; margin-left: 4px;">
+                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'JC2'}">
+                        </i>
                     </button>
-                  </th>
-                  
-                  <th>
+                </th>
+
+                <th>
                     VA
-                    <button (click)="toggleFiltro('VA')" style="border: none; background: none; padding: 0; margin-left: 4px;">
-                      <i class="bi bi-caret-down-fill" 
-                          [ngClass]="{'rotate-arrow': filtroLoja === 'VA'}">
-                      </i>
+                    <button (click)="toggleFiltro('VA')"
+                        style="border: none; background: none; padding: 0; margin-left: 4px;">
+                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'VA'}">
+                        </i>
                     </button>
-                  </th>
-                  
-                  <th>
+                </th>
+
+                <th>
                     CL
-                    <button (click)="toggleFiltro('CL')" style="border: none; background: none; padding: 0; margin-left: 4px;">
-                      <i class="bi bi-caret-down-fill" 
-                          [ngClass]="{'rotate-arrow': filtroLoja === 'CL'}">
-                      </i>
+                    <button (click)="toggleFiltro('CL')"
+                        style="border: none; background: none; padding: 0; margin-left: 4px;">
+                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'CL'}">
+                        </i>
                     </button>
-                  </th>
+                </th>
                 <th>Observação</th>
                 <th>Op</th>
 
@@ -95,31 +101,38 @@
         <!-- Corpo da tabela -->
 
         <tbody>
-            <ng-container *ngFor="let produtoGeral of produtosFaltaFiltrados | paginate: { itemsPerPage: 20, currentPage: p }">
+            <ng-container
+                *ngFor="let produtoGeral of produtosFaltaFiltrados | paginate: { itemsPerPage: 20, currentPage: p }">
                 <tr>
+                    <td>
+                        <input type="checkbox" [(ngModel)]="produtoGeral.selected"
+                            (change)="updateSelection(produtoGeral)" />
+                    </td>
                     <!-- Nome do produto centralizado -->
                     <td style="text-align: center;">{{ produtoGeral.nomeProduto | uppercase }}</td>
-                
+
                     <!-- Coluna de Fornecedor e preço -->
                     <td style="text-align: center;">
                         <div style="display: flex; align-items: center; justify-content: center;">
                             <!-- Ícone de lupa -->
-                            <button type="button" class="btn btn-outline-success" (click)="toggleDetalhes(produtoGeral)" style="padding: 0; border: none; background: none;">
+                            <button type="button" class="btn btn-outline-success" (click)="toggleDetalhes(produtoGeral)"
+                                style="padding: 0; border: none; background: none;">
                                 <i class="bi bi-zoom-in custom-icon" style="font-size: 16px;"></i>
                             </button>
                             <!-- Nome do fornecedor e preço -->
                             <span style="margin-left: 8px;">
-                                {{ produtoGeral.fornecedorMenorPreco?.nome }} - R$ {{ produtoGeral.fornecedorMenorPreco?.valor }}
+                                {{ produtoGeral.fornecedorMenorPreco?.nome }} - R$ {{
+                                produtoGeral.fornecedorMenorPreco?.valor }}
                             </span>
                         </div>
                     </td>
-                
+
                     <!-- Código do produto centralizado -->
                     <td style="text-align: center;">{{ produtoGeral.codigo }}</td>
-                
+
                     <!-- Código do fornecedor centralizado -->
                     <td style="text-align: center;">{{ produtoGeral.codigoFornecedor }}</td>
-                
+
                     <!-- Usuário e Data centralizados -->
                     <td style="text-align: center;">
                         <div>
@@ -129,47 +142,75 @@
                             {{ produtoGeral.dataHoraCadastro | date: 'dd/MM/yyyy' }}
                         </div>
                     </td>
-                
-                    <!-- Checkboxes centralizados -->
-                    <td style="text-align: center;" (click)="confirmarRecebimento(produtoGeral, 1)">
+
+                    <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 1)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 1)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 1, $event)">
-                            <span class="checkmark" [ngClass]="{'recebido-checkbox': produtoGeral.jC1Recebido}"></span>
+                          <input type="checkbox"
+                                 [checked]="produtoPossuiLoja(produtoGeral, 1)"
+                                 [disabled]="produtoPossuiLoja(produtoGeral, 1)"
+                                 (change)="onLojaCheckboxChange(produtoGeral, 1, $event)">
+                          
+                          <span class="checkmark"
+                                (click)="onCheckmarkClick(produtoGeral, 1, $event)"
+                                [ngClass]="{
+                                  'recebido-checkbox': produtoGeral.jC1Recebido,
+                                  'separado-checkbox': produtoGeral.separadoJC1 && !produtoGeral.jC1Recebido
+                                }"></span>
                         </label>
-                    </td>
-                
-                    <td style="text-align: center;" (click)="confirmarRecebimento(produtoGeral, 2)">
+                      </td>
+                      
+                      
+                      
+                  
+                      <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 2)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 2)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 2, $event)">
-                            <span class="checkmark" [ngClass]="{'recebido-checkbox': produtoGeral.jC2Recebido}"></span>
+                          <input type="checkbox"
+                                 [checked]="produtoPossuiLoja(produtoGeral, 2)"
+                                 [disabled]="produtoPossuiLoja(produtoGeral, 2)"
+                                 (change)="onLojaCheckboxChange(produtoGeral, 2, $event)">
+                          
+                          <span class="checkmark"
+                                (click)="onCheckmarkClick(produtoGeral, 2, $event)"
+                                [ngClass]="{
+                                  'recebido-checkbox': produtoGeral.jC2Recebido,
+                                  'separado-checkbox': produtoGeral.separadoJC2 && !produtoGeral.jC2Recebido
+                                }"></span>
                         </label>
-                    </td>
-                
-                    <td style="text-align: center;" (click)="confirmarRecebimento(produtoGeral, 3)">
+                      </td>
+
+                      <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 3)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 3)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 3, $event)">
-                            <span class="checkmark" [ngClass]="{'recebido-checkbox': produtoGeral.vaRecebido}"></span>
+                          <input type="checkbox"
+                                 [checked]="produtoPossuiLoja(produtoGeral, 3)"
+                                 [disabled]="produtoPossuiLoja(produtoGeral, 3)"
+                                 (change)="onLojaCheckboxChange(produtoGeral, 3, $event)">
+                          
+                          <span class="checkmark"
+                                (click)="onCheckmarkClick(produtoGeral, 3, $event)"
+                                [ngClass]="{
+                                  'recebido-checkbox': produtoGeral.VARecebido,
+                                  'separado-checkbox': produtoGeral.separadoVA && !produtoGeral.VARecebido
+                                }"></span>
                         </label>
-                    </td>
-                
-                    <td style="text-align: center;" (click)="confirmarRecebimento(produtoGeral, 4)">
+                      </td>
+                      <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 4)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 4)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 4, $event)">
-                            <span class="checkmark" [ngClass]="{'recebido-checkbox': produtoGeral.clRecebido}"></span>
+                          <input type="checkbox"
+                                 [checked]="produtoPossuiLoja(produtoGeral, 4)"
+                                 [disabled]="produtoPossuiLoja(produtoGeral, 4)"
+                                 (change)="onLojaCheckboxChange(produtoGeral, 4, $event)">
+                          
+                          <span class="checkmark"
+                                (click)="onCheckmarkClick(produtoGeral, 4, $event)"
+                                [ngClass]="{
+                                  'recebido-checkbox': produtoGeral.CLRecebido,
+                                  'separado-checkbox': produtoGeral.separadoCL && !produtoGeral.CLRecebido
+                                }"></span>
                         </label>
-                    </td>
-                
+                      </td>
                     <!-- Observação -->
                     <td style="text-align: center;">{{ produtoGeral.observacao }}</td>
-                
+
                     <!-- Ações -->
                     <td class="text-center">
                         <div style="display: flex; align-items: center; gap: 3px; justify-content: center;">
@@ -178,17 +219,17 @@
                                 (click)="!produtoGeral.dataSolicitacao && abrirFormularioCredenciaisEditar(produtoGeral.id)" />
                             <div *ngIf="produtoGeral.dataSolicitacao" class="data-solicitacao-destaque">
                                 <strong> {{ produtoGeral.dataSolicitacao | date: 'dd/MM/yyyy' }}</strong>
-                                
+
                             </div>
                             <button class="btn btn-sm btn-outline-success"
-                            (click)="abrirFormularioCredenciaisEditar(produtoGeral)">
-                            Concluir
-                        </button>
+                                (click)="abrirFormularioCredenciaisEditar(produtoGeral)">
+                                Concluir
+                            </button>
                         </div>
-                      
+
                     </td>
                 </tr>
-                
+
                 <!-- Linha para exibir os detalhes adicionais -->
                 <tr *ngIf="produtoGeral.mostrarDetalhes">
                     <td colspan="10">
@@ -245,10 +286,18 @@
             </td>
         </tr>
     </tfoot>
+    
 </div>
 
 
-
+<div class="floating-question" *ngIf="menuFlutuante as menu">
+    <p>O que deseja informar para este produto?</p>
+    <button (click)="marcarSeparado(menu.produto, menu.lojaId)">📦 Separado na Matriz</button>
+    <button (click)="confirmarRecebimento(menu.produto, menu.lojaId)">✅ Recebido na Loja</button>
+    <button class="cancelar" (click)="fecharMenu()">Cancelar</button>
+  </div>
+  
+  
 
 <div class="col text-center"><strong>
         <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
@@ -503,6 +552,9 @@
         <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onEdit()">Solicitar</button>
         <button class="btn btn-outline-light" style="font-weight: bold;"
             (click)="concluir(editarProduto)">Concluir</button>
+        <button class="btn btn-outline-light" (click)="concluirSelecionados()" style="font-weight: bold;">
+            Concluir selecionados
+        </button>
 
     </div>
 </div>

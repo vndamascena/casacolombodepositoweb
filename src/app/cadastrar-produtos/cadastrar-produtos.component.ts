@@ -125,6 +125,12 @@ export class CadastrarProdutosComponent implements OnInit {
   }
 
   onSubmit(): void {
+
+  // Log para verificar os valores antes de enviar
+  console.log('categoriaId:', this.form.value.categoriaId, typeof this.form.value.categoriaId);
+  console.log('fornecedorId:', this.form.value.fornecedorId, typeof this.form.value.fornecedorId);
+  console.log('depositoId:', this.form.value.depositoId, typeof this.form.value.depositoId);
+
     const lotesArray = this.form.get('lote') as FormArray;
 
     if (lotesArray && lotesArray.length === 0) {
