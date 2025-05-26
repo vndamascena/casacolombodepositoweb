@@ -6,11 +6,10 @@ import { Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
-  selector: 'app-autenticar-usuario',
-  standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, CommonModule, NgxSpinnerModule],
-  templateUrl: './autenticar-usuario.component.html',
-  styleUrls: ['./autenticar-usuario.component.css']
+    selector: 'app-autenticar-usuario',
+    imports: [FormsModule, ReactiveFormsModule, CommonModule, NgxSpinnerModule],
+    templateUrl: './autenticar-usuario.component.html',
+    styleUrls: ['./autenticar-usuario.component.css']
 })
 export class AutenticarUsuarioComponent {
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';

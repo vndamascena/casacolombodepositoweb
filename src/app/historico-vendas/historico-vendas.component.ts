@@ -7,11 +7,10 @@ import { environment } from '../../environments/environment.development';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
-  selector: 'app-historico-vendas',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
-  templateUrl: './historico-vendas.component.html',
-  styleUrl: './historico-vendas.component.css'
+    selector: 'app-historico-vendas',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
+    templateUrl: './historico-vendas.component.html',
+    styleUrl: './historico-vendas.component.css'
 })
 export class HistoricoVendasComponent implements OnInit {
 

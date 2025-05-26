@@ -8,11 +8,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-historico-produtofalta',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './historico-produtofalta.component.html',
-  styleUrl: './historico-produtofalta.component.css'
+    selector: 'app-historico-produtofalta',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './historico-produtofalta.component.html',
+    styleUrl: './historico-produtofalta.component.css'
 })
 export class HistoricoProdutofaltaComponent implements OnInit {
 

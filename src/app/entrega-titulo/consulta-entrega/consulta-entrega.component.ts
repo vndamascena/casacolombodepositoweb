@@ -10,11 +10,10 @@ import { NgxImageZoomModule } from 'ngx-image-zoom';
 
 
 @Component({
-  selector: 'app-consulta-entrega',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule],
-  templateUrl: './consulta-entrega.component.html',
-  styleUrls: ['./consulta-entrega.component.css']
+    selector: 'app-consulta-entrega',
+    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule],
+    templateUrl: './consulta-entrega.component.html',
+    styleUrls: ['./consulta-entrega.component.css']
 })
 export class ConsultaEntregaComponent implements OnInit {
   p: number = 1;

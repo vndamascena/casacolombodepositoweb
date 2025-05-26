@@ -8,11 +8,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
-  selector: 'app-historico-baixa-ocorrencia',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './historico-baixa-ocorrencia.component.html',
-  styleUrl: './historico-baixa-ocorrencia.component.css'
+    selector: 'app-historico-baixa-ocorrencia',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './historico-baixa-ocorrencia.component.html',
+    styleUrl: './historico-baixa-ocorrencia.component.css'
 })
 export class HistoricoBaixaOcorrenciaComponent implements OnInit {
 

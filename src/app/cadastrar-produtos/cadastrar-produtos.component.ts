@@ -8,16 +8,16 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 @Component({
-  selector: 'app-cadastro-produtos',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule, RouterModule,
-    NgxSpinnerModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './cadastrar-produtos.component.html',
-  styleUrls: ['./cadastrar-produtos.component.css']
+    selector: 'app-cadastro-produtos',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule, RouterModule,
+        NgxSpinnerModule
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './cadastrar-produtos.component.html',
+    styleUrls: ['./cadastrar-produtos.component.css']
 })
 export class CadastrarProdutosComponent implements OnInit {
 

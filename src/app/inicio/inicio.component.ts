@@ -8,11 +8,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
-  selector: 'app-inicio',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './inicio.component.html',
-  styleUrls: ['./inicio.component.css']
+    selector: 'app-inicio',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './inicio.component.html',
+    styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit {
 

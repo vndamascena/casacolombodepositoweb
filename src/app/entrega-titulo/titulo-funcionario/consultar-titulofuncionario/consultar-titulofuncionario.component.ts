@@ -9,17 +9,14 @@ import { environment } from '../../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-consultar-titulofuncionario',
-  standalone: true,
-  imports: [
-
-    CommonModule, FormsModule, RouterModule,
-    ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule,
-    NgxImageZoomModule
-
-  ],
-  templateUrl: './consultar-titulofuncionario.component.html',
-  styleUrl: './consultar-titulofuncionario.component.css'
+    selector: 'app-consultar-titulofuncionario',
+    imports: [
+        CommonModule, FormsModule, RouterModule,
+        ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule,
+        NgxImageZoomModule
+    ],
+    templateUrl: './consultar-titulofuncionario.component.html',
+    styleUrl: './consultar-titulofuncionario.component.css'
 })
 export class ConsultarTitulofuncionarioComponent implements OnInit{
 

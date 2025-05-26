@@ -8,14 +8,13 @@ import Tesseract from 'tesseract.js';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-cadastro-titulo',
-  standalone: true,
-  imports: [
-    CommonModule, FormsModule,
-    ReactiveFormsModule, RouterModule, NgxSpinnerModule
-  ],
-  templateUrl: './cadastro-titulo.component.html',
-  styleUrl: './cadastro-titulo.component.css'
+    selector: 'app-cadastro-titulo',
+    imports: [
+        CommonModule, FormsModule,
+        ReactiveFormsModule, RouterModule, NgxSpinnerModule
+    ],
+    templateUrl: './cadastro-titulo.component.html',
+    styleUrl: './cadastro-titulo.component.css'
 })
 export class CadastroTituloComponent implements OnInit {
 

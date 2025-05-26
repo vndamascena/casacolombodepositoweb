@@ -6,11 +6,10 @@ import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 
 @Component({
-  selector: 'app-edicao-produtos',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule],
-  templateUrl: './edicao-produtos.component.html',
-  styleUrls: ['./edicao-produtos.component.css']
+    selector: 'app-edicao-produtos',
+    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule],
+    templateUrl: './edicao-produtos.component.html',
+    styleUrls: ['./edicao-produtos.component.css']
 })
 export class EdicaoProdutosComponent implements OnInit {
 

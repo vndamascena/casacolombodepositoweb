@@ -12,11 +12,10 @@ import { NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
-  selector: 'app-dashboard',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule, NgbDatepickerModule],
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+    selector: 'app-dashboard',
+    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule, NgbDatepickerModule],
+    templateUrl: './dashboard.component.html',
+    styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent {
   

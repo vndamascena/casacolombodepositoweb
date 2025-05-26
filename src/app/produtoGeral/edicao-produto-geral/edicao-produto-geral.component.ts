@@ -7,15 +7,14 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-edicao-produto-geral',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule, RouterModule, NgxSpinnerModule
-  ],
-  templateUrl: './edicao-produto-geral.component.html',
-  styleUrl: './edicao-produto-geral.component.css'
+    selector: 'app-edicao-produto-geral',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule, RouterModule, NgxSpinnerModule
+    ],
+    templateUrl: './edicao-produto-geral.component.html',
+    styleUrl: './edicao-produto-geral.component.css'
 })
 export class EdicaoProdutoGeralComponent implements OnInit {
 

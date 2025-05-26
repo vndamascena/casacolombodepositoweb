@@ -8,16 +8,13 @@ import Tesseract from 'tesseract.js';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-cadastrar-titulofuncionario',
-  standalone: true,
-  imports: [
-
-    CommonModule, FormsModule,
-    ReactiveFormsModule, RouterModule, NgxSpinnerModule
-
-  ],
-  templateUrl: './cadastrar-titulofuncionario.component.html',
-  styleUrl: './cadastrar-titulofuncionario.component.css'
+    selector: 'app-cadastrar-titulofuncionario',
+    imports: [
+        CommonModule, FormsModule,
+        ReactiveFormsModule, RouterModule, NgxSpinnerModule
+    ],
+    templateUrl: './cadastrar-titulofuncionario.component.html',
+    styleUrl: './cadastrar-titulofuncionario.component.css'
 })
 export class CadastrarTitulofuncionarioComponent implements OnInit {
 

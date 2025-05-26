@@ -9,11 +9,10 @@ import Tesseract from 'tesseract.js';
 
 
 @Component({
-  selector: 'app-cadastra-entrega',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule],
-  templateUrl: './cadastra-entrega.component.html',
-  styleUrls: ['./cadastra-entrega.component.css']
+    selector: 'app-cadastra-entrega',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule],
+    templateUrl: './cadastra-entrega.component.html',
+    styleUrls: ['./cadastra-entrega.component.css']
 })
 export class CadastraEntregaComponent implements OnInit {
 

@@ -9,11 +9,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-produtofalta-consultar',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule],
-  templateUrl: './produtofalta-consultar.component.html',
-  styleUrl: './produtofalta-consultar.component.css'
+    selector: 'app-produtofalta-consultar',
+    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule],
+    templateUrl: './produtofalta-consultar.component.html',
+    styleUrl: './produtofalta-consultar.component.css'
 })
 export class ProdutofaltaConsultarComponent implements OnInit {
 

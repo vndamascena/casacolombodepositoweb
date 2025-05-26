@@ -23,20 +23,18 @@ import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/cons
 import { EditarEntregaComponent } from './entrega-titulo/editar-entrega/editar-entrega.component';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-
-    RouterOutlet,
-    MenuComponent,
-    //ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
-    //OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
-    //CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
-    //CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
-    //EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent, EditarEntregaComponent
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        MenuComponent,
+        //ConsultaProdutosComponent, InicioComponent, CadastrarProdutosComponent, HistoricoVendasComponent,
+        //OcorrenciaComponent, HistoricoBaixaOcorrenciaComponent, CadastraFornecedorComponent, ConsultaFornecedorComponent,
+        //CadastraEntregaComponent, ConsultaEntregaComponent, HistoricoEntregaComponent,HistoricoVendaProdutoGeralComponent,
+        //CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
+        //EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent, EditarEntregaComponent
     ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.css'
 })
 export class AppComponent implements OnInit{
   title = 'casacolombodeposito';

@@ -9,15 +9,14 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-editar-titulo',
-  standalone: true,
-  imports: [
-    CommonModule, FormsModule, RouterModule,
-    ReactiveFormsModule,NgxPaginationModule, NgxSpinnerModule,
-    NgxImageZoomModule
-  ],
-  templateUrl: './editar-titulo.component.html',
-  styleUrl: './editar-titulo.component.css'
+    selector: 'app-editar-titulo',
+    imports: [
+        CommonModule, FormsModule, RouterModule,
+        ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule,
+        NgxImageZoomModule
+    ],
+    templateUrl: './editar-titulo.component.html',
+    styleUrl: './editar-titulo.component.css'
 })
 export class EditarTituloComponent implements OnInit {
 

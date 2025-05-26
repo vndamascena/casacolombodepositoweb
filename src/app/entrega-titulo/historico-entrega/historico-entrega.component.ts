@@ -9,11 +9,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import * as XLSX from 'xlsx';
 
 @Component({
-  selector: 'app-historico-entrega',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './historico-entrega.component.html',
-  styleUrl: './historico-entrega.component.css'
+    selector: 'app-historico-entrega',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './historico-entrega.component.html',
+    styleUrl: './historico-entrega.component.css'
 })
 export class HistoricoEntregaComponent implements OnInit {
 

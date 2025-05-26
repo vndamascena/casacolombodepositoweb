@@ -11,14 +11,13 @@ import * as XLSX from 'xlsx';
 
 
 @Component({
-  selector: 'app-consultar-titulo',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule,
-    ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule,
-    NgxImageZoomModule
-  ],
-  templateUrl: './consultar-titulo.component.html',
-  styleUrls: ['./consultar-titulo.component.css']
+    selector: 'app-consultar-titulo',
+    imports: [CommonModule, FormsModule, RouterModule,
+        ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule,
+        NgxImageZoomModule
+    ],
+    templateUrl: './consultar-titulo.component.html',
+    styleUrls: ['./consultar-titulo.component.css']
 })
 export class ConsultarTituloComponent implements OnInit{
 

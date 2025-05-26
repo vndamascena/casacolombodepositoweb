@@ -7,14 +7,13 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-cadastra-ocorrencia',
-  standalone: true,
-  imports: [CommonModule,
-    FormsModule,
-    ReactiveFormsModule, RouterModule,
-    NgxSpinnerModule],
-  templateUrl: './cadastra-ocorrencia.component.html',
-  styleUrl: './cadastra-ocorrencia.component.css'
+    selector: 'app-cadastra-ocorrencia',
+    imports: [CommonModule,
+        FormsModule,
+        ReactiveFormsModule, RouterModule,
+        NgxSpinnerModule],
+    templateUrl: './cadastra-ocorrencia.component.html',
+    styleUrl: './cadastra-ocorrencia.component.css'
 })
 export class CadastraOcorrenciaComponent implements OnInit {
 

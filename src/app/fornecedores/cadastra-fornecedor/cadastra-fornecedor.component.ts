@@ -7,11 +7,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-cadastra-fornecedor',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule,NgxSpinnerModule],
-  templateUrl: './cadastra-fornecedor.component.html',
-  styleUrl: './cadastra-fornecedor.component.css'
+    selector: 'app-cadastra-fornecedor',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule],
+    templateUrl: './cadastra-fornecedor.component.html',
+    styleUrl: './cadastra-fornecedor.component.css'
 })
 export class CadastraFornecedorComponent  {
 

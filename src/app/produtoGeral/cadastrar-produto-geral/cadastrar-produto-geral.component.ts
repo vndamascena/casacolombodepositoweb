@@ -7,15 +7,14 @@ import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-cadastrar-produto-geral',
-  standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule, RouterModule, NgxSpinnerModule
-  ],
-  templateUrl: './cadastrar-produto-geral.component.html',
-  styleUrl: './cadastrar-produto-geral.component.css'
+    selector: 'app-cadastrar-produto-geral',
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule, RouterModule, NgxSpinnerModule
+    ],
+    templateUrl: './cadastrar-produto-geral.component.html',
+    styleUrl: './cadastrar-produto-geral.component.css'
 })
 export class CadastrarProdutoGeralComponent implements OnInit {
 

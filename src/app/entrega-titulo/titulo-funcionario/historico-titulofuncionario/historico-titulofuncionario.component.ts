@@ -8,11 +8,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../../environments/environment.development';
 
 @Component({
-  selector: 'app-historico-titulofuncionario',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './historico-titulofuncionario.component.html',
-  styleUrl: './historico-titulofuncionario.component.css'
+    selector: 'app-historico-titulofuncionario',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './historico-titulofuncionario.component.html',
+    styleUrl: './historico-titulofuncionario.component.css'
 })
 export class HistoricoTitulofuncionarioComponent implements OnInit {
 

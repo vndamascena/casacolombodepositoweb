@@ -8,11 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
-  selector: 'app-consultar-produto-geral',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './consultar-produto-geral.component.html',
-  styleUrl: './consultar-produto-geral.component.css'
+    selector: 'app-consultar-produto-geral',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './consultar-produto-geral.component.html',
+    styleUrl: './consultar-produto-geral.component.css'
 })
 export class ConsultarProdutoGeralComponent implements OnInit {
   depositoSelecionado: any;

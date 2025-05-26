@@ -7,11 +7,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-editar-entrega',
-  standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule],
-  templateUrl: './editar-entrega.component.html',
-  styleUrl: './editar-entrega.component.css'
+    selector: 'app-editar-entrega',
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule],
+    templateUrl: './editar-entrega.component.html',
+    styleUrl: './editar-entrega.component.css'
 })
 export class EditarEntregaComponent implements OnInit{
  

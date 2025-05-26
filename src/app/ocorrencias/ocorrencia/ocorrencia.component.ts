@@ -8,11 +8,10 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-ocorrencia',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule],
-  templateUrl: './ocorrencia.component.html',
-  styleUrl: './ocorrencia.component.css'
+    selector: 'app-ocorrencia',
+    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule],
+    templateUrl: './ocorrencia.component.html',
+    styleUrl: './ocorrencia.component.css'
 })
 export class OcorrenciaComponent implements OnInit {
 

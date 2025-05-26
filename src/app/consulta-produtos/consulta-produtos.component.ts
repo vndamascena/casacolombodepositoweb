@@ -12,12 +12,11 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 
 @Component({
-  selector: 'app-consulta-produtos',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './consulta-produtos.component.html',
-  styleUrls: ['./consulta-produtos.component.css']
+    selector: 'app-consulta-produtos',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './consulta-produtos.component.html',
+    styleUrls: ['./consulta-produtos.component.css']
 })
 export class ConsultaProdutosComponent implements OnInit {
   loteSelecionado: any;

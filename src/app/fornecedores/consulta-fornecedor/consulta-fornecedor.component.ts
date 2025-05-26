@@ -7,12 +7,11 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { environment } from '../../../environments/environment.development';
 
 @Component({
-  selector: 'app-consulta-fornecedor',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, ReactiveFormsModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './consulta-fornecedor.component.html',
-  styleUrls: ['./consulta-fornecedor.component.css']
+    selector: 'app-consulta-fornecedor',
+    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, ReactiveFormsModule],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
+    templateUrl: './consulta-fornecedor.component.html',
+    styleUrls: ['./consulta-fornecedor.component.css']
 })
 export class ConsultaFornecedorComponent implements OnInit {
 
