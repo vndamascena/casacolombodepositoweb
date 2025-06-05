@@ -1,0 +1,263 @@
+.line {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(4, 105, 45);
+}
+.titulo {
+    text-align: center; /* Centraliza o texto */
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+}
+.navbar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    /* Alinha verticalmente os itens */
+    margin-right: -10px;
+    /* Espaçamento entre os itens */
+}
+
+.navbar-brand {
+    margin-right: 50px;
+    /* Adiciona margem à direita do logo */
+}
+
+.nav-item{
+    margin-right: -30px;
+}
+.input-group {
+    position: relative;
+    width: 100%;
+}
+.col .btn {
+    margin: 10px 20px; /* Adiciona 10px de margem vertical e 20px de margem horizontal */
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  
+  .table th, .table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    white-space: nowrap; /* Impede a quebra de linha no texto */
+    width: 150px; /* Define uma largura fixa para todas as células */
+    text-align: center;
+  }
+  td {
+    vertical-align: middle;
+  }
+
+  
+  
+  .table th {
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 3px solid #ccc; /* Ajuste a espessura da borda das células conforme necessário */
+    background-color: #03682b;
+    color: #fff;
+    
+  }
+  
+  .table td {
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 1px solid #cccccc; /* Ajuste a espessura da borda das células conforme necessário */
+    
+    
+  }
+  .inner-table {
+    padding: 4px;
+    border: none; /* Remove a borda da tabela interna */
+}
+@media (max-width: 768px) {
+  .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .navbar-brand,
+  .titulo-container {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-right: 10px;
+  }
+
+  .barra-pesquisa {
+    width: 100%;
+    margin-right: 10px;
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .nav-item {
+    margin: 0 8px ;
+    align-items: center;
+    
+  }
+
+  .navbar-collapse {
+    justify-content: center;
+    display: flex !important;
+  }
+
+  .table {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .table th, .table td {
+    padding: 3px;
+  }
+}
+
+@media (max-width: 425px) {
+  .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .navbar-brand,
+  .titulo-container {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-right: 10px;
+  }
+
+  .barra-pesquisa {
+    width: 100%;
+    margin-right: 10px;
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .nav-item {
+    margin: 0 auto;
+  }
+
+  .navbar-collapse {
+    justify-content: center;
+    display: flex !important;
+  }
+
+  .table {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .table th, .table td {
+    padding: 3px;
+  }
+}
+@media (max-width: 375px) {
+  .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .navbar-brand,
+  .titulo-container {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+    
+  }
+
+  .barra-pesquisa {
+    width: 100%;
+   
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .nav-item {
+    margin: 0 auto;
+  }
+
+  .navbar-collapse {
+    justify-content: center;
+    display: flex !important;
+  }
+
+  .table {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .table th, .table td {
+    padding: 3px;
+  }
+}
+
+@media (max-width: 320px) {
+  .navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+    
+  }
+
+  .navbar-brand,
+  .titulo-container {
+    width: 100%;
+    margin-bottom: 10px;
+    text-align: center;
+    margin-left: 30px;
+  }
+
+  .barra-pesquisa {
+    width: 100%;
+    
+  }
+
+  .navbar-nav {
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .nav-item {
+    margin: 0 auto;
+    
+  }
+
+  .navbar-collapse {
+    justify-content: center;
+    display: flex !important;
+  }
+
+  .table {
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .table th, .table td {
+    padding: 3px;
+  }
+}

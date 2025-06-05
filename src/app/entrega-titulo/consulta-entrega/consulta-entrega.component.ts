@@ -43,7 +43,7 @@ export class ConsultaEntregaComponent implements OnInit {
     { nome: 'Sexta-feira', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
     { nome: 'Sábado', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
   ];
-  motoristas: string[] = ['JORGE', 'DOUGLAS', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
+  motoristas: string[] = ['EDVALDO', 'DOUGLAS', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
   pagamentos: string[] = ['PAGO', 'REC NO LOCAL', 'CARTEIRA'];
   isEditing: string | null = null;
   entregaEditando: any = null;

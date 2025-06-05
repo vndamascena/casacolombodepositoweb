@@ -1,0 +1,14 @@
+.line {
+    height: 3px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: rgb(4, 105, 45);
+}
+@keyframes piscar {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.piscar {
+  animation: piscar 1s infinite;
+}

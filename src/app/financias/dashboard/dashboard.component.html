@@ -1,0 +1,531 @@
+<br>
+
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>{{mensagem}}</strong>
+  <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div *ngIf="mensagemErro" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>{{mensagemErro}}</strong>
+  <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+
+<div class="container mt-3">
+
+  <main class="container mt-3">
+
+
+    <div class="d-flex justify-content-center align-items-center mb-4">
+      <div>
+        <button class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#compras">
+          <i class="bi bi-cart-check me-1"></i> Compras
+        </button>
+        <button class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#cobranca">
+          <i class="bi bi-cash-coin me-1"></i> Cobranças
+        </button>
+        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#fornecedor">
+          <i class="bi bi-truck me-1"></i> Fornecedor
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="row g-3">
+      <div class="col-md-3" *ngFor="let card of cards">
+        <div class="card card-dashboard shadow-sm" [ngClass]="card.bg">
+          <div class="card-body d-flex flex-column align-items-start">
+            <h5 class="card-title">
+              <i class="bi me-2" [ngClass]="card.icon"></i> {{ card.title }}
+            </h5>
+            <p class="card-text fs-4">hg</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+
+
+<div>
+  <div class="modal fade" id="compras" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Escolha uma ação </p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal" routerLink="/compras">Consultar</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal"
+            data-bs-target="#cadastrarCompras">Cadastrar</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="modal fade" id="cobranca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Escolha uma ação </p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
+            routerLink="/cobranca">Consultar</button>
+          <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#cadastrarCobrancas"
+            (click)="abrirModalCobranca()">
+            Cadastrar
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="modal fade" id="fornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+
+          </h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Escolha uma ação </p>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
+            routerLink="/fornecedor">Consultar</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal"
+            data-bs-target="#cadastrarFornecedor">Cadastrar</button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="cadastrarCompras" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar compras</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="formCompras">
+            <div class="container text-center">
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <!-- Primeira linha -->
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label><strong>Fornecedor</strong></label>
+                      <select class=" form-select" formControlName="idForn">
+                        <option value=""> Selecione um fornecedor</option>
+                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.empresa | uppercase }}</option>
+                      </select>
+                      <div class="text-danger" *ngIf="c['idForn'].touched && c['idForn'].invalid">
+                        Selecione um fornecedor para a compra
+                      </div>
+
+                    </div>
+                    <div class="col-md-3">
+                      <label><strong>Empresa frete</strong></label>
+
+                      <select class=" form-select" formControlName="idEmpFrete">
+                        <option value=""> Selecione o frete</option>
+                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.empresa | uppercase }}</option>
+                      </select>
+                      <div class="text-danger" *ngIf="c['idEmpFrete'].touched && c['idEmpFrete'].invalid">
+                        Selecione a empresa do frete
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>N° nota fiscal</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="numNF" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>N° Nota</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="numNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Loja</strong></label>
+                      <select class="form-select " formControlName="loja">
+
+                        <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row justify-content-center">
+                     <div class="col-md-2">
+                      <label><strong>Valor nota</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor frete</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorFrete" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor total</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorTotal" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor outros</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorOutro" />
+                    </div>
+
+
+                   
+
+                  </div>
+                  <hr>
+                  <div class="row justify-content-center ">
+                     <div class="col-md-3">
+                      <label><strong>Forma de pag</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="formaPag" />
+                    </div>
+                    <div class="col-md-3">
+                      <label><strong>Forma pag frete</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="formaPagFrete" />
+                    </div>
+                   
+                  </div>
+                  <hr>
+                  <div class="row mt-2">
+                    <div class="col-md-3">
+                      <label><strong>Data nota</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataNota" />
+                    </div>
+                    <div class="col-md-3">
+                      <label><strong>Data entrega</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataEntrega" />
+                    </div>
+                    <div class="col-md-6 ">
+                      <label><strong>Observação</strong></label>
+                      <textarea class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="obs"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="modal-footer text-center">
+                    <div class="w-100">
+                      <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="CadastrarCompras()">Cadastrar</button>
+                    </div>
+                  </div>
+
+
+
+
+
+                </div>
+
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="modal fade" id="cadastrarCobrancas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar cobranças</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="formCobrancas">
+          <div formArrayName="cobrancas">
+            <div *ngFor="let cobranca of cobrancas.controls; let i = index" [formGroupName]="i"
+              class="border rounded p-3 mb-3">
+              <h5 class="text-start mb-3 text-center">Cobrança {{ i + 1 }}</h5>
+              <div class="row">
+                <div class="col-md-4 text-center">
+                  <label><strong>Fornecedor</strong></label>
+                  <select class="form-select text-center" formControlName="idForn">
+                    <option value=""> Selecione um fornecedor</option>
+                    <option *ngFor="let f of fornecedor" [value]="f.id">{{ f.empresa | uppercase }}</option>
+                  </select>
+                  <div class="text-danger"
+                    *ngIf="cobrancas.at(i).get('idForn')?.touched && cobrancas.at(i).get('idForn')?.invalid">
+                    Selecione um fornecedor da cobrança
+                  </div>
+                </div>
+
+                <div class="col-md-2 text-center">
+                  <label><strong>N° da Nota</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
+
+                </div>
+                <div class="col-md-2 text-center">
+                  <label><strong>Valor frete</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorFrete" />
+                </div>
+                <div class="col-md-2 text-center">
+                  <label><strong>Valor total</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorTotal" />
+                </div>
+                <div class="col-md-2">
+                  <label><strong>Loja</strong></label>
+                  <select class="form-select " formControlName="loja">
+
+                    <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                  </select>
+                </div>
+              </div>
+              <br>
+              <div class="row text-center">
+                <div class="col-md-6">
+                  <label><strong>Tipo cobrança</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                    formControlName="tipoCobr" />
+                </div>
+                <div class="col-md-6">
+                  <label><strong>N° cobrança</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                    formControlName="numCobr" />
+                </div>
+              </div>
+              <br>
+              <div class="row mt-2 text-center">
+                <div class="col-md-2">
+                  <label><strong>Parcela</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                    formControlName="parcela" />
+                </div>
+                <div class="col-md-3">
+                  <label><strong>Forma pg</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                    formControlName="formaPag" />
+                </div>
+                <div class="col-md-3">
+                  <label><strong>Valor cobrado</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorCobr" />
+                </div>
+                <div class="col-md-3">
+                  <label><strong>Data vencimento</strong></label>
+                  <input type="date" class="form-control text-center" formControlName="dataVenc" />
+                </div>
+              </div>
+
+
+
+              <div class="row mt-2 text-center">
+                <div class="col-md-12">
+                  <label><strong>Observação</strong></label>
+                  <textarea class="form-control text-center" placeholder="Digite aqui" formControlName="obs"></textarea>
+                </div>
+              </div>
+
+              <div class="mt-2 d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <div *ngIf="!valorCobradoIgualValorTotal" class="msg-erro"
+                    title="Erro: soma dos valores cobrados não bate com o valor total">
+                    <small class="piscar" style="color: red; font-weight: bold;">
+                      ❗ Valores cobrados NÃO batem com o valor total!
+                    </small>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-danger btn-sm ms-2" (click)="removerCobranca(i)"
+                  title="Remover cobrança {{ i + 1 }}">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-9">
+        <div class="d-flex gap-2 mt-1">
+          <button type="button" class="btn btn-success" (click)="adicionarCobranca()">
+            <i class="bi bi-plus-circle me-1"></i><strong>Adicionar</strong>
+          </button>
+
+          <button type="button" class="btn btn-danger" (click)="removerUltimaCobranca()"
+            [disabled]="cobrancas.length === 0">
+            <i class="bi bi-trash"></i> Remover
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer text-center">
+        <div class="w-100">
+          <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="CadastrarCobranca()">Cadastrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="modalConfirmarCobranca" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title w-100">Cadastro de Cobrança</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja cadastrar uma cobrança para esta compra?</p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-primary" (click)="confirmarCriarCobranca()">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="cadastrarFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar Fornecedor</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="formFornecedor">
+          <div class="container text-center">
+            <div class="row justify-content-center">
+              <div class="col-12">
+
+                <!-- Primeira linha -->
+                <div class="row mb-2">
+                  <div class="col-md-6">
+                    <label><strong>Razão social</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="empresa" />
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>CNPJ</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="cnpj" />
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <div class="col-md-12">
+                    <label><strong>Endereço</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="endereco" />
+                  </div>
+                </div>
+
+                <hr>
+
+                <!-- Segunda linha -->
+                <div class="row mb-2">
+                  <div class="col-md-6">
+                    <label><strong>Telefone</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="telefone" />
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>Fornecedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="fornecedo" />
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <div class="col-md-6">
+                    <label><strong>Tipo fornecedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="tipoFornecedor" />
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>Vendedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="vendedor" />
+                  </div>
+                </div>
+
+                <div class="row mt-3">
+                  <div class="col-md-6 offset-md-3">
+                    <label><strong>Tel - Vendedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="teleVendedor" />
+                  </div>
+                </div>
+
+                <hr>
+
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer text-center">
+        <div class="w-100">
+          <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="CadastrarFornecedo()">Cadastrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

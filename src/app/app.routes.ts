@@ -193,22 +193,28 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: DashboardComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard],
+         data: { roles: ['Admin'] }
     },
     {
         path: 'cobranca',
         component: CobrancaComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard],
+         data: { roles: ['Admin'] }
+        
     },
     {
         path: 'compras',
         component: ComprasComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard],
+         data: { roles: ['Admin'] }
     },
     {
         path: 'fornecedor',
         component: FornecedorComponent,
-        canActivate: [AuthenticationGuard]
+        canActivate: [AuthenticationGuard],
+         data: { roles: ['Admin'] }
+        
     },
     {
         path: 'erro-401',

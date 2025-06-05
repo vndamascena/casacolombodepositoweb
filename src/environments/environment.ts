@@ -5,4 +5,6 @@ export const environment = {
     ocorrencApi: 'https://colombo01-001-site5.otempurl.com/api',
     
     entregatitulo: 'https://colombo01-001-site5.otempurl.com/api',
+    
+    financa: 'https://colombo01-001-site1.gtempurl.com/api'
 };

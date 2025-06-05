@@ -1,2 +1,190 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+
+
+    <div class="container mt-3">
+
+
+        <a class="navbar-brand" href="inicio">
+            <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+
+        </a>
+        <div class="container">
+            
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Digite o nome Fornecedo"
+                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
+                    (input)="filtrarFornecedores()">
+                <div class="overlay" (click)="filtrarFornecedores()"></div>
+            </div>
+
+        </div>
+
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+              
+                <li class="nav-item">
+                    <a class="nav-link black-text" >
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+                    </a>
+                </li>
+              
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
+<div class="line container mt-3  "></div>
 <br>
-<p>cobranca works!</p>
+
+<div class="col text-center"><strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+     nextLabel="Próximo"></pagination-controls>
+    </strong>
+</div>
+<div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div class="table-responsive container mt-3 ">
+
+
+
+
+    <table class="table">
+        <!-- Cabeçalho da tabela -->
+        <thead>
+            <tr>
+                <th>Fornecedor</th>
+                <th>N° cobrança</th>
+                <th>Loja</th>
+                <th>Tipo</th>
+                <th>Parcela/th>
+                <th>Forma pg</th>
+                <th>Valor cobrado</th>
+                <th>Observação</th>
+                <th>Data Venc</th>
+                <th>Operação</th>
+
+            </tr>
+        </thead>
+        <!-- Corpo da tabela -->
+        <ng-container
+            *ngFor="let cobranca of cobrancas | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
+            <tr [ngStyle]="{'background-color': getColor(i)}">
+                <td>{{ cobranca.idForn || '-' }}</td>
+                <td>{{ cobranca.numCobr || '-' }}</td>
+                <td>{{ cobranca.loja || '-' }}</td>
+                <td>{{ cobranca.tipoCobr || '-' }}</td>
+                <td>{{ cobranca.parcela || '-' }}</td>
+                <td>{{ cobranca.formaPag || '-' }}</td>
+                <td>{{ cobranca.valorCobr || '-' }}</td>
+                <td>{{ cobranca.obs || '-' }}</td>
+                <td>{{ cobranca.dataVenc || '-' }}</td>
+                <td>
+                    <button class="btn btn-outline-success btn-sm" 
+                        data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">
+                        Editar
+                    </button>
+                </td>
+
+
+
+            </tr>
+        </ng-container>
+      
+    </table>
+
+
+    <tfoot>
+        <tr>
+            <td colspan="14">
+                <strong> Quantidade fornecedores: {{ cobrancas.length }}</strong>
+            </td>
+        </tr>
+    </tfoot>
+</div>
+
+<div class="col text-center"><strong>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls></strong>
+
+
+
+</div>
+
+<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">
+                    Edição de Fornecedor de Produto
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form [formGroup]="form">
+                    <!-- Contêiner centralizado -->
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <!-- primeira linha -->
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <label><strong>Fornecedor</strong></label>
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="nome" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <label><strong>Fornecedor / Produto</strong></label>
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="forneProdu" />
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <label><strong>Tipo</strong></label>
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="tipo" />
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <label><strong>Vendedor</strong></label>
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="vendedor" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <label><strong>Tel - Vendedor</strong></label>
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="telVen" />
+                                    </div>
+                                    <div class="col-md-10">
+                                        <label><strong>Tel - Fornecedor</strong></label>
+                                        <input type="text" class="form-control" placeholder="Digite aqui"
+                                            formControlName="telFor" />
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" >
+                    Confirmar edição</button>
+            </div>
+        </div>
+    </div>
+</div>

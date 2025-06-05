@@ -56,10 +56,6 @@ export class CadastraFornecedorComponent  {
 
   onSubmit(): void {
     
-    
-
-    
-    
       // Configuração dos parâmetros da solicitação PUT
       
       this.spinner.show();

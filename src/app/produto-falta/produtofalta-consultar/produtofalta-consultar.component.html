@@ -188,8 +188,8 @@
                           <span class="checkmark"
                                 (click)="onCheckmarkClick(produtoGeral, 3, $event)"
                                 [ngClass]="{
-                                  'recebido-checkbox': produtoGeral.VARecebido,
-                                  'separado-checkbox': produtoGeral.separadoVA && !produtoGeral.VARecebido
+                                  'recebido-checkbox': produtoGeral.vaRecebido,
+                                  'separado-checkbox': produtoGeral.separadoVA && !produtoGeral.vaRecebido
                                 }"></span>
                         </label>
                       </td>
@@ -203,8 +203,8 @@
                           <span class="checkmark"
                                 (click)="onCheckmarkClick(produtoGeral, 4, $event)"
                                 [ngClass]="{
-                                  'recebido-checkbox': produtoGeral.CLRecebido,
-                                  'separado-checkbox': produtoGeral.separadoCL && !produtoGeral.CLRecebido
+                                  'recebido-checkbox': produtoGeral.clRecebido,
+                                  'separado-checkbox': produtoGeral.separadoCL && !produtoGeral.clRecebido
                                 }"></span>
                         </label>
                       </td>
