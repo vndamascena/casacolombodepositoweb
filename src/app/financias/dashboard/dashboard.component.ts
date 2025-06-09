@@ -32,12 +32,14 @@ export class DashboardComponent implements OnInit {
   devePerguntarCobranca = false;
   ultimaCompra: any = null;
   cobrancaJaInicializada = false;
+  tipoCobranca: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA' ];
+  formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA' ];
 
 
   formCompras: FormGroup = this.formBuilder.group({
 
     idForn: ['', Validators.required],
-    idEmpFrete: ['', Validators.required],
+    idEmpFrete: [''],
     numNF: [''],
     numNota: [''],
     formaPag: [''],
@@ -80,6 +82,7 @@ export class DashboardComponent implements OnInit {
       tipoCobr: '',
       numCobr: '',
       numNota: '',
+      numNF:'',
       conta: '',
       formaPag: '',
       obs: '',
@@ -110,6 +113,7 @@ export class DashboardComponent implements OnInit {
       tipoCobr: [dadosBase.tipoCobr],
       numCobr: [dadosBase.numCobr],
       numNota: [dadosBase.numNota],
+      numNF: [dadosBase.numNF],
       conta: [dadosBase.conta],
       formaPag: [dadosBase.formaPag],
       obs: [dadosBase.obs],
@@ -131,7 +135,9 @@ export class DashboardComponent implements OnInit {
           idForn: '',
           loja: '',
           valorFrete: '',
-          valorTotal: ''
+          valorTotal: '',
+          numNF:'',
+          
         });
         return;
       }
@@ -144,7 +150,7 @@ export class DashboardComponent implements OnInit {
           idForn: compra.idForn,
           valorFrete: this.formatarDecimalParaReal(compra.valorFrete),
           valorTotal: this.formatarDecimalParaReal(compra.valorTotal),
-
+          numNF: compra.numNF,
           loja: compra.loja
         });
       } else {
@@ -154,6 +160,7 @@ export class DashboardComponent implements OnInit {
           valorFrete: '',
           valorTotal: '',
           loja: '',
+          numNF:'',
         });
       }
     });
@@ -204,6 +211,7 @@ export class DashboardComponent implements OnInit {
       tipoCobr: [''],
       numCobr: [''],
       numNota: [this.ultimaCompra.numNota],
+      numNF:[this.ultimaCompra.numNF],
       conta: [''],
       formaPag: [''],
       obs: [''],
@@ -335,6 +343,7 @@ export class DashboardComponent implements OnInit {
             valorTotal: data.comprasGet.valorTotal ?? formData.valorTotal,
             numNota: data.comprasGet.numNota ?? formData.numNota,
             loja: data.comprasGet.loja ?? formData.loja,
+            numNF: data.comprasGet.numNF ?? formData.numNF,
           };
 
           this.formCompras.reset();

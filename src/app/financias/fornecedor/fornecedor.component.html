@@ -66,9 +66,10 @@
         <!-- Cabeçalho da tabela -->
         <thead>
             <tr>
+               <th>CNPJ</th>
+                <th>Razao Soc</th>
                 <th>Nome</th>
                 <th>Vendedor</th>
-                <th>Forn / Prod</th>
                 <th>Tipo</th>
                 <th>Tel Vendedor</th>
                 <th>Tel Fornecedor</th>
@@ -80,12 +81,13 @@
         <ng-container
             *ngFor="let fornecedor of fornecedores | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
             <tr [ngStyle]="{'background-color': getColor(i)}">
-                <td>{{ fornecedor.nome || '-' }}</td>
+               <td>{{ fornecedor.cnpj || '-' }}</td>
+                <td>{{ fornecedor.empresa || '-' }}</td>
+                <td>{{ fornecedor.fornecedo || '-' }}</td>
                 <td>{{ fornecedor.vendedor || '-' }}</td>
-                <td>{{ fornecedor.forneProdu || '-' }}</td>
-                <td>{{ fornecedor.tipo || '-' }}</td>
-                <td>{{ fornecedor.telVen || '-' }}</td>
-                <td>{{ fornecedor.telFor || '-' }}</td>
+                <td>{{ fornecedor.tipoFornecedor || '-' }}</td>
+                <td>{{ fornecedor.telVendedor || '-' }}</td>
+                <td>{{ fornecedor.telefone || '-' }}</td>
                 <td>
                     <button class="btn btn-outline-success btn-sm" 
                         data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">

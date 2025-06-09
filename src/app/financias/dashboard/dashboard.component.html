@@ -164,9 +164,7 @@
                         <option value=""> Selecione o frete</option>
                         <option *ngFor="let f of fornecedor" [value]="f.id">{{f.empresa | uppercase }}</option>
                       </select>
-                      <div class="text-danger" *ngIf="c['idEmpFrete'].touched && c['idEmpFrete'].invalid">
-                        Selecione a empresa do frete
-                      </div>
+
                     </div>
                     <div class="col-md-2">
                       <label><strong>N° nota fiscal</strong></label>
@@ -188,61 +186,59 @@
                   </div>
                   <hr>
                   <div class="row justify-content-center">
-                     <div class="col-md-2">
-                      <label><strong>Valor nota</strong></label>
+                    <div class="col-md-2">
+                      <label><strong>Valor compra</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorTotal" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor NF</strong></label>
                       <input type="text" class="form-control text-center" placeholder="R$"
                         formControlName="valorNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Forma de pag</strong></label>
+                      <select class="form-select " formControlName="formaPag">
+
+                        <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-2">
+                      <label><strong>Data nota</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Data entrega</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataEntrega" />
+                    </div>
+
+                  </div>
+
+                  <hr>
+                  <div class="row justify-content-center ">
+
+                    <div class="col-md-2">
+                      <label><strong>Forma pag frete</strong></label>
+                      <select class="form-select " formControlName="formaPagFrete">
+
+                        <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
+                      </select>
                     </div>
                     <div class="col-md-2">
                       <label><strong>Valor frete</strong></label>
                       <input type="text" class="form-control text-center" placeholder="R$"
                         formControlName="valorFrete" />
                     </div>
-                    <div class="col-md-2">
-                      <label><strong>Valor total</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="R$"
-                        formControlName="valorTotal" />
-                    </div>
-                    <div class="col-md-2">
-                      <label><strong>Valor outros</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="R$"
-                        formControlName="valorOutro" />
-                    </div>
 
-
-                   
-
-                  </div>
-                  <hr>
-                  <div class="row justify-content-center ">
-                     <div class="col-md-3">
-                      <label><strong>Forma de pag</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                        formControlName="formaPag" />
-                    </div>
-                    <div class="col-md-3">
-                      <label><strong>Forma pag frete</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                        formControlName="formaPagFrete" />
-                    </div>
-                   
-                  </div>
-                  <hr>
-                  <div class="row mt-2">
-                    <div class="col-md-3">
-                      <label><strong>Data nota</strong></label>
-                      <input type="date" class="form-control text-center" formControlName="dataNota" />
-                    </div>
-                    <div class="col-md-3">
-                      <label><strong>Data entrega</strong></label>
-                      <input type="date" class="form-control text-center" formControlName="dataEntrega" />
-                    </div>
                     <div class="col-md-6 ">
                       <label><strong>Observação</strong></label>
                       <textarea class="form-control text-center" placeholder="Digite aqui"
                         formControlName="obs"></textarea>
                     </div>
                   </div>
+                  <hr>
+
 
                   <div class="modal-footer text-center">
                     <div class="w-100">
@@ -251,10 +247,6 @@
                         (click)="CadastrarCompras()">Cadastrar</button>
                     </div>
                   </div>
-
-
-
-
 
                 </div>
 
@@ -285,8 +277,8 @@
             <div *ngFor="let cobranca of cobrancas.controls; let i = index" [formGroupName]="i"
               class="border rounded p-3 mb-3">
               <h5 class="text-start mb-3 text-center">Cobrança {{ i + 1 }}</h5>
-              <div class="row">
-                <div class="col-md-4 text-center">
+              <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
                   <label><strong>Fornecedor</strong></label>
                   <select class="form-select text-center" formControlName="idForn">
                     <option value=""> Selecione um fornecedor</option>
@@ -298,10 +290,18 @@
                   </div>
                 </div>
 
+              </div>
+              <div class="row justify-content-center">
+
+
                 <div class="col-md-2 text-center">
                   <label><strong>N° da Nota</strong></label>
                   <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
 
+                </div>
+                <div class="col-md-2 text-center">
+                  <label><strong>N° nota fiscal</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="n°"formControlName="numNF" />
                 </div>
                 <div class="col-md-2 text-center">
                   <label><strong>Valor frete</strong></label>
@@ -318,42 +318,39 @@
                     <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
                   </select>
                 </div>
+
+
               </div>
-              <br>
-              <div class="row text-center">
-                <div class="col-md-6">
-                  <label><strong>Tipo cobrança</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                    formControlName="tipoCobr" />
-                </div>
-                <div class="col-md-6">
-                  <label><strong>N° cobrança</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                    formControlName="numCobr" />
-                </div>
-              </div>
-              <br>
+
+              <hr>
               <div class="row mt-2 text-center">
-                <div class="col-md-2">
+                <div class="col-md-1">
                   <label><strong>Parcela</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                    formControlName="parcela" />
-                </div>
-                <div class="col-md-3">
-                  <label><strong>Forma pg</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                    formControlName="formaPag" />
-                </div>
-                <div class="col-md-3">
-                  <label><strong>Valor cobrado</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorCobr" />
+                  <input type="text" class="form-control text-center" formControlName="parcela" />
                 </div>
                 <div class="col-md-3">
                   <label><strong>Data vencimento</strong></label>
                   <input type="date" class="form-control text-center" formControlName="dataVenc" />
                 </div>
+                <div class="col-md-2">
+                  <label><strong>Valor</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorCobr" />
+                </div>
+
+                <div class="col-md-3">
+                  <label><strong>Tipo cobrança</strong></label>
+                  <select class="form-select text-center" formControlName="tipoCobr">
+                    <option *ngFor=" let tipo of tipoCobranca" [value]="tipo">{{tipo}}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label><strong>N° cobrança</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                    formControlName="numCobr" />
+                </div>
               </div>
 
+              <hr>
 
 
               <div class="row mt-2 text-center">
