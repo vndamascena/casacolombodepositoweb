@@ -1,4 +1,3 @@
-
 <br>
 
 <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -13,48 +12,47 @@
 
 
 
-    <div class="container mt-3">
+  <div class="container mt-3">
 
 
-        <a class="navbar-brand" href="inicio">
-            <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+    <a class="navbar-brand" href="inicio">
+      <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
 
-        </a>
-        <div class="container">
-            <h1 class="titulo"><strong>Consulta de fornecedores</strong></h1>
-            <div class="input-group mb-3 barra-pesquisa">
-                <input type="text" class="form-control lupa" placeholder="Digite o nome Fornecedo"
-                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
-                    (input)="filtrarFornecedores()">
-                <div class="overlay" (click)="filtrarFornecedores()"></div>
-            </div>
-
-        </div>
-
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              
-                <li class="nav-item">
-                    <a class="nav-link black-text" data-bs-dismiss="modal" data-bs-toggle="modal"
-            data-bs-target="#cadastrarFornecedor">
-                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
-                    </a>
-                </li>
-              
-
-            </ul>
-        </div>
+    </a>
+    <div class="container">
+      <h1 class="titulo"><strong>Consulta de fornecedores</strong></h1>
+      <div class="input-group mb-3 barra-pesquisa">
+        <input type="text" class="form-control lupa" placeholder="Digite o nome Fornecedo" aria-label="Pesquisar"
+          aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarFornecedores()">
+        <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+        <div class="overlay" (click)="filtrarFornecedores()"></div>
+      </div>
 
     </div>
+
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+
+        <li class="nav-item">
+          <a class="nav-link black-text" data-bs-dismiss="modal" data-bs-toggle="modal"
+            data-bs-target="#cadastrarFornecedor">
+            <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+          </a>
+        </li>
+
+
+      </ul>
+    </div>
+
+  </div>
 </nav>
 <div class="line container mt-3  "></div>
 <br>
 
 <div class="col text-center"><strong>
-    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
-     nextLabel="Próximo"></pagination-controls>
-    </strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+  </strong>
 </div>
 
 <div class="table-responsive container mt-3 ">
@@ -62,137 +60,130 @@
 
 
 
-    <table class="table">
-        <!-- Cabeçalho da tabela -->
-        <thead>
-            <tr>
-               <th>CNPJ</th>
-                <th>Razao Soc</th>
-                <th>Nome</th>
-                <th>Vendedor</th>
-                <th>Tipo</th>
-                <th>Tel Vendedor</th>
-                <th>Tel Fornecedor</th>
-                <th>Operação</th>
+  <table class="table">
+    <!-- Cabeçalho da tabela -->
+    <thead>
+      <tr>
+        <th>CNPJ</th>
+        <th>Razao Soc</th>
+        <th>Nome</th>
+        <th>Vendedor</th>
+        <th>Tipo</th>
+        <th>Tel Vendedor</th>
+        <th>Tel Fornecedor</th>
+        <th>Operação</th>
 
-            </tr>
-        </thead>
-        <!-- Corpo da tabela -->
-        <ng-container
-            *ngFor="let fornecedor of fornecedores | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
-            <tr [ngStyle]="{'background-color': getColor(i)}">
-               <td>{{ fornecedor.cnpj || '-' }}</td>
-                <td>{{ fornecedor.empresa || '-' }}</td>
-                <td>{{ fornecedor.fornecedo || '-' }}</td>
-                <td>{{ fornecedor.vendedor || '-' }}</td>
-                <td>{{ fornecedor.tipoFornecedor || '-' }}</td>
-                <td>{{ fornecedor.telVendedor || '-' }}</td>
-                <td>{{ fornecedor.telefone || '-' }}</td>
-                <td>
-                    <button class="btn btn-outline-success btn-sm" 
-                        data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">
-                        Editar
-                    </button>
-                </td>
-
+      </tr>
+    </thead>
+    <!-- Corpo da tabela -->
+    <ng-container
+      *ngFor="let fornecedor of fornecedores | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
+      <tr [ngStyle]="{'background-color': getColor(i)}">
+        <td>{{ fornecedor.cnpj || '-' }}</td>
+        <td>{{ fornecedor.empresa || '-' }}</td>
+        <td>{{ fornecedor.fornecedo || '-' }}</td>
+        <td>{{ fornecedor.vendedor || '-' }}</td>
+        <td>{{ fornecedor.tipoFornecedor || '-' }}</td>
+        <td>{{ fornecedor.telVendedor || '-' }}</td>
+        <td>{{ fornecedor.telefone || '-' }}</td>
+        <td>
+          <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">
+            Editar
+          </button>
+        </td>
 
 
-            </tr>
-        </ng-container>
-      
-    </table>
+
+      </tr>
+    </ng-container>
+
+  </table>
 
 
-    <tfoot>
-        <tr>
-            <td colspan="14">
-                <strong> Quantidade fornecedores: {{ fornecedores.length }}</strong>
-            </td>
-        </tr>
-    </tfoot>
+  <tfoot>
+    <tr>
+      <td colspan="14">
+        <strong> Quantidade fornecedores: {{ fornecedores.length }}</strong>
+      </td>
+    </tr>
+  </tfoot>
 </div>
 
 <div class="col text-center"><strong>
-        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
-            nextLabel="Próximo"></pagination-controls></strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+      nextLabel="Próximo"></pagination-controls></strong>
 
 
 
 </div>
 
-<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                    Edição de Fornecedor de Produto
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
+<!--<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          Edição de Fornecedor de Produto
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
 
-                <form [formGroup]="form">
-                    <!-- Contêiner centralizado -->
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                <!-- primeira linha -->
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Fornecedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="nome" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label><strong>Fornecedor / Produto</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="forneProdu" />
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Tipo</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="tipo" />
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Vendedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="vendedor" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label><strong>Tel - Vendedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="telVen" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label><strong>Tel - Fornecedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="telFor" />
-                                    </div>
-                                </div>
-                                <hr>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
+        <form [formGroup]="form">
+          
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                
+                <div class="row">
+                  <div class="col-md-10">
+                    <label><strong>Fornecedor</strong></label>
+                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
+                  </div>
+                  <div class="col-md-10">
+                    <label><strong>Fornecedor / Produto</strong></label>
+                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="forneProdu" />
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-10">
+                    <label><strong>Tipo</strong></label>
+                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="tipo" />
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-md-10">
+                    <label><strong>Vendedor</strong></label>
+                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="vendedor" />
+                  </div>
+                  <div class="col-md-10">
+                    <label><strong>Tel - Vendedor</strong></label>
+                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="telVen" />
+                  </div>
+                  <div class="col-md-10">
+                    <label><strong>Tel - Fornecedor</strong></label>
+                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="telFor" />
+                  </div>
+                </div>
+                <hr>
+              </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          </div>
+        </form>
 
-                    Cancelar
-                </button>
-                <button type="button" class="btn btn-success" >
-                    Confirmar edição</button>
-            </div>
-        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-success">
+          Confirmar edição</button>
+      </div>
     </div>
-</div>
+  </div>
+</div>-->
 
 
 
@@ -221,8 +212,8 @@
                   </div>
                   <div class="col-md-6">
                     <label><strong>CNPJ</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="cnpj" />
+                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00" formControlName="cnpj"
+                      (input)="formatarCNPJ($event)" />
                   </div>
                 </div>
 
@@ -240,8 +231,9 @@
                 <div class="row mb-2">
                   <div class="col-md-6">
                     <label><strong>Telefone</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="telefone" />
+                    <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
+                      formControlName="telefone" (input)="formatarTelefone($event)" />
+
                   </div>
                   <div class="col-md-6">
                     <label><strong>Fornecedor</strong></label>
@@ -252,9 +244,11 @@
 
                 <div class="row mb-2">
                   <div class="col-md-6">
-                    <label><strong>Tipo fornecedor</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="tipoFornecedor" />
+                    <label><strong>Tipo Fornecedor</strong></label>
+                    <select class="form-select text-center" formControlName="tipoFornecedor">
+                      <option value=""> Selecione </option>
+                      <option *ngFor=" let tipo of tipoFornec" [value]="tipo">{{tipo}}</option>
+                    </select>
                   </div>
                   <div class="col-md-6">
                     <label><strong>Vendedor</strong></label>
@@ -266,8 +260,8 @@
                 <div class="row mt-3">
                   <div class="col-md-6 offset-md-3">
                     <label><strong>Tel - Vendedor</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="teleVendedor" />
+                    <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
+                      formControlName="teleVendedor" (input)="formatarTelefoneVendedor($event)" />
                   </div>
                 </div>
 

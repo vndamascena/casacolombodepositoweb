@@ -150,7 +150,7 @@
                       <label><strong>Fornecedor</strong></label>
                       <select class=" form-select" formControlName="idForn">
                         <option value=""> Selecione um fornecedor</option>
-                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.empresa | uppercase }}</option>
+                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.fornecedo | uppercase }}</option>
                       </select>
                       <div class="text-danger" *ngIf="c['idForn'].touched && c['idForn'].invalid">
                         Selecione um fornecedor para a compra
@@ -162,18 +162,18 @@
 
                       <select class=" form-select" formControlName="idEmpFrete">
                         <option value=""> Selecione o frete</option>
-                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.empresa | uppercase }}</option>
+                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.fornecedo | uppercase }}</option>
                       </select>
 
                     </div>
                     <div class="col-md-2">
                       <label><strong>N° nota fiscal</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      <input type="text" class="form-control text-center" placeholder="N°"
                         formControlName="numNF" />
                     </div>
                     <div class="col-md-2">
                       <label><strong>N° Nota</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      <input type="text" class="form-control text-center" placeholder="N°"
                         formControlName="numNota" />
                     </div>
                     <div class="col-md-2">
@@ -278,11 +278,17 @@
               class="border rounded p-3 mb-3">
               <h5 class="text-start mb-3 text-center">Cobrança {{ i + 1 }}</h5>
               <div class="row justify-content-center">
-                <div class="col-md-8 text-center">
+
+                <div class="col-md-2 text-center">
+                  <label><strong>Id compra</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="ID" formControlName="idCompra" />
+
+                </div>
+                <div class="col-md-5 text-center">
                   <label><strong>Fornecedor</strong></label>
                   <select class="form-select text-center" formControlName="idForn">
                     <option value=""> Selecione um fornecedor</option>
-                    <option *ngFor="let f of fornecedor" [value]="f.id">{{ f.empresa | uppercase }}</option>
+                    <option *ngFor="let f of fornecedor" [value]="f.id">{{ f.fornecedo | uppercase }}</option>
                   </select>
                   <div class="text-danger"
                     *ngIf="cobrancas.at(i).get('idForn')?.touched && cobrancas.at(i).get('idForn')?.invalid">
@@ -295,13 +301,13 @@
 
 
                 <div class="col-md-2 text-center">
-                  <label><strong>N° da Nota</strong></label>
+                  <label><strong>N° da nota</strong></label>
                   <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
 
                 </div>
                 <div class="col-md-2 text-center">
                   <label><strong>N° nota fiscal</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="n°"formControlName="numNF" />
+                  <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNF" />
                 </div>
                 <div class="col-md-2 text-center">
                   <label><strong>Valor frete</strong></label>
@@ -311,10 +317,10 @@
                   <label><strong>Valor total</strong></label>
                   <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorTotal" />
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                   <label><strong>Loja</strong></label>
                   <select class="form-select " formControlName="loja">
-
+                    <option value=""> Selecione </option>
                     <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
                   </select>
                 </div>
@@ -339,13 +345,14 @@
 
                 <div class="col-md-3">
                   <label><strong>Tipo cobrança</strong></label>
-                  <select class="form-select text-center" formControlName="tipoCobr">
-                    <option *ngFor=" let tipo of tipoCobranca" [value]="tipo">{{tipo}}</option>
+                  <select class="form-select text-center" formControlName="formaPag">
+                    <option value=""> Selecione </option>
+                    <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
                   </select>
                 </div>
                 <div class="col-md-3">
                   <label><strong>N° cobrança</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                  <input type="text" class="form-control text-center" placeholder="N°"
                     formControlName="numCobr" />
                 </div>
               </div>
@@ -417,7 +424,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
       <div class="modal-body">
-        <p>Deseja cadastrar uma cobrança para esta compra?</p>
+        <p>Deseja cadastrar uma cobrança para a compra do <strong><h1 style="color: rgba(8, 98, 13, 0.814);">ID : {{ ultimaCompra?.id }} ?</h1></strong></p>
       </div>
       <div class="modal-footer justify-content-center">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
@@ -458,8 +465,8 @@
                   </div>
                   <div class="col-md-6">
                     <label><strong>CNPJ</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="cnpj" />
+                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00" formControlName="cnpj"
+                      (input)="formatarCNPJ($event)" />
                   </div>
                 </div>
 
@@ -477,8 +484,9 @@
                 <div class="row mb-2">
                   <div class="col-md-6">
                     <label><strong>Telefone</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="telefone" />
+                    <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
+                      formControlName="telefone" (input)="formatarTelefone($event)" />
+
                   </div>
                   <div class="col-md-6">
                     <label><strong>Fornecedor</strong></label>
@@ -489,9 +497,11 @@
 
                 <div class="row mb-2">
                   <div class="col-md-6">
-                    <label><strong>Tipo fornecedor</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="tipoFornecedor" />
+                    <label><strong>Tipo Fornecedor</strong></label>
+                    <select class="form-select text-center" formControlName="tipoFornecedor">
+                      <option value=""> Selecione </option>
+                      <option *ngFor=" let tipo of tipoFornec" [value]="tipo">{{tipo}}</option>
+                    </select>
                   </div>
                   <div class="col-md-6">
                     <label><strong>Vendedor</strong></label>
@@ -503,8 +513,8 @@
                 <div class="row mt-3">
                   <div class="col-md-6 offset-md-3">
                     <label><strong>Tel - Vendedor</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
-                      formControlName="teleVendedor" />
+                    <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
+                      formControlName="teleVendedor" (input)="formatarTelefoneVendedor($event)" />
                   </div>
                 </div>
 

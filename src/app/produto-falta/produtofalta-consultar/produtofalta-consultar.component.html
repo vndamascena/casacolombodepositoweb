@@ -34,6 +34,7 @@
     <div class="input-group mb-1 barra-pesquisa">
         <input type="text" class="form-control lupa" placeholder="Pesquisar produto cadastrado" aria-label="Pesquisar"
             aria-describedby="basic-addon1" [(ngModel)]="termoPesquisa" (input)="filtrarProdutosFalta()">
+            <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
         <div class="overlay" (click)="filtrarProdutosFalta()"></div>
     </div>
 

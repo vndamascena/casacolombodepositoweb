@@ -6,7 +6,7 @@
 
 
         <a class="navbar-brand" href="inicio">
-            <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+            <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
 
         </a>
         <div class="container">
@@ -15,7 +15,9 @@
             <div class="input-group mb-3 barra-pesquisa">
                 <input type="text" class="form-control lupa" placeholder="Digite para pesquisar o título desejado"
                     aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
-                    (input)="filtrarTitulosBaixados()">
+                    (input)="filtrarTitulosBaixados()">  
+                    <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+                    
                 <div class="overlay" (click)="filtrarTitulosBaixados()"></div>
             </div>
         </div>

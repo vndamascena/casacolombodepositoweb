@@ -102,7 +102,10 @@ export class HistoricoVendaProdutoGeralComponent implements OnInit{
 
 
 
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarProdutos(); // Chama filtro com campo limpo
+}
 
 
 

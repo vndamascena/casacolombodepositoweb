@@ -170,7 +170,10 @@ export class ConsultaEntregaComponent implements OnInit {
 
 
 
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarEntregas(); // Chama filtro com campo limpo
+}
 
 private extractDate(diaNome: string): string | undefined {
     const regex = /(\d{2})\/(\d{2})\/(\d{4})/; // regex para capturar a data no formato dd/MM/yyyy

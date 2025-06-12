@@ -32,8 +32,10 @@ export class DashboardComponent implements OnInit {
   devePerguntarCobranca = false;
   ultimaCompra: any = null;
   cobrancaJaInicializada = false;
-  tipoCobranca: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA' ];
-  formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA' ];
+  tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA'];
+  formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA'];
+ 
+
 
 
   formCompras: FormGroup = this.formBuilder.group({
@@ -82,7 +84,7 @@ export class DashboardComponent implements OnInit {
       tipoCobr: '',
       numCobr: '',
       numNota: '',
-      numNF:'',
+      numNF: '',
       conta: '',
       formaPag: '',
       obs: '',
@@ -98,7 +100,13 @@ export class DashboardComponent implements OnInit {
 
     if (this.cobrancas.length > 0) {
       const ultima = this.cobrancas.at(this.cobrancas.length - 1).value;
-      dadosBase = { ...ultima };
+
+      dadosBase = {
+        ...ultima,
+        valorCobr: this.converterRealParaDecimal(ultima.valorCobr),
+        valorFrete: this.converterRealParaDecimal(ultima.valorFrete),
+        valorTotal: this.converterRealParaDecimal(ultima.valorTotal),
+      };
 
       const [num, total] = (ultima.parcela || '1');
       const novoNumero = +num + 1;
@@ -106,6 +114,7 @@ export class DashboardComponent implements OnInit {
 
       dadosBase.parcela = `${novoNumero}`;
     }
+
 
     const novaCobranca = this.formBuilder.group({
       idForn: [dadosBase.idForn, Validators.required],
@@ -128,42 +137,43 @@ export class DashboardComponent implements OnInit {
       valorTotal: [this.formatarDecimalParaReal(dadosBase.valorTotal)],
     });
 
-    novaCobranca.get('numNota')?.valueChanges.subscribe(nota => {
-      if (!nota) {
+    novaCobranca.get('idCompra')?.valueChanges.subscribe(id => {
+      if (!id) {
         novaCobranca.patchValue({
-          idCompra: '',
           idForn: '',
           loja: '',
           valorFrete: '',
           valorTotal: '',
-          numNF:'',
-          
+          numNota: '',
+          numNF: ''
         });
         return;
       }
 
-      const compra = this.compras.find(c => c.numNota === nota);
+      const compra = this.compras.find(c => c.id == id); // usa == para comparar string e número
 
       if (compra) {
         novaCobranca.patchValue({
-          idCompra: compra.id,
           idForn: compra.idForn,
+          loja: compra.loja,
           valorFrete: this.formatarDecimalParaReal(compra.valorFrete),
           valorTotal: this.formatarDecimalParaReal(compra.valorTotal),
-          numNF: compra.numNF,
-          loja: compra.loja
+          numNota: compra.numNota,
+          numNF: compra.numNF
         });
       } else {
+        // Se não encontrar, limpa os campos
         novaCobranca.patchValue({
-          idCompra: '',
           idForn: '',
+          loja: '',
           valorFrete: '',
           valorTotal: '',
-          loja: '',
-          numNF:'',
+          numNota: '',
+          numNF: ''
         });
       }
     });
+
 
     this.cobrancas.push(novaCobranca);
   }
@@ -197,8 +207,58 @@ export class DashboardComponent implements OnInit {
     return `${novaData.getFullYear()}-${pad(novaData.getMonth() + 1)}-${pad(novaData.getDate())}`;
   }*/
 
+formatarCNPJ(event: any): void {
+  let valor = event.target.value.replace(/\D/g, '');
 
+  if (valor.length > 14) valor = valor.slice(0, 14);
 
+  let cnpjFormatado = valor;
+
+  if (valor.length > 12) {
+    cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+  } else if (valor.length > 8) {
+    cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+  } else if (valor.length > 5) {
+    cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+  } else if (valor.length > 2) {
+    cnpjFormatado = valor.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+  }
+
+  this.formFornecedor.get('cnpj')?.setValue(cnpjFormatado, { emitEvent: false });
+}
+
+formatarTelefone(event: any): void {
+  let valor = event.target.value.replace(/\D/g, '');
+  if (valor.length > 11) valor = valor.slice(0, 11);
+
+  let formatado = valor;
+
+  if (valor.length > 10) {
+    formatado = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  } else if (valor.length > 6) {
+    formatado = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+  } else if (valor.length > 2) {
+    formatado = valor.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+  }
+
+  this.formFornecedor.get('telefone')?.setValue(formatado, { emitEvent: false });
+}
+formatarTelefoneVendedor(event: any): void {
+  let valor = event.target.value.replace(/\D/g, '');
+  if (valor.length > 11) valor = valor.slice(0, 11);
+
+  let formatado = valor;
+
+  if (valor.length > 10) {
+    formatado = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  } else if (valor.length > 6) {
+    formatado = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+  } else if (valor.length > 2) {
+    formatado = valor.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+  }
+
+  this.formFornecedor.get('teleVendedor')?.setValue(formatado, { emitEvent: false });
+}
 
   confirmarCriarCobranca(): void {
     if (!this.ultimaCompra) return;
@@ -211,7 +271,7 @@ export class DashboardComponent implements OnInit {
       tipoCobr: [''],
       numCobr: [''],
       numNota: [this.ultimaCompra.numNota],
-      numNF:[this.ultimaCompra.numNF],
+      numNF: [this.ultimaCompra.numNF],
       conta: [''],
       formaPag: [''],
       obs: [''],
@@ -267,6 +327,12 @@ export class DashboardComponent implements OnInit {
         next: (data) => {
           this.compras = data as any[];
           console.log('📦 Compras carregadas:', this.compras);
+          const modalComprasEl = document.getElementById('cadastrarCompras');
+          if (modalComprasEl) {
+            modalComprasEl.addEventListener('hidden.bs.modal', () => {
+              this.limparFormCompras();
+            });
+          }
         },
         error: (e) => {
           console.log(e.error);
@@ -286,6 +352,12 @@ export class DashboardComponent implements OnInit {
       .subscribe({
         next: (data) => {
           this.fornecedor = data as any[];
+          const modalFornecedorEl = document.getElementById('cadastrarFornecedor');
+          if (modalFornecedorEl) {
+            modalFornecedorEl.addEventListener('hidden.bs.modal', () => {
+              this.limparFormFornecedor();
+            });
+          }
         },
         error: (e) => {
           console.log(e.error);
@@ -294,6 +366,38 @@ export class DashboardComponent implements OnInit {
 
 
   }
+
+  limparFormCompras(): void {
+    this.formCompras.patchValue({
+      idForn: '',        
+      idEmpFrete: '',
+      numNF: '',
+      numNota: '',
+      formaPag: '',
+      formaPagFrete: '',
+      obs: '',
+      valorNota: '',
+      valorFrete: '',
+      valorTotal: '',
+      loja: '',
+      dataNota: null,
+      dataEntrega: null
+    });
+  }
+  limparFormFornecedor(): void {
+  this.formFornecedor.patchValue({
+    empresa: '',
+    cnpj: '',
+    endereco: '',
+    telefone: '',
+    fornecedo: '',
+    tipoFornecedor: '',
+    vendedor: '',
+    teleVendedor: ''
+  });
+}
+
+
   abrirModalCobranca(): void {
     this.cobrancas.clear();
     this.adicionarCobranca();
@@ -305,7 +409,6 @@ export class DashboardComponent implements OnInit {
     return num.toFixed(2).replace('.', ',');
   }
 
-  // Função para converter string com vírgula para número (ponto decimal)
   converterRealParaDecimal(valor: string): number | null {
     if (!valor) return null;
     const num = parseFloat(valor.replace(/\./g, '').replace(',', '.'));
@@ -322,7 +425,9 @@ export class DashboardComponent implements OnInit {
     formData.valorNota = formData.valorNota ? parseFloat((formData.valorNota + '').replace(',', '.')) : null;
     formData.valorFrete = formData.valorFrete ? parseFloat((formData.valorFrete + '').replace(',', '.')) : null;
     formData.valorTotal = formData.valorTotal ? parseFloat((formData.valorTotal + '').replace(',', '.')) : null;
-
+    formData.idEmpFrete = formData.idEmpFrete || 0;
+    formData.dataEntrega = formData.dataEntrega || null;
+    formData.dataNota = formData.dataNota || null;
     Object.keys(formData).forEach(key => {
       if (typeof formData[key] === 'string') {
         formData[key] = formData[key].toUpperCase();
@@ -414,7 +519,8 @@ export class DashboardComponent implements OnInit {
           this.formCobrancas.reset();
           this.cobrancas.clear();
           this.spinner.hide();
-          setTimeout(() => this.mensagem = null, 5000);
+          setTimeout(() => this.mensagem = null, 2000);
+          window.location.reload();
         },
         error: (e) => {
           console.log(e.error);
@@ -483,11 +589,12 @@ export class DashboardComponent implements OnInit {
           this.mensagem = data.message;
           this.formFornecedor.reset();
 
+
           this.spinner.hide();
           setTimeout(() => {
             this.mensagem = null;
-          }, 5000);
-
+          }, 2000);
+          window.location.reload();
 
         },
         error: (e) => {

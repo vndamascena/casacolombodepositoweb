@@ -473,7 +473,10 @@ toggleAllSelection(cliente: any): void {
     }
   });
 }
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarTitulo(); 
+}
 
 concluirSelecionados(): void {
   // Obter os IDs dos títulos selecionados

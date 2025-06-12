@@ -79,7 +79,10 @@ export class ConsultarProdutoGeralComponent implements OnInit {
     }
   }
 
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarProdutos(); // Chama filtro com campo limpo
+}
   getFullImageUrlGeral(imagemUrlGeral: string): string {
     return `${environment.apiUrl + '/produtoGeral'}${imagemUrlGeral}`;
   }

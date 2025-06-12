@@ -121,7 +121,10 @@ expression: string = '';
     }
   }
 
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarEntregas(); // Chama filtro com campo limpo
+}
 
 
 

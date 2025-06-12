@@ -45,7 +45,10 @@ export class CobrancaComponent implements OnInit {
     getColor(index: number): string {
         return index % 2 === 0 ? '#8bc546' : '#ffffff';
     }
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarCobranca(); // Chama filtro com campo limpo
+}
  ngOnInit(): void {
   // 1. Carrega fornecedores primeiro
   this.httpClient.get<any[]>(environment.financa + "/fornecedor").subscribe({
@@ -86,7 +89,7 @@ export class CobrancaComponent implements OnInit {
 
 
 
-    filtrarFornecedores(): void {
+    filtrarCobranca(): void {
         if (this.expression.trim() === '') {
             // Se a expressão de pesquisa estiver vazia, recarrega todos os fornecedores
             this.ngOnInit();

@@ -81,7 +81,10 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
 
 
   }
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarOcorrencias(); // Chama filtro com campo limpo
+}
   
   getColor(index: number): string {
     return index % 2 === 0 ? '#8bc546' : '#ffffff';

@@ -53,7 +53,10 @@ export class HistoricoTituloComponent implements OnInit {
 
     return brazilTime;
   }
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarTitulosBaixados(); // Chama filtro com campo limpo
+}
   ngOnInit(): void {
 
 

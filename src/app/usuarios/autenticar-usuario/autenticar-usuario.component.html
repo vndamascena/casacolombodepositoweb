@@ -4,25 +4,25 @@
       <div class="card">
         <div class="card-body">
           <div class="text-center">
-            <img src="/assets/CASA COLOMBO.jpg" />
+            <img src="/assets/cplg.png" />
             <div class="mt-2">
-              <h4>Autenticar Usuário</h4>
-              <p>Entre com as credenciais de acesso.</p>
+             
             </div>
           </div>
+          <br>
           <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-              <label>Usuário:</label>
-              <input type="text" class="form-control" formControlName="matricula" placeholder="Digite usuário aqui" />
+            <div class="mb-3 text-center">
+              <label><strong>Usuário:</strong></label>
+              <input type="text" class="form-control text-center" formControlName="matricula" placeholder="Digite usuário aqui" />
             </div>
-            <div class="mb-3">
-              <label>Senha:</label>
-              <input type="password" class="form-control" formControlName="senha" placeholder="Digite sua senha aqui" />
+            <div class="mb-3 text-center">
+              <label><strong>Senha:</strong></label>
+              <input type="password" class="form-control text-center" formControlName="senha" placeholder="Digite sua senha aqui" />
             </div>
             <div class="mb-3 d-grid">
               <input type="submit" class="btn btn-success" value="Acessar Sistema" />
             </div>
-            <div class="mb-3 text-center">
+            <div class="mb-2 text-center">
               <small>Sistema Casa Colomo v2.0</small>
             </div>
           </form>

@@ -6,7 +6,7 @@
 
 
         <a class="navbar-brand" href="inicio">
-            <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+            <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
 
         </a>
         <div class="container">
@@ -16,6 +16,7 @@
                 <input type="text" class="form-control lupa" placeholder="Digite para pesquisar a entrega"
                     aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
                     (input)="filtrarEntregas()">
+                    <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
                 <div class="overlay" (click)="filtrarEntregas()"></div>
             </div>
         </div>

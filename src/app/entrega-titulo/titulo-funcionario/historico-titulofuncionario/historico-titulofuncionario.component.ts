@@ -189,7 +189,10 @@ export class HistoricoTitulofuncionarioComponent implements OnInit {
         }
       });
   }
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarTitulosBaixados(); // Chama filtro com campo limpo
+}
   controlarZoom(event: WheelEvent) {
     event.preventDefault();
     const incremento = event.deltaY < 0 ? 0.1 : -0.1;

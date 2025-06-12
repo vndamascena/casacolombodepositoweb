@@ -92,7 +92,10 @@ export class HistoricoVendasComponent implements OnInit {
       });
   }
 
- 
+   limparPesquisa() {
+  this.expression = '';
+  this.filtrarProdutos(); // Chama filtro com campo limpo
+}
   
 
   convertToBrazilTime(date: Date): Date {

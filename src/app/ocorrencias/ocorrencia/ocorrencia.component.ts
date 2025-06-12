@@ -105,7 +105,10 @@ export class OcorrenciaComponent implements OnInit {
 
   }
   
-  
+    limparPesquisa() {
+  this.expression = '';
+  this.filtrarOcorrencias(); // Chama filtro com campo limpo
+}
 
   abrirFormularioCredenciais(ocorr: any): void{ 
     this.ocorr= ocorr ;

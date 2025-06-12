@@ -126,4 +126,8 @@ export class ConsultaFornecedorComponent implements OnInit {
         });
     
   }
+    limparPesquisa() {
+  this.expression = '';
+  this.filtrarFornecedores(); // Chama filtro com campo limpo
+}
 }

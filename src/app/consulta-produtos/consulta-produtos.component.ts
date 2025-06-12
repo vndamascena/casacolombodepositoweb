@@ -199,7 +199,10 @@ export class ConsultaProdutosComponent implements OnInit {
 
 
 
-
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarProdutos(); // Chama filtro com campo limpo
+}
 
 
 

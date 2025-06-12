@@ -1,4 +1,4 @@
-<div >
+<div>
 
 
   <nav class="navbar navbar-expand-lg navbar-dark"
@@ -6,24 +6,26 @@
 
 
 
-    <div class="container mt-3" >
+    <div class="container mt-3">
 
 
       <a class="navbar-brand" href="inicio">
-        <img src="/assets/CASA COLOMBO.jpg" alt="Logo" style="width: 200px; height: auto;">
+       <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
 
       </a>
-      <div >
+      <div>
         <br>
-
         <h2 class="text-center titulo"><strong>Consultar títulos a receber de funcionários</strong></h2>
 
-        <div class="input-group  barra-pesquisa">
+        <div class="input-group barra-pesquisa position-relative">
           <input type="text" class="form-control lupa" placeholder="Digite para pesquisar o titulo."
-            aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarTitulo()">
-          <div class="overlay" (click)="filtrarTitulo()"></div>
+            aria-label="Pesquisar" [(ngModel)]="expression" (input)="filtrarTitulo()" />
+
+          <!-- Botão X sempre visível -->
+          <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
         </div>
       </div>
+
 
 
       <div class="collapse navbar-collapse" id="navbarNav">
@@ -66,14 +68,14 @@
 
 
 
-  <div class="container mt-3" >
+  <div class="container mt-3">
 
 
     <div class="card mb-3" *ngFor="let cliente of clientes">
       <h1 (click)="abrirFormularioAutenticacao(cliente)" class="section-header text-center" style="cursor: pointer;">
         <strong> {{ cliente.nomeCliente }}: {{ cliente.contagemTotal }} </strong>
       </h1>
-    
+
       <div *ngIf="clienteAutenticacaoVisivel === cliente.nomeCliente" class="formulario-credenciais text-center">
         <button class="btn-close btn-close-white" (click)="fecharFormularioAutenticacao()">&times;</button>
         <h4>Autenticação para {{ cliente.nomeCliente }}</h4>
@@ -87,14 +89,14 @@
           <input type="password" class="form-control" id="senha{{cliente.nomeCliente}}" placeholder="Digite a senha"
             #senhaInput>
         </div>
-    
-        <button class="btn btn-outline-light"
-          (click)="autenticarCliente(cliente, usuarioInput.value, senhaInput.value)" style="font-weight: bold;">Autenticar</button>
+
+        <button class="btn btn-outline-light" (click)="autenticarCliente(cliente, usuarioInput.value, senhaInput.value)"
+          style="font-weight: bold;">Autenticar</button>
         <p *ngIf="mensagemErroAutenticacao === cliente.nomeCliente" class="text-danger mt-2">
           {{ mensagemErroAutenticacaoEspecifica }}
         </p>
       </div>
-    
+
       <div *ngIf="clienteAutenticado === cliente.nomeCliente" class="table-responsive">
         <hr>
         <div>
@@ -145,18 +147,19 @@
                 <tr>
                   <td colspan="5"><strong>Total:</strong></td>
                   <td><strong>
-                      R${{ getSomaValores(cliente.titulos).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+                      R${{ getSomaValores(cliente.titulos).toLocaleString('pt-BR', { minimumFractionDigits: 2,
+                      maximumFractionDigits: 2 }) }}
                     </strong>
                   </td>
-                  <td colspan="4"> <button class="btn btn-dark"
-                      (click)="abrirFormularioBaixaTituloSelecionado(titulos)" data-bs-dismiss="modal"><STRONG>Concluir
+                  <td colspan="4"> <button class="btn btn-dark" (click)="abrirFormularioBaixaTituloSelecionado(titulos)"
+                      data-bs-dismiss="modal"><STRONG>Concluir
                         Selecionados</STRONG></button></td>
                 </tr>
               </tfoot>
             </table>
           </div>
         </div>
-    
+
         <div class="imagem-ampliada" *ngIf="cliente.imagemAmpliadaUrl" (wheel)="controlarZoom($event)">
           <button class="btn-close" (click)="fecharImagemAmpliada(cliente)">&times;</button>
           <div class="imagem-container">
@@ -264,14 +267,15 @@
     <h4>Confirmar para concluir selecionados</h4>
     <div class="mb-3">
       <label for="matriculaInputSelecionados" class="form-label">Matrícula</label>
-      <input type="text" class="form-control" id="matriculaInputSelecionados" placeholder="Digite sua matrícula" [(ngModel)]="matricula">
+      <input type="text" class="form-control" id="matriculaInputSelecionados" placeholder="Digite sua matrícula"
+        [(ngModel)]="matricula">
     </div>
     <div class="mb-3">
       <label for="senhaInputSelecionados" class="form-label">Senha</label>
-      <input type="password" class="form-control" id="senhaInputSelecionados" placeholder="Digite sua senha" [(ngModel)]="senha">
+      <input type="password" class="form-control" id="senhaInputSelecionados" placeholder="Digite sua senha"
+        [(ngModel)]="senha">
     </div>
     <button class="btn btn-outline-light" (click)="concluirSelecionados()" style="font-weight: bold;">
       Confirmar
     </button>
   </div>
-  

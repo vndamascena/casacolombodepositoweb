@@ -486,3 +486,19 @@ td {
 .text-black {
   color: black;
 }
+ .barra-pesquisa {
+  position: relative;
+}
+
+.btn-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: #999;
+  z-index: 10;
+  background-color: transparent;
+  border: none;
+}

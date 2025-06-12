@@ -136,15 +136,21 @@ export class ConsultarTitulofuncionarioComponent implements OnInit{
   
 
   
-  getSomaValores(titulos: any[]): number {
-    return titulos.reduce((total, titulo) => {
-      // Remove o ponto (separador de milhar) e substitui a vírgula por ponto (para parseFloat funcionar)
-      const valorNumerico = parseFloat(titulo.valor.replace(/\./g, '').replace(',', '.')) || 0;
-      return total + valorNumerico;
-    }, 0);
-  }
+getSomaValores(titulos: any[]): number {
+  const total = titulos.reduce((total, titulo) => {
+    // Remove o ponto (separador de milhar) e substitui a vírgula por ponto (para parseFloat funcionar)
+    const valorNumerico = parseFloat(titulo.valor.replace(/\./g, '').replace(',', '.')) || 0;
+    return total + valorNumerico;
+  }, 0);
+
+  const totalComDesconto = total * 0.85; // Aplica 15% de desconto
+  return totalComDesconto;
+}
   
-  
+  limparPesquisa() {
+  this.expression = '';
+  this.filtrarTitulo(); // Chama filtro com campo limpo
+}
   
 
 

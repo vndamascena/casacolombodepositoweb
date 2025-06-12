@@ -169,6 +169,10 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         }
       });
   }
+limparPesquisa() {
+  this.termoPesquisa = '';
+  this.filtrarProdutosFalta(); // Reaplica o filtro com campo limpo
+}
   
   produtoPossuiLojas(produto: any, lojaId: number): boolean {
  
