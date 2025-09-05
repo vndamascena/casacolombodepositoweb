@@ -35,6 +35,9 @@ import { CobrancaComponent } from './financias/cobranca/cobranca.component';
 import { ComprasComponent } from './financias/compras/compras.component';
 import { FornecedorComponent } from './financias/fornecedor/fornecedor.component';
 import { DashboardComponent } from './financias/dashboard/dashboard.component';
+import { DespesasComponent } from './financias/despesas/despesas.component';
+import { SuprimentosComponent } from './financias/suprimentos/suprimentos.component';
+
 
 
 export const routes: Routes = [
@@ -194,28 +197,43 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         canActivate: [AuthenticationGuard],
-         data: { roles: ['Admin'] }
+        data: { roles: ['Admin'] }
     },
     {
         path: 'cobranca',
         component: CobrancaComponent,
         canActivate: [AuthenticationGuard],
-         data: { roles: ['Admin'] }
-        
+        data: { roles: ['Admin'] }
+
     },
+
     {
         path: 'compras',
         component: ComprasComponent,
         canActivate: [AuthenticationGuard],
-         data: { roles: ['Admin'] }
+        data: { roles: ['Admin'] }
     },
     {
         path: 'fornecedor',
         component: FornecedorComponent,
         canActivate: [AuthenticationGuard],
-         data: { roles: ['Admin'] }
-        
+        data: { roles: ['Admin'] }
+
     },
+    {
+        path: 'despesas',
+        component: DespesasComponent,
+        canActivate: [AuthenticationGuard],
+        data: { roles: ['Admin'] }
+
+    },
+     {
+        path: 'suprimentos',
+        component: SuprimentosComponent,
+        canActivate: [AuthenticationGuard]
+
+    },
+
     {
         path: 'erro-401',
         component: Erro401Component  // Define a rota de erro 401

@@ -22,7 +22,7 @@
 <div class="col-md-3 container mt-3"
     style="padding: 1px; text-align: center; display: flex; flex-direction: column; align-items: center;">
     <label style="color: #036822;"><strong>Produto faltante</strong></label>
-     <div style="display: flex; gap: 10px; margin-top: 5px;">
+    <div style="display: flex; gap: 10px; margin-top: 5px;">
         <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#cadastraProdutoFalta">
             Cadastrar
         </button>
@@ -30,23 +30,20 @@
             Histórico
         </button>
     </div>
-    
+
     <div class="input-group mb-1 barra-pesquisa">
         <input type="text" class="form-control lupa" placeholder="Pesquisar produto cadastrado" aria-label="Pesquisar"
             aria-describedby="basic-addon1" [(ngModel)]="termoPesquisa" (input)="filtrarProdutosFalta()">
-            <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+        <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
         <div class="overlay" (click)="filtrarProdutosFalta()"></div>
     </div>
 
-    <table class="table table-bordered table-hover">
-    </table>
-</div>
-<div class="container mt-1">
-
+    <button class="btn btn-success" (click)="exportarBancoParaExcel()">
+        📁 Exportar excel
+    </button>
 
 </div>
-
-
+<br>
 <div class="table-responsive container mt-3">
     <table class="table table-bordered table-hover">
         <!-- cabeçalho da tabela -->
@@ -146,69 +143,57 @@
 
                     <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                          <input type="checkbox"
-                                 [checked]="produtoPossuiLoja(produtoGeral, 1)"
-                                 [disabled]="produtoPossuiLoja(produtoGeral, 1)"
-                                 (change)="onLojaCheckboxChange(produtoGeral, 1, $event)">
-                          
-                          <span class="checkmark"
-                                (click)="onCheckmarkClick(produtoGeral, 1, $event)"
-                                [ngClass]="{
+                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 1)"
+                                [disabled]="produtoPossuiLoja(produtoGeral, 1)"
+                                (change)="onLojaCheckboxChange(produtoGeral, 1, $event)">
+
+                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 1, $event)" [ngClass]="{
                                   'recebido-checkbox': produtoGeral.jC1Recebido,
                                   'separado-checkbox': produtoGeral.separadoJC1 && !produtoGeral.jC1Recebido
                                 }"></span>
                         </label>
-                      </td>
-                      
-                      
-                      
-                  
-                      <td style="text-align: center;">
+                    </td>
+
+
+
+
+                    <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                          <input type="checkbox"
-                                 [checked]="produtoPossuiLoja(produtoGeral, 2)"
-                                 [disabled]="produtoPossuiLoja(produtoGeral, 2)"
-                                 (change)="onLojaCheckboxChange(produtoGeral, 2, $event)">
-                          
-                          <span class="checkmark"
-                                (click)="onCheckmarkClick(produtoGeral, 2, $event)"
-                                [ngClass]="{
+                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 2)"
+                                [disabled]="produtoPossuiLoja(produtoGeral, 2)"
+                                (change)="onLojaCheckboxChange(produtoGeral, 2, $event)">
+
+                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 2, $event)" [ngClass]="{
                                   'recebido-checkbox': produtoGeral.jC2Recebido,
                                   'separado-checkbox': produtoGeral.separadoJC2 && !produtoGeral.jC2Recebido
                                 }"></span>
                         </label>
-                      </td>
+                    </td>
 
-                      <td style="text-align: center;">
+                    <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                          <input type="checkbox"
-                                 [checked]="produtoPossuiLoja(produtoGeral, 3)"
-                                 [disabled]="produtoPossuiLoja(produtoGeral, 3)"
-                                 (change)="onLojaCheckboxChange(produtoGeral, 3, $event)">
-                          
-                          <span class="checkmark"
-                                (click)="onCheckmarkClick(produtoGeral, 3, $event)"
-                                [ngClass]="{
+                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 3)"
+                                [disabled]="produtoPossuiLoja(produtoGeral, 3)"
+                                (change)="onLojaCheckboxChange(produtoGeral, 3, $event)">
+
+                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 3, $event)" [ngClass]="{
                                   'recebido-checkbox': produtoGeral.vaRecebido,
                                   'separado-checkbox': produtoGeral.separadoVA && !produtoGeral.vaRecebido
                                 }"></span>
                         </label>
-                      </td>
-                      <td style="text-align: center;">
+                    </td>
+                    <td style="text-align: center;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                          <input type="checkbox"
-                                 [checked]="produtoPossuiLoja(produtoGeral, 4)"
-                                 [disabled]="produtoPossuiLoja(produtoGeral, 4)"
-                                 (change)="onLojaCheckboxChange(produtoGeral, 4, $event)">
-                          
-                          <span class="checkmark"
-                                (click)="onCheckmarkClick(produtoGeral, 4, $event)"
-                                [ngClass]="{
+                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 4)"
+                                [disabled]="produtoPossuiLoja(produtoGeral, 4)"
+                                (change)="onLojaCheckboxChange(produtoGeral, 4, $event)">
+
+                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 4, $event)" [ngClass]="{
                                   'recebido-checkbox': produtoGeral.clRecebido,
                                   'separado-checkbox': produtoGeral.separadoCL && !produtoGeral.clRecebido
                                 }"></span>
                         </label>
-                      </td>
+                    </td>
                     <!-- Observação -->
                     <td style="text-align: center;">{{ produtoGeral.observacao }}</td>
 
@@ -287,7 +272,7 @@
             </td>
         </tr>
     </tfoot>
-    
+
 </div>
 
 
@@ -296,9 +281,9 @@
     <button (click)="marcarSeparado(menu.produto, menu.lojaId)">📦 Separado na Matriz</button>
     <button (click)="confirmarRecebimento(menu.produto, menu.lojaId)">✅ Recebido na Loja</button>
     <button class="cancelar" (click)="fecharMenu()">Cancelar</button>
-  </div>
-  
-  
+</div>
+
+
 
 <div class="col text-center"><strong>
         <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
@@ -459,7 +444,7 @@
 
                     Cancelar
                 </button>
-                <button type="button" class="btn btn-success" (click)="onSubmit()">
+                <button type="button" class="btn btn-success" (click)="onSubmit()" data-bs-dismiss="modal">
                     Adicionar</button>
             </div>
         </div>

@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
+import { forkJoin } from 'rxjs';
 
 @Component({
-    selector: 'app-ocorrencia',
-    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule],
-    templateUrl: './ocorrencia.component.html',
-    styleUrl: './ocorrencia.component.css'
+  selector: 'app-ocorrencia',
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule],
+  templateUrl: './ocorrencia.component.html',
+  styleUrl: './ocorrencia.component.css'
 })
 export class OcorrenciaComponent implements OnInit {
 
@@ -25,9 +26,28 @@ export class OcorrenciaComponent implements OnInit {
   ocorrencia: any = {};
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
   ocorrenciaFiltrados: any[] = [];
-  expression: string = ''; 
+  expression: string = '';
   ocorr: any;
-  
+  selecionados: number[] = [];
+  fornecedores: any[] = [];
+  lojas: any[] = [];
+  tipoOcorrencias: any[] = [];
+  ocorrenciasOriginais: any[] = [];
+
+
+  form: FormGroup = this.formBiulder.group({
+    id: [''],
+    fornecedorGeralId: [''],
+    codProduto: [''],
+    produto: [''],
+    numeroNota: [''],
+    tipoOcorrenciaId: [''],
+    observacao: [''],
+    quantidade: [''],
+    lojaId: [''],
+
+  });
+
 
 
 
@@ -39,8 +59,11 @@ export class OcorrenciaComponent implements OnInit {
     private formBiulder: FormBuilder,
   ) { }
 
- 
- 
+
+  get f(): any {
+    return this.form.controls;
+
+  }
 
   ngOnInit(): void {
 
@@ -51,7 +74,7 @@ export class OcorrenciaComponent implements OnInit {
 
     const ocorrencId = this.route.snapshot.queryParams['id'];
 
-   
+
     if (ocorrencId) {
       this.httpClient.get<any[]>(environment.ocorrencApi + 'ocorrencia/${ocorrencId}')
 
@@ -61,11 +84,11 @@ export class OcorrenciaComponent implements OnInit {
             this.ocorrencias = ocorrenciasData.map(ocorrencia => {
               ocorrencia.dataTime = this.convertToBrazilTime(new Date(ocorrencia.dataTime));
               return ocorrencia;
-            
+
             });
             this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
             this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
-            
+
 
 
 
@@ -79,21 +102,44 @@ export class OcorrenciaComponent implements OnInit {
       this.httpClient.get<any[]>(environment.ocorrencApi + '/ocorrencia')
         .subscribe({
           next: (ocorrenciasData) => {
-            this.ocorrencias = ocorrenciasData.map(ocorrencia => {
-              
-              
+            this.ocorrenciasOriginais = ocorrenciasData.map(ocorrencia => {
               ocorrencia.dataTime = this.convertToBrazilTime(new Date(ocorrencia.dataTime));
-              
               return ocorrencia;
-            
-            });
-            this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
-            this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
-           
+            }).sort((a, b) => b.dataTime - a.dataTime);
 
+            this.ocorrencias = [...this.ocorrenciasOriginais];
+            this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
           },
           error: (error) => {
             console.error('Erro ao carregar as ocorrências:', error);
+          }
+        });
+      this.httpClient.get(environment.ocorrencApi + "/fornecedorGeral")
+        .subscribe({
+          next: (data) => {
+            this.fornecedores = data as any[];
+          },
+          error: (e) => {
+            console.log(e.error);
+          }
+        });
+
+      this.httpClient.get(environment.ocorrencApi + "/loja")
+        .subscribe({
+          next: (data) => {
+            this.lojas = data as any[];
+          },
+          error: (e) => {
+            console.log(e.error);
+          }
+        });
+      this.httpClient.get(environment.ocorrencApi + "/tipoOcorrencia")
+        .subscribe({
+          next: (data) => {
+            this.tipoOcorrencias = data as any[];
+          },
+          error: (e) => {
+            console.log(e.error);
           }
         });
 
@@ -104,14 +150,16 @@ export class OcorrenciaComponent implements OnInit {
 
 
   }
-  
-    limparPesquisa() {
-  this.expression = '';
-  this.filtrarOcorrencias(); // Chama filtro com campo limpo
-}
 
-  abrirFormularioCredenciais(ocorr: any): void{ 
-    this.ocorr= ocorr ;
+  limparPesquisa(): void {
+    this.expression = '';
+    this.startDate = undefined as any;
+    this.endDate = undefined as any;
+    this.ocorrencias = [...this.ocorrenciasOriginais];
+  }
+
+  abrirFormularioCredenciais(ocorr: any): void {
+    this.ocorr = ocorr;
     console.log('id:', this.ocorr);
   }
   fecharFormularioCredenciais(): void {
@@ -120,31 +168,79 @@ export class OcorrenciaComponent implements OnInit {
     this.senha = '';
   }
 
-  concluirOcorrencia(ocorr: any): void{
-    this.ocorrencias = ocorr;
-    const options = { params: { matricula: this.matricula, senha: this.senha, id: this.ocorr} };
-    //this.spinner.show();
+  concluirOcorrencia(ocorr: any): void {
+    if (!this.matricula || !this.senha) {
+      alert('Preencha matrícula e senha.');
+      return;
+    }
 
-    console.log('Dados enviados:', options); 
+    const options = { params: { matricula: this.matricula, senha: this.senha, Id: ocorr.id } };
 
-    this.httpClient.post<any>(`${environment.ocorrencApi}/ocorrencia/baixaOcorrencia`, { id: this.ocorr.id},  options)
-        .subscribe({
-            next: (response) => {
-                
-               
-                this.spinner.hide();
-                
-                this.mensagem = response.message; // exibir mensagem de sucesso
-               
-                this.fecharFormularioCredenciais();
-                
-            },
-            error: (error) => {
-              alert('Erro ao concluir ocorrencia. Usuário e senha incorreto, tente novamente.');
-                this.spinner.hide();
-            }
-        });
+    this.spinner.show();
+
+    this.httpClient.post<any>(`${environment.ocorrencApi}/ocorrencia/baixaOcorrencia`, {}, options)
+      .subscribe({
+        next: (response) => {
+          this.spinner.hide();
+          this.mensagem = response.message || 'Ocorrência concluída com sucesso!';
+
+          // Remove a ocorrência concluída do array
+          this.ocorrencias = this.ocorrencias.filter(o => o.id !== ocorr.id);
+
+          this.fecharFormularioCredenciais();
+        },
+        error: () => {
+          this.spinner.hide();
+          alert('Erro ao concluir ocorrência. Usuário e senha incorretos, tente novamente.');
+        }
+      });
   }
+
+  // Concluir múltiplas ocorrências selecionadas
+  concluirSelecionados(): void {
+    const selecionados = this.ocorrencias.filter(o => o.selected).map(o => o.id);
+
+    if (selecionados.length === 0) {
+      alert('Nenhuma ocorrência selecionada.');
+      return;
+    }
+
+    if (!this.matricula || !this.senha) {
+      alert('Preencha matrícula e senha.');
+      return;
+    }
+
+    this.spinner.show();
+
+    const requests = selecionados.map(id =>
+      this.httpClient.post(
+        `${environment.ocorrencApi}/ocorrencia/baixaOcorrencia`,
+        {},
+        { params: { matricula: this.matricula, senha: this.senha, Id: id } }
+      )
+    );
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.spinner.hide();
+        this.mensagem = 'Ocorrências concluídas com sucesso!';
+
+        // Remove do array as ocorrências concluídas
+        this.ocorrencias = this.ocorrencias.filter(o => !selecionados.includes(o.id));
+
+        // Atualiza a tabela ou qualquer lógica adicional
+        this.atualizarOcorrencias();
+
+        // Limpa seleção
+        this.selecionados = [];
+      },
+      error: () => {
+        this.spinner.hide();
+        alert('Erro ao concluir uma ou mais ocorrências.');
+      }
+    });
+  }
+
 
   isDateOlderThanThreeDays(dateString: string): boolean {
     const date = new Date(dateString);
@@ -153,7 +249,7 @@ export class OcorrenciaComponent implements OnInit {
     return date < threeDaysAgo;
   }
 
-  
+
 
   convertToBrazilTime(date: Date): Date {
     // Cria um novo objeto Date baseado na data original
@@ -180,61 +276,115 @@ export class OcorrenciaComponent implements OnInit {
       });
   }
 
-  filterData(): void {
+aplicarFiltros(): void {
+  let filtradas = [...this.ocorrenciasOriginais];
+
+  // Filtro por datas (funciona com startDate, endDate, ou ambos)
+  if (this.startDate || this.endDate) {
+    const start = this.startDate ? new Date(this.startDate) : new Date(-8640000000000000); // mínimo possível
+    const end = this.endDate ? new Date(this.endDate) : new Date(8640000000000000); // máximo possível
+
+    if (this.endDate) {
+      end.setDate(end.getDate() + 1); // inclui o dia final
+    }
+
+    filtradas = filtradas.filter(o => {
+      const ocorrenciaDate = new Date(o.dataTime);
+      return ocorrenciaDate >= start && ocorrenciaDate < end;
+    });
+  }
+
+  // Filtro por texto (independente da data)
+  const texto = this.expression.trim().toLowerCase();
+  if (texto) {
+    filtradas = filtradas.filter(o =>
+      JSON.stringify(o).toLowerCase().includes(texto)
+    );
+  }
+
+  this.ocorrencias = filtradas;
+}
 
 
-    if (this.startDate && this.endDate) {
-      const start = new Date(this.startDate);
-      const end = new Date(this.endDate);
+  onEdite(id: string): void {
+    this.httpClient.get(environment.ocorrencApi + "/ocorrencia/" + id)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Dados da ocorrência:', data);
 
-      end.setDate(end.getDate() + 1);
+          this.form.patchValue({
+            id: data.id,
+            codProduto: data.codProduto,
+            produto: data.produto,
+            numeroNota: data.numeroNota,
+            quantidade: data.quantidade,
+            observacao: data.observacao,
+            fornecedorGeralId: data.fornecedorGeral?.id,
+            lojaId: data.loja?.id,
+            tipoOcorrenciaId: data.tipoOcorrencia?.id
+          });
+        },
+        error: (e) => {
+          console.log('Erro ao buscar Ocorrência:', e.error);
+        }
+      });
+  }
 
-      
-      
-      this.httpClient.get<any[]>(environment.ocorrencApi + '/ocorrencia').subscribe({
+
+  onSubmit(): void {
+    const formData = { ...this.form.value };
+
+
+    formData.fornecedorGeralId = Number(formData.fornecedorGeralId);
+    formData.lojaId = Number(formData.lojaId);
+    formData.tipoOcorrenciaId = Number(formData.tipoOcorrenciaId);
+
+    console.log('Payload enviado:', formData);
+
+    this.httpClient.put(`${environment.ocorrencApi}/ocorrencia`, formData)
+      .subscribe({
+        next: (data: any) => {
+          this.mensagem = data.message;
+
+
+          this.atualizarOcorrencias();
+
+
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar:', error);
+          alert('Erro ao atualizar. Verifique os campos e tente novamente.');
+        }
+      });
+  }
+
+  private atualizarOcorrencias(): void {
+    this.httpClient.get<any[]>(`${environment.ocorrencApi}/ocorrencia`)
+      .subscribe({
         next: (ocorrenciasData) => {
           this.ocorrencias = ocorrenciasData.map(ocorrencia => {
             ocorrencia.dataTime = this.convertToBrazilTime(new Date(ocorrencia.dataTime));
             return ocorrencia;
-          }).filter(ocorrencia => {
-            const ocorrenciaDate = new Date(ocorrencia.dataTime);
-
-            return ocorrenciaDate >= start && ocorrenciaDate < end;
           });
-           
           this.ocorrencias.sort((a, b) => b.dataTime - a.dataTime);
           this.ocorrencias.forEach(ocorrencia => this.loadUserName(ocorrencia));
-         
         },
         error: (error) => {
-          console.error('Erro ao filtrar o histórico de vendas:', error);
+          console.error('Erro ao atualizar lista de ocorrências:', error);
         }
       });
-
-    }
   }
 
-  filtrarOcorrencias(): void {
-    if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todas as ocorrências
-      this.ngOnInit();
+  updateSelection(produto: any): void {
+    if (produto.selected) {
+      // Evita duplicados
+      if (!this.selecionados.includes(produto.id)) {
+        this.selecionados.push(produto.id);
+      }
     } else {
-      // Filtra as ocorrências com base na expressão de pesquisa
-      const lowerCaseExpression = this.expression.toLowerCase();
-      this.ocorrencias = this.ocorrencias.filter(o =>
-        o.tipoOcorrencia.nome.toLowerCase().includes(lowerCaseExpression) ||
-        o.fornecedorOcorrencia.nome.toLowerCase().includes(lowerCaseExpression) ||
-        o.loja.nome.toLowerCase().includes(lowerCaseExpression) ||
-        o.id.toString().includes(lowerCaseExpression) ||
-        Object.values(o).some(value =>
-          typeof value === 'string' && value.toLowerCase().includes(lowerCaseExpression)
-        )
-      );
+      this.selecionados = this.selecionados.filter(id => id !== produto.id);
     }
   }
-  
-
-
 
 
 }

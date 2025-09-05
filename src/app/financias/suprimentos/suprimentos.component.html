@@ -1,0 +1,503 @@
+<br>
+
+
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div *ngIf="mensagemErro" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{mensagemErro}}</strong>
+    <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<br>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-left: 90px;margin-right: 140px; 
+                        margin-top: -40px; margin-bottom: 0px; padding: 1px;">
+
+    <div class="container mt-3">
+
+
+        <a class="navbar-brand" href="inicio">
+            <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
+
+        </a>
+
+        <div class="container">
+            <br>
+            <h2 class="text-center titulo"><strong>Pedido de suprimetos</strong></h2>
+
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Pesquisar" aria-label="Pesquisar"
+                    aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarCompras()">
+                <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+                <div class="overlay" (click)="filtrarCompras()"></div>
+
+            </div>
+            
+            <div class="mb-2 d-flex gap-3 align-items-center  justify-content-center">
+
+                <div>
+                    <label for="dataInicio" class="form-label"></label>
+                    <input id="dataInicio" type="date" class="form-control" [(ngModel)]="dataInicio"
+                        (change)="filtrarCompras()">
+                </div>
+
+                <div>
+                    <label for="dataFim" class="form-label"></label>
+                    <input id="dataFim" type="date" class="form-control" [(ngModel)]="dataFim"
+                        (change)="filtrarCompras()">
+                </div>
+                <br>
+
+
+                Falta
+                <label class="form-check">
+                    <br>
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="filtroAtivo" (change)="onFiltroCheck()"
+                        style="background-color: rgb(216, 62, 62); transform: scale(1.5);">
+
+                </label>
+                <br>
+                Entregue
+                <label class="form-check">
+                    <br>
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="filtroInativo"
+                        (change)="onFiltroCheck()" style="background-color: green; transform: scale(1.5);">
+
+
+                </label>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 85px;">
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link black-text mb-3 ">
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110"
+                            data-bs-toggle="modal" data-bs-target="#suprimentos">
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+
+
+
+    </div>
+
+</nav>
+
+
+<div class="line container mt-3  "></div>
+<br>
+<div class="table-responsive   container mt-3 ">
+
+
+
+
+
+    <table class="table">
+
+        <thead>
+            <tr>
+
+                <th style="width: 4%;">Id</th>
+                <th style="width: 15%;">Nome</th>
+                <th style="width: 11%;">Data pedida</th>
+                <!--<th style="width: 2%;">JC1</th>-->
+
+                <th style="width: 2%;">VA</th>
+
+                <th style="width: 2%;">JC2</th>
+
+                <th style="width: 2%;">CL</th>
+                <th style="width: 4%;">Total</th>
+
+                <th style="width: 4%;">Obs</th>
+                <th style="width: 9%;">Entregue</th>
+
+
+
+            </tr>
+        </thead>
+
+        <ng-container
+            *ngFor="let suprimentos of suprimentosFiltradas | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;">
+
+            <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
+
+                <td>{{suprimentos.id}}</td>
+                <td>{{suprimentos.nome}}</td>
+                <td>{{suprimentos.dataPedido | date: 'dd/MM/yyyy'}}</td>
+                <!-- JC1 -->
+                <!-- <td>
+                    <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                            <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'jC1')"
+                                [disabled]="suprimentos.dataEntrega || produtoPossuiLojaIndividual(suprimentos, 'jC1')"
+                                (click)="abrirModalQuantidade(suprimentos, 'jC1', $event)" />
+                            <span class="checkmark"
+                                [ngClass]="{'entrega-preenchida': suprimentos.dataEntrega && produtoPossuiLojaIndividual(suprimentos, 'jC1')}">
+
+                            </span>
+
+                        </label>
+                        <span>{{ formatarQuantidade(suprimentos.quantidadeJC1) }}
+                               <input type="checkbox" [(ngModel)]="suprimentos.selected" (change)="updateSelection(suprimentos)" />
+                        </span>
+                    </div>
+                </td>-->
+
+
+
+                <!-- VA -->
+                <td style="text-align: center; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                            <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'va')"
+                                [disabled]="suprimentos.dataEntrega || produtoPossuiLojaIndividual(suprimentos, 'va')"
+                                (click)="abrirModalQuantidade(suprimentos, 'va', $event)" />
+                            <span class="checkmark"
+                                [ngClass]="{'entrega-preenchida': suprimentos.dataEntrega && produtoPossuiLojaIndividual(suprimentos, 'va')}">
+                            </span>
+                        </label>
+                        <span class="quantidade-texto" style="position: relative;">
+                            {{ formatarQuantidade(suprimentos.quantidadeVA) }}
+                            <input type="checkbox" [checked]="suprimentos.selected"
+                                *ngIf="!suprimentos.dataEntrega && suprimentos.quantidadeVA > 0"
+                                (mousedown)="$event.preventDefault(); FormularioCredenciais(suprimentos,'VA')" />
+
+
+                            <!-- Tooltip -->
+                            <div class="data-tooltip" *ngIf="suprimentos.dataEntrega">
+                                {{ suprimentos.dataEntrega | date: 'dd/MM/yy' }}
+                            </div>
+                        </span>
+                    </div>
+                </td>
+
+                <!-- JC2 -->
+                <td style="text-align: center; position: relative;">
+                    <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                            <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'jC2')"
+                                [disabled]="suprimentos.dataEntrega_JC2 || produtoPossuiLojaIndividual(suprimentos, 'jC2')"
+                                (click)="abrirModalQuantidade(suprimentos, 'jC2', $event)" />
+                            <span class="checkmark"
+                                [ngClass]="{'entrega-preenchida': suprimentos.dataEntrega_JC2 && produtoPossuiLojaIndividual(suprimentos, 'jC2')}">
+                            </span>
+                        </label>
+                        <span class="quantidade-texto" style="position: relative;">
+                            {{ formatarQuantidade(suprimentos.quantidadeJC2) }}
+                            <input type="checkbox" [checked]="suprimentos.selected"
+                                *ngIf="!suprimentos.dataEntrega_JC2 && suprimentos.quantidadeJC2 > 0"
+                                (mousedown)="$event.preventDefault(); FormularioCredenciais(suprimentos,'JC2')" />
+
+
+                            <!-- Tooltip -->
+                            <div class="data-tooltip" *ngIf="suprimentos.dataEntrega_JC2">
+                                {{ suprimentos.dataEntrega_JC2 | date: 'dd/MM/yy' }}
+                            </div>
+                        </span>
+                    </div>
+                </td>
+
+                <!-- CL -->
+                <td style="text-align: center; position: relative;">
+                    <div class="quantidade-container"
+                        style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                            <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'cl')"
+                                [disabled]="suprimentos.dataEntrega_CL || produtoPossuiLojaIndividual(suprimentos, 'cl')"
+                                (click)="abrirModalQuantidade(suprimentos, 'cl', $event)" />
+                            <span class="checkmark"
+                                [ngClass]="{'entrega-preenchida': suprimentos.dataEntrega_CL && produtoPossuiLojaIndividual(suprimentos, 'cl')}">
+                            </span>
+                        </label>
+                        <span class="quantidade-texto" style="position: relative;">
+                            {{ formatarQuantidade(suprimentos.quantidadeCL) }}
+                            <input type="checkbox" [checked]="suprimentos.selected"
+                                *ngIf="!suprimentos.dataEntrega_CL && suprimentos.quantidadeCL > 0"
+                                (mousedown)="$event.preventDefault(); FormularioCredenciais(suprimentos, 'CL')" />
+
+                            <div class="data-tooltip" *ngIf="suprimentos.dataEntrega_CL">
+                                {{ suprimentos.dataEntrega_CL | date: 'dd/MM/yy' }}
+                            </div>
+                        </span>
+
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    {{
+                    (suprimentos.quantidadeJC1 || 0) +
+                    (suprimentos.quantidadeVA || 0) +
+                    (suprimentos.quantidadeJC2 || 0) +
+                    (suprimentos.quantidadeCL || 0)
+                    }}
+                </td>
+
+
+                <td>
+                    <button class="btn btn-sm"
+                        [ngClass]="suprimentos.observacao ? 'btn-primary' : 'btn-outline-secondary'"
+                        [style.background-color]="suprimentos.observacao ? '#0d6efd' : 'transparent'"
+                        (click)="mostraObservacao(suprimentos)">
+                        <!-- Aqui pode colocar o ícone se quiser -->
+                    </button>
+                </td>
+
+                <td>
+
+                    <button *ngIf="!suprimentos.dataEntrega" class="btn btn-outline-success btn-sm">
+                        <!-- Ícone ou texto para Opções -->
+                    </button>
+                </td>
+
+
+
+
+
+
+            </tr>
+        </ng-container>
+
+    </table>
+
+
+    <tfoot>
+        <tr>
+            <td colspan="14" class="text-start">
+                <strong>
+                    Quantidade exibida: {{ suprimentosFiltradas.length }}
+                    <span *ngIf="suprimentos.length !== suprimentos.length">
+                        (de um total de {{ suprimentos.length }})
+                    </span>
+                </strong>
+            </td>
+        </tr>
+    </tfoot>
+
+
+
+
+
+</div>
+<div class="formulario-credenciais text-center"
+    *ngIf="suprimentoSelecionado && suprimentoSelecionado === suprimentoSelecionado">
+    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+    <h4><strong>Confirmar entrega</strong></h4>
+    <div class="mb-3">
+        <label for="matriculaInput" class="form-label"></label>
+        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+            [(ngModel)]="matricula">
+    </div>
+    <div class="mb-3">
+        <label for="senhaInput" class="form-label"></label>
+        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
+    </div>
+
+
+ <form [formGroup]="formSuprimentos">
+  <div class="md-3">
+    <label class="text-center w-100"><strong>Quantidade</strong></label>
+    <input type="number" min="1" class="form-control text-center" formControlName="quantidade" />
+  </div>
+</form>
+    <br>
+    <button type="button" class="btn btn-outline-light" (click)="confirmarEntrega()" style="font-weight: bold;">
+        <strong>Confirmar</strong>
+    </button>
+
+</div>
+<div class="modal fade" id="modalObservacao" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title text-center w-100">Observações do pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p><strong>Observações existentes:</strong></p>
+                <div class="texto-obs" style="white-space: pre-wrap;">
+                    {{ observacaoSelecionada.observacao || 'Nenhuma' }}
+                </div>
+
+                <!-- SOMENTE aparece ao clicar em "+" -->
+                <div *ngIf="exibirCampoNovaObservacao" class="mt-3 fade-in">
+                    <!-- Seletor de Loja -->
+                    <label for="lojaSelect" class="form-label">Selecione a loja:</label>
+                    <select [(ngModel)]="lojaSelecionada" id="lojaSelect" class="form-select mb-2">
+                        <option value="">-- Escolha uma loja --</option>
+
+                        <option value="VA">VA</option>
+                        <option value="JC2">JC2</option>
+                        <option value="CL">CL</option>
+                        <option value="ROBERTA">ROBERTA</option>
+
+                    </select>
+
+                    <!-- Campo de nova observação -->
+                    <textarea class="form-control" [(ngModel)]="novaObservacao" rows="4"
+                        placeholder="Digite nova observação..."></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer d-flex justify-content-between">
+                <div>
+                    <button type="button" class="btn btn-outline-success" (click)="toggleNovaObservacao()">+</button>
+                </div>
+                <div>
+                    <button *ngIf="exibirCampoNovaObservacao" type="button" class="btn btn-primary"
+                        (click)="salvarObservacao()" data-bs-dismiss="modal">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="suprimentos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar suprimentos</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formSuprimentos">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="row mb-4 justify-content-center">
+                                    <div class="col-md-5">
+                                        <label class="text-center w-100"><strong>Nome</strong></label>
+                                        <select class="form-select text-center" formControlName="nome">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let form of tipoSuprimentos" [value]="form">{{ form }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="text-center w-100"><strong>Loja</strong></label>
+                                        <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
+
+
+                                            <button type="button" class="btn btn-outline-success px-2 py-0"
+                                                style="line-height: 1.2; height: 28px;"
+                                                [class.active]="formSuprimentos.get('loja')?.value === 'va'"
+                                                (click)="selecionarLoja('va')">VA</button>
+
+                                            <button type="button" class="btn btn-outline-success px-2 py-0"
+                                                style="line-height: 1.2; height: 28px;"
+                                                [class.active]="formSuprimentos.get('loja')?.value === 'jC2'"
+                                                (click)="selecionarLoja('jC2')">JC2</button>
+
+                                            <button type="button" class="btn btn-outline-success px-2 py-0"
+                                                style="line-height: 1.2; height: 28px;"
+                                                [class.active]="formSuprimentos.get('loja')?.value === 'cl'"
+                                                (click)="selecionarLoja('cl')">CL</button>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-2">
+                                        <label class="text-center w-100"><strong>Quantidade</strong></label>
+                                        <input type="number" min="1" class="form-control text-center"
+                                            formControlName="quantidade" />
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <div class="row mb-3 justify-content-center">
+                                    <div class="col-md-7">
+                                        <label class="text-center w-100"><strong>Observação</strong></label>
+                                        <textarea class="form-control text-center"
+                                            formControlName="observacao"></textarea>
+                                    </div>
+                                </div>
+
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" (click)="cadastrar()">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="modal fade" id="modalQuantidade" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Informe a quantidade necessária</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formSuprimentos">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+
+                                <!-- Primeira linha -->
+                                <div class="row mb-10 justify-content-center">
+                                    <div class="col-md-6 justify-content-center">
+                                        <label><strong>Quantidade</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                                            formControlName="quantidade" />
+                                    </div>
+
+                                </div>
+                                <!-- Campo de observação opcional -->
+                                <div class="row mt-3 justify-content-center">
+                                    <div class="col-md-10">
+                                        <label><strong>Observação (opcional)</strong></label>
+                                        <textarea class="form-control" rows="3" formControlName="observacao"
+                                            placeholder="Digite uma observação, se desejar..."></textarea>
+
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="confirmarCadastroLoja()">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

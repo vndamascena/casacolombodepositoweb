@@ -1,4 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+<nav class="navbar navbar-expand-lg navbar-dark"
+    style="background-color: #ffffff; margin-bottom: 0px; padding: 1px;  margin-left: 90px;margin-right: 140px;  margin-top: -10px;">
 
 
 
@@ -9,25 +10,79 @@
             <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
 
         </a>
-        <div class="container">
+        <div class="container pt-5">
 
-            <div class="input-group mb-3 barra-pesquisa">
-                <input type="text" class="form-control lupa" placeholder="Digite o nome Fornecedo"
-                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
-                    (input)="filtrarCobranca()">
-                      <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+            <div class="d-flex justify-content-center align-items-center mb-4 gap-2" style=" margin-left: 71px;margin-right: 140px; 
+                        margin-top: -20px; margin-bottom: 0px; padding: 1px;">
+
+                <div class="dropdown">
+                    <button class="btn btn-outline-success" routerLink="/compras">
+                        <i class="bi bi-cash-coin me-1"></i> Compras
+                    </button>
+
+                </div>
+
+
+                <div>
+                    <button class="btn btn-outline-success " routerLink="/fornecedor">
+                        <i class="bi bi-truck me-1"></i> Fornecedor
+                    </button>
+
+                </div>
+
+            </div>
+            <div class="input-group pt-0 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Pesquisar" aria-label="Pesquisar"
+                    aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarCobranca()">
+                <i class=" bi-trash-fill btn-clear" (click)="limparPesquisa()"></i>
                 <div class="overlay" (click)="filtrarCobranca()"></div>
+            </div>
+            <div class="mb-3 d-flex gap-3 align-items-center  justify-content-center">
+
+                <div>
+                    <label for="dataInicio" class="form-label"></label>
+                    <input id="dataInicio" type="date" class="form-control" [(ngModel)]="dataVencInicio"
+                        (change)="filtrarCobranca()">
+                </div>
+
+                <div>
+                    <label for="dataFim" class="form-label"></label>
+                    <input id="dataFim" type="date" class="form-control" [(ngModel)]="dataVencFim"
+                        (change)="filtrarCobranca()">
+                </div>
+
+                <br>
+
+                Pagar
+
+
+                <label class="form-check">
+                    <br>
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="filtroAtivo" (change)="onFiltroCheck()"
+                        style="background-color: rgb(216, 62, 62); transform: scale(1.5);">
+
+                </label>
+                <br>
+                Pagos
+                <label class="form-check">
+                    <br>
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="filtroInativo"
+                        (change)="onFiltroCheck()" style="background-color: green; transform: scale(1.5);">
+
+
+                </label>
             </div>
 
         </div>
 
 
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 15px;">
             <ul class="navbar-nav">
 
                 <li class="nav-item">
                     <a class="nav-link black-text">
-                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110">
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110"
+                            data-bs-toggle="modal" data-bs-target="#cadastrarCobrancas" (click)="abrirModalCobranca()">
                     </a>
                 </li>
 
@@ -37,6 +92,11 @@
 
     </div>
 </nav>
+
+
+
+
+
 <div class="line container mt-3  "></div>
 <br>
 
@@ -45,69 +105,112 @@
             nextLabel="Próximo"></pagination-controls>
     </strong>
 </div>
+
 <div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
     <strong>{{mensagem}}</strong>
-    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+    <button (click)="onFecharAlerta()" type="button" class="btn-close" aria-label="Close"></button>
 </div>
-<div class="table-responsive container mt-3 ">
+
+
+<div class="table-responsive  " style="padding:  10px;">
+
+
+
 
 
 
 
     <table class="table">
-        <!-- Cabeçalho da tabela -->
+        <!-- ... thead ... -->
         <thead>
             <tr>
+                <th>Id compra</th>
                 <th>Fornecedor</th>
-                <th>N° cobrança</th>
+                <th>NF</th>
+                <th>N° nota</th>
+                <th>N° cobr </th>
+                <th>Data nota</th>
                 <th>Loja</th>
                 <th>Tipo</th>
-                <th>Parcela</th>
-                <th>Forma pg</th>
+                <th>Parc</th>
+                <th>De</th>
                 <th>Valor cobrado</th>
-                <th>Observação</th>
+                <th>Op</th>
                 <th>Data Venc</th>
-                <th>Operação</th>
+                <th>Valor pago</th>
+                <th>Data pg</th>
+                <th>Forma pg</th>
+                <th>Obs</th>
 
             </tr>
         </thead>
-        <!-- Corpo da tabela -->
+
         <ng-container
-            *ngFor="let cobranca of cobrancas | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
-            <tr [ngStyle]="{'background-color': getColor(i)}">
+            *ngFor="let cobranca of cobrancasFiltradas | paginate: { itemsPerPage: 50, currentPage: p }; let i = index">
+
+            <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
+                <td [ngStyle]="{ color: getCorTexto(cobranca.idCompra) }"
+                    [attr.title]="isSomaDasCobrancasDiferenteDaCompra(cobranca.idCompra) ? 'Não foram cadastrada todas as cobranças' : null">
+                    {{ cobranca.idCompra }}
+                </td>
+
                 <td>{{ cobranca.nomeFornecedor|| '-' }}</td>
+                <td>{{cobranca.numNF}}</td>
+                <td>{{cobranca.numNota}}</td>
                 <td>{{ cobranca.numCobr || '-' }}</td>
+                <td>{{cobranca.dataNota | date: 'dd/MM/yyyy' }}</td>
                 <td>{{ cobranca.loja || '-' }}</td>
                 <td>{{ cobranca.tipoCobr || '-' }}</td>
                 <td>{{ cobranca.parcela || '-' }}</td>
-                <td>{{ cobranca.formaPag || '-' }}</td>
-                <td>{{ cobranca.valorCobr != null ? cobranca.valorCobr.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '-' }}
+                <td>{{cobranca.qtdParc}}</td>
+                <td>R$ {{ cobranca.valorCobr != null ? cobranca.valorCobr.toLocaleString('pt-BR', {
+                    minimumFractionDigits:
+                    2, maximumFractionDigits: 2 }) : '-' }}
                 </td>
 
-                <td>{{ cobranca.obs || '-' }}</td>
-                <td>{{ cobranca.dataVenc || '-' | date: 'dd/MM/yyyy'}}</td>
                 <td>
                     <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
-                        data-bs-target="#edicaoFornecedor">
-                        Editar
+                        [attr.data-bs-target]="'#opcoes' + cobranca.id">
+                        <!-- Ícone ou texto para Opções -->
                     </button>
                 </td>
 
+                <td
+                    [ngStyle]="isVencidaOuHoje(cobranca.dataVenc, cobranca.ativo, cobranca.tipoCobr) ? {'color': 'red', 'font-weight': 'bold'} : {}">
+                    {{ cobranca.dataVenc | date: 'dd/MM/yyyy' }}
+                </td>
 
+                <td style="color: rgb(6, 68, 255);">
+                    R$ {{ cobranca.valorPago != null ? cobranca.valorPago.toLocaleString('pt-BR', {
+                    minimumFractionDigits:
+                    2, maximumFractionDigits: 2 }) : '-' }}
+                </td>
+
+                <td> {{cobranca.dataPag | date: 'dd/MM/yyyy'}}</td>
+                <td>{{ cobranca.formaPag || '-' }}</td>
+                <td>
+                    <button class="btn btn-sm" [ngClass]="cobranca.obs ? 'btn-primary' : 'btn-outline-secondary'"
+                        [style.background-color]="cobranca.obs ? '#0d6efd' : 'transparent'"
+                        (click)="mostraObservacao(cobranca)"></button>
+                </td>
 
             </tr>
         </ng-container>
-
     </table>
-
 
     <tfoot>
         <tr>
-            <td colspan="14">
-                <strong> Quantidade fornecedores: {{ cobrancas.length }}</strong>
+            <td colspan="17" class="text-start">
+                <strong>
+                    Quantidade exibida: {{ cobrancasFiltradas.length }}
+                    <span *ngIf="cobrancasFiltradas.length !== allCobrancas.length">
+                        (de um total de {{ allCobrancas.length }})
+                    </span>
+                </strong>
             </td>
         </tr>
     </tfoot>
+
 </div>
 
 <div class="col text-center"><strong>
@@ -118,62 +221,344 @@
 
 </div>
 
-<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+
+
+
+
+
+<div class="modal fade" id="modalObservacao" tabindex="-1" aria-hidden="true" style="text-align: center;">
+    <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                    Edição de Fornecedor de Produto
+                <h5 class="modal-title text-center w-100">Detalhes da Cobrança</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Observação:</strong></p>
+                <div class="texto-obs">{{ observacaoSelecionada.obs || 'Nenhuma' }}</div>
+
+                <br>
+                <p><strong>Pagamento feito pela conta:</strong> <br>{{ observacaoSelecionada.conta || 'Nenhuma' }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngFor="let cobra of allCobrancas">
+    <div class="modal fade" [attr.id]="'opcoes' + cobra.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+                        Cobrança com vencimento em {{ cobra.dataVenc | date: 'dd/MM/yyyy' }}
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Verifique os dados e escolha uma ação</p>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-4">Fornecedor:</div>
+                        <div class="col-md-7">{{cobra.nomeFornecedor}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">N° Nota:</div>
+                        <div class="col-md-7">{{cobra.numCobr}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">N° NF:</div>
+                        <div class="col-md-7">{{cobra.numNF}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Loja:</div>
+                        <div class="col-md-7">{{cobra.loja}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">Valor:</div>
+                        <div class="col-md-7">{{cobra.valorCobr}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Parcela:</div>
+                        <div class="col-md-7">{{cobra.parcela}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Tipo cobrança:</div>
+                        <div class="col-md-7">{{cobra.tipoCobr}}</div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" (click)="onEdite(cobra.id)" data-bs-toggle="modal"
+                        data-bs-target="#modalConcluirCobranca" data-bs-dismiss="modal">Pagar</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Excluir</button>
+                    <button type="button" class="btn btn-dark" (click)="onEdite(cobra.id)" data-bs-toggle="modal"
+                        data-bs-target="#edicaoCobranca">
+                        Editar
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="cadastrarCobrancas" tabindex="-1" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar cobranças</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formCobrancas">
+                    <div formArrayName="cobrancas">
+                        <div *ngFor="let cobrancaGroup of cobrancasFormArray.controls; let i = index"
+                            [formGroupName]="i" class="border rounded p-3 mb-3">
+                            <h5 class="text-start mb-3 text-center">Cobrança {{ i + 1 }}</h5>
+                            <div class="row justify-content-center">
+
+                                <div class="col-md-2 text-center">
+                                    <label><strong>Id compra</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="ID"
+                                        formControlName="idCompra" />
+
+                                </div>
+                                <div class="col-md-5 text-center">
+                                    <label><strong>Fornecedor</strong></label>
+                                    <select class="form-select text-center" formControlName="idForn">
+                                        <option value=""> Selecione um fornecedor</option>
+                                        <option *ngFor="let f of fornecedor" [value]="f.id">{{ f.fornecedo | uppercase
+                                            }}</option>
+                                    </select>
+                                    <div class="text-danger"
+                                        *ngIf="cobrancaGroup.get('idForn')?.touched && cobrancaGroup.get('idForn')?.invalid">
+                                        Selecione um fornecedor da cobrança
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row justify-content-center">
+
+
+                                <div class="col-md-2 text-center">
+                                    <label><strong>N° da nota</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="N°"
+                                        formControlName="numNota" />
+
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <label><strong>N° nota fiscal</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="N°"
+                                        formControlName="numNF" />
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <label><strong>Valor frete</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="R$"
+                                        formControlName="valorFrete" />
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <label><strong>Valor total</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="R$"
+                                        formControlName="valorCompra" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label><strong>Loja</strong></label>
+                                    <select class="form-select " formControlName="loja">
+                                        <option value=""> Selecione </option>
+                                        <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+                            <hr>
+                            <div class="row mt-2 text-center">
+                                <div class="col-md-1">
+                                    <label><strong>Parcela</strong></label>
+                                    <input type="text" class="form-control text-center" formControlName="parcela" />
+                                </div>
+                                <div class="col-md-3">
+                                    <label><strong>Data vencimento</strong></label>
+                                    <input type="date" class="form-control text-center" formControlName="dataVenc" />
+                                </div>
+                                <div class="col-md-2">
+                                    <label><strong>Valor</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="R$"
+                                        formControlName="valorCobr" />
+                                </div>
+
+                                <div class="col-md-3">
+                                    <label><strong>Tipo cobrança</strong></label>
+                                    <select class="form-select text-center" formControlName="tipoCobr">
+                                        <option value=""> Selecione </option>
+                                        <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label><strong>N° cobrança</strong></label>
+                                    <input type="text" class="form-control text-center" placeholder="N°"
+                                        formControlName="numCobr" />
+                                </div>
+                            </div>
+
+                            <hr>
+
+
+                            <div class="row mt-2 text-center">
+                                <div class="col-md-12">
+                                    <label><strong>Observação</strong></label>
+                                    <textarea class="form-control text-center" placeholder="Digite aqui"
+                                        formControlName="obs"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mt-2 d-flex align-items-center">
+                                <div class="flex-grow-1">
+                                    <div *ngIf="!valorCobradoIgualValorTotal" class="msg-erro"
+                                        title="Erro: soma dos valores cobrados não bate com o valor total">
+                                        <small class="piscar" style="color: red; font-weight: bold;">
+                                            ❗ Valores cobrados NÃO batem com o valor total!
+                                        </small>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-danger btn-sm ms-2" (click)="removerCobranca(i)"
+                                    title="Remover cobrança {{ i + 1 }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-9">
+                <div class="d-flex gap-2 mt-1">
+                    <button type="button" class="btn btn-success" (click)="adicionarCobranca()">
+                        <i class="bi bi-plus-circle me-1"></i><strong>Adicionar</strong>
+                    </button>
+
+                    <button type="button" class="btn btn-danger" (click)="removerUltimaCobranca()"
+                        [disabled]="cobrancasFormArray.length === 0">
+                        <i class="bi bi-trash"></i> Remover
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="CadastrarCobranca()">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="edicaoCobranca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">
+                    Edição de cobrança
                 </h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
 
                 <form [formGroup]="form">
-                    <!-- Contêiner centralizado -->
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                <!-- primeira linha -->
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Fornecedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="nome" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label><strong>Fornecedor / Produto</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="forneProdu" />
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Tipo</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="tipo" />
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Vendedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="vendedor" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label><strong>Tel - Vendedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="telVen" />
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label><strong>Tel - Fornecedor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="telFor" />
-                                    </div>
-                                </div>
-                                <hr>
+
+                    <div class="row justify-content-center">
+
+                        <div class="col-md-2 text-center">
+                            <label><strong>Id compra</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="ID"
+                                formControlName="idCompra" />
+
+                        </div>
+                        <div class="col-md-5 text-center">
+                            <label><strong>Fornecedor</strong></label>
+                            <select class="form-select text-center" formControlName="idForn">
+                                <option value=""> Selecione um fornecedor</option>
+                                <option *ngFor="let f of fornecedor" [value]="f.id">{{ f.fornecedo | uppercase }}
+                                </option>
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="row justify-content-center">
+
+
+                        <div class="col-md-2 text-center">
+                            <label><strong>N° da nota</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="N°"
+                                formControlName="numNota" />
+
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <label><strong>N° NF</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="N°"
+                                formControlName="numNF" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Loja</strong></label>
+                            <select class="form-select " formControlName="loja">
+                                <option value=""> Selecione </option>
+                                <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                            </select>
+                        </div>
+
+
+                    </div>
+
+                    <hr>
+                    <div class="row mt-2 text-center">
+                        <div class="col-md-1">
+                            <label><strong>Parcela</strong></label>
+                            <input type="text" class="form-control text-center" formControlName="parcela" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Data vencimento</strong></label>
+                            <input type="date" class="form-control text-center" formControlName="dataVenc" />
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Valor</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="R$"
+                                formControlName="valorCobr" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Tipo cobrança</strong></label>
+                            <select class="form-select text-center" formControlName="tipoCobr">
+                                <option value=""> Selecione </option>
+                                <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>N° cobrança</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="N°"
+                                formControlName="numCobr" />
+                        </div>
+                        <div class="row mt-2 text-center">
+                            <div class="col-md-12">
+                                <label><strong>Observação</strong></label>
+                                <textarea class="form-control text-center" placeholder="Digite aqui"
+                                    formControlName="obs"></textarea>
                             </div>
                         </div>
                     </div>
@@ -185,9 +570,108 @@
 
                     Cancelar
                 </button>
-                <button type="button" class="btn btn-success">
+                <button type="button" class="btn btn-success" (click)="onSubmit()">
                     Confirmar edição</button>
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalConcluirCobranca" aria-labelledby="exampleModalLabel" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content text-center ">
+            <div class="modal-header">
+                <h3 class="modal-title w-100">Pagamento</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body justify-content-center">
+
+                <form [formGroup]="form">
+
+
+
+                    <div class="row mt-2  text-center">
+                        <div class="col-md-1">
+                            <label><strong>Parcela</strong></label>
+                            <input type="text" class="form-control text-center" formControlName="parcela" readonly />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Data vencimento</strong></label>
+                            <input type="date" class="form-control text-center" formControlName="dataVenc" readonly />
+
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Valor</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="R$"
+                                formControlName="valorCobr" readonly />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Tipo cobrança</strong></label>
+                            <input type="text" class="form-control text-center" [value]="form.get('tipoCobr')?.value"
+                                readonly>
+
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>N° cobrança</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="N°"
+                                formControlName="numCobr" readonly />
+                        </div>
+                        <div class="row mt-2 text-center">
+                            <div class="col-md-12">
+                                <label><strong>Observação</strong></label>
+                                <textarea class="form-control text-center" placeholder="Digite aqui"
+                                    formControlName="obs"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mt-2 justify-content-center text-center">
+                        <h3>Informe os dados abaixos para concluir o pagamento</h3>
+                        <br><br><br>
+                        <div class="col-md-3">
+                            <label><strong>Conta de Pagamento</strong></label>
+                            <select class="form-select text-center" formControlName="conta">
+                                <option value=""> Selecione </option>
+                                <option *ngFor=" let cont of conta" [value]="cont">{{cont}}</option>
+                            </select>
+                            <div class="text-danger" *ngIf="cb['conta'].touched && cb['conta'].invalid">
+                                Selecione uma conta.</div>
+                        </div>
+                        <div class="col-md-2">
+                            <label><strong>Valor pago</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="R$"
+                                formControlName="valorPago" />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Data Pagamento</strong></label>
+                            <input type="date" class="form-control text-center" formControlName="dataPag" />
+                            <div class="text-danger" *ngIf="cb['dataPag'].touched && cb['dataPag'].invalid">
+                                Selecione uma data.
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Forma de pagamento</strong></label>
+                            <select class="form-select text-center" formControlName="formaPag">
+                                <option value=""> Selecione </option>
+                                <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </form>
+                <hr>
+                <div class="modal-body">
+                    <h1 style="color: rgb(9, 105, 5);"><strong> Deseja concluir o pagamento dessa cobrança ?
+
+                        </strong></h1>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                    <button type="button" class="btn btn-primary" (click)="onConcluir()"
+                        data-bs-dismiss="modal">Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>

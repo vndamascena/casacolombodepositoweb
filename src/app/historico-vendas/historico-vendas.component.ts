@@ -5,12 +5,13 @@ import { FormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { forkJoin, catchError, of } from 'rxjs';
 
 @Component({
-    selector: 'app-historico-vendas',
-    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
-    templateUrl: './historico-vendas.component.html',
-    styleUrl: './historico-vendas.component.css'
+  selector: 'app-historico-vendas',
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
+  templateUrl: './historico-vendas.component.html',
+  styleUrl: './historico-vendas.component.css'
 })
 export class HistoricoVendasComponent implements OnInit {
 
@@ -25,78 +26,99 @@ export class HistoricoVendasComponent implements OnInit {
   originalVendas: any[] = [];
   originalCombinedData: any[] = [];
   lotes: any[] = [];
-  combinedData: any[] = []; 
+  combinedData: any[] = [];
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-    const currentDate = new Date();
-    this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+ ngOnInit(): void {
+  const currentDate = new Date();
+  this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+  this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-    this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`)
-      .subscribe({
-        next: (vendasData) => {
-          this.vendas = vendasData.map(venda => {
-            venda.dataVenda = new Date(venda.dataVenda); // Certifique-se de que a data seja convertida para Date
-            return venda;
-          });
-
-          this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/lotes`)
-            .subscribe({
-              next: (lotesData) => {
-                // Aplique o filtro antes de mapear os lotes
-                this.lotes = lotesData
-                .filter(lote => {
-                  console.log('Filtrando lote:', lote.codigo, lote.numeroLote); 
-                  return lote.codigo.trim().toLowerCase() !== 'xxx' && lote.numeroLote.trim().toLowerCase() !== 'xxx';
-                })
-                .map(lote => {
-                  lote.dataEntrada = new Date(lote.dataEntrada);
-                  return lote;
-                });
-
-                // Combine os dados de vendas e lotes
-                this.combinedData = [
-                  ...this.vendas.map(venda => ({
-                    ...venda,
-                    data: venda.dataVenda, // Usa dataVenda para a ordenação
-                    tipo: 'dataVenda' // Adiciona um campo para diferenciar
-                  })),
-                  ...this.lotes.map(lote => ({
-                    ...lote,
-                    data: lote.dataEntrada, // Usa dataEntrada para a ordenação
-                    tipo: 'dataEntrada' // Adiciona um campo para diferenciar
-                  }))
-                ];
-
-                // Carrega os nomes dos usuários para todos os itens combinados
-                this.combinedData.forEach(item => this.loadUserName(item));
-                this.originalCombinedData = [...this.combinedData];
-                
-
-                // Ordena os dados combinados por data de forma decrescente (do mais recente para o mais antigo)
-                this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
-              },
-              error: (error) => {
-                console.error('Erro ao carregar os lotes:', error);
-              }
-            });
-        },
-        error: (error) => {
-          console.error('Erro ao carregar o histórico de vendas:', error);
-        }
+  // Carrega vendas e lotes em paralelo
+  forkJoin({
+    vendas: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`),
+    lotes: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/lotes`)
+  }).subscribe({
+    next: ({ vendas, lotes }) => {
+      // Trata vendas
+      this.vendas = vendas.map(venda => {
+        venda.dataVenda = new Date(venda.dataVenda);
+        return venda;
       });
+
+      // Trata lotes filtrando 'xxx'
+      this.lotes = lotes
+        .filter(lote =>
+          lote.codigo.trim().toLowerCase() !== 'xxx' &&
+          lote.numeroLote.trim().toLowerCase() !== 'xxx'
+        )
+        .map(lote => {
+          lote.dataEntrada = new Date(lote.dataEntrada);
+          return lote;
+        });
+
+      // Combina dados
+      this.combinedData = [
+        ...this.vendas.map(venda => ({
+          ...venda,
+          data: venda.dataVenda,
+          tipo: 'dataVenda'
+        })),
+        ...this.lotes.map(lote => ({
+          ...lote,
+          data: lote.dataEntrada,
+          tipo: 'dataEntrada'
+        }))
+      ];
+
+      // ✅ Etapa de carregamento de nomes única
+      this.carregarNomesUsuarios();
+
+      // Ordena por data
+      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
+      this.originalCombinedData = [...this.combinedData];
+    },
+    error: (err) => {
+      console.error('Erro ao carregar dados:', err);
+    }
+  });
+}
+carregarNomesUsuarios(): void {
+  const uniqueIds = Array.from(new Set(
+    this.combinedData.map(item => Number(item.usuarioId)).filter(id => !isNaN(id))
+  ));
+
+  const userRequests = uniqueIds.map(id =>
+    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${id}`)
+      .pipe(
+        catchError(() => of({ nome: 'Desconhecido', id }))
+      )
+  );
+
+  forkJoin(userRequests).subscribe(users => {
+    const nomeMap = new Map<number, string>();
+    users.forEach((user, index) => {
+      nomeMap.set(uniqueIds[index], user.nome || 'Desconhecido');
+    });
+
+    // Atribui nomes
+    this.combinedData.forEach(item => {
+      item.nome = nomeMap.get(Number(item.usuarioId)) || 'Desconhecido';
+    });
+  });
+}
+
+
+
+  limparPesquisa() {
+    this.expression = '';
+    this.filtrarProdutos(); // Chama filtro com campo limpo
   }
 
-   limparPesquisa() {
-  this.expression = '';
-  this.filtrarProdutos(); // Chama filtro com campo limpo
-}
-  
 
   convertToBrazilTime(date: Date): Date {
     // Cria um novo objeto Date baseado na data original
@@ -118,13 +140,14 @@ export class HistoricoVendasComponent implements OnInit {
 
 
   loadUserName(venda: any): void {
+    
     this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
       .subscribe({
         next: (userData) => {
-          venda.nome = userData.nome; // Atribuir o nome do usuário
+          venda.nome = userData.nome;
         },
         error: (error) => {
-          console.error('Erro ao carregar o nome do usuário:', error);
+          console.error('❌ Erro ao carregar nome para ID', venda.usuarioId, ':', error);
         }
       });
   }
@@ -132,11 +155,11 @@ export class HistoricoVendasComponent implements OnInit {
 
   filterData(): void {
 
-    
+
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
-     
+
       end.setDate(end.getDate() + 1);
 
       this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`).subscribe({
@@ -149,10 +172,10 @@ export class HistoricoVendasComponent implements OnInit {
 
             return vendaDate >= start && vendaDate < end;
           });
-           
+
           this.vendas.sort((a, b) => b.dataVenda - a.dataVenda);
           this.vendas.forEach(venda => this.loadUserName(venda));
-         
+
         },
         error: (error) => {
           console.error('Erro ao filtrar o histórico de vendas:', error);
@@ -192,35 +215,35 @@ export class HistoricoVendasComponent implements OnInit {
     if (this.expression.trim() === '') {
       // Se a expressão de pesquisa estiver vazia, recarrega todos os dados combinados da lista original
       this.combinedData = [...this.originalCombinedData];
-      
+
       // Ordena os dados combinados por data de forma decrescente (do mais recente para o mais antigo)
       this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
-      
+
       window.location.reload();
-      
+
     } else {
       const searchTerm = this.expression.toLowerCase();
-      
+
       // Filtrar a tabela com base no termo de pesquisa
       this.combinedData = this.originalCombinedData.filter(item => {
         // Itera sobre todos os valores do item (registro da tabela)
         return Object.keys(item).some(key => {
           const value = item[key];
-          
+
           // Verifica se o valor é válido (não nulo, não indefinido)
           if (value !== null && value !== undefined) {
             // Converte o valor para string, independentemente do tipo, e compara com o termo de pesquisa
             return value.toString().toLowerCase().includes(searchTerm);
           }
-          
+
           return false;
         });
       });
-      
+
       // Ordena os dados filtrados por data de forma decrescente (do mais recente para o mais antigo)
       this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
     }
   }
-  
+
 
 }

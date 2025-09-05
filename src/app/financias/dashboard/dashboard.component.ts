@@ -17,16 +17,17 @@ declare var bootstrap: any;
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  cards = [
-    { title: 'Cobranças Vencidas', bg: 'bg-danger text-white', icon: 'bi-exclamation-circle' },
-    { title: 'Próx. Vencimento', bg: 'bg-warning text-dark', icon: 'bi-calendar-event' },
-    { title: 'Pagas no Mês', bg: 'bg-info text-white', icon: 'bi-check-circle' },
-    { title: 'Compras no Mês', bg: 'bg-primary text-white', icon: 'bi-bag-check' }
-  ];
+
   loja: string[] = ['JC1', 'VA', 'JC2', 'CL', 'CONSTRUTORA', 'OUTROS'];
   compras: any[] = [];
   cobranca: any[] = [];
+  cobrancasProximoVencimento: any[] = [];
+  cobrancasPagasNoMes: any[] = [];
+  cobrancasPagasNoDia: any[] = [];
+  cobrancasVencidasNoDia: any[] = [];
+  cobrancasSemPagamentos: any[] = [];
   fornecedor: any[] = [];
+  filteredFornecedores: any[] = [];
   mensagem: string | null = null;
   mensagemErro: string | null = null;
   devePerguntarCobranca = false;
@@ -34,9 +35,26 @@ export class DashboardComponent implements OnInit {
   cobrancaJaInicializada = false;
   tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA'];
   formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA'];
- 
+  tipoDespesa: string[] = ['COMBUSTÍVEL', 'CONTABILIDADE', 'DESINFETANTE E CLORO', 'INSUMOS', 'MECÂNICA', 'MERCADO', 'OBRA', 'REFEIÇÃO', 'SACOLAS', 'TRABALHO EXTRA', 'OUTROS',]
+  selectedFornecedor: any = null;
+  selectedEmpresaFrete: any = null;
+  qtdCobrancasVencidas: number = 0;
+  qtdCobrancasSemPagamento: number = 0;
+  qtdCobrancasProximoVencimento: number = 0; qtdCobrancasPagasNoMes: number = 0; // NOVA
+  qtdCobrancasPagasNoDia: number = 0;
+  qtdCobrancasVencidasNoDia: number = 0;
+  qtdCobrancasAVencer: number = 0;
+  cobrancasAVencer: any[] = [];
+  
 
+  constructor(
+    private route: ActivatedRoute,
+    private httpClient: HttpClient,
+    private router: Router,
+    private formBuilder: FormBuilder,
+    private spinner: NgxSpinnerService
 
+  ) { }
 
   formCompras: FormGroup = this.formBuilder.group({
 
@@ -47,9 +65,10 @@ export class DashboardComponent implements OnInit {
     formaPag: [''],
     formaPagFrete: [''],
     obs: [''],
-    valorNota: [''],
+    valorNF: [''],
+    valorCompra: [''],
     valorFrete: [''],
-    valorTotal: [''],
+    valorOutro: [''],
     loja: [''],
     dataNota: [''],
     dataEntrega: [''],
@@ -66,6 +85,20 @@ export class DashboardComponent implements OnInit {
     tipoFornecedor: [''],
     vendedor: [''],
     teleVendedor: [''],
+    obs: ['']
+
+  });
+  formDespesas: FormGroup = this.formBuilder.group({
+
+    nomeLocal: ['', Validators.required],
+    nomeDespesa: [''],
+    quantidade: [''],
+    observacao: [''],
+    valor: [''],
+    dataCompra: [''],
+    formaPagamento: [''],
+    loja: [''],
+
 
   });
   formCobrancas: FormGroup = this.formBuilder.group({
@@ -89,13 +122,14 @@ export class DashboardComponent implements OnInit {
       formaPag: '',
       obs: '',
       parcela: '1',
+      qtdParc: '',
       valorPago: '',
       valorCobr: '',
       dataVenc: '',
       dataPag: '',
       loja: '',
       valorFrete: '',
-      valorTotal: ''
+      valorCompra: ''
     };
 
     if (this.cobrancas.length > 0) {
@@ -105,7 +139,7 @@ export class DashboardComponent implements OnInit {
         ...ultima,
         valorCobr: this.converterRealParaDecimal(ultima.valorCobr),
         valorFrete: this.converterRealParaDecimal(ultima.valorFrete),
-        valorTotal: this.converterRealParaDecimal(ultima.valorTotal),
+        valorCompra: this.converterRealParaDecimal(ultima.valorCompra),
       };
 
       const [num, total] = (ultima.parcela || '1');
@@ -127,14 +161,15 @@ export class DashboardComponent implements OnInit {
       formaPag: [dadosBase.formaPag],
       obs: [dadosBase.obs],
       parcela: [dadosBase.parcela],
+      qtdParc: [dadosBase],
       loja: [dadosBase.loja],
       valorPago: [dadosBase.valorPago],
       valorCobr: [this.formatarDecimalParaReal(dadosBase.valorCobr)],
       dataVenc: [Validators.required],
       dataPag: [dadosBase.dataPag],
-      // Aqui uso a formatação:
+
       valorFrete: [this.formatarDecimalParaReal(dadosBase.valorFrete)],
-      valorTotal: [this.formatarDecimalParaReal(dadosBase.valorTotal)],
+      valorCompra: [this.formatarDecimalParaReal(dadosBase.valorCompra)],
     });
 
     novaCobranca.get('idCompra')?.valueChanges.subscribe(id => {
@@ -143,7 +178,7 @@ export class DashboardComponent implements OnInit {
           idForn: '',
           loja: '',
           valorFrete: '',
-          valorTotal: '',
+          valorCompra: '',
           numNota: '',
           numNF: ''
         });
@@ -157,7 +192,7 @@ export class DashboardComponent implements OnInit {
           idForn: compra.idForn,
           loja: compra.loja,
           valorFrete: this.formatarDecimalParaReal(compra.valorFrete),
-          valorTotal: this.formatarDecimalParaReal(compra.valorTotal),
+          valorCompra: this.formatarDecimalParaReal(compra.valorCompra),
           numNota: compra.numNota,
           numNF: compra.numNF
         });
@@ -167,7 +202,7 @@ export class DashboardComponent implements OnInit {
           idForn: '',
           loja: '',
           valorFrete: '',
-          valorTotal: '',
+          valorCompra: '',
           numNota: '',
           numNF: ''
         });
@@ -176,89 +211,100 @@ export class DashboardComponent implements OnInit {
 
 
     this.cobrancas.push(novaCobranca);
+
+    const totalParcelas = this.cobrancas.length;
+    this.cobrancas.controls.forEach((grupo, index) => {
+      grupo.get('qtdParc')?.setValue(totalParcelas.toString());
+
+    });
+
   }
-  /*calcularProximaDataVencimento(): string {
-    const cobrancas = this.cobrancas;
-    if (cobrancas.length === 0) return '';
-
-    const ultima = cobrancas.at(cobrancas.length - 1);
-    const dataAnteriorStr = ultima.get('dataVenc')?.value;
-
-    if (!dataAnteriorStr) return '';
-
-    const [ano, mes, dia] = dataAnteriorStr.split('-').map(Number);
-
-
-    const dataAtual = new Date(ano, mes - 1, dia);
-
-    const mesSomado = dataAtual.getMonth() + 1;
-    const novaData = new Date(dataAtual.getFullYear(), mesSomado, 1);
-
-
-    const ultimoDiaMes = new Date(novaData.getFullYear(), novaData.getMonth() + 1, 0).getDate();
-
-
-    const diaAjustado = Math.min(dia, ultimoDiaMes);
-
-    novaData.setDate(diaAjustado);
-
-
-    const pad = (n: number) => (n < 10 ? '0' + n : n);
-    return `${novaData.getFullYear()}-${pad(novaData.getMonth() + 1)}-${pad(novaData.getDate())}`;
-  }*/
-
-formatarCNPJ(event: any): void {
-  let valor = event.target.value.replace(/\D/g, '');
-
-  if (valor.length > 14) valor = valor.slice(0, 14);
-
-  let cnpjFormatado = valor;
-
-  if (valor.length > 12) {
-    cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
-  } else if (valor.length > 8) {
-    cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
-  } else if (valor.length > 5) {
-    cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
-  } else if (valor.length > 2) {
-    cnpjFormatado = valor.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+  filterFornecedores(event: Event): void {
+    const searchTerm = (event.target as HTMLInputElement).value.toLowerCase();
+    if (searchTerm.length > 0) {
+      this.filteredFornecedores = this.fornecedor.filter(f =>
+        f.fornecedo.toLowerCase().includes(searchTerm)
+      );
+    } else {
+      this.filteredFornecedores = [...this.fornecedor]; // Show all if input is empty
+    }
   }
+  onGenericFornecedorInput(event: any, campo: 'idForn' | 'idEmpFrete') {
+    const nome = event.target.value;
+    const fornecedor = this.fornecedor.find(f => f.fornecedo === nome);
 
-  this.formFornecedor.get('cnpj')?.setValue(cnpjFormatado, { emitEvent: false });
-}
+    if (fornecedor) {
+      this.formCompras.patchValue({ [campo]: fornecedor.id });
 
-formatarTelefone(event: any): void {
-  let valor = event.target.value.replace(/\D/g, '');
-  if (valor.length > 11) valor = valor.slice(0, 11);
+      if (campo === 'idForn') {
+        this.selectedFornecedor = fornecedor;
+      } else if (campo === 'idEmpFrete') {
+        this.selectedEmpresaFrete = fornecedor;
+      }
 
-  let formatado = valor;
+      console.log(`🆔 ${campo} capturado:`, fornecedor);
+    } else {
+      this.formCompras.patchValue({ [campo]: null });
 
-  if (valor.length > 10) {
-    formatado = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-  } else if (valor.length > 6) {
-    formatado = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-  } else if (valor.length > 2) {
-    formatado = valor.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+      if (campo === 'idForn') {
+        this.selectedFornecedor = null;
+      } else if (campo === 'idEmpFrete') {
+        this.selectedEmpresaFrete = null;
+      }
+    }
+  }
+  formatarCNPJ(event: any): void {
+    let valor = event.target.value.replace(/\D/g, '');
+
+    if (valor.length > 14) valor = valor.slice(0, 14);
+
+    let cnpjFormatado = valor;
+
+    if (valor.length > 12) {
+      cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+    } else if (valor.length > 8) {
+      cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+    } else if (valor.length > 5) {
+      cnpjFormatado = valor.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+    } else if (valor.length > 2) {
+      cnpjFormatado = valor.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+    }
+
+    this.formFornecedor.get('cnpj')?.setValue(cnpjFormatado, { emitEvent: false });
   }
 
-  this.formFornecedor.get('telefone')?.setValue(formatado, { emitEvent: false });
-}
-formatarTelefoneVendedor(event: any): void {
-  let valor = event.target.value.replace(/\D/g, '');
-  if (valor.length > 11) valor = valor.slice(0, 11);
+  formatarTelefone(event: any): void {
+    let valor = event.target.value.replace(/\D/g, '');
+    if (valor.length > 11) valor = valor.slice(0, 11);
 
-  let formatado = valor;
+    let formatado = valor;
 
-  if (valor.length > 10) {
-    formatado = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-  } else if (valor.length > 6) {
-    formatado = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-  } else if (valor.length > 2) {
-    formatado = valor.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+    if (valor.length > 10) {
+      formatado = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (valor.length > 6) {
+      formatado = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else if (valor.length > 2) {
+      formatado = valor.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+    }
+
+    this.formFornecedor.get('telefone')?.setValue(formatado, { emitEvent: false });
   }
+  formatarTelefoneVendedor(event: any): void {
+    let valor = event.target.value.replace(/\D/g, '');
+    if (valor.length > 11) valor = valor.slice(0, 11);
 
-  this.formFornecedor.get('teleVendedor')?.setValue(formatado, { emitEvent: false });
-}
+    let formatado = valor;
+
+    if (valor.length > 10) {
+      formatado = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (valor.length > 6) {
+      formatado = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    } else if (valor.length > 2) {
+      formatado = valor.replace(/^(\d{2})(\d{0,4})/, '($1) $2');
+    }
+
+    this.formFornecedor.get('teleVendedor')?.setValue(formatado, { emitEvent: false });
+  }
 
   confirmarCriarCobranca(): void {
     if (!this.ultimaCompra) return;
@@ -276,13 +322,14 @@ formatarTelefoneVendedor(event: any): void {
       formaPag: [''],
       obs: [''],
       parcela: ['1'],
+      qtdParc: [''],
       valorPago: [''],
       valorCobr: [this.formatarDecimalParaReal(this.ultimaCompra.valorCobr)],
       dataVenc: [''],
       dataPag: [''],
       loja: [this.ultimaCompra.loja],
       valorFrete: [this.formatarDecimalParaReal(this.ultimaCompra.valorFrete)],
-      valorTotal: [this.formatarDecimalParaReal(this.ultimaCompra.valorTotal)],
+      valorCompra: [this.formatarDecimalParaReal(this.ultimaCompra.valorCompra)],
     });
 
     console.log('🧾 Cobranca criada no form:', novaCobranca.value);
@@ -302,14 +349,7 @@ formatarTelefoneVendedor(event: any): void {
     return this.formCobrancas.get('cobrancas') as FormArray;
   }
 
-  constructor(
-    private route: ActivatedRoute,
-    private httpClient: HttpClient,
-    private router: Router,
-    private formBuilder: FormBuilder,
-    private spinner: NgxSpinnerService
 
-  ) { }
 
   get c(): any {
     return this.formCompras.controls;
@@ -338,21 +378,19 @@ formatarTelefoneVendedor(event: any): void {
           console.log(e.error);
         }
       });
-    this.httpClient.get(environment.financa + "/cobranca")
-      .subscribe({
-        next: (data) => {
-          this.cobranca = data as any[];
-        },
-        error: (e) => {
-          console.log(e.error);
-        }
-      });
+
+    this.carregarDadosCobrancas();
+
 
     this.httpClient.get(environment.financa + "/fornecedor")
       .subscribe({
         next: (data) => {
+
           this.fornecedor = data as any[];
           const modalFornecedorEl = document.getElementById('cadastrarFornecedor');
+          this.fornecedor = (data as any[]).sort((a, b) => {
+            return a.fornecedo.localeCompare(b.fornecedo);
+          });
           if (modalFornecedorEl) {
             modalFornecedorEl.addEventListener('hidden.bs.modal', () => {
               this.limparFormFornecedor();
@@ -367,35 +405,150 @@ formatarTelefoneVendedor(event: any): void {
 
   }
 
+
+  carregarDadosCobrancas(): void {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    const dataLimiteProximoVencimento = new Date();
+    dataLimiteProximoVencimento.setDate(hoje.getDate() + 5);
+    dataLimiteProximoVencimento.setHours(0, 0, 0, 0);
+
+    const formasIgnoradas = ['DINHEIRO', 'CHEQUE', 'TRANSFERÊNCIA'];
+
+    this.httpClient.get(environment.financa + "/cobranca/ativo")
+      .subscribe({
+        next: (data) => {
+          const cobrancasAtivas = data as any[];
+
+          // 🔴 FILTRO 1: VENCIDAS (EXCLUINDO DINHEIRO, CHEQUE, TRANSFERÊNCIA)
+          this.cobranca = cobrancasAtivas.filter((cobranca: any) => {
+            const dataVencimento = new Date(cobranca.dataVenc);
+            dataVencimento.setHours(0, 0, 0, 0);
+
+            const tipo = (cobranca.tipoCobr || '').toUpperCase();
+            return (
+              dataVencimento <= hoje &&
+              !formasIgnoradas.includes(tipo)
+            );
+          });
+          this.qtdCobrancasVencidas = this.cobranca.length;
+          console.log('💲 Cobranças ativas e vencidas (excluindo DINHEIRO, CHEQUE, TRANSFERÊNCIA):', this.cobranca);
+
+          // 🟡 FILTRO 2: Próximas ao vencimento (sem mudanças)
+          this.cobrancasProximoVencimento = cobrancasAtivas.filter((cobranca: any) => {
+            const dataVencimento = new Date(cobranca.dataVenc);
+            dataVencimento.setHours(0, 0, 0, 0);
+            return dataVencimento > hoje && dataVencimento <= dataLimiteProximoVencimento;
+          });
+          this.qtdCobrancasProximoVencimento = this.cobrancasProximoVencimento.length;
+
+          // 🔵 FILTRO 3: Vencidas no dia (sem mudanças)
+          this.cobrancasVencidasNoDia = cobrancasAtivas.filter((cobranca: any) => {
+            const dataVencimento = new Date(cobranca.dataVenc);
+            dataVencimento.setHours(0, 0, 0, 0);
+            return dataVencimento.getTime() === hoje.getTime();
+          });
+          this.qtdCobrancasVencidasNoDia = this.cobrancasVencidasNoDia.length;
+
+          // 🟢 FILTRO 4: A vencer (sem mudanças)
+          this.cobrancasAVencer = cobrancasAtivas.filter((cobranca: any) => {
+            const dataVencimento = new Date(cobranca.dataVenc);
+            dataVencimento.setHours(0, 0, 0, 0);
+            return dataVencimento > hoje && !cobranca.dataPag;
+          });
+          this.qtdCobrancasAVencer = this.cobrancasAVencer.length;
+
+
+          // 🔶 FILTRO 5: VENCIDAS COM PAGAMENTO MANUAL (DINHEIRO, CHEQUE, TRANSFERÊNCIA)
+          this.cobrancasSemPagamentos = cobrancasAtivas.filter((cobranca: any) => {
+            const dataVencimento = new Date(cobranca.dataVenc);
+            dataVencimento.setHours(0, 0, 0, 0);
+
+            const tipo = (cobranca.tipoCobr || '').toUpperCase();
+
+            return (
+              dataVencimento <= hoje &&
+              formasIgnoradas.includes(tipo)
+            );
+          });
+          this.qtdCobrancasSemPagamento = this.cobrancasSemPagamentos.length;
+          console.log('🔶 Cobranças vencidas com pagamento manual:', this.cobrancasSemPagamentos);
+
+
+
+        },
+
+
+        error: (e) => {
+          console.log('Erro ao carregar cobranças ativas:', e.error);
+        }
+      });
+
+    this.httpClient.get(environment.financa + "/Cobranca/inativo")
+      .subscribe({
+        next: (data) => {
+          const cobrancasInativas = data as any[];
+
+          // ✅ Cobranças pagas no mês (sem mudanças)
+          this.cobrancasPagasNoMes = cobrancasInativas.filter((cobranca: any) => {
+            if (!cobranca.dataPag) return false;
+            const dataPagamento = new Date(cobranca.dataPag);
+            return (
+              dataPagamento.getMonth() === hoje.getMonth() &&
+              dataPagamento.getFullYear() === hoje.getFullYear()
+            );
+          });
+          this.qtdCobrancasPagasNoMes = this.cobrancasPagasNoMes.length;
+
+          // ✅ Cobranças pagas no dia (sem mudanças)
+          this.cobrancasPagasNoDia = cobrancasInativas.filter((cobranca: any) => {
+            if (!cobranca.dataPag) return false;
+            const dataPagamento = new Date(cobranca.dataPag);
+            dataPagamento.setHours(0, 0, 0, 0);
+            return dataPagamento.getTime() === hoje.getTime();
+          });
+          this.qtdCobrancasPagasNoDia = this.cobrancasPagasNoDia.length;
+        },
+        error: (e) => {
+          console.log('Erro ao carregar cobranças inativas (pagas):', e.error);
+        }
+      });
+  }
+
+
+
+
+
   limparFormCompras(): void {
     this.formCompras.patchValue({
-      idForn: '',        
+      idForn: '',
       idEmpFrete: '',
       numNF: '',
       numNota: '',
       formaPag: '',
       formaPagFrete: '',
       obs: '',
-      valorNota: '',
+      valorNF: '',
       valorFrete: '',
-      valorTotal: '',
+      valorCompra: '',
       loja: '',
       dataNota: null,
       dataEntrega: null
     });
   }
   limparFormFornecedor(): void {
-  this.formFornecedor.patchValue({
-    empresa: '',
-    cnpj: '',
-    endereco: '',
-    telefone: '',
-    fornecedo: '',
-    tipoFornecedor: '',
-    vendedor: '',
-    teleVendedor: ''
-  });
-}
+    this.formFornecedor.patchValue({
+      empresa: '',
+      cnpj: '',
+      endereco: '',
+      telefone: '',
+      fornecedo: '',
+      tipoFornecedor: '',
+      vendedor: '',
+      teleVendedor: ''
+    });
+  }
 
 
   abrirModalCobranca(): void {
@@ -414,17 +567,48 @@ formatarTelefoneVendedor(event: any): void {
     const num = parseFloat(valor.replace(/\./g, '').replace(',', '.'));
     return isNaN(num) ? null : num;
   }
+  verificarCompraDuplicada(): boolean {
+    const novaCompra = this.formCompras.value;
+
+    const idForn = novaCompra.idForn;
+    const numNota = novaCompra.numNota?.trim();
+    const numNF = novaCompra.numNF?.trim();
+
+    const duplicada = this.compras.find(c =>
+      c.idForn === idForn &&
+      (
+        (c.numNota && c.numNota === numNota) ||
+        (c.numNF && c.numNF === numNF) ||
+        (c.numNota && c.numNF && c.numNota === numNota && c.numNF === numNF)
+      )
+    );
+
+    if (duplicada) {
+      console.warn("🚫 Compra duplicada detectada!", duplicada);
+      this.mensagemErro = "Já existe uma compra com esse fornecedor e número de nota ou NF.";
+      return true;
+    }
+
+    console.log("✅ Nenhuma duplicidade detectada.");
+    return false;
+  }
+
   CadastrarCompras(): void {
-    this.spinner.show();
+
+
+    if (this.verificarCompraDuplicada()) {
+      return;
+    }
 
 
     const formData = { ...this.formCompras.value };
 
 
 
-    formData.valorNota = formData.valorNota ? parseFloat((formData.valorNota + '').replace(',', '.')) : null;
+    formData.valorNF = formData.valorNF ? parseFloat((formData.valorNF + '').replace(',', '.')) : null;
     formData.valorFrete = formData.valorFrete ? parseFloat((formData.valorFrete + '').replace(',', '.')) : null;
-    formData.valorTotal = formData.valorTotal ? parseFloat((formData.valorTotal + '').replace(',', '.')) : null;
+    formData.valorCompra = formData.valorCompra ? parseFloat((formData.valorCompra + '').replace(',', '.')) : null;
+    formData.valorOutro = formData.valorOutro ? parseFloat((formData.valorOutro + '').replace(',', '.')) : null;
     formData.idEmpFrete = formData.idEmpFrete || 0;
     formData.dataEntrega = formData.dataEntrega || null;
     formData.dataNota = formData.dataNota || null;
@@ -433,19 +617,21 @@ formatarTelefoneVendedor(event: any): void {
         formData[key] = formData[key].toUpperCase();
       }
     });
-
+    this.spinner.show();
+    setTimeout(() => this.spinner.hide(), 3000);
+    console.log('🆔 ID do Fornecedor capturado:', formData.idForn);
     this.httpClient.post(environment.financa + "/compras", formData)
       .subscribe({
         next: (data: any) => {
           console.log('🔍 Resposta da API após cadastro de compra:', data);
           this.mensagem = data.message;
-          this.spinner.hide();
+
 
           this.ultimaCompra = {
             id: data.comprasGet.id,
             idForn: data.comprasGet.idForn,
             valorFrete: data.comprasGet.valorFrete ?? formData.valorFrete,
-            valorTotal: data.comprasGet.valorTotal ?? formData.valorTotal,
+            valorCompra: data.comprasGet.valorCompra ?? formData.valorCompra,
             numNota: data.comprasGet.numNota ?? formData.numNota,
             loja: data.comprasGet.loja ?? formData.loja,
             numNF: data.comprasGet.numNF ?? formData.numNF,
@@ -464,7 +650,7 @@ formatarTelefoneVendedor(event: any): void {
 
           setTimeout(() => {
             this.mensagem = null;
-          }, 5000);
+          }, 4000);
         },
 
         error: (e) => {
@@ -487,10 +673,14 @@ formatarTelefoneVendedor(event: any): void {
   }
 
 
-
+  cancelarCriacaoCobranca(): void {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarCobranca'));
+    modal?.hide(); // Fecha o modal
+    location.reload(); // Recarrega a página
+  }
 
   CadastrarCobranca(): void {
-    this.spinner.show();
+
 
     const cobrancasRaw = this.formCobrancas.get('cobrancas')?.value || [];
 
@@ -508,19 +698,21 @@ formatarTelefoneVendedor(event: any): void {
         valorPago: this.converterRealParaDecimal(copia.valorPago),
         valorCobr: this.converterRealParaDecimal(copia.valorCobr),
         valorFrete: this.converterRealParaDecimal(copia.valorFrete),
-        valorTotal: this.converterRealParaDecimal(copia.valorTotal),
+        valorCompra: this.converterRealParaDecimal(copia.valorCompra),
       };
     });
-
+    this.spinner.show();
+    setTimeout(() => this.spinner.hide(), 3000);
     this.httpClient.post(environment.financa + "/cobranca", cobrancasData)
       .subscribe({
         next: (data: any) => {
           this.mensagem = 'Cobranças cadastradas com sucesso!';
           this.formCobrancas.reset();
           this.cobrancas.clear();
-          this.spinner.hide();
-          setTimeout(() => this.mensagem = null, 2000);
+
+          setTimeout(() => this.mensagem = null, 4000);
           window.location.reload();
+
         },
         error: (e) => {
           console.log(e.error);
@@ -550,10 +742,9 @@ formatarTelefoneVendedor(event: any): void {
   get valorTotalCompra(): number {
     if (this.cobrancas.length === 0) return 0;
 
-    // Como o valor total está em cada cobrança, vamos pegar o valorTotal da primeira cobrança
-    // (assumindo que todas são da mesma compra)
-    const valorTotalStr = this.cobrancas.at(0).get('valorTotal')?.value;
-    return this.converterRealParaDecimal(valorTotalStr) ?? 0;
+
+    const valorCompraStr = this.cobrancas.at(0).get('valorCompra')?.value;
+    return this.converterRealParaDecimal(valorCompraStr) ?? 0;
   }
 
   get somaValorCobranca(): number {
@@ -573,7 +764,7 @@ formatarTelefoneVendedor(event: any): void {
 
   CadastrarFornecedo(): void {
 
-    this.spinner.show();
+
     const formData = this.formFornecedor.value;
     Object.keys(formData).forEach(key => {
       if (typeof formData[key] === 'string') {
@@ -582,7 +773,8 @@ formatarTelefoneVendedor(event: any): void {
     });
 
     console.log('Form Data:', formData);
-
+    this.spinner.show();
+    setTimeout(() => this.spinner.hide(), 3000);
     this.httpClient.post(environment.financa + "/fornecedor", this.formFornecedor.value)
       .subscribe({
         next: (data: any) => {
@@ -593,7 +785,7 @@ formatarTelefoneVendedor(event: any): void {
           this.spinner.hide();
           setTimeout(() => {
             this.mensagem = null;
-          }, 2000);
+          }, 1000);
           window.location.reload();
 
         },
@@ -619,7 +811,51 @@ formatarTelefoneVendedor(event: any): void {
   }
 
 
+  cadastrarDespesas(): void {
+    const formData = this.formDespesas.value;
 
+    formData.valor = formData.valor ? parseFloat((formData.valor + '').replace(',', '.')) : null;
+    Object.keys(formData).forEach(key => {
+      if (typeof formData[key] === 'string') {
+        formData[key] = formData[key].toUpperCase();
+      }
+    });
+    console.log('Form Data:', formData);
+
+    this.httpClient.post(environment.financa + "/despesas", this.formDespesas.value)
+      .subscribe({
+        next: (data: any) => {
+          this.mensagem = data.message;
+          this.formDespesas.reset();
+
+
+          this.spinner.hide();
+          setTimeout(() => {
+            this.mensagem = null;
+          }, 1000);
+          window.location.reload();
+
+        },
+        error: (e) => {
+          console.log(e.error);
+
+          this.spinner.hide();
+
+
+          if (e.status === 400 && e.error && e.error.message) {
+            this.mensagemErro = e.error.message;
+          } else if (e.error && e.error.message) {
+            this.mensagemErro = e.error.message;
+          } else {
+            this.mensagemErro = 'Erro inesperado ao cadastrar despesa.';
+          }
+          setTimeout(() => {
+            this.mensagemErro = null;
+          }, 5000);
+        }
+      });
+
+  }
 
 
 

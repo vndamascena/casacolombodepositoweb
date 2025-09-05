@@ -8,11 +8,13 @@
   <strong>{{mensagemErro}}</strong>
   <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
 </div>
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-left: 90px;margin-right: 140px; 
+                        margin-top: -10px; margin-bottom: 0px; padding: 1px;">
 
 
 
-  <div class="container mt-3">
+
+  <div class="container mt-2">
 
 
     <a class="navbar-brand" href="inicio">
@@ -20,8 +22,26 @@
 
     </a>
     <div class="container">
-      <h1 class="titulo"><strong>Consulta de fornecedores</strong></h1>
-      <div class="input-group mb-3 barra-pesquisa">
+      <div class="d-flex justify-content-center align-items-center mb-4 gap-2" style=" margin-left: 71px;margin-right: 140px; 
+                        margin-top: -10px; margin-bottom: 0px; padding: 1px;">
+        <div>
+          <button class="btn btn-outline-success " routerLink="/compras">
+            <i class="bi bi-truck me-1"></i> Compras
+          </button>
+
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-outline-success" routerLink="/cobranca">
+            <i class="bi bi-cash-coin me-1"></i> Cobranças
+          </button>
+
+        </div>
+
+
+
+
+      </div>
+      <div class="input-group mb-3 barra-pesquisa ">
         <input type="text" class="form-control lupa" placeholder="Digite o nome Fornecedo" aria-label="Pesquisar"
           aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarFornecedores()">
         <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
@@ -55,40 +75,48 @@
   </strong>
 </div>
 
-<div class="table-responsive container mt-3 ">
+<div class="table-responsive  " style="padding:  10px;">
 
 
 
 
-  <table class="table">
+  <table class="table" style="font-weight: bold;">
     <!-- Cabeçalho da tabela -->
     <thead>
       <tr>
-        <th>CNPJ</th>
-        <th>Razao Soc</th>
-        <th>Nome</th>
-        <th>Vendedor</th>
-        <th>Tipo</th>
-        <th>Tel Vendedor</th>
-        <th>Tel Fornecedor</th>
-        <th>Operação</th>
+        
+        
+        <th style="width: 10%;">Nome</th>
+        <th style="width: 8%;">Vendedor</th>
+        <th style="width: 8%;">Tipo</th>
+        <th style="width: 7%;">Tel Vend</th>
+        <th style="width: 7%;">Tel Forn</th>
+        <th style="width: 3%;">Obs</th>
+        <th style="width: 3%;">Editar</th>
 
       </tr>
     </thead>
     <!-- Corpo da tabela -->
     <ng-container
-      *ngFor="let fornecedor of fornecedores | paginate: { itemsPerPage: 15, currentPage: p }; let i = index">
+      *ngFor="let fornecedor of fornecedores | paginate: { itemsPerPage: 50, currentPage: p }; let i = index">
       <tr [ngStyle]="{'background-color': getColor(i)}">
-        <td>{{ fornecedor.cnpj || '-' }}</td>
-        <td>{{ fornecedor.empresa || '-' }}</td>
+       
+        
         <td>{{ fornecedor.fornecedo || '-' }}</td>
         <td>{{ fornecedor.vendedor || '-' }}</td>
         <td>{{ fornecedor.tipoFornecedor || '-' }}</td>
-        <td>{{ fornecedor.telVendedor || '-' }}</td>
+        <td>{{ fornecedor.teleVendedor || '-' }}</td>
         <td>{{ fornecedor.telefone || '-' }}</td>
         <td>
-          <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#edicaoFornecedor">
-            Editar
+          <button class="btn btn-sm" [ngClass]="fornecedor.obs ? 'btn-primary' : 'btn-outline-secondary'"
+            [style.background-color]="fornecedor.obs ? '#0d6efd' : 'transparent'"
+            (click)="mostraObservacao(fornecedor)"></button>
+        </td>
+
+        <td>
+          <button class="btn btn-outline-success btn-sm" (click)="onEdite(fornecedor.id)" data-bs-toggle="modal"
+            data-bs-target="#edicaoFornecedor">
+
           </button>
         </td>
 
@@ -117,7 +145,7 @@
 
 </div>
 
-<!--<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="edicaoFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -128,77 +156,8 @@
       </div>
       <div class="modal-body">
 
-        <form [formGroup]="form">
-          
-          <div class="container">
-            <div class="row justify-content-center">
-              <div class="col-md-8">
-                
-                <div class="row">
-                  <div class="col-md-10">
-                    <label><strong>Fornecedor</strong></label>
-                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="nome" />
-                  </div>
-                  <div class="col-md-10">
-                    <label><strong>Fornecedor / Produto</strong></label>
-                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="forneProdu" />
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-md-10">
-                    <label><strong>Tipo</strong></label>
-                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="tipo" />
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-md-10">
-                    <label><strong>Vendedor</strong></label>
-                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="vendedor" />
-                  </div>
-                  <div class="col-md-10">
-                    <label><strong>Tel - Vendedor</strong></label>
-                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="telVen" />
-                  </div>
-                  <div class="col-md-10">
-                    <label><strong>Tel - Fornecedor</strong></label>
-                    <input type="text" class="form-control" placeholder="Digite aqui" formControlName="telFor" />
-                  </div>
-                </div>
-                <hr>
-              </div>
-            </div>
-          </div>
-        </form>
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-
-          Cancelar
-        </button>
-        <button type="button" class="btn btn-success">
-          Confirmar edição</button>
-      </div>
-    </div>
-  </div>
-</div>-->
-
-
-
-
-
-<div class="modal fade" id="cadastrarFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar Fornecedor</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
         <form [formGroup]="formFornecedor">
+
           <div class="container text-center">
             <div class="row justify-content-center">
               <div class="col-12">
@@ -212,8 +171,8 @@
                   </div>
                   <div class="col-md-6">
                     <label><strong>CNPJ</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00" formControlName="cnpj"
-                      (input)="formatarCNPJ($event)" />
+                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00"
+                      formControlName="cnpj" (input)="formatarCNPJ($event)" />
                   </div>
                 </div>
 
@@ -257,11 +216,121 @@
                   </div>
                 </div>
 
-                <div class="row mt-3">
-                  <div class="col-md-6 offset-md-3">
+                <div class="row mb-3">
+                  <div class="col-md-6">
                     <label><strong>Tel - Vendedor</strong></label>
                     <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
                       formControlName="teleVendedor" (input)="formatarTelefoneVendedor($event)" />
+                  </div>
+                  <div class="col-md-6 ">
+                    <label><strong>obs</strong></label>
+                    <textarea class="form-control text-center" placeholder="Observação"
+                      formControlName="obs"></textarea>
+                  </div>
+                </div>
+
+                <hr>
+
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-success" (click)="onSubmit()">
+          Confirmar edição</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="cadastrarFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered ">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar Fornecedor</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="formFornecedor">
+          <div class="container text-center">
+            <div class="row justify-content-center">
+              <div class="col-12">
+
+                <!-- Primeira linha -->
+                <div class="row mb-2">
+                  <div class="col-md-6">
+                    <label><strong>Razão social</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="empresa" />
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>CNPJ</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00"
+                      formControlName="cnpj" (input)="formatarCNPJ($event)" />
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <div class="col-md-12">
+                    <label><strong>Endereço</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="endereco" />
+                  </div>
+                </div>
+
+                <hr>
+
+                <!-- Segunda linha -->
+                <div class="row mb-2">
+                  <div class="col-md-6">
+                    <label><strong>Telefone</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
+                      formControlName="telefone" (input)="formatarTelefone($event)" />
+
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>Fornecedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="fornecedo" />
+                  </div>
+                </div>
+
+                <div class="row mb-2">
+                  <div class="col-md-6">
+                    <label><strong>Tipo Fornecedor</strong></label>
+                    <select class="form-select text-center" formControlName="tipoFornecedor">
+                      <option value=""> Selecione </option>
+                      <option *ngFor=" let tipo of tipoFornec" [value]="tipo">{{tipo}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>Vendedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="vendedor" />
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label><strong>Tel - Vendedor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
+                      formControlName="teleVendedor" (input)="formatarTelefoneVendedor($event)" />
+                  </div>
+                  <div class="col-md-6 ">
+                    <label><strong>obs</strong></label>
+                    <textarea class="form-control text-center" placeholder="Observação"
+                      formControlName="obs"></textarea>
                   </div>
                 </div>
 
@@ -279,6 +348,27 @@
           <button type="button" class="btn btn-success" data-bs-dismiss="modal"
             (click)="CadastrarFornecedo()">Cadastrar</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalObservacao" tabindex="-1" aria-hidden="true" style="text-align: center;">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center w-100"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Observação:</strong></p>
+        <div class="texto-obs">{{ observacaoSelecionada.obs || 'Nenhuma' }}</div>
+        <br>
+         <p><strong>CNPJ e razão social:</strong> <br>{{ observacaoSelecionada.cnpj || 'Nenhuma' }}
+        <br>{{observacaoSelecionada.empresa}}</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
       </div>
     </div>
   </div>

@@ -12,3 +12,37 @@
 .piscar {
   animation: piscar 1s infinite;
 }
+
+.dropdown {
+  position: relative;
+}
+.dropdown-menu {
+    display: none; 
+    position: absolute;
+    background-color: #036822; 
+    border: none;
+    box-shadow: none;
+    min-width: 100%;
+    z-index: 1000;
+    top: 100%;
+     left: 0;
+}
+
+.dropdown-menu .dropdown-item {
+    background-color: #ffffff;
+    color: #036822;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    color: #ffffff;
+    background-color: #87c746;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+
+.dropdown-submenu:hover .dropdown-menu {
+    display: block;
+}

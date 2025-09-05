@@ -1,4 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+<nav class="navbar navbar-expand-lg navbar-dark"
+    style="background-color: #ffffff; margin-bottom: 0px; padding: 0px;  margin-left: 90px;margin-right: 140px;  margin-top: -10px;">
 
 
 
@@ -9,21 +10,39 @@
             <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
 
         </a>
-        <div class="container">
-            <h1 class="titulo"><strong>Ocorrências</strong></h1>
-            <div class="input-group mb-3 barra-pesquisa">
-                <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
-                    aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
-                    (input)="filtrarOcorrencias()">
-                      <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
-                <div class="overlay" (click)="filtrarOcorrencias()"></div>
+        <div class="container mt-5 pt-5">
+
+
+            <div class="input-group pt-0 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Pesquisar" [(ngModel)]="expression"
+                    (input)="aplicarFiltros()">
+                <i class=" bi-trash-fill btn-clear" (click)="limparPesquisa()"></i>
+                <div class="overlay" (click)="aplicarFiltros()"></div>
+            </div>
+            <div class="mb-3 d-flex gap-3 align-items-center  justify-content-center">
+
+                <div>
+                    <label for="dataInicio" class="form-label"></label>
+                    <input id="dataInicio" type="date" class="form-control" [(ngModel)]="startDate"
+                        (change)="aplicarFiltros()">
+                </div>
+
+                <div>
+                    <label for="dataFim" class="form-label"></label>
+                    <input id="dataFim" type="date" class="form-control" [(ngModel)]="endDate"
+                        (change)="aplicarFiltros()">
+                </div>
+
+
+
             </div>
 
         </div>
 
 
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 15px;">
             <ul class="navbar-nav">
+
                 <li class="nav-item">
                     <a class="nav-link black-text" routerLink="/ocorrencia">
                         <img src="/assets/2.png" alt="Ícone de Consulta" width="110" height="110">
@@ -40,6 +59,7 @@
                     </a>
                 </li>
 
+
             </ul>
         </div>
 
@@ -53,56 +73,56 @@
     <strong>{{mensagem}}</strong>
     <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
 </div>
-<div class="table-responsive container mt-3 ">
+<div class="table-responsive container  ">
+    <button class="btn btn-success mt-8" (click)="abrirFormularioCredenciais(ocorrencia)"
+        [disabled]="selecionados.length === 0">
+        Concluir Selecionados ({{ selecionados.length }})
+    </button>
 
 
-    <div class="row mb-2 align-items-end">
-        <div class="col-md-2">
-            <label for="startDate">Data Inicial:</label>
-            <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDate = $event; filterData()">
-        </div>
-        <div class="col-md-2">
-            <label for="endDate">Data Final:</label>
-            <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDate = $event; filterData()">
-        </div>
-       
-    </div>
-    
+
     <table class="table">
         <!-- Cabeçalho da tabela -->
         <thead>
             <tr>
+                <th>✓</th>
                 <th>Id</th>
                 <th>Usuário</th>
                 <th width="100">Ocorrência</th>
                 <th width="70">Código</th>
                 <th>Nome do Produto</th>
+                <th>Qtd</th>
                 <th width="70">N° nota</th>
                 <th>Fornecedor</th>
                 <th>Observação</th>
                 <th>Loja</th>
                 <th>Data</th>
-                <th>Operação</th>
+                <th>Op</th>
             </tr>
         </thead>
         <!-- Corpo da tabela -->
         <ng-container *ngFor="let ocorrencia of ocorrencias | paginate: { itemsPerPage: 10, currentPage: p }">
             <tr>
+                <td>
+                    <input type="checkbox" [(ngModel)]="ocorrencia.selected" (change)="updateSelection(ocorrencia)" />
+                </td>
                 <td>{{ocorrencia.id}}</td>
                 <td width="100">{{ocorrencia.nome| uppercase}}</td>
                 <td>{{ocorrencia.tipoOcorrencia.nome}}</td>
                 <td>{{ocorrencia.codProduto}}</td>
                 <td>{{ocorrencia.produto}}</td>
+                <td>{{ocorrencia.quantidade}}</td>
                 <td>{{ocorrencia.numeroNota}}</td>
                 <td width="100">{{ocorrencia.fornecedorGeral.nome}}</td>
                 <td class="observacao">{{ocorrencia.observacao}}</td>
                 <td width="70">{{ocorrencia.loja.nome}}</td>
                 <td [ngClass]="{'text-danger': isDateOlderThanThreeDays(ocorrencia.dataTime)}">
-                    {{ocorrencia.dataTime | date:'dd/MM/yyyy - HH:mm'}}
-                </td>   
+                    {{ocorrencia.dataTime | date:'dd/MM/yyyy'}}
+                </td>
                 <td width="100">
-                    <button class="btn btn-sm btn-outline-success me-2" (click)="abrirFormularioCredenciais(ocorrencia.id)">
-                        <strong>Concluir</strong>
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#opcoes' + ocorrencia.id">
+
                     </button>
                 </td>
             </tr>
@@ -128,6 +148,68 @@
 
 </div>
 
+
+<div *ngFor="let ocorr of ocorrencias">
+    <div class="modal fade" [attr.id]="'opcoes' + ocorr.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+                        Cobrança com vencimento em {{ ocorr.dataVenc | date: 'dd/MM/yyyy' }}
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Verifique os dados e escolha uma ação</p>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-4">Produto:</div>
+                        <div class="col-md-7">{{ocorr.produto| uppercase}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Codígo:</div>
+                        <div class="col-md-7">{{ocorr.codProduto}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Fornecedor:</div>
+                        <div class="col-md-7">{{ocorr.fornecedorGeral.nome}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">N° Nota:</div>
+                        <div class="col-md-7">{{ocorr.numeroNota}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">Loja:</div>
+                        <div class="col-md-7">{{ocorr.loja.nome}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">Quantidade:</div>
+                        <div class="col-md-7">{{ocorr.quantidade}}</div>
+                    </div>
+
+
+
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-success" (click)="abrirFormularioCredenciais(ocorr)"
+                        data-bs-dismiss="modal">Concluir</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Excluir</button>
+                    <button type="button" class="btn btn-dark" (click)="onEdite(ocorr.id)" data-bs-toggle="modal"
+                        data-bs-target="#edicaoOcorrencia">
+                        Editar
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="formulario-credenciais text-center" *ngIf="ocorr && ocorr === ocorr">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
     <h4>Confirme a sua venda</h4>
@@ -140,7 +222,124 @@
         <label for="senhaInput" class="form-label">Senha</label>
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
-    <button class="btn btn-outline-light" (click)="concluirOcorrencia(ocorrencia)"
-        style="font-weight: bold;">Confirmar
+    <button class="btn btn-outline-light" (click)="concluirOcorrencia(ocorr)"
+        style="font-weight: bold;">Confirmar</button>
+
+    <button class="btn btn-outline-light" (click)="concluirSelecionados()" style="font-weight: bold;">Confirmar
+        selecionados
     </button>
+
+</div>
+
+<div class="modal fade" id="edicaoOcorrencia" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">
+                    Edição de ocorrência
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form [formGroup]="form">
+
+                    <div class="row justify-content-center text-center">
+
+                        <div class="col-md-2 text-center">
+                            <label><strong>Id</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="ID" formControlName="id" />
+
+                        </div>
+                        <div class="col-md-6">
+                            <label><strong>Nome do produto</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"
+                                formControlName="produto" />
+                            <div class="text-danger" *ngIf="f['produto'].touched && f['produto'].invalid">
+                                Por favor, informe um nome válido de 4 a 30 caracteres.
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                    <div class="row justify-content-center">
+
+
+                        <div class="col-md-2">
+                            <label><strong>Codígo </strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"
+                                formControlName="codProduto" />
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <label><strong>N° da nota</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"
+                                formControlName="numeroNota" />
+
+                        </div>
+                        <div class="col-md-2 text-center">
+                            <label><strong>Qtd</strong></label>
+                            <input type="text" class="form-control" placeholder="Digite aqui"
+                                formControlName="quantidade" />
+                        </div>
+
+                        <!-- <div class="col-md-5 text-center">
+                            <label><strong>Fornecedor</strong></label>
+                            <select class="form-select" formControlName="fornecedorGeralId">
+                                <option value="">Selecione um fornecedor</option>
+                                <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase }}</option>
+                            </select>
+
+
+                        </div>
+
+                        <div class="col-md-3 text-center">
+                            <label><strong>Tipo ocorrência</strong></label>
+                            <select class="form-select" formControlName="tipoOcorrenciaId">
+                                <option value="">Selecione um</option>
+                                <option *ngFor="let f of tipoOcorrencias" [value]="f.id">
+                                    {{ f.nome | uppercase }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 text-center">
+                            <label><strong>Loja</strong></label>
+                            <select class="form-select" formControlName="lojaId">
+                                <option value="">Selecione uma </option>
+                                <option *ngFor="let l of lojas" [value]="l.id">{{ l.nome | uppercase }}</option>
+                            </select>
+                        </div>-->
+
+
+                    </div>
+
+                    <hr>
+                    <div class="row justify-content-center text-center">
+
+
+
+
+                        <div class="row justify-content-center text-center">
+                            <div class="col-md-8">
+                                <label><strong>Observação</strong></label>
+                                <textarea class="form-control" placeholder="Digite aqui"
+                                    formControlName="observacao"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-success" (click)="onSubmit()" data-bs-dismiss="modal">
+                    Confirmar edição</button>
+            </div>
+        </div>
+    </div>
 </div>

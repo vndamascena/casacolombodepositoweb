@@ -1,0 +1,270 @@
+<br>
+
+
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div *ngIf="mensagemErro" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>{{mensagemErro}}</strong>
+    <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-left: 90px;margin-right: 140px; 
+                        margin-top: -40px; margin-bottom: 0px; padding: 1px;">
+
+    <div class="container mt-3">
+
+
+        <a class="navbar-brand" href="inicio">
+            <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
+
+        </a>
+
+        <div class="container pt-5">
+            <div class="d-flex justify-content-center align-items-center mb-4 gap-2">
+
+                <div class="dropdown">
+                    <button class="btn btn-outline-success" routerLink="/cobranca">
+                        <i class="bi bi-cash-coin me-1"></i> Cobranças
+                    </button>
+
+                </div>
+
+
+                <div>
+                    <button class="btn btn-outline-success " routerLink="/fornecedor">
+                        <i class="bi bi-truck me-1"></i> Fornecedor
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="input-group mb-3 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Pesquisar" aria-label="Pesquisar"
+                    aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarCompras()">
+                <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+                <div class="overlay" (click)="filtrarCompras()"></div>
+
+            </div>
+            <div class="mb-1 d-flex gap-3 align-items-center  justify-content-center">
+
+                <div>
+                    <label for="dataInicio" class="form-label"></label>
+                    <input id="dataInicio" type="date" class="form-control" [(ngModel)]="dataInicio"
+                        (change)="filtrarCompras()">
+                </div>
+
+                <div>
+                    <label for="dataFim" class="form-label"></label>
+                    <input id="dataFim" type="date" class="form-control" [(ngModel)]="dataFim"
+                        (change)="filtrarCompras()">
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 85px;">
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link black-text mb-3 ">
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110"
+                            data-bs-toggle="modal" data-bs-target="#despesas">
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+
+
+
+    </div>
+
+</nav>
+
+
+
+
+<div class="line container mt-3  "></div>
+<br>
+
+
+<div class="table-responsive   container mt-3 ">
+
+
+
+
+    <table class="table">
+
+        <thead>
+            <tr>
+                <th style="width: 4%;">Id</th>
+                <th style="width: 13%;">Local</th>
+                <th style="width: 10%;">Despesa</th>
+                <th style="width: 3%;">Loja</th>
+                <th style="width: 7%;">Qtd</th>
+                <th style="width: 11%;">Pago</th>
+                <th style="width: 10%;">Valor</th>
+
+                <th style="width: 8%;">Data compra</th>
+
+                <th>Obs</th>
+
+
+
+            </tr>
+        </thead>
+
+        <ng-container
+            *ngFor="let despesas of despesasFiltradas | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;">
+
+            <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
+
+                <td>{{despesas.id}}</td>
+                <td>{{despesas.nomeLocal}}</td>
+                <td>{{despesas.nomeDespesa}}</td>
+                <td>{{despesas.loja}}</td>
+                <td>{{despesas.quantidade}}</td>
+                <td>{{despesas.formaPagamento}}</td>
+
+                <td>R$ {{ despesas.valor != null ? despesas.valor.toLocaleString('pt-BR', {
+                    minimumFractionDigits:
+                    2, maximumFractionDigits: 2 }) : '-'}}</td>
+                <td>{{despesas.dataCompra | date: 'dd/MM/yyyy'}}</td>
+                <td>{{despesas.observacao}} </td>
+
+
+
+
+
+            </tr>
+        </ng-container>
+
+    </table>
+
+
+    <tfoot>
+        <tr>
+            <td colspan="14" class="text-start">
+                <strong>
+                    Quantidade exibida: {{ despesasFiltradas.length }}
+                    <span *ngIf="despesas.length !== despesas.length">
+                        (de um total de {{ despesas.length }})
+                    </span>
+                </strong>
+            </td>
+        </tr>
+    </tfoot>
+
+
+
+
+
+</div>
+
+
+<div class="modal fade" id="despesas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar despesas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formDespesas">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+
+                                <!-- Primeira linha -->
+                                <div class="row mb-10">
+                                    <div class="col-md-6">
+                                        <label><strong>Nome</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                                            formControlName="nomeLocal" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label><strong>Despesa</strong></label>
+                                        <select class="form-select text-center" formControlName="nomeDespesa">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor=" let form of tipoDespesa" [value]="form">{{form}}</option>
+                                        </select>
+
+
+
+
+
+                                    </div>
+                                </div>
+                                <hr>
+                                <!-- Segunda linha -->
+                                <div class="row mb-12 row justify-content-center">
+                                    <div class="col-md-3">
+                                        <label><strong>Valor</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="R$ 0,00"
+                                            formControlName="valor" />
+
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label><strong>Quantidade</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="x"
+                                            formControlName="quantidade" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label><strong>Loja</strong></label>
+                                        <select class="form-select " formControlName="loja">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label><strong>Pagamento</strong></label>
+                                        <select class="form-select text-center" formControlName="formaPagamento">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <hr>
+
+                                <div class="row mb-18 justify-content-center">
+                                    <div class="col-md-5">
+                                        <label><strong>Data compra</strong></label>
+                                        <input type="date" class="form-control text-center"
+                                            formControlName="dataCompra" />
+                                    </div>
+                                    <div class="col-md-7 ">
+                                        <label><strong>Obs</strong></label>
+                                        <textarea class="form-control text-center" placeholder="Observação"
+                                            formControlName="observacao"></textarea>
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="cadastrarDespesas()">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>>

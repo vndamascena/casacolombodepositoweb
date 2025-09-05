@@ -1,2 +1,653 @@
 <br>
-<h1>CASA COLOMBO COMPRAS</h1>
+
+<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>{{mensagem}}</strong>
+  <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div *ngIf="mensagemErro" class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>{{mensagemErro}}</strong>
+  <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #ffffff; margin-left: 90px;margin-right: 140px; 
+                        margin-top: -40px; margin-bottom: 0px; padding: 1px;">
+
+  <div class="container mt-3">
+
+
+    <a class="navbar-brand" href="inicio">
+      <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
+
+    </a>
+
+    <div class="container pt-5">
+      <div class="d-flex justify-content-center align-items-center mb-4 gap-2">
+
+        <div class="dropdown">
+          <button class="btn btn-outline-success" routerLink="/cobranca">
+            <i class="bi bi-cash-coin me-1"></i> Cobranças
+          </button>
+
+        </div>
+
+
+        <div>
+          <button class="btn btn-outline-success " routerLink="/fornecedor">
+            <i class="bi bi-truck me-1"></i> Fornecedor
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="input-group mb-3 barra-pesquisa">
+        <input type="text" class="form-control lupa" placeholder="Pesquisar" aria-label="Pesquisar"
+          aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarCompras()">
+        <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+        <div class="overlay" (click)="filtrarCompras()"></div>
+
+      </div>
+      <div class="mb-1 d-flex gap-3 align-items-center  justify-content-center">
+
+        <div>
+          <label for="dataInicio" class="form-label"></label>
+          <input id="dataInicio" type="date" class="form-control" [(ngModel)]="dataNotaInicio"
+            (change)="filtrarCompras()">
+        </div>
+
+        <div>
+          <label for="dataFim" class="form-label"></label>
+          <input id="dataFim" type="date" class="form-control" [(ngModel)]="dataNotaFim" (change)="filtrarCompras()">
+        </div>
+
+      </div>
+
+
+    </div>
+
+
+
+    <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 85px;">
+      <ul class="navbar-nav">
+
+        <li class="nav-item">
+          <a class="nav-link black-text mb-3 ">
+            <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110" data-bs-toggle="modal"
+              data-bs-target="#cadastrarCompras">
+          </a>
+        </li>
+
+
+      </ul>
+    </div>
+
+
+
+  </div>
+
+</nav>
+
+
+
+
+<div class="line container mt-3  "></div>
+<br>
+
+<div class="col text-center"><strong>
+    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo"></pagination-controls>
+  </strong>
+</div>
+<div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
+  <strong>{{mensagem}}</strong>
+  <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+
+
+<div class="table-responsive container mt-3 ">
+
+
+
+
+  <table class="table">
+
+    <thead>
+      <tr>
+        <th style="width: 4%;">ID</th>
+        <th style="width: 10%;">Fornecedor</th>
+        <th style="width: 8%;">NF</th>
+        <th style="width: 6%;">N° nota</th>
+        <th style="width: 3%;">Loja</th>
+        <th style="width: 12%;">Forma pg</th>
+        <th style="width: 8%;">Data nota</th>
+        <th style="width: 4%;">Data entrega</th>
+        <th style="width: 10%;">Valor </th>
+        <th style="width: 10%;">Valor cobrança</th>
+        <th style="width: 4%;">Obs</th>
+
+
+
+      </tr>
+    </thead>
+
+    <ng-container
+      *ngFor="let compra of comprasFiltradas | paginate: { itemsPerPage: 50, currentPage: p }; let i = index; trackBy: trackByCompraId">
+
+      <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
+        <td>
+
+          <a [routerLink]="['/cobranca']" [queryParams]="{ idCompra: compra.id }"
+            style="color: rgb(6, 68, 255); text-decoration: none; background-color: transparent; font-weight: bold;"
+            class="clickable-id"> {{compra.id}}
+          </a>
+        </td>
+        <td (click)="atualizarCompra(compra.id)" data-bs-toggle="modal" data-bs-target="#atualizarCompra"
+          style="cursor: pointer;">
+          {{ compra.nomeFornecedor || '-' }}
+        </td>
+
+        <td>{{compra.numNF}}</td>
+        <td>{{compra.numNota}}</td>
+        <td>{{ compra.loja || '-' }}</td>
+
+        <td>{{ compra.formaPag || '-' }}</td>
+        <td>{{compra.dataNota | date: 'dd/MM/yyyy'}}</td>
+        <td>{{compra.dataEntrega | date: 'dd/MM/yyyy'}}</td>
+        <td>R$ {{((compra.valorCompra || 0) + (compra.valorFrete || 0)).toLocaleString('pt-BR',
+          {minimumFractionDigits: 2, maximumFractionDigits: 2})}}</td>
+        <td [ngStyle]="!valoresIguais(compra.valorTotalBoleto || 0, (compra.valorCompra || 0) + (compra.valorFrete || 0))
+                        ? { 'color': 'red', 'font-weight': 'bold' } : {}" data-bs-toggle="popover"
+          [attr.data-bs-title]="'Cobranças da Compra ID: ' + compra.id"
+          [attr.data-bs-content]="getCobrancasParaCompra(compra.id)" data-bs-html="true" data-bs-trigger="hover"
+          data-bs-placement="right" #popoverTrigger>
+          R$ {{ compra.valorTotalBoleto != null
+          ? compra.valorTotalBoleto.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits:
+          2}) : '-' }}
+        </td>
+
+
+        <td>
+          <button class="btn btn-sm" [ngClass]="compra.obs ? 'btn-primary' : 'btn-outline-secondary'"
+            [style.background-color]="compra.obs ? '#0d6efd' : 'transparent'"
+            (click)="mostraObservacao(compra)"></button>
+        </td>
+
+      </tr>
+    </ng-container>
+
+  </table>
+
+
+  <tfoot>
+    <tr>
+      <td colspan="14" class="text-start">
+        <strong>
+          Quantidade exibida: {{ comprasFiltradas.length }}
+          <span *ngIf="compras.length !== compras.length">
+            (de um total de {{ compras.length }})
+          </span>
+        </strong>
+      </td>
+    </tr>
+  </tfoot>
+</div>
+
+<div class="col text-center"><strong>
+    <pagination-controls (pageChange)="onPageChange($event)" previousLabel="Anterior"
+      nextLabel="Próximo"></pagination-controls></strong>
+</div>
+
+<div class="modal fade" id="cadastrarCompras" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar compras</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="formCompras">
+            <div class="container text-center">
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <!-- Primeira linha -->
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label><strong>Fornecedor</strong></label>
+                      <input type="text" class="form-control" [value]="selectedFornecedor?.fornecedo || ''"
+                        (input)="onGenericFornecedorInput($event, 'idForn')" list="fornecedoresList"
+                        placeholder="Digite o nome do fornecedor" />
+                    </div>
+
+                    <!-- EMPRESA FRETE -->
+                    <div class="col-md-3">
+                      <label><strong>Empresa frete</strong></label>
+                      <input type="text" class="form-control" [value]="selectedEmpresaFrete?.fornecedo || ''"
+                        (input)="onGenericFornecedorInput($event, 'idEmpFrete')" list="fornecedoresList"
+                        placeholder="Digite o nome da empresa de frete" />
+                    </div>
+
+                    <!-- ÚNICO DATALIST COMPARTILHADO -->
+                    <datalist id="fornecedoresList">
+                      <option *ngFor="let f of fornecedor" [value]="f.fornecedo"></option>
+                    </datalist>
+                    <div class="col-md-2">
+                      <label><strong>N° nota fiscal</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNF" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>N° Nota</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Loja</strong></label>
+                      <select class="form-select " formControlName="loja">
+
+                        <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row justify-content-center">
+                    <div class="col-md-2">
+                      <label><strong>Valor compra</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorCompra" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor NF</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorNF" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor outros</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorOutro" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Forma de pag</strong></label>
+                      <select class="form-select " formControlName="formaPag">
+
+                        <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-2">
+                      <label><strong>Data nota</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Data entrega</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataEntrega" />
+                    </div>
+
+                  </div>
+
+                  <hr>
+                  <div class="row justify-content-center ">
+
+                    <div class="col-md-2">
+                      <label><strong>Forma pag frete</strong></label>
+                      <select class="form-select " formControlName="formaPagFrete">
+                        <option value=""> Selecione </option>
+                        <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor frete</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorFrete" />
+                    </div>
+
+                    <div class="col-md-6 ">
+                      <label><strong>Observação</strong></label>
+                      <textarea class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="obs"></textarea>
+                    </div>
+                  </div>
+                  <hr>
+
+
+                  <div class="modal-footer text-center">
+                    <div class="w-100">
+                      <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="CadastrarCompras()">Cadastrar</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<div class="modal fade" id="atualizarCompra" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-content">
+        <div class="modal-header text-center">
+          <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Atualizar compras</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="formCompras">
+            <div class="container text-center">
+              <div class="row justify-content-center">
+                <div class="col-12">
+                  <!-- Primeira linha -->
+                  <div class="row">
+                    <div class="col-md-3">
+                      <label><strong>Fornecedor</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="Fornecedor"
+                        formControlName="idForn" />
+                    </div>
+
+
+                    <div class="col-md-3">
+                      <label><strong>Empresa frete</strong></label>
+
+                      <input type="text" class="form-control text-center" placeholder="Fornecedor"
+                        formControlName="idEmpFrete" />
+
+                    </div>
+
+                    <!-- ÚNICO DATALIST COMPARTILHADO -->
+                    <datalist id="fornecedoresList">
+                      <option *ngFor="let f of fornecedor" [value]="f.fornecedo"></option>
+                    </datalist>
+                    <div class="col-md-2">
+                      <label><strong>N° nota fiscal</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNF" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>N° Nota</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Loja</strong></label>
+                      <select class="form-select " formControlName="loja">
+
+                        <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row justify-content-center">
+                    <div class="col-md-2">
+                      <label><strong>Valor compra</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorCompra" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor NF</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorNF" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor outros</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorOutro" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Forma de pag</strong></label>
+                      <select class="form-select " formControlName="formaPag">
+
+                        <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-md-2">
+                      <label><strong>Data nota</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataNota" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Data entrega</strong></label>
+                      <input type="date" class="form-control text-center" formControlName="dataEntrega" />
+                    </div>
+
+                  </div>
+
+                  <hr>
+                  <div class="row justify-content-center ">
+
+                    <div class="col-md-2">
+                      <label><strong>Forma pag frete</strong></label>
+                      <select class="form-select " formControlName="formaPagFrete">
+                        <option value=""> Selecione </option>
+                        <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
+                      </select>
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor frete</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$"
+                        formControlName="valorFrete" />
+                    </div>
+
+                    <div class="col-md-6 ">
+                      <label><strong>Observação</strong></label>
+                      <textarea class="form-control text-center" placeholder="Digite aqui"
+                        formControlName="obs"></textarea>
+                    </div>
+                  </div>
+                  <hr>
+
+
+                  <div class="modal-footer text-center">
+                    <div class="w-100">
+                      <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="atualizar()">Atualizar</button>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<div class="modal fade" id="modalObservacao" tabindex="-1" aria-hidden="true" style="text-align: center;">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-center w-100">Detalhes da Cobrança</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Observação:</strong></p>
+        <div class="texto-obs">{{ observacaoSelecionada.obs || 'Nenhuma' }}</div>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="cadastrarCobrancas" tabindex="-1" aria-labelledby="exampleModalLabel">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar cobranças</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="formCobrancas">
+          <div formArrayName="cobrancas">
+            <div *ngFor="let cobranca of cobrancas.controls; let i = index" [formGroupName]="i"
+              class="border rounded p-3 mb-3">
+              <h5 class="text-start mb-3 text-center">Cobrança {{ i + 1 }}</h5>
+              <div class="row justify-content-center">
+
+                <div class="col-md-2 text-center">
+                  <label><strong>Id compra</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="ID" formControlName="idCompra" />
+
+                </div>
+                <div class="col-md-5 text-center">
+                  <label><strong>Fornecedor</strong></label>
+                  <select class="form-select text-center" formControlName="idForn">
+                    <option value=""> Selecione um fornecedor</option>
+                    <option *ngFor="let f of fornecedor" [value]="f.id">{{ f.fornecedo | uppercase }}</option>
+                  </select>
+                  <div class="text-danger"
+                    *ngIf="cobrancas.at(i).get('idForn')?.touched && cobrancas.at(i).get('idForn')?.invalid">
+                    Selecione um fornecedor da cobrança
+                  </div>
+                </div>
+
+              </div>
+              <div class="row justify-content-center">
+
+
+                <div class="col-md-2 text-center">
+                  <label><strong>N° da nota</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
+
+                </div>
+                <div class="col-md-2 text-center">
+                  <label><strong>N° nota fiscal</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNF" />
+                </div>
+                <div class="col-md-2 text-center">
+                  <label><strong>Valor frete</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorFrete" />
+                </div>
+                <div class="col-md-2 text-center">
+                  <label><strong>Valor total</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorCompra" />
+                </div>
+                <div class="col-md-3">
+                  <label><strong>Loja</strong></label>
+                  <select class="form-select " formControlName="loja">
+                    <option value=""> Selecione </option>
+                    <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                  </select>
+                </div>
+
+
+              </div>
+
+              <hr>
+              <div class="row mt-2 text-center">
+                <div class="col-md-1">
+                  <label><strong>Parcela</strong></label>
+                  <input type="text" class="form-control text-center" formControlName="parcela" />
+                </div>
+                <div class="col-md-3">
+                  <label><strong>Data vencimento</strong></label>
+                  <input type="date" class="form-control text-center" formControlName="dataVenc" />
+                </div>
+                <div class="col-md-2">
+                  <label><strong>Valor</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorCobr" />
+                </div>
+
+                <div class="col-md-3">
+                  <label><strong>Tipo cobrança</strong></label>
+                  <select class="form-select text-center" formControlName="tipoCobr">
+                    <option value=""> Selecione </option>
+                    <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label><strong>N° cobrança</strong></label>
+                  <input type="text" class="form-control text-center" placeholder="N°" formControlName="numCobr" />
+                </div>
+              </div>
+
+              <hr>
+
+
+              <div class="row mt-2 text-center">
+                <div class="col-md-12">
+                  <label><strong>Observação</strong></label>
+                  <textarea class="form-control text-center" placeholder="Digite aqui" formControlName="obs"></textarea>
+                </div>
+              </div>
+
+              <div class="mt-2 d-flex align-items-center">
+                <div class="flex-grow-1">
+                  <div *ngIf="!valorCobradoIgualValorTotal" class="msg-erro"
+                    title="Erro: soma dos valores cobrados não bate com o valor total">
+                    <small class="piscar" style="color: red; font-weight: bold;">
+                      ❗ Valores cobrados NÃO batem com o valor total!
+                    </small>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-danger btn-sm ms-2" (click)="removerCobranca(i)"
+                  title="Remover cobrança {{ i + 1 }}">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-md-9">
+        <div class="d-flex gap-2 mt-1">
+          <button type="button" class="btn btn-success" (click)="adicionarCobranca()">
+            <i class="bi bi-plus-circle me-1"></i><strong>Adicionar</strong>
+          </button>
+
+          <button type="button" class="btn btn-danger" (click)="removerUltimaCobranca()"
+            [disabled]="cobrancas.length === 0">
+            <i class="bi bi-trash"></i> Remover
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer text-center">
+        <div class="w-100">
+          <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="cadastrarCobranca()">Cadastrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalConfirmarCobranca" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content text-center">
+      <div class="modal-header">
+        <h5 class="modal-title w-100">Cadastro de Cobrança</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja cadastrar uma cobrança para a compra do <strong>
+            <h1 style="color: rgba(8, 98, 13, 0.814);">ID : {{ ultimaCompra?.id }} ?</h1>
+          </strong></p>
+      </div>
+      <div class="modal-footer justify-content-center">
+        <!-- Botão "Não" atualizado -->
+        <button type="button" class="btn btn-secondary" (click)="cancelarCriacaoCobranca()">Não</button>
+
+        <button type="button" class="btn btn-primary" (click)="confirmarCriarCobranca()">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>

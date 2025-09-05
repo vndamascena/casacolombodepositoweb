@@ -7,12 +7,15 @@ import { NgxImageZoomModule } from 'ngx-image-zoom';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
 
 @Component({
-    selector: 'app-produtofalta-consultar',
-    imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule],
-    templateUrl: './produtofalta-consultar.component.html',
-    styleUrl: './produtofalta-consultar.component.css'
+  selector: 'app-produtofalta-consultar',
+  imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule],
+  templateUrl: './produtofalta-consultar.component.html',
+  styleUrl: './produtofalta-consultar.component.css'
 })
 export class ProdutofaltaConsultarComponent implements OnInit {
 
@@ -29,29 +32,29 @@ export class ProdutofaltaConsultarComponent implements OnInit {
   produtoAlls: any;
   lojas: any[] = [];
   acaoAtual: 'cadastrar' | 'concluir' | null = null;
-  produtoParaConcluir: any ;
+  produtoParaConcluir: any;
   editarProduto: any;
   autorizar: any;
   produtoSelecionadoId: number | null = null;
   produtoAllId: number | null = null;
   termoPesquisa: string = '';
   produtosFiltradosPesquisa: any[] = [];
-  originalProdutosFalta: any[] = []; 
+  originalProdutosFalta: any[] = [];
   filtroLoja: string | null = null;
   selecionados: number[] = [];
   menuFlutuante: { produto: any, lojaId: number } | null = null;
-  produtosFaltaFiltrada: any[] = []; // Lista para os produtos filtrados
-  filtroAtivo: string | null = null; // Controla qual filtro dropdown está visível
+  produtosFaltaFiltrada: any[] = [];
+  filtroAtivo: string | null = null;
   filtroLojaAtivo: { [key: string]: boolean } = {};
 
   form: FormGroup = this.formBuilder.group({
-    codigo: [''], // Agora usaremos para armazenar o código OU identificador do produto selecionado
-    produtoNomeDisplay: [''], // Novo campo para exibir o nome do produto
-    produtoCustom: [''], // Campo para o nome do produto customizado
+    codigo: [''],
+    produtoNomeDisplay: [''],
+    produtoCustom: [''],
     lojaId: ['', Validators.required],
     observacao: [''],
-    
-    
+
+
   });
   formi: FormGroup = this.formBuilder.group({
     valor: [''],
@@ -63,8 +66,8 @@ export class ProdutofaltaConsultarComponent implements OnInit {
   mostrarSugestoes: boolean = false;
   exibirCampoOutroProduto: boolean = false;
   produtoSelecionadoParaCadastro: any | null = null;
-  codigoLength = 6; 
-  
+  codigoLength = 6;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -79,17 +82,17 @@ export class ProdutofaltaConsultarComponent implements OnInit {
 
   onLojaCheckboxChange(produto: any, lojaId: number, event: any): void {
     const marcado = event.target.checked;
-  
-    
-  
+
+
+
     const payload = {
       id: produto.id,
       lojaId: lojaId,
 
-      
-     
+
+
     };
-  
+
     this.httpClient.put(`${environment.apiUrl}/produtoFalta/lojas`, payload)
       .subscribe({
         next: (res) => {
@@ -108,7 +111,7 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         }
       });
 
-      
+
   }
 
   updateSelection(produto: any): void {
@@ -125,23 +128,23 @@ export class ProdutofaltaConsultarComponent implements OnInit {
     });
   }
 
-  
-  
+
+
   confirmarRecebimento(produto: any, lojaId: number): void {
     this.menuFlutuante = null;
-  
+
     const payload: any = {
       id: produto.id,
       lojaId: lojaId
     };
-  
+
     switch (lojaId) {
       case 1: payload.jC1Recebido = true; break;
       case 2: payload.jC2Recebido = true; break;
       case 3: payload.vaRecebido = true; break;
       case 4: payload.clRecebido = true; break;
     }
-  
+
     this.httpClient.put(`${environment.apiUrl}/produtoFalta/chegouCor`, payload)
       .subscribe({
         next: () => {
@@ -169,13 +172,13 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         }
       });
   }
-limparPesquisa() {
-  this.termoPesquisa = '';
-  this.filtrarProdutosFalta(); // Reaplica o filtro com campo limpo
-}
-  
+  limparPesquisa() {
+    this.termoPesquisa = '';
+    this.filtrarProdutosFalta(); // Reaplica o filtro com campo limpo
+  }
+
   produtoPossuiLojas(produto: any, lojaId: number): boolean {
- 
+
     switch (lojaId) {
       case 1: return produto.JC1Recebido;
       case 2: return produto.JC2Recebido;
@@ -193,37 +196,37 @@ limparPesquisa() {
       default: return false;
     }
   }
-  
-  
+
+
   onCheckmarkClick(produto: any, lojaId: number, event: MouseEvent): void {
     event.stopPropagation();
-  
+
     // IMPEDIR clique se o produto já foi recebido
     if (this.produtoRecebido(produto, lojaId)) {
       return; // Já recebido, não faz nada
     }
-  
+
     // Só abrir se o checkbox estiver marcado
     if (!this.produtoPossuiLoja(produto, lojaId)) {
       return;
     }
-  
+
     this.menuFlutuante = { produto, lojaId };
   }
-  
-  
-  
+
+
+
   fecharMenu(): void {
     this.menuFlutuante = null;
   }
-  
+
   marcarSeparado(produto: any, lojaId: number): void {
     let payload: any = {
       id: produto.id,
       lojaId: lojaId,
       recebido: false // sinaliza que não é um recebimento
     };
-  
+
     // Alternar o valor de separado localmente e no payload
     switch (lojaId) {
       case 1:
@@ -243,7 +246,7 @@ limparPesquisa() {
         payload.separadoCL = produto.separadoCL;
         break;
     }
-  
+
     // Chamada ao backend
     this.httpClient.put(`${environment.apiUrl}/produtoFalta/chegouCor`, payload)
       .subscribe({
@@ -251,24 +254,24 @@ limparPesquisa() {
         error: (err) => console.error('Erro ao marcar como separado:', err)
       });
   }
-  
-  
-  
-  
-  
+
+
+
+
+
   getLojaPorId(id: number): string | null {
     const loja = this.lojas.find(l => l.id === id);
     return loja ? loja.nome : null;
   }
-  
+
   produtoPossuiLoja(produto: any, lojaId: number): boolean {
     const nomeLoja = this.getLojaPorId(lojaId);
     if (!nomeLoja) return false;
-  
+
     return [produto.loja, produto.loja2, produto.loja3, produto.loja4]
       .some(l => l?.toLowerCase() === nomeLoja.toLowerCase());
   }
-  
+
   formatarCodigo(codigo: any): string {
     const codigoStr = String(codigo);
     return codigoStr.padStart(this.codigoLength, '0');
@@ -337,7 +340,7 @@ limparPesquisa() {
         next: (data) => {
           this.produtoAll = (data as any[]).map(produto => ({
             ...produto,
-            codigoFormatado: this.formatarCodigo(produto.codigo) // Formata o código ao receber
+            codigoFormatado: this.formatarCodigo(produto.codigo)
           }));
         },
         error: (e) => {
@@ -377,11 +380,14 @@ limparPesquisa() {
       this.httpClient.get(`${environment.apiUrl}/produtoFalta`)
         .subscribe({
           next: (produtosData) => {
-            this.produtosFalta = produtosData as any[];
-            this.originalProdutosFalta = [...this.produtosFalta]; 
+            // Ordenar pela data de cadastro (mais antiga primeiro)
+            this.produtosFalta = (produtosData as any[]).sort((a, b) =>
+              new Date(a.dataHoraCadastro).getTime() - new Date(b.dataHoraCadastro).getTime()
+            );
+
+            this.originalProdutosFalta = [...this.produtosFalta];
             this.produtosFaltaFiltrada = [...this.produtosFalta];
 
-            // Agora carregamos os fornecedores para cada produto imediatamente
             this.produtosFalta.forEach(produto => {
               this.carregarFornecedores(produto);
             });
@@ -400,7 +406,6 @@ limparPesquisa() {
 
 
 
-  
   abrirFormularioCredenciais(produtoOuLista: any, acao: 'cadastrar' | 'concluir'): void {
     this.acaoAtual = acao;
 
@@ -417,10 +422,10 @@ limparPesquisa() {
   abrirFormularioCredenciaisEditar(produto: any): void {
     this.editarProduto = produto;
     this.produtoParaConcluir = produto;
-    
+
   }
 
-  abriformularioautorizar(produto:any): void{
+  abriformularioautorizar(produto: any): void {
     this.autorizar = produto;
 
   }
@@ -432,46 +437,47 @@ limparPesquisa() {
     this.matricula = '';
     this.senha = '';
   }
- 
-  
-  carregarFornecedores(produto: any): void {
-    if (!produto.fornecedores || produto.fornecedores.length === 0) {
-      this.httpClient.get<any[]>(`${environment.apiUrl}/produtoFalta/${produto.id}/fornecedorProduto`)
-        .subscribe(
-          (FornecedoresData) => {
-            produto.fornecedores = Array.isArray(FornecedoresData) ? FornecedoresData : [];
 
-            // Agora já definimos o menor preço assim que carregamos os fornecedores
-            produto.fornecedorMenorPreco = this.getMenorPreco(produto.fornecedores);
-          },
-          (error) => {
-            console.error('Erro ao carregar os fornecedores:', error);
-          }
-        );
-    } else {
-      // Caso os fornecedores já estejam carregados, define o menor preço diretamente
-      produto.fornecedorMenorPreco = this.getMenorPreco(produto.fornecedores);
-    }
+
+  carregarFornecedores(produto: any): void {
+    // Sempre carrega do backend
+    this.httpClient.get<any[]>(`${environment.apiUrl}/produtoFalta/${produto.id}/fornecedorProduto`)
+      .subscribe(
+        (fornecedoresData) => {
+          produto.fornecedores = Array.isArray(fornecedoresData) ? fornecedoresData : [];
+
+          // Define menor preço após carregar
+          produto.fornecedorMenorPreco = this.getMenorPreco(produto.fornecedores);
+
+          // Atualiza lista para refletir no front-end
+          this.produtosFaltaFiltrada = [...this.produtosFalta];
+          this.originalProdutosFalta = [...this.produtosFalta];
+        },
+        (error) => {
+          console.error('Erro ao carregar os fornecedores:', error);
+        }
+      );
   }
+
 
   toggleDetalhes(produto: any): void {
     produto.mostrarDetalhes = !produto.mostrarDetalhes;
   }
-  
+
 
   getMenorPreco(fornecedores: any[]): any {
     if (!fornecedores || fornecedores.length === 0) {
       return null;
     }
-  
+
     return fornecedores.reduce((menor, atual) => {
       const valorAtual = parseFloat(atual.valor.toString().replace(',', '.'));
       const valorMenor = parseFloat(menor.valor.toString().replace(',', '.'));
-  
+
       return valorAtual < valorMenor ? atual : menor;
     }, fornecedores[0]);
   }
-  
+
 
   onSubmit(): void {
     if (!this.formi.valid || this.produtoSelecionadoId == null) {
@@ -487,17 +493,30 @@ limparPesquisa() {
     this.httpClient.post(`${environment.apiUrl}/produtoFalta/fornecedorProduto`, formDataWithId)
       .subscribe({
         next: (data: any) => {
-          this.mensagem = data.message;
-          this.router.navigate(['/produtofalta-consultar']).then(() => {
-            
-          });
+          this.mensagem = "Cadastro realizado com sucesso.";
+
+          // ✅ Aqui está a correção
+          if (this.produtoSelecionadoId !== null) {
+            this.carregarFornecedoresDoBanco(this.produtoSelecionadoId);
+          }
+
+          this.formi.reset();
+          this.produtoSelecionadoId = null;
+          this.produtoSelecionadoParaCadastro = null;
+
+          setTimeout(() => this.mensagem = '', 3000);
         },
         error: (error) => {
-          console.error('Erro ao atualizar fornecedor:', error);
-          alert('Erro ao atualizar o fornecedor. Verifique os campos e tente novamente.');
+          console.error('Erro ao cadastrar fornecedor:', error);
+          this.mensagem_erro = "Erro ao cadastrar fornecedor.";
+          alert("Erro ao cadastrar. Verifique o console para mais detalhes.");
         }
       });
   }
+
+
+
+
 
   onSubmitt(): void {
     if (!this.matricula || !this.senha) {
@@ -552,7 +571,7 @@ limparPesquisa() {
           },
           error: (e) => {
             console.log('Erro ao cadastrar produto:', e.error);
-            
+
             this.mensagem_erro = e.error.message;
             this.spinner.hide();
             setTimeout(() => {
@@ -590,35 +609,35 @@ limparPesquisa() {
       alert('Preencha matrícula e senha');
       return;
     }
-  
+
     const options = {
       params: { matricula: this.matricula, senha: this.senha }
     };
-  
+
     const body = {
       id: this.editarProduto,
       dataSolicitacao: new Date().toISOString(),
-     
-      
+
+
     };
-  
+
     this.spinner.show();
-  
+
     this.httpClient.put(`${environment.apiUrl}/produtoFalta`, body, options)
       .subscribe({
         next: (data: any) => {
           this.mensagem = data.message;
-  
-          
+
+
           const produto = this.produtosFalta.find(p => p.id === this.editarProduto);
           if (produto) {
             produto.editado = true;
             produto.dataSolicitacao = body.dataSolicitacao;
           }
-  
+
           this.fecharFormularioCredenciais();
           this.spinner.hide();
-          
+
         },
         error: (e) => {
           console.log('Erro ao concluir produto:', e.error);
@@ -627,25 +646,25 @@ limparPesquisa() {
         }
       });
   }
-  concluir(concluirFalta: any):void {
- 
-  this.produtoParaConcluir = concluirFalta;
-   
-    
-  
+  concluir(concluirFalta: any): void {
+
+    this.produtoParaConcluir = concluirFalta;
+
+
+
     const params = {
       matricula: this.matricula,
       senha: this.senha,
-      id: this.produtoParaConcluir.id  
+      id: this.produtoParaConcluir.id
     };
-  
-    
+
+
     console.log('Dados enviados:', params);
-  
+
     this.spinner.show();
     console.log('🔍 Parâmetros enviados:', params);
     // 👇 Corpo vazio (conforme backend)
-    this.httpClient.post(`${environment.apiUrl}/produtofalta/confirmar-baixa`,{}, { params })
+    this.httpClient.post(`${environment.apiUrl}/produtofalta/confirmar-baixa`, {}, { params })
       .subscribe({
         next: (data: any) => {
           console.log('Resposta do backend:', data);
@@ -658,7 +677,7 @@ limparPesquisa() {
           console.error('❌ Erro ao concluir produto:', err);
           alert('Erro ao concluir o produto. Verifique as credenciais e tente novamente.');
           this.spinner.hide();
-      
+
         }
       });
   }
@@ -667,37 +686,37 @@ limparPesquisa() {
     this.selecionados = this.produtosFalta
       .filter(produto => produto.selected) // Verificar seleção no array `titulos`
       .map(produto => produto.id);
-  
+
     if (this.selecionados.length === 0) {
       alert('Nenhum produto selecionado para concluir.');
       return;
     }
-  
+
     if (!this.matricula || !this.senha) {
       alert('Por favor, preencha a matrícula e senha.');
       return;
     }
-  
+
     const erros: any[] = [];
     const sucessos: any[] = [];
-  
+
     this.selecionados.forEach(id => {
       const params = { matricula: this.matricula, senha: this.senha, id };
-  
+
       this.httpClient.post<any>(`${environment.apiUrl}/produtofalta/confirmar-baixa`, {}, { params })
         .subscribe({
           next: (response: any) => {
             console.log(`produtos em falta de ID ${id} concluído com sucesso.`, response);
             sucessos.push(id);
-  
+
             // Atualiza localmente o status do título
             const produto = this.produtosFalta.find(t => t.id === id);
             if (produto) produto.concluido = true;
-  
+
             this.spinner.hide();
             this.fecharFormularioCredenciais();
             window.location.reload();
-  
+
           },
           error: (error: any) => {
             console.error(`Erro ao concluir o produtos em falta de  ID ${id}:`, error);
@@ -705,7 +724,7 @@ limparPesquisa() {
           }
         });
     });
-  
+
     // Exibe os resultados
     if (sucessos.length > 0) {
       alert(`${sucessos.length} produtos em falta concluídos com sucesso.`);
@@ -713,46 +732,70 @@ limparPesquisa() {
     if (erros.length > 0) {
       alert(`${erros.length} produtos em falta não foram concluídos. Verifique os erros no console.`);
     }
-  
+
     this.fecharFormularioCredenciais(); // Fecha o formulário
   }
+  carregarFornecedoresDoBanco(produtoId: number): void {
+    this.httpClient.get<any>(`${environment.apiUrl}/produtoFalta/${produtoId}/fornecedorProduto`)
+      .subscribe({
+        next: (fornecedores: any[]) => {
+          const index = this.produtosFalta.findIndex(p => p.id === produtoId);
+          if (index !== -1) {
+            const produtoAtualizado = {
+              ...this.produtosFalta[index],
+              fornecedores: fornecedores,
+              mostrarDetalhes: true // se quiser manter expandido
+            };
+            this.produtosFalta[index] = produtoAtualizado;
+
+            // 🔁 Gatilho de atualização reativa
+            this.produtosFalta = [...this.produtosFalta];
+          }
+        },
+        error: (err) => {
+          console.error('Erro ao buscar fornecedores atualizados:', err);
+          alert("Erro ao atualizar fornecedores após cadastro.");
+        }
+      });
+  }
+
 
   autorizarCompra(): void {
     if (!this.matricula || !this.senha) {
       alert('Preencha matrícula e senha');
       return;
     }
-  
+
     const options = {
       params: { matricula: this.matricula, senha: this.senha }
     };
-  
+
     const body = {
       id: this.autorizar,
-     
+
       dataHoraAutorizacao: new Date().toISOString()
     };
-  
-   
+
+
     this.spinner.show();
-  
+
     this.httpClient.put(`${environment.apiUrl}/produtoFalta/autorizar`, body, options)
       .subscribe({
         next: (data: any) => {
           this.mensagem = data.message;
-        
+
           // Encontrar o produto correto
           const produto = this.produtosFalta.find(p =>
             p.fornecedores.some((f: any) => f.id === this.autorizar)
           );
-        
+
           if (produto) {
             const fornecedor = produto.fornecedores.find((f: any) => f.id === this.autorizar);
             if (fornecedor) {
               fornecedor.usuarioAutorizador = data.result?.usuarioAutorizador || 'NÃO INFORMADO';
             }
           }
-        
+
           this.fecharFormularioCredenciais();
           this.spinner.hide();
         },
@@ -763,9 +806,9 @@ limparPesquisa() {
         }
       });
   }
-  
 
-  
+
+
   // Método para filtrar os produtos de falta baseado no termo de pesquisa
   filtrarProdutosFalta(): void {
     if (this.termoPesquisa.trim() === '') {
@@ -797,7 +840,7 @@ limparPesquisa() {
     if (!this.filtroLoja) {
       return true; // Sem filtro, mostra tudo
     }
-  
+
     switch (this.filtroLoja) {
       case 'JC1':
         return this.produtoPossuiLoja(produto, 1);
@@ -814,5 +857,102 @@ limparPesquisa() {
   get produtosFaltaFiltrados() {
     return this.produtosFalta.filter(produto => this.produtoFiltrado(produto));
   }
-  
+
+  exportarBancoParaExcel(): void {
+    this.spinner.show();
+
+    this.httpClient.get<any[]>(`${environment.apiUrl}/produtoFalta`)
+      .subscribe({
+        next: (dados) => {
+          const dadosExcel: any[] = [];
+
+          dados.forEach(p => {
+            if (p.fornecedores?.length > 0) {
+              p.fornecedores.forEach((f: any) => {
+                dadosExcel.push({
+                  ID: p.id,
+                  Produto: p.nomeProduto,
+                  Código: p.codigo,
+                  CódigoFornecedor: p.codigoFornecedor,
+                  Loja1: p.loja,
+                  Loja2: p.loja2,
+                  Loja3: p.loja3,
+                  Loja4: p.loja4,
+                  JC1Recebido: p.jC1Recebido ? 'Sim' : 'Não',
+                  JC2Recebido: p.jC2Recebido ? 'Sim' : 'Não',
+                  VARecebido: p.vaRecebido ? 'Sim' : 'Não',
+                  CLRecebido: p.clRecebido ? 'Sim' : 'Não',
+                  SeparadoJC1: p.separadoJC1 ? 'Sim' : 'Não',
+                  SeparadoJC2: p.separadoJC2 ? 'Sim' : 'Não',
+                  SeparadoVA: p.separadoVA ? 'Sim' : 'Não',
+                  SeparadoCL: p.separadoCL ? 'Sim' : 'Não',
+                  Observação: p.observacao,
+                  SolicitadoEm: new Date(p.dataSolicitacao).toLocaleDateString(),
+                  CadastradoEm: new Date(p.dataHoraCadastro).toLocaleDateString(),
+                  UsuárioSolicitante: p.usuario,
+                  UsuárioAutorizador: p.usuarioAutorizador,
+                  Fornecedor: f.nome,
+
+                  Valor: f.valor,
+                  Quantidade: f.quantidade,
+                  EntradaFornecedor: f.dataEntrada ? new Date(f.dataEntrada).toLocaleDateString() : '',
+                  AutorizadoEm: f.dataHoraAutorizacao ? new Date(f.dataHoraAutorizacao).toLocaleDateString() : ''
+                });
+              });
+            } else {
+              // Produto sem fornecedores — ainda exporta os dados do produto
+              dadosExcel.push({
+                ID: p.id,
+                Produto: p.nomeProduto,
+                Código: p.codigo,
+                CódigoFornecedor: p.codigoFornecedor,
+                Loja1: p.loja,
+                Loja2: p.loja2,
+                Loja3: p.loja3,
+                Loja4: p.loja4,
+                JC1Recebido: p.jC1Recebido ? 'Sim' : 'Não',
+                JC2Recebido: p.jC2Recebido ? 'Sim' : 'Não',
+                VARecebido: p.vaRecebido ? 'Sim' : 'Não',
+                CLRecebido: p.clRecebido ? 'Sim' : 'Não',
+                SeparadoJC1: p.separadoJC1 ? 'Sim' : 'Não',
+                SeparadoJC2: p.separadoJC2 ? 'Sim' : 'Não',
+                SeparadoVA: p.separadoVA ? 'Sim' : 'Não',
+                SeparadoCL: p.separadoCL ? 'Sim' : 'Não',
+                Observação: p.observacao,
+                SolicitadoEm: new Date(p.dataSolicitacao).toLocaleDateString(),
+                CadastradoEm: new Date(p.dataHoraCadastro).toLocaleDateString(),
+                UsuárioSolicitante: p.usuario,
+                UsuárioAutorizador: p.usuarioAutorizador,
+                Fornecedor: '',
+
+                Valor: '',
+                Quantidade: '',
+                EntradaFornecedor: '',
+                AutorizadoEm: ''
+              });
+            }
+          });
+
+          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dadosExcel);
+          const workbook: XLSX.WorkBook = {
+            Sheets: { 'Relatório Completo': worksheet },
+            SheetNames: ['Relatório Completo']
+          };
+
+          const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+          const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+          FileSaver.saveAs(blob, `relatorio_completo_produtofalta_${new Date().toISOString()}.xlsx`);
+
+          this.spinner.hide();
+        },
+        error: (err) => {
+          console.error('Erro ao exportar:', err);
+          alert('Erro ao exportar os dados completos.');
+          this.spinner.hide();
+        }
+      });
+  }
+
+
+
 }

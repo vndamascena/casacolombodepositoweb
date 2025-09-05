@@ -7,6 +7,7 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { environment } from '../../../environments/environment.development';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+declare var bootstrap: any;
 
 @Component({
   selector: 'app-fornecedor',
@@ -23,11 +24,11 @@ export class FornecedorComponent implements OnInit {
   fornecedor: any = {}
   p: number = 1;
   fornecedorForm: any;
-tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA'];
+  tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA'];
+  observacaoSelecionada: any = {};
 
-  
   formFornecedor: FormGroup = this.formBuilder.group({
-
+    id: [''],
     empresa: ['', Validators.required],
     cnpj: [''],
     endereco: [''],
@@ -36,6 +37,7 @@ tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADOR
     tipoFornecedor: [''],
     vendedor: [''],
     teleVendedor: [''],
+    obs: ['']
 
   });
 
@@ -74,6 +76,7 @@ tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADOR
         }
       });
 
+
   }
   limparPesquisa() {
     this.expression = '';
@@ -82,8 +85,8 @@ tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADOR
   CadastrarFornecedo(): void {
 
     this.spinner.show();
-    
-  const formData = this.formFornecedor.value;
+
+    const formData = this.formFornecedor.value;
     Object.keys(formData).forEach(key => {
       if (typeof formData[key] === 'string') {
         formData[key] = formData[key].toUpperCase();
@@ -193,5 +196,52 @@ tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADOR
     this.formFornecedor.get('teleVendedor')?.setValue(formatado, { emitEvent: false });
   }
 
+  //função para obter os dados do fornecedor através do ID
+  onEdite(id: string): void {
+    console.log(id)
+    this.httpClient.get(environment.financa + "/fornecedor/" + id)
+      .subscribe({
+        next: (data: any) => {
+          this.formFornecedor.patchValue(data);  // Preenche o formulário com os dados recebidos
+        },
+        error: (e) => {
+          console.log('Erro ao buscar fornecedor:', e.error);
+        }
+      });
+  }
 
+
+  onSubmit(): void {
+
+    const formDataWithId = this.formFornecedor.value;
+
+
+    this.httpClient.put(`${environment.financa}/fornecedor`, formDataWithId)
+      .subscribe({
+        next: (data: any) => {
+
+          this.mensagem = data.message;
+          this.router.navigate(['/fornecedor']).then(() => {
+            window.location.reload();
+            this.mensagem = data.message;
+            window.location.reload();
+          });
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar fornecedor:', error);
+          alert('Erro ao atualizar o fornecedor. Verifique os campos e tente novamente.');
+        }
+      });
+
+  }
+
+  mostraObservacao(compras: any): void {
+    this.observacaoSelecionada = compras;
+    const modalElement = document.getElementById('modalObservacao');
+    const modalInstance = new bootstrap.Modal(modalElement);
+    modalInstance.show();
+  }
 }
+
+
+

@@ -32,6 +32,10 @@
 }
  .barra-pesquisa {
   position: relative;
+   max-width: 850px;
+}
+table {
+  width: 100% !important;
 }
 
 .btn-clear {

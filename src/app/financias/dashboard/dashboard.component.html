@@ -14,32 +14,171 @@
   <main class="container mt-3">
 
 
-    <div class="d-flex justify-content-center align-items-center mb-4">
-      <div>
-        <button class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#compras">
+    <div class="d-flex justify-content-center align-items-center mb-4 gap-2">
+
+      <!-- Compras -->
+      <div class="dropdown">
+        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuCompras" data-bs-toggle="dropdown"
+          aria-expanded="false">
           <i class="bi bi-cart-check me-1"></i> Compras
         </button>
-        <button class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#cobranca">
+        <ul class="dropdown-menu" aria-labelledby="DropdownMenuCompras">
+          <li>
+            <a class="dropdown-item" routerLink="/compras"><strong>Consultar</strong></a>
+          </li>
+          <li>
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarCompras">
+              <strong>Cadastrar</strong>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Cobranças -->
+      <div class="dropdown">
+        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuCobranca" data-bs-toggle="dropdown"
+          aria-expanded="false">
           <i class="bi bi-cash-coin me-1"></i> Cobranças
         </button>
-        <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#fornecedor">
+        <ul class="dropdown-menu" aria-labelledby="DropdownMenuCobranca">
+          <li>
+            <a class="dropdown-item" routerLink="/cobranca"><strong>Consultar</strong></a>
+          </li>
+          <li>
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarCobrancas"
+              (click)="abrirModalCobranca()">
+              <strong>Cadastrar</strong>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuCobranca" data-bs-toggle="dropdown"
+          aria-expanded="false">
+          <i class="bi bi-cash-coin me-1"></i> Despesas
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="DropdownMenuCobranca">
+          <li>
+            <a class="dropdown-item" routerLink="/despesas"><strong>Consultar</strong></a>
+          </li>
+          <li>
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#despesas">
+              <strong>Cadastrar</strong>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Fornecedor -->
+      <div class="dropdown">
+        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuFornecedor" data-bs-toggle="dropdown"
+          aria-expanded="false">
           <i class="bi bi-truck me-1"></i> Fornecedor
         </button>
+        <ul class="dropdown-menu" aria-labelledby="DropdownMenuFornecedor">
+          <li>
+            <a class="dropdown-item" routerLink="/fornecedor"><strong>Consultar</strong></a>
+          </li>
+          <li>
+            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarFornecedor">
+              <strong>Cadastrar</strong>
+            </a>
+          </li>
+        </ul>
       </div>
+
     </div>
 
-    <!-- Cards -->
-    <div class="row g-3">
-      <div class="col-md-3" *ngFor="let card of cards">
-        <div class="card card-dashboard shadow-sm" [ngClass]="card.bg">
-          <div class="card-body d-flex flex-column align-items-start">
-            <h5 class="card-title">
-              <i class="bi me-2" [ngClass]="card.icon"></i> {{ card.title }}
-            </h5>
-            <p class="card-text fs-4">hg</p>
-          </div>
+
+
+
+    <div class="container mt-3">
+      <nav class="navbar navbar-expand-lg navbar-dark"
+        style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidas' }" class="text-decoration-none">
+            <div class="card bg-danger text-white text-center p-3 shadow">
+              <i class="bi bi-exclamation-circle display-10"></i>
+              <h5 class="card-title mt-2">Cobranças vencidas</h5>
+              <h1 class="card-text">{{ qtdCobrancasVencidas }}</h1>
+            </div>
+          </a>
         </div>
-      </div>
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidadia' }"
+            class="text-decoration-none">
+            <div class="card bg-secondary text-white text-center p-3 shadow">
+              <i class="bi bi-exclamation-circle display-10"></i>
+              <h5 class="card-title  mt-2">Vencendo hoje</h5>
+              <h1 class="card-text">{{ qtdCobrancasVencidasNoDia }}</h1>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'proxvenc' }" class="text-decoration-none">
+            <div class="card bg-warning text-dark text-center p-3 shadow">
+              <i class="bi bi-calendar-event display-10"></i>
+              <h5 class="card-title mt-2">Prox. vencimento</h5>
+              <h1 class="card-text">{{ qtdCobrancasProximoVencimento }}</h1>
+            </div>
+          </a>
+        </div>
+
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'avencer' }" class="text-decoration-none">
+            <div class="card bg-primary text-white text-center p-3 shadow">
+              <i class="bi bi-bag-check display-10"></i>
+              <h5 class="card-title  mt-2">A vencer</h5>
+              <h1 class="card-text">{{ qtdCobrancasAVencer }}</h1>
+            </div>
+          </a>
+        </div>
+
+
+
+      </nav>
+
+      <nav class="navbar navbar-expand-lg navbar-dark justify-content-center"
+        style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidasSemPagamento' }" class="text-decoration-none">
+            <div class="card bg-warning text-dark text-center p-3 shadow">
+              <i class="bi bi-exclamation-circle display-10"></i>
+              <h5 class="card-title mt-2">Cobranças a pagar</h5>
+              <h1 class="card-text">{{  qtdCobrancasSemPagamento }}</h1>
+            </div>
+          </a>
+        </div>
+
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasdia' }" class="text-decoration-none">
+            <div class="card bg-success text-white text-center p-3 shadow">
+              <i class="bi bi-check-circle display-10"></i>
+              <h5 class="card-title">Pagas hoje</h5>
+              <h1 class="card-text">{{ qtdCobrancasPagasNoDia }}</h1>
+            </div>
+          </a>
+        </div>
+
+        <div class="col-md-3 px-3">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasmes' }" class="text-decoration-none">
+            <div class="card bg-success text-white text-center p-3 shadow">
+              <i class="bi bi-check-circle display-10"></i>
+              <h5 class="card-title  mt-2">Pagas no mês</h5>
+              <h1 class="card-text">{{ qtdCobrancasPagasNoMes }}</h1>
+            </div>
+          </a>
+        </div>
+
+      </nav>
+      <div class="line container mt-3"></div>
     </div>
 
   </main>
@@ -73,61 +212,7 @@
   </div>
 </div>
 
-<div>
-  <div class="modal fade" id="cobranca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
 
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Escolha uma ação </p>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
-            routerLink="/cobranca">Consultar</button>
-          <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#cadastrarCobrancas"
-            (click)="abrirModalCobranca()">
-            Cadastrar
-          </button>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div>
-  <div class="modal fade" id="fornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
-
-          </h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p>Escolha uma ação </p>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-warning" data-bs-dismiss="modal"
-            routerLink="/fornecedor">Consultar</button>
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal" data-bs-toggle="modal"
-            data-bs-target="#cadastrarFornecedor">Cadastrar</button>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
@@ -148,33 +233,30 @@
                   <div class="row">
                     <div class="col-md-3">
                       <label><strong>Fornecedor</strong></label>
-                      <select class=" form-select" formControlName="idForn">
-                        <option value=""> Selecione um fornecedor</option>
-                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.fornecedo | uppercase }}</option>
-                      </select>
-                      <div class="text-danger" *ngIf="c['idForn'].touched && c['idForn'].invalid">
-                        Selecione um fornecedor para a compra
-                      </div>
-
+                      <input type="text" class="form-control" [value]="selectedFornecedor?.fornecedo || ''"
+                        (input)="onGenericFornecedorInput($event, 'idForn')" list="fornecedoresList"
+                        placeholder="Digite o nome do fornecedor" />
                     </div>
+
+                    <!-- EMPRESA FRETE -->
                     <div class="col-md-3">
                       <label><strong>Empresa frete</strong></label>
-
-                      <select class=" form-select" formControlName="idEmpFrete">
-                        <option value=""> Selecione o frete</option>
-                        <option *ngFor="let f of fornecedor" [value]="f.id">{{f.fornecedo | uppercase }}</option>
-                      </select>
-
+                      <input type="text" class="form-control" [value]="selectedEmpresaFrete?.fornecedo || ''"
+                        (input)="onGenericFornecedorInput($event, 'idEmpFrete')" list="fornecedoresList"
+                        placeholder="Digite o nome da empresa de frete" />
                     </div>
+
+                    <!-- ÚNICO DATALIST COMPARTILHADO -->
+                    <datalist id="fornecedoresList">
+                      <option *ngFor="let f of fornecedor" [value]="f.fornecedo"></option>
+                    </datalist>
                     <div class="col-md-2">
                       <label><strong>N° nota fiscal</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="N°"
-                        formControlName="numNF" />
+                      <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNF" />
                     </div>
                     <div class="col-md-2">
                       <label><strong>N° Nota</strong></label>
-                      <input type="text" class="form-control text-center" placeholder="N°"
-                        formControlName="numNota" />
+                      <input type="text" class="form-control text-center" placeholder="N°" formControlName="numNota" />
                     </div>
                     <div class="col-md-2">
                       <label><strong>Loja</strong></label>
@@ -189,12 +271,16 @@
                     <div class="col-md-2">
                       <label><strong>Valor compra</strong></label>
                       <input type="text" class="form-control text-center" placeholder="R$"
-                        formControlName="valorTotal" />
+                        formControlName="valorCompra" />
                     </div>
                     <div class="col-md-2">
                       <label><strong>Valor NF</strong></label>
+                      <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorNF" />
+                    </div>
+                    <div class="col-md-2">
+                      <label><strong>Valor outros</strong></label>
                       <input type="text" class="form-control text-center" placeholder="R$"
-                        formControlName="valorNota" />
+                        formControlName="valorOutro" />
                     </div>
                     <div class="col-md-2">
                       <label><strong>Forma de pag</strong></label>
@@ -221,7 +307,7 @@
                     <div class="col-md-2">
                       <label><strong>Forma pag frete</strong></label>
                       <select class="form-select " formControlName="formaPagFrete">
-
+                        <option value=""> Selecione </option>
                         <option *ngFor="let fp of formaPag" [value]="fp">{{ fp }}</option>
                       </select>
                     </div>
@@ -263,7 +349,7 @@
 </div>
 
 
-<div class="modal fade" id="cadastrarCobrancas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="cadastrarCobrancas" tabindex="-1" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
       <div class="modal-header text-center">
@@ -315,7 +401,7 @@
                 </div>
                 <div class="col-md-2 text-center">
                   <label><strong>Valor total</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorTotal" />
+                  <input type="text" class="form-control text-center" placeholder="R$" formControlName="valorCompra" />
                 </div>
                 <div class="col-md-3">
                   <label><strong>Loja</strong></label>
@@ -345,15 +431,14 @@
 
                 <div class="col-md-3">
                   <label><strong>Tipo cobrança</strong></label>
-                  <select class="form-select text-center" formControlName="formaPag">
+                  <select class="form-select text-center" formControlName="tipoCobr">
                     <option value=""> Selecione </option>
                     <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
                   </select>
                 </div>
                 <div class="col-md-3">
                   <label><strong>N° cobrança</strong></label>
-                  <input type="text" class="form-control text-center" placeholder="N°"
-                    formControlName="numCobr" />
+                  <input type="text" class="form-control text-center" placeholder="N°" formControlName="numCobr" />
                 </div>
               </div>
 
@@ -413,7 +498,9 @@
 </div>
 
 
-
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="ball-clip-rotate" [fullScreen]="true">
+  <p style="color: white">Aguarde a realização do cadastro...</p>
+</ngx-spinner>
 
 
 <div class="modal fade" id="modalConfirmarCobranca" tabindex="-1" aria-hidden="true">
@@ -424,10 +511,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
       </div>
       <div class="modal-body">
-        <p>Deseja cadastrar uma cobrança para a compra do <strong><h1 style="color: rgba(8, 98, 13, 0.814);">ID : {{ ultimaCompra?.id }} ?</h1></strong></p>
+        <p>Deseja cadastrar uma cobrança para a compra do <strong>
+            <h1 style="color: rgba(8, 98, 13, 0.814);">ID : {{ ultimaCompra?.id }} ?</h1>
+          </strong></p>
       </div>
       <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+        <!-- Botão "Não" atualizado -->
+        <button type="button" class="btn btn-secondary" (click)="cancelarCriacaoCobranca()">Não</button>
+
         <button type="button" class="btn btn-primary" (click)="confirmarCriarCobranca()">Sim</button>
       </div>
     </div>
@@ -438,7 +529,99 @@
 
 
 
+<div class="modal fade" id="despesas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg ">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar despesas</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
 
+      <div class="modal-body">
+        <form [formGroup]="formDespesas">
+          <div class="container text-center">
+            <div class="row justify-content-center">
+              <div class="col-12">
+
+                <!-- Primeira linha -->
+                <div class="row mb-16">
+                  <div class="col-md-6">
+                    <label><strong>Nome</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                      formControlName="nomeLocal" />
+                  </div>
+                  <div class="col-md-6">
+                    <label><strong>Despesa</strong></label>
+                    <select class="form-select text-center" formControlName="nomeDespesa">
+                      <option value=""> Selecione </option>
+                      <option *ngFor=" let form of tipoDespesa" [value]="form">{{form}}</option>
+                    </select>
+                  </div>
+
+
+                </div>
+                <hr>
+                <!-- Segunda linha -->
+                <div class="row mb-12 row justify-content-center">
+                  <div class="col-md-3">
+                    <label><strong>Valor</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="R$ 0,00" formControlName="valor" />
+
+                  </div>
+
+                  <div class="col-md-2">
+                    <label><strong>Quantidade</strong></label>
+                    <input type="text" class="form-control text-center" placeholder="x" formControlName="quantidade" />
+                  </div>
+                  <div class="col-md-3">
+                    <label><strong>Loja</strong></label>
+                    <select class="form-select " formControlName="loja">
+                      <option value=""> Selecione </option>
+                      <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label><strong>Pagamento</strong></label>
+                    <select class="form-select text-center" formControlName="formaPagamento">
+                      <option value=""> Selecione </option>
+                      <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                    </select>
+                  </div>
+
+                </div>
+                <hr>
+
+                <div class="row mb-18 justify-content-center">
+                  <div class="col-md-5">
+                    <label><strong>Data compra</strong></label>
+                    <input type="date" class="form-control text-center" formControlName="dataCompra" />
+                  </div>
+                  <div class="col-md-7 ">
+                    <label><strong>Obs</strong></label>
+                    <textarea class="form-control text-center" placeholder="Observação"
+                      formControlName="observacao"></textarea>
+                  </div>
+
+                </div>
+
+                <hr>
+
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer text-center">
+        <div class="w-100">
+          <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+            (click)="cadastrarDespesas()">Cadastrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -465,8 +648,8 @@
                   </div>
                   <div class="col-md-6">
                     <label><strong>CNPJ</strong></label>
-                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00" formControlName="cnpj"
-                      (input)="formatarCNPJ($event)" />
+                    <input type="text" class="form-control text-center" placeholder="00.000.000/0000-00"
+                      formControlName="cnpj" (input)="formatarCNPJ($event)" />
                   </div>
                 </div>
 
@@ -510,11 +693,16 @@
                   </div>
                 </div>
 
-                <div class="row mt-3">
-                  <div class="col-md-6 offset-md-3">
+                <div class="row mb-3">
+                  <div class="col-md-6">
                     <label><strong>Tel - Vendedor</strong></label>
                     <input type="text" class="form-control text-center" placeholder="(00) 00000-0000"
                       formControlName="teleVendedor" (input)="formatarTelefoneVendedor($event)" />
+                  </div>
+                  <div class="col-md-6 ">
+                    <label><strong>obs</strong></label>
+                    <textarea class="form-control text-center" placeholder="Observação"
+                      formControlName="obs"></textarea>
                   </div>
                 </div>
 

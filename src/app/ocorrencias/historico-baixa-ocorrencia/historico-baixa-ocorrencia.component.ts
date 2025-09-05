@@ -24,9 +24,9 @@ export class HistoricoBaixaOcorrenciaComponent implements OnInit {
   ocorrencias: any[] = [];
   ocorrencia: any = {};
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
-  ocorrenciaApiUrl: string = 'https://colombo01-001-site1.gtempurl.com/api/TipoOcorrencia';
-  fornOcrApiUrl: string = 'https://colombo01-001-site1.gtempurl.com/api/fornecedorocorrencia';
-  lojaApiurl: string = 'https://colombo01-001-site1.gtempurl.com/api/loja';
+  ocorrenciaApiUrl: string = 'https://colombo01-001-site5.otempurl.com/api/TipoOcorrencia';
+  fornOcrApiUrl: string = 'https://colombo01-001-site5.otempurl.com/api/fornecedorGeral';
+  lojaApiurl: string = 'https://colombo01-001-site5.otempurl.com/api/loja';
   grupoOcorrencias: any = {};
   expression: string = ''; 
 
