@@ -51,6 +51,7 @@
                         (change)="filtrarCobranca()">
                 </div>
 
+
                 <br>
 
                 Pagar
@@ -91,25 +92,85 @@
         </div>
 
     </div>
+
 </nav>
 
 
-
-
-
-<div class="line container mt-3  "></div>
-<br>
-
-<div class="col text-center"><strong>
-        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
-            nextLabel="Próximo"></pagination-controls>
-    </strong>
-</div>
 
 <div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
     <strong>{{mensagem}}</strong>
     <button (click)="onFecharAlerta()" type="button" class="btn-close" aria-label="Close"></button>
 </div>
+
+<div class="line container mt-3  "></div>
+
+
+<div class="d-flex justify-content-between align-items-center mb-3 container-fluid" style="width: 100%;">
+
+    <!-- Coluna vazia à esquerda -->
+    <div class="d-flex gap-1 justify-content-start col-4">
+        <!-- alterado justify-content-end para justify-content-start -->
+        <div class="card shadow-sm border-0 rounded-4" style="min-width: 50px;">
+            <div class="card-body p-3">
+                <h6 class="text-center mb-3 fw-bold text-success">Resumo de cobranças</h6>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pagar: </span>
+                    <span class="fw-bold text-danger">{{ totalSaldoAtivas + totalChequeSaldo | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pago: </span>
+                    <span class="fw-bold text-success">{{ totalValorPago + totalChequePago | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coluna central com paginação -->
+    <div class="col-4 text-center"> <strong>
+            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo">
+            </pagination-controls></strong>
+    </div>
+
+    <!-- Coluna à direita com os resumos -->
+    <div class="d-flex gap-1 justify-content-end col-4">
+        <div class="card shadow-sm border-0 rounded-4" style="min-width: 50px;">
+            <div class="card-body p-3">
+                <h6 class="text-center mb-3 fw-bold text-success">Resumo de cobranças</h6>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pagar: </span>
+                    <span class="fw-bold text-danger">{{ totalSaldoAtivas | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pago: </span>
+                    <span class="fw-bold text-success">{{ totalValorPago | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4" style="min-width: 150px;">
+            <div class="card-body p-3">
+                <h6 class="text-center mb-3 fw-bold text-success">Resumo de cheques </h6>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pagar: </span>
+                    <span class="fw-bold text-danger">{{ totalChequeSaldo | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pago: </span>
+                    <span class="fw-bold text-success">{{ totalChequePago | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 
 
 <div class="table-responsive  " style="padding:  10px;">
@@ -198,18 +259,26 @@
         </ng-container>
     </table>
 
-    <tfoot>
+    <tfoot class="table-light border-top">
         <tr>
-            <td colspan="17" class="text-start">
+            <td colspan="17" class="text-start p-3">
                 <strong>
                     Quantidade exibida: {{ cobrancasFiltradas.length }}
                     <span *ngIf="cobrancasFiltradas.length !== allCobrancas.length">
                         (de um total de {{ allCobrancas.length }})
                     </span>
+                    <br>
+
+
+
                 </strong>
             </td>
         </tr>
     </tfoot>
+
+
+
+
 
 </div>
 
@@ -675,3 +744,4 @@
             </div>
         </div>
     </div>
+</div>

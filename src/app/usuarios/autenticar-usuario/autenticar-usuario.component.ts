@@ -12,7 +12,8 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
     styleUrls: ['./autenticar-usuario.component.css']
 })
 export class AutenticarUsuarioComponent {
-  userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
+  //userApiUrl: string = 'http://localhost:5233/api/usuarios';
+    userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
 
   constructor(
     private httpClient: HttpClient,
@@ -39,8 +40,19 @@ export class AutenticarUsuarioComponent {
     if (matricula === 'venda') {
       endpoint = '/autenticarvenda';  // Endpoint para autenticar usuário de venda
     } else if (matricula === 'Admin') {
-      endpoint = '/autenticaradmin';  // Endpoint para autenticar usuário admin
-    } else {
+      endpoint = '/autenticaradmin';  // 
+    } 
+    else if (matricula === '1') {
+      endpoint = '/autenticaradmin';  
+    } 
+    else if (matricula === '2') {
+      endpoint = '/autenticaradmin';  
+    } 
+      else if (matricula === '65') {
+      endpoint = '/autenticaradmin';  
+    } 
+    
+    else {
       // Caso a matrícula seja inválida
       alert('Matrícula inválida');
       this.spinner.hide();
@@ -57,6 +69,13 @@ export class AutenticarUsuarioComponent {
             (data as any).tipo = 'venda';
           } else if (matricula === 'Admin') {
             (data as any).tipo = 'Admin';
+          }else if (matricula === '1') {
+            (data as any).tipo = 'Ricardo';
+          }else if (matricula === '2') {
+            (data as any).tipo = 'Roberta';
+          }
+          else if (matricula === '65') {
+            (data as any).tipo = 'Vinicius';
           }
           // Salva as informações do usuário no sessionStorage
           sessionStorage.setItem('auth_usuario', JSON.stringify(data));

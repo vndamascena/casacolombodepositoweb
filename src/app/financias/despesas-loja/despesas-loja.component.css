@@ -5,84 +5,23 @@
     background-color: rgb(4, 105, 45);
 }
 .titulo {
-    text-align: center; 
-    color: rgb(4, 105, 45);
+    text-align: center; /* Centraliza o texto */
+    color: rgb(4, 105, 45); /* Define a cor do texto como verde */
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }
-
-.custom-checkbox {
-  position: relative;
-  display: inline-block;
-  width: 22px;
-  height: 22px;
-  cursor: pointer;
-}
-
-.custom-checkbox input[type="checkbox"] {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  position: absolute;
-  margin: 0;
-}
-
-.checkmark {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 22px;
-  width: 22px;
-  background-color: #534b4b;
-  border: 2px solid #aaa;
-  border-radius: 4px;
-}
-
-
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark {
-  background-color: #e42222;
-  border-color: #ffffff;
-}
-.entrega-preenchida {
-  background-color: rgb(4, 105, 45) !important; 
-  border-color: #28a745 !important;
-}
-
-.custom-checkbox .checkmark::after {
-  content: '';
-  position: absolute;
-  display: none;
-  left: 6px;
-  top: 2px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
-}
-
-/* ✔️ Mostra o tick apenas se estiver marcado */
-.custom-checkbox input[type="checkbox"]:checked ~ .checkmark::after {
-  display: block;
-}
-
-/* ⛔ Apenas impede clique visualmente se estiver desabilitado */
-.custom-checkbox input[type="checkbox"]:disabled ~ .checkmark {
-  cursor: not-allowed;
-}
-
 .navbar-nav .nav-link {
     display: flex;
     align-items: center;
-    
+    /* Alinha verticalmente os itens */
     margin-right: -10px;
-   
+    /* Espaçamento entre os itens */
 }
 .texto-obs {
-  white-space: pre-wrap;     
-  word-break: break-word;     
-  max-height: 300px;          
-  overflow-y: auto;           
+  white-space: pre-wrap;      /* permite quebra de linha e mantém \n */
+  word-break: break-word;     /* quebra palavras longas */
+  max-height: 300px;          /* altura máxima da área de texto */
+  overflow-y: auto;           /* scroll se passar do limite */
   padding: 8px;
  
   border-radius: 4px;
@@ -90,7 +29,7 @@
 }
 .navbar-brand {
     margin-right: 50px;
-   
+    /* Adiciona margem à direita do logo */
 }
  .barra-pesquisa {
   position: relative;
@@ -128,107 +67,34 @@
   .table th, .table td {
     border: 1px solid #dddddd;
     padding: 8px;
-    word-break: break-word;  
-    width: 150px; 
+    white-space: nowrap; /* Impede a quebra de linha no texto */
+    width: 150px; /* Define uma largura fixa para todas as células */
     text-align: center;
   }
   td {
     vertical-align: middle;
   }
 
-  .data-tooltip {
-    position: absolute;
-    bottom: 120%; /* aparece acima do número */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
-    z-index: 10;
-    
-}
-.data-tooltip {
-    position: absolute;
-    bottom: 120%; /* aparece acima do número */
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #333;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 13px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease-in-out;
-    z-index: 10;
-}
-
-.data-tooltip::after {
-    content: '';
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 5px;
-    border-style: solid;
-    border-color: #333 transparent transparent transparent;
-}
-
-.quantidade-texto {
-    position: relative;
-    cursor: pointer; /* agora mostra a mãozinha */
-}
-
-.quantidade-texto:hover .data-tooltip {
-    opacity: 1;
-}
+  
+  
   .table th {
-    padding: 1px;
-    border: 3px solid #ccc; 
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 3px solid #ccc; /* Ajuste a espessura da borda das células conforme necessário */
     background-color: #03682b;
     color: #fff;
     
   }
   
   .table td {
-    padding: 1px; 
-    border: 1px solid #cccccc; 
-    word-break: break-word; 
+    padding: 1px; /* Ajuste o preenchimento das células conforme necessário */
+    border: 1px solid #cccccc; /* Ajuste a espessura da borda das células conforme necessário */
+    
     
   }
   .inner-table {
     padding: 4px;
-    border: none; 
+    border: none; /* Remove a borda da tabela interna */
 }
-  .formulario-credenciais {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #198754;
-    padding: 20px;
-    border: 1px solid #ccc;
-    z-index: 9999;
-    color: #fff;
-    font-weight: bold;
-  }
-  
-
-
-.formulario-credenciais .btn-close {
-    position: absolute; 
-    top: 1px; 
-    right: 01px; 
-    z-index: 9999; 
-        
-}  
 @media (max-width: 768px) {
   .navbar {
     display: flex;

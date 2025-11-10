@@ -8,10 +8,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule } from 'ngx-spinner';
 
 @Component({
-    selector: 'app-inicio',
-    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-    templateUrl: './inicio.component.html',
-    styleUrls: ['./inicio.component.css']
+  selector: 'app-inicio',
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+  templateUrl: './inicio.component.html',
+  styleUrls: ['./inicio.component.css']
 })
 export class InicioComponent implements OnInit {
 
@@ -43,7 +43,9 @@ export class InicioComponent implements OnInit {
   pisosRecentes: any[] = [];
   aniversariantes: { nome: string; dataNascimento: string }[] = [];
   proximoAniversariante: { nome: string; dataNascimento: string } | null = null;
-  
+  aniversarianteHoje: { nome: string; dataNascimento: string } | null = null;
+  mostrarAviso = true;
+
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -87,51 +89,64 @@ export class InicioComponent implements OnInit {
     this.carregarEntregasDoDia();
     this.carregarOcorrencias();
     this.carregarVendasDoDia();
-    this.carregarTitulosAReceber(); 
+    this.carregarTitulosAReceber();
     this.carregarPisosRecentes();
     this.buscarAniversariantes();
 
 
 
   }
-  buscarAniversariantes(): void {
-    const endpoint = 'https://colombo01-001-site2.gtempurl.com/api/usuarios/getall';
-    const hoje = new Date();
-    const hojeDia = hoje.getDate();
-    const hojeMes = hoje.getMonth() + 1;
+ buscarAniversariantes(): void {
+  const endpoint = 'https://colombo01-001-site2.gtempurl.com/api/usuarios/getall';
+  const hoje = new Date();
+  const hojeDia = hoje.getDate();
+  const hojeMes = hoje.getMonth() + 1;
 
-    this.httpClient.get<{ nome: string; dataNascimento: string | null }[]>(endpoint).subscribe(
-        (data) => {
-            this.aniversariantes = data
-                .filter(user => user.dataNascimento)
-                .map(user => ({ ...user, dataNascimento: user.dataNascimento! }))
-                .filter(user => {
-                    const [, mes] = user.dataNascimento.split('-').map(Number);
-                    return mes === hojeMes;
-                })
-                .sort((a, b) => {
-                    const [diaA] = a.dataNascimento.split('-').map(Number);
-                    const [diaB] = b.dataNascimento.split('-').map(Number);
-                    return diaA - diaB; // Ordena pelo dia
-                });
+  this.httpClient.get<{ nome: string; dataNascimento: string | null }[]>(endpoint).subscribe(
+    (data) => {
+      this.aniversariantes = data
+        .filter(user => user.dataNascimento)
+        .map(user => ({ ...user, dataNascimento: user.dataNascimento! }))
+        .filter(user => {
+          const [, mes] = user.dataNascimento.split('-').map(Number);
+          return mes === hojeMes;
+        })
+        .sort((a, b) => {
+          const [diaA] = a.dataNascimento.split('-').map(Number);
+          const [diaB] = b.dataNascimento.split('-').map(Number);
+          return diaA - diaB;
+        });
 
-            // Encontra o PRÓXIMO aniversariante
-            const proximo = this.aniversariantes.find(user => {
-                const [dia] = user.dataNascimento.split('-').map(Number);
-                return dia >= hojeDia; // Verifica se o dia é igual ou posterior ao dia atual
-            });
+      // Aniversariante de hoje
+      this.aniversarianteHoje = this.aniversariantes.find(user => {
+        const [dia, mes] = user.dataNascimento.split('-').map(Number);
+        return dia === hojeDia && mes === hojeMes;
+      }) || null;
 
-            if (proximo) {
-                this.proximoAniversariante = proximo;
-            } else {
-                // Se não houver aniversariantes restantes para o mês, não destaca ninguém
-                this.proximoAniversariante = null;
-            }
-        },
-        (error) => {
-            console.error('Erro ao buscar aniversariantes:', error);
-        }
-    );
+      // Só exibe temporizador se tiver aniversariante hoje
+      if (this.aniversarianteHoje) {
+        this.mostrarAviso = true;
+        setTimeout(() => {
+          this.mostrarAviso = false;
+        }, 8000); // 8 segundos
+      }
+
+      // Próximo aniversariante
+      const proximo = this.aniversariantes.find(user => {
+        const [dia] = user.dataNascimento.split('-').map(Number);
+        return dia >= hojeDia;
+      });
+
+      this.proximoAniversariante = proximo || null;
+    },
+    (error) => {
+      console.error('Erro ao buscar aniversariantes:', error);
+    }
+  );
+}
+
+fecharAviso(): void {
+  this.mostrarAviso = false;
 }
 
 
@@ -160,45 +175,45 @@ export class InicioComponent implements OnInit {
     this.imagemAmpliadaUrl = this.getFullImageUrl(imagemUrl);
     const imagemAmpliada = document.querySelector('.imagem-ampliada');
     if (imagemAmpliada) {
-        imagemAmpliada.classList.add('mostrar');
+      imagemAmpliada.classList.add('mostrar');
     }
-}
+  }
 
-fecharImagemAmpliada(): void {
-  console.log('Imagem ampliada foi clicada. Fechando...');
-  this.imagemAmpliadaUrl = null;
-}
-
-
+  fecharImagemAmpliada(): void {
+    console.log('Imagem ampliada foi clicada. Fechando...');
+    this.imagemAmpliadaUrl = null;
+  }
 
 
 
 
-findProdutoMaisVendido(): void {
-  console.log("Buscando produtos ativos...");
 
-  this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso').subscribe(produtosAtivos => {
+
+  findProdutoMaisVendido(): void {
+    console.log("Buscando produtos ativos...");
+
+    this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso').subscribe(produtosAtivos => {
       console.log("Produtos ativos recebidos:", produtosAtivos);
 
       const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
 
       this.vendas.forEach(venda => {
-          const nomeFormatado = venda.nomeProduto.trim().toUpperCase().replace(/\s+/g, ' ');
+        const nomeFormatado = venda.nomeProduto.trim().toUpperCase().replace(/\s+/g, ' ');
 
-          const produto = produtosAtivos.find(p => 
-              p.nome.trim().toUpperCase().replace(/\s+/g, ' ') === nomeFormatado
-          );
+        const produto = produtosAtivos.find(p =>
+          p.nome.trim().toUpperCase().replace(/\s+/g, ' ') === nomeFormatado
+        );
 
-          if (produto) {  
-              console.log(`Produto ativo encontrado: ${produto.nome}, Quantidade: ${venda.quantidade}`);
+        if (produto) {
+          console.log(`Produto ativo encontrado: ${produto.nome}, Quantidade: ${venda.quantidade}`);
 
-              if (!produtoQuantidades[nomeFormatado]) {
-                  produtoQuantidades[nomeFormatado] = { quantidade: 0, nomeProduto: venda.nomeProduto };
-              }
-              produtoQuantidades[nomeFormatado].quantidade += venda.quantidade;
-          } else {
-              console.log(`Produto ignorado: ${venda.nomeProduto}, Motivo: Produto não está na lista de ativos`);
+          if (!produtoQuantidades[nomeFormatado]) {
+            produtoQuantidades[nomeFormatado] = { quantidade: 0, nomeProduto: venda.nomeProduto };
           }
+          produtoQuantidades[nomeFormatado].quantidade += venda.quantidade;
+        } else {
+          console.log(`Produto ignorado: ${venda.nomeProduto}, Motivo: Produto não está na lista de ativos`);
+        }
       });
 
       console.log("Produtos e quantidades calculadas:", produtoQuantidades);
@@ -208,55 +223,55 @@ findProdutoMaisVendido(): void {
       console.log("Produtos ordenados por mais vendidos:", produtosArray);
 
       this.produtoMaisVendido = produtosArray.slice(0, 10).map((produto, index) => ({
-          ...produto,
-          posicao: `${index + 1}º`
+        ...produto,
+        posicao: `${index + 1}º`
       }));
 
       console.log("Produtos mais vendidos final:", this.produtoMaisVendido);
-  });
-}
+    });
+  }
 
   findProdutoMenosVendido(): void {
     console.log("Buscando produtos ativos...");
 
     this.httpClient.get<any[]>(environment.apiUrl + '/ProdutoPiso').subscribe(produtosAtivos => {
-        console.log("Produtos ativos recebidos:", produtosAtivos);
+      console.log("Produtos ativos recebidos:", produtosAtivos);
 
-        const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
+      const produtoQuantidades: { [key: string]: { quantidade: number, nomeProduto: string } } = {};
 
-        this.vendas.forEach(venda => {
-            const nomeFormatado = venda.nomeProduto.trim().toUpperCase().replace(/\s+/g, ' ');
+      this.vendas.forEach(venda => {
+        const nomeFormatado = venda.nomeProduto.trim().toUpperCase().replace(/\s+/g, ' ');
 
-            const produto = produtosAtivos.find(p => 
-                p.nome.trim().toUpperCase().replace(/\s+/g, ' ') === nomeFormatado
-            );
+        const produto = produtosAtivos.find(p =>
+          p.nome.trim().toUpperCase().replace(/\s+/g, ' ') === nomeFormatado
+        );
 
-            if (produto) {  
-                console.log(`Produto ativo encontrado: ${produto.nome}, Quantidade: ${venda.quantidade}`);
+        if (produto) {
+          console.log(`Produto ativo encontrado: ${produto.nome}, Quantidade: ${venda.quantidade}`);
 
-                if (!produtoQuantidades[nomeFormatado]) {
-                    produtoQuantidades[nomeFormatado] = { quantidade: 0, nomeProduto: venda.nomeProduto };
-                }
-                produtoQuantidades[nomeFormatado].quantidade += venda.quantidade;
-            } else {
-                console.log(`Produto ignorado: ${venda.nomeProduto}, Motivo: Produto não está na lista de ativos`);
-            }
-        });
+          if (!produtoQuantidades[nomeFormatado]) {
+            produtoQuantidades[nomeFormatado] = { quantidade: 0, nomeProduto: venda.nomeProduto };
+          }
+          produtoQuantidades[nomeFormatado].quantidade += venda.quantidade;
+        } else {
+          console.log(`Produto ignorado: ${venda.nomeProduto}, Motivo: Produto não está na lista de ativos`);
+        }
+      });
 
-        console.log("Produtos e quantidades calculadas:", produtoQuantidades);
+      console.log("Produtos e quantidades calculadas:", produtoQuantidades);
 
-        const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
+      const produtosArray = Object.values(produtoQuantidades).sort((a, b) => a.quantidade - b.quantidade);
 
-        console.log("Produtos ordenados por menos vendidos:", produtosArray);
+      console.log("Produtos ordenados por menos vendidos:", produtosArray);
 
-        this.produtoMenosVendido = produtosArray.slice(0, 10).map((produto, index) => ({
-            ...produto,
-            posicao: `${index + 1}º`
-        }));
+      this.produtoMenosVendido = produtosArray.slice(0, 10).map((produto, index) => ({
+        ...produto,
+        posicao: `${index + 1}º`
+      }));
 
-        console.log("Produtos menos vendidos final:", this.produtoMenosVendido);
+      console.log("Produtos menos vendidos final:", this.produtoMenosVendido);
     });
-}
+  }
 
 
 
@@ -406,7 +421,7 @@ findProdutoMaisVendido(): void {
 
   carregarPisosRecentes(): void {
     const endpoint = `${environment.apiUrl}/produtoPiso/lotes`;
-  
+
     this.httpClient.get<any[]>(endpoint).subscribe({
       next: (lotesData) => {
         // Filtrar lotes válidos (não "xxx")
@@ -415,28 +430,28 @@ findProdutoMaisVendido(): void {
           console.log('Filtrando lote:', lote.codigo, lote.numeroLote, 'isNotXXX:', isNotXXX);
           return isNotXXX;
         });
-  
-        
+
+
         const ultimaData = lotesValidos.reduce((maisRecente, lote) => {
           const dataEntrada = new Date(lote.dataEntrada);
           return dataEntrada > maisRecente ? dataEntrada : maisRecente;
-        }, new Date(0)); 
-  
+        }, new Date(0));
+
         console.log('Última data de entrada identificada:', ultimaData);
-  
-       
+
+
         this.pisosRecentes = lotesValidos
           .filter(lote => {
             const dataEntrada = new Date(lote.dataEntrada);
-            return dataEntrada.toDateString() === ultimaData.toDateString(); 
+            return dataEntrada.toDateString() === ultimaData.toDateString();
           })
           .map(lote => ({
             nomeProduto: lote.nomeProduto,
             qtdEntrada: lote.qtdEntrada,
-            dataEntrada: new Date(lote.dataEntrada) 
+            dataEntrada: new Date(lote.dataEntrada)
           }))
-          .sort((a, b) => b.dataEntrada.getTime() - a.dataEntrada.getTime()); 
-  
+          .sort((a, b) => b.dataEntrada.getTime() - a.dataEntrada.getTime());
+
         console.log('Pisos recentes filtrados e ordenados:', this.pisosRecentes);
       },
       error: (err) => {
@@ -444,25 +459,25 @@ findProdutoMaisVendido(): void {
       }
     });
   }
-  
+
   enderecos: string[] = [
     "Casa Colombo"
-   
-];
 
-abrirPesquisaNoGoogle(endereco: string): void {
+  ];
+
+  abrirPesquisaNoGoogle(endereco: string): void {
     if (!endereco) {
-        console.log("Endereço não disponível");
-        return;
+      console.log("Endereço não disponível");
+      return;
     }
 
     // Criando a URL do Google com base no endereço pesquisado
     const url = `https://www.google.com/search?tbm=lcl&q=${encodeURIComponent(endereco)}`;
-    
-    window.open(url, '_blank');
-}
 
-  
+    window.open(url, '_blank');
+  }
+
+
 }
 
 

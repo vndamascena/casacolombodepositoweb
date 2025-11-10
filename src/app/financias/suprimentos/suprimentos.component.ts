@@ -8,6 +8,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 declare var bootstrap: any;
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-suprimentos',
@@ -28,12 +30,12 @@ export class SuprimentosComponent implements OnInit {
   suprimentos: any[] = [];
   private suprimentosCarregados: boolean = false;
   tipoSuprimentos: string[] = ['ÁLCOOL EM GEL', 'AÇÚCAR', 'BOBINA DE CAIXA', 'BOBINA MQ DE CARTÃO', 'BLOCO DE NOTAS', 'CAFÉ', 'CAIXA DE SOM',
-    'CALCULADORA', 'CANETA', 'CLIPS', 'CLORO', 'CLORO ATIVO', 'COPO', 'COPO DE CAFÉ', 'CUADOR DE CAFE', 'DETERGENTE', 'DESINFETANTE', 'DUREX', 'ELÁSTICO',
-    'ESPONJA','ETIQUETA B VERMELHA', 'FOLHA A4', 'GRAMPEADOR', 'GRAMPO', 'LÁPIS', 'LEITOR', 'LIMPADOR MULTIUSO', 'LIXEIRA', 'MANTEIGA', 'MONITOR', 'MOEDAS', 'MOUSE', 'OUTROS',
-    'PANO DE CHÃO G', 'PANO DE CHÃO P', 'PANO DE LIMPEZA', 'PAPEL HIGIÊNICO', 'PAPEL TOALHA', 'PÁ DE LIXO', 'PASTA ARQUIVO', 'PANO DE PATRO', 'PORTA PAPEL TOALHA',
-    'PORTA SABONETE', 'POST-IT','SABÃO EM PÓ', 'SABONETE LÍQUIDO', 'SACO DE AREIA', 'SACO DE PAPEL ½ KG', 'SACO P/ MOEDA', 'SACO PARA LIXO 100LT',
+    'CALCULADORA', 'CANETA', 'CLIPS', 'CLORO', 'CLORO ATIVO', 'COPO', 'COPO DE CAFÉ', 'COADOR DE CAFE', 'DETERGENTE', 'DESINFETANTE', 'DUREX', 'ELÁSTICO',
+    'ESPONJA', 'ETIQUETA B VERMELHA', 'FOLHA A4', 'GRAMPEADOR', 'GRAMPO', 'LÁPIS', 'LEITOR', 'LIMPADOR MULTIUSO', 'LIXEIRA', 'MANTEIGA', 'MONITOR', 'MOEDAS', 'MOUSE', 'OUTROS',
+    'PANO DE CHÃO G', 'PANO DE CHÃO P', 'PANO DE LIMPEZA', 'PAPEL HIGIÊNICO', 'PAPEL TOALHA', 'PÁ DE LIXO', 'PASTA ARQUIVO', 'PANO DE PRATO', 'PORTA PAPEL TOALHA',
+    'PORTA SABONETE', 'POST-IT', 'SABÃO EM PÓ', 'SABONETE LÍQUIDO', 'SACO DE AREIA', 'SACO DE PAPEL ½ KG', 'SACO P/ MOEDA', 'SACO PARA LIXO 100LT',
     'SACO PARA LIXO 200LT', 'SACOLAS LEVE G', 'SACOLAS LEVE M', 'SACOLAS LEVE P', 'SACOLAS PESADA G', 'SACOLAS PESADA M', 'SACOLAS PESADA P',
-    'TECLADO','TROCO', 'TINTA IMPRESSORA']
+    'TECLADO', 'TROCO', 'TINTA IMPRESSORA']
 
   jC1: string[] = ['JC1'];
   va: string[] = ['VA'];
@@ -55,6 +57,8 @@ export class SuprimentosComponent implements OnInit {
   filtroAtivo: boolean = false;
   filtroInativo: boolean = false;
   filtroIdCompraAtivo: string | null = null;
+  lojaAtiva: string | null = null;
+
 
 
 
@@ -95,6 +99,32 @@ export class SuprimentosComponent implements OnInit {
   FormularioCredenciais(suprimento: any, loja: string): void {
     this.suprimentoSelecionado = suprimento;
     this.lojaSelecionada = loja;
+
+    let quantidadeSelecionada = 0;
+
+
+    switch (loja) {
+      case 'CL':
+        quantidadeSelecionada = suprimento.quantidadeCL;
+        break;
+      case 'JC1':
+        quantidadeSelecionada = suprimento.quantidadeJC1;
+        break;
+      case 'JC2':
+        quantidadeSelecionada = suprimento.quantidadeJC2;
+        break;
+      case 'VA':
+        quantidadeSelecionada = suprimento.quantidadeVA;
+        break;
+      case 'ROBERTA':
+        quantidadeSelecionada = suprimento.quantidadeROBERTA; // caso tenha
+        break;
+    }
+
+
+    this.formSuprimentos.patchValue({
+      quantidade: quantidadeSelecionada
+    });
   }
   fecharFormularioCredenciais(): void {
     this.suprimentoSelecionado = null;
@@ -121,6 +151,243 @@ export class SuprimentosComponent implements OnInit {
       this.initializePopovers();
     }, 1550);
   }
+  ehFalta(s: any): boolean {
+    // verifica se o produto ainda tem alguma loja pendente
+    return !(
+      s.dataEntrega ||
+      s.dataEntrega_JC2 ||
+      s.dataEntrega_CL
+    );
+  }
+
+  ehEntregue(s: any): boolean {
+    // considera entregue se todas as lojas com quantidade > 0 já têm dataEntrega
+    return (
+      (!!s.dataEntrega || !!s.dataEntrega_JC2 || !!s.dataEntrega_CL)
+    );
+  }
+  aplicarFiltrosGlobais(s: any): boolean {
+    // Filtro de data
+    if (this.dataInicio && new Date(s.dataPedida) < new Date(this.dataInicio)) return false;
+    if (this.dataFim && new Date(s.dataPedida) > new Date(this.dataFim)) return false;
+
+    // Filtro de Falta/Entregue
+    const entregue = !!(s.dataEntrega || s.dataEntrega_JC2 || s.dataEntrega_CL);
+
+    if (this.filtroAtivo && entregue) return false;
+    if (this.filtroInativo && !entregue) return false;
+
+    return true;
+  }
+  imprimirTabela() {
+    const tabela = document.getElementById('tabela-suprimentos');
+    if (!tabela) return;
+
+    const estilo = `
+    <style>
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          background: #fff !important;
+        }
+
+        h3 {
+          text-align: center;
+          margin-bottom: 20px;
+          color: #333;
+          font-family: Arial, sans-serif;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-family: Arial, sans-serif;
+        }
+
+        th, td {
+          border: 1px solid #000;
+          padding: 6px;
+          text-align: center;
+          font-size: 12px;
+        }
+
+        /* 🟩 Cabeçalho verde com texto branco */
+        thead {
+          background-color: rgb(4, 105, 45) !important;
+          color: #ffffff !important;
+        }
+          thead th:nth-child(4),
+thead th:nth-child(0),
+thead th:nth-child(0) {
+  background-color: #dc3545 !important;
+  color: #ffffff !important;
+}
+
+        tr:nth-child(even) {
+          background-color: #fafafa !important;
+        }
+
+        @page {
+          size: A4 portrait;
+          margin: 15mm;
+        }
+
+        /* 🔻 Oculta colunas Id, Total, Entregue */
+        th:nth-child(1),
+        td:nth-child(1),
+        th:nth-last-child(3),
+        td:nth-last-child(3),
+        th:nth-last-child(1),
+        td:nth-last-child(1) {
+          display: none !important;
+        }
+
+        /* ✅ Checkboxes personalizados */
+        .custom-checkbox {
+          position: relative;
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+        }
+
+        .custom-checkbox input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+
+        /* 🔴 Vermelho = pendente */
+        .custom-checkbox .checkmark {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 16px;
+          height: 16px;
+          background-color: #dc3545 !important;
+          border: 1px solid #000;
+          border-radius: 3px;
+        }
+
+        /* 🟢 Verde = entregue */
+        .custom-checkbox .checkmark.entrega-preenchida {
+          background-color: #198754 !important;
+          border-color: #146c43 !important;
+        }
+
+        /* Desenha o ✓ branco */
+        .custom-checkbox .checkmark::after {
+          content: '';
+          position: absolute;
+          display: none;
+        }
+
+        .custom-checkbox input:checked + .checkmark::after {
+          display: block;
+          left: 5px;
+          top: 1px;
+          width: 4px;
+          height: 8px;
+          border: solid white;
+          border-width: 0 2px 2px 0;
+          transform: rotate(45deg);
+        }
+
+        /* ✅ Botão de observação azul */
+        .btn-primary {
+          background-color: #0d6efd !important;
+          color: #fff !important;
+          border: 1px solid #0a58ca !important;
+        }
+
+        /* Botão cinza quando sem observação */
+        .btn-outline-secondary {
+          border: 1px solid #6c757d !important;
+          color: #6c757d !important;
+          background-color: transparent !important;
+        }
+
+        .btn-sm {
+          padding: 4px 8px;
+          font-size: 12px;
+          border-radius: 4px;
+        }
+      }
+
+      body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    </style>
+  `;
+
+    const novaJanela = window.open('', '_blank');
+    novaJanela?.document.write(`
+    <html>
+      <head>
+        <title>Pedido de Suprimentos</title>
+        ${estilo}
+      </head>
+      <body>
+        <h3>Pedido de Suprimentos</h3>
+        ${tabela.outerHTML}
+      </body>
+    </html>
+  `);
+
+    novaJanela?.document.close();
+
+    novaJanela?.addEventListener('load', () => {
+      novaJanela.print();
+      novaJanela.close();
+    });
+  }
+
+
+
+
+
+  alternarLoja(loja: string) {
+    // Se clicar novamente na mesma loja, limpa o filtro
+    if (this.lojaAtiva === loja) {
+      this.lojaAtiva = null;
+
+      // Se um dos filtros globais estiver ativo, respeita ele
+      if (this.filtroAtivo) {
+        this.suprimentosFiltradas = this.suprimentos.filter(s => this.ehFalta(s));
+      } else if (this.filtroInativo) {
+        this.suprimentosFiltradas = this.suprimentos.filter(s => this.ehEntregue(s));
+      } else {
+        this.suprimentosFiltradas = [...this.suprimentos];
+      }
+    }
+    else {
+      this.lojaAtiva = loja;
+      this.suprimentosFiltradas = this.suprimentos.filter(s => {
+        const qtd = s[`quantidade${loja}`];
+        if (typeof qtd !== 'number' || qtd <= 0) return false;
+
+        // Identifica o campo certo de entrega
+        let campoEntrega = '';
+        switch (loja) {
+          case 'JC1': campoEntrega = 'dataEntrega'; break;
+          case 'VA': campoEntrega = 'dataEntrega'; break;
+          case 'JC2': campoEntrega = 'dataEntrega_JC2'; break;
+          case 'CL': campoEntrega = 'dataEntrega_CL'; break;
+        }
+
+        const entregue = !!s[campoEntrega];
+
+        // Respeita o filtro global ativo
+        if (this.filtroAtivo) return !entregue; // Falta entregar
+        if (this.filtroInativo) return entregue; // Já entregue
+        return true; // Nenhum filtro global -> mostra todos
+      });
+    }
+
+    this.cdr.detectChanges();
+  }
+
 
   initializePopovers() {
     const existingPopovers = document.querySelectorAll('[data-bs-toggle="popover"]');
@@ -194,6 +461,8 @@ export class SuprimentosComponent implements OnInit {
           });
 
           this.suprimentosFiltradas = [...this.suprimentos];
+         
+
           console.log('📦 Compras carregadas e ordenadas:', this.suprimentos);
           this.suprimentosCarregados = true;
         },
@@ -685,7 +954,52 @@ export class SuprimentosComponent implements OnInit {
     this.p = 1;
   }
 
+  exportarBancoParaExcel(): void {
+    this.spinner.show();
+
+    this.httpClient.get<any[]>(`${environment.financa}/suprimentos`)
+      .subscribe({
+        next: (dados) => {
+          const dadosExcel = dados.map(p => ({
+            ID: p.id,
+            Nome: p.nome,
+            Quantidade_JC1: p.quantidadeJC1,
+            Quantidade_VA: p.quantidadeVA,
+            Quantidade_JC2: p.quantidadeJC2,
+            Quantidade_CL: p.quantidadeCL,
+            JC1: p.jC1 ? 'Sim' : 'Não',
+            VA: p.va ? 'Sim' : 'Não',
+            JC2: p.jC2 ? 'Sim' : 'Não',
+            CL: p.cl ? 'Sim' : 'Não',
+            Observação: p.observacao,
+            Data_Pedido: new Date(p.dataPedido).toLocaleDateString(),
+            Data_Entrega: new Date(p.dataEntrega).toLocaleDateString(),
+            Data_Entrega_JC2: new Date(p.dataEntrega_JC2).toLocaleDateString(),
+            Data_Entrega_CL: new Date(p.dataEntrega_CL).toLocaleDateString()
+          }));
+
+          const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(dadosExcel);
+          const workbook: XLSX.WorkBook = {
+            Sheets: { 'Relatório de Suprimentos': worksheet },
+            SheetNames: ['Relatório de Suprimentos']
+          };
+
+          const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+          const blob: Blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+          FileSaver.saveAs(blob, `relatorio_suprimentos_${new Date().toISOString()}.xlsx`);
+
+          this.spinner.hide();
+        },
+        error: (err) => {
+          console.error('Erro ao exportar:', err);
+          alert('Erro ao exportar os dados.');
+          this.spinner.hide();
+        }
+      });
+  }
 
 
 
 }
+
+

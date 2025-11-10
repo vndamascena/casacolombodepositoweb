@@ -15,7 +15,7 @@
                 <input type="text" class="form-control lupa" placeholder="Digite o nome do produto"
                     aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression"
                     (input)="filtrarProdutos()">
-                    <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+                <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
                 <div class="overlay" (click)="filtrarProdutos()"></div>
             </div>
         </div>
@@ -62,39 +62,49 @@
 
 
 
-<div class="col-md-3 container mt-3"style="padding: 1px;">
+<!--<div class="col-md-3 container mt-3"style="padding: 1px;">
     <label style="color: #036822;"><strong>Upload de relatório</strong></label>
    <input type="file" class="form-control custom-file-input" id="fileInput" (change)="onFileSelected($event)" />
-</div>
+</div>!-->
 
 <!-- Tabela para exibir a consulta de produtos -->
+ <div class="col text-center"><strong>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls>
+    </strong>
+
+
+
+</div>
 <div class="table-responsive container mt-3">
     <table class="table table-bordered table-hover">
+        
         <!-- cabeçalho da tabela -->
         <thead>
             <tr>
                 <th>Foto</th>
-                <th>Detalhes</th>
+                <th>Info</th>
                 <th>Codígo</th>
                 <th>Un</th>
                 <th>Nome do produto</th>
                 <th>Marca</th>
                 <th style="color: #07612b; font-weight: bold;">Qtd</th>
-                <th>Operação</th>
+                <th>Op</th>
             </tr>
         </thead>
         <!-- Corpo da tabela -->
 
         <tbody>
-            <ng-container *ngFor="let produtoGeral of produtoGerals | paginate: { itemsPerPage: 10, currentPage: p }">
+            <ng-container *ngFor="let produtoGeral of produtoGerals | paginate: { itemsPerPage: 20, currentPage: p }">
                 <tr>
                     <!-- Colunas para exibir os detalhes básicos do produto -->
-                    <td><img [src]="getFullImageUrlGeral(produtoGeral.imagemUrlGeral)" alt="{{ produtoGeral.nome }}" width="50"
-                            (click)="expandirImagemGeral(produtoGeral.imagemUrlGeral)"></td>
+                    <td><img [src]="getFullImageUrlGeral(produtoGeral.imagemUrlGeral)" alt="{{ produtoGeral.nome }}"
+                            width="50" (click)="expandirImagemGeral(produtoGeral.imagemUrlGeral)"></td>
                     <td>
-                        <button type="button" class="btn btn-outline-success" (click)="toggleDetalhes(produtoGeral)">
-                            <i class="bi bi-zoom-in  custom-icon"> </i>
-                        </button>
+                        <i class="bi bi-plus-circle text-success custom-icon"
+                            style="cursor: pointer; font-size: 1.5rem;" (click)="toggleDetalhes(produtoGeral)">
+                        </i>
+
                     </td>
                     <td>{{ produtoGeral.codigoSistema}}</td>
                     <td>{{ produtoGeral.un| uppercase}}</td>
@@ -104,7 +114,8 @@
 
                     <!-- Botão de editar -->
                     <td>
-                        <button class="btn btn-sm btn-outline-success me-2" (click)="editarProdutoGeral(produtoGeral.id)">
+                        <button class="btn btn-sm btn-outline-success me-2"
+                            (click)="editarProdutoGeral(produtoGeral.id)">
                             <strong>Editar</strong>
                         </button>
                     </td>
@@ -112,22 +123,22 @@
                 <!-- Linha para exibir os detalhes adicionais -->
                 <tr *ngIf="produtoGeral.mostrarDetalhes">
                     <td colspan="13">
-                      <!-- Tabela para os detalhes dos depósitos -->
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>Depósito</th>
-                            <th style="color: #07612b; font-weight: bold;">Quantidade</th>
-                            <th>Quantidade Vendida</th>
-                            <th>Confirmar Venda</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <!-- Use um ngFor para iterar sobre os depósitos -->
-                          <tr *ngFor="let deposito of depositos; let primeiro = first">
-                            <td>{{ deposito.nomeDeposito }}</td>
-                            <td>{{ deposito.quantidade }}</td>
-                                    
+                        <!-- Tabela para os detalhes dos depósitos -->
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Depósito</th>
+                                    <th style="color: #07612b; font-weight: bold;">Quantidade</th>
+                                    <th>Quantidade Vendida</th>
+                                    <th>Confirmar Venda</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Use um ngFor para iterar sobre os depósitos -->
+                                <tr *ngFor="let deposito of depositos; let primeiro = first">
+                                    <td>{{ deposito.nomeDeposito }}</td>
+                                    <td>{{ deposito.quantidade }}</td>
+
                                     <!-- Coluna para quantidade vendida -->
                                     <td>
                                         <input type="number" min="-100" [(ngModel)]="deposito.quantidadeVendida"
@@ -181,7 +192,8 @@
 
 
 
-<div class="formulario-credenciais text-center" *ngIf="depositoSelecionado && depositoSelecionado === depositoSelecionado || file && file === file">
+<div class="formulario-credenciais text-center"
+    *ngIf="depositoSelecionado && depositoSelecionado === depositoSelecionado || file && file === file">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
     <h4 *ngIf="file">Envio de relatório venda</h4>
     <h4 *ngIf="!file">Confirme a sua venda</h4>
@@ -194,8 +206,10 @@
         <label for="senhaInput" class="form-label">Senha</label>
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
-    <button class="btn btn-outline-light" *ngIf="file" (click)="uploadVenda()" style="font-weight: bold;">Confirmar Upload</button>
-    <button class="btn btn-outline-light" *ngIf="!file" (click)="confirmarVenda(depositoSelecionado)" style="font-weight: bold;">Confirmar Venda</button>
+    <button class="btn btn-outline-light" *ngIf="file" (click)="uploadVenda()" style="font-weight: bold;">Confirmar
+        Upload</button>
+    <button class="btn btn-outline-light" *ngIf="!file" (click)="confirmarVenda(depositoSelecionado)"
+        style="font-weight: bold;">Confirmar Venda</button>
 </div>
 
 

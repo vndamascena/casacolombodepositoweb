@@ -35,7 +35,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link black-text" routerLink="/historico-vendas">
-                        <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110" > 
+                        <img src="/assets/1.jpg" alt="Ícone de Consulta" width="110" height="110">
                     </a>
                 </li>
 
@@ -48,8 +48,8 @@
 <div class="line container mt-3"></div>
 <br>
 <div class="col text-center"><strong>
-    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
-     nextLabel="Próximo"></pagination-controls>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls>
     </strong>
 
 
@@ -72,8 +72,8 @@
             <!-- cabeçalho da tabela -->
             <thead>
                 <tr>
-                    <th>Miniatura</th>
-                    <th>Detalhes</th>
+                    <th>Foto</th>
+                    <th>Info</th>
                     <th>Nome do produto</th>
                     <th>Descrição</th>
                     <th>Lu - Pei</th>
@@ -82,7 +82,7 @@
                     <th>Peças CX</th>
                     <th>M² CX</th>
                     <th>Preço CX</th>
-                    
+
                     <th style="color: #07612b; font-weight: bold;">Qtd CX</th>
                     <th>Operação</th>
                 </tr>
@@ -96,28 +96,28 @@
                         <td><img [src]="getFullImageUrl(produto.imagemUrl)" alt="{{ produto.nome }}" width="50"
                                 (click)="expandirImagem(produto.imagemUrl)"></td>
                         <td>
-                            <button type="button" class="btn btn-outline-success"  (click)="toggleDetalhes(produto)">
-                                <i class="bi bi-zoom-in  custom-icon"> </i> 
-                              </button>
+                            <i class="bi bi-plus-circle text-success custom-icon"
+                                style="cursor: pointer; font-size: 1.5rem;" (click)="toggleDetalhes(produto)">
+                            </i>
                         </td>
-                        
-                        
-                        
+
+
+
 
                         <td>{{ produto.nome | uppercase }}</td>
                         <td>{{ produto.descricao | uppercase }}</td>
-                            <td style="width: 90px">
-                                <button class="btn btn-sm btn-close-white me-2 " (click)="mostrarInformacoes(produto)">
-                                    {{ produto.pei | uppercase}}
-                                </button>
-                            </td>
-                        <td >{{ produto.marca | uppercase}}</td>
+                        <td style="width: 90px">
+                            <button class="btn btn-sm btn-close-white me-2 " (click)="mostrarInformacoes(produto)">
+                                {{ produto.pei | uppercase}}
+                            </button>
+                        </td>
+                        <td>{{ produto.marca | uppercase}}</td>
                         <td>R${{ produto.precoMetroQ }}</td>
                         <td>{{ produto.pecasCaixa}}</td>
                         <td>{{ produto.metroQCaixa }}M²</td>
                         <td>R${{ produto.precoCaixa }}</td>
 
-                        
+
                         <td style="color: #07612b; font-weight: bold;">{{ produto.quantidade }}</td>
 
                         <!-- Botão de editar -->
@@ -178,20 +178,20 @@
         <tfoot>
             <tr>
                 <td colspan="14"><strong> Quantidade de produtos: {{ produtosPiso.length }}</strong>
-                   
+
                 </td>
             </tr>
         </tfoot>
     </div>
     <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="timer" [fullScreen]="true">
         <p style="color: white"> Aguarde... </p>
-      </ngx-spinner>
+    </ngx-spinner>
 </div>
 
 
 <div class="col text-center"><strong>
-    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
-     nextLabel="Próximo"></pagination-controls>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls>
     </strong>
 
 
@@ -217,8 +217,6 @@
         <label for="senhaInput" class="form-label">Senha</label>
         <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
     </div>
-    <button class="btn btn-outline-light" (click)="confirmarVenda(loteSelecionado)"
-        style="font-weight: bold;">Confirmar
+    <button class="btn btn-outline-light" (click)="confirmarVenda(loteSelecionado)" style="font-weight: bold;">Confirmar
     </button>
 </div>
-

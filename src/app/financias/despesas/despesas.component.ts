@@ -108,10 +108,10 @@ export class DespesasComponent implements OnInit {
       .subscribe({
         next: (comprasData) => {
           this.despesas = (comprasData as any[]).sort((a, b) =>
-            new Date(a.dataCompra).getTime() - new Date(b.dataCompra).getTime()
+            new Date(b.dataCompra).getTime() - new Date(a.dataCompra).getTime()
           );
           this.despesasFiltradas = [...this.despesas];
-          console.log('📦 Compras carregadas e ordenadas:', this.despesas);
+          
           this.DespesasCarregadas = true;
 
         },
@@ -131,7 +131,7 @@ export class DespesasComponent implements OnInit {
         formData[key] = formData[key].toUpperCase();
       }
     });
-    console.log('Form Data:', formData);
+    
 
     this.httpClient.post(environment.financa + "/despesas", this.formDespesas.value)
       .subscribe({
@@ -167,5 +167,72 @@ export class DespesasComponent implements OnInit {
       });
 
   }
+  onEdite(id: number): void {
+    const despesa = this.despesas.find(c => c.id === id);
+    if (!despesa) return;
+   
+  let valorFormatado = '';
+  if (despesa.valor !== null && despesa.valor !== undefined) {
+    const numero = Number(despesa.valor);
+    if (!isNaN(numero)) {
+      valorFormatado = numero.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+  }
+
+
+          this.formDespesas.patchValue({
+            id: despesa,
+
+            nomeLocal: despesa.nomeLocal,
+            nomeDespesa:despesa.nomeDespesa,
+            quantidade:despesa.quantidade,
+            observacao:despesa.observacao,
+            valor:valorFormatado,
+            dataCompra:despesa.dataCompra,
+            formaPagamento:despesa.formaPagamento,
+            loja:despesa.loja,
+
+
+
+          });
+          // Salva o ID da compra para atualizar depois
+        this.formDespesas.addControl('id', this.formBuilder.control(id));
+     
+  }
+Editar(): void {
+
+  const formData = { ...this.formDespesas.value };
+    
+
+    if (typeof formData.valor === 'string') {
+      const cleaned = formData.valor
+        .replace(/\s/g, '')
+        .replace('R$', '')
+        .replace(/\./g, '')
+        .replace(',', '.');
+      formData.valor = parseFloat(cleaned);
+    }
+    console.log('Form enviado:', this.formDespesas.value);
+
+    this.httpClient.put(`${environment.financa}/despesas`, formData)
+      .subscribe({
+        next: (data: any) => {
+          this.mensagem = data.message;
+          this.router.navigate(['/despesas']).then(() => {
+          window.location.reload();
+          });
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar :', error);
+          alert('Erro ao atualizar . Verifique os campos e tente novamente.');
+        }
+      });
+
+
+
+}
 
 }

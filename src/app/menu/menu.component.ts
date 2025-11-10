@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-menu',
@@ -16,18 +17,39 @@ export class MenuComponent implements OnInit {
   autent: boolean = false; // Variável para controlar a exibição do menu
   matricula: string = "";
   senha: string = "";
+  nome:string =""
+  menuTipo: string = '';
+   constructor(
+    private route: ActivatedRoute,
+    private httpClient: HttpClient,
+    private router: Router
+  ) { }
+ngOnInit(): void {
+  const data = sessionStorage.getItem('auth_usuario');
 
-  ngOnInit(): void {
-    //ler o conteudo da local storage
-    const data = sessionStorage.getItem('auth_usuario');
-    //verificando se existe um usuário autenticado
-    if (data != null) {
-      this.autent = true;
-      //ler os dados do usuário
-      //this.matricula = JSON.parse(data).nome;
-      //this.senha = JSON.parse(data).matricula;
+  if (data != null) {
+    this.autent = true;
+    const usuario = JSON.parse(data);
+    this.nome = usuario.nome;
+
+    // Normaliza o nome (remove espaços e coloca minúsculo)
+    const nomeLower = this.nome.trim().toLowerCase();
+
+    // Verifica cada tipo de usuário
+    if (nomeLower === 'admin') {
+      this.menuTipo = 'admin';
+    } 
+    else if (nomeLower === 'venda') {
+      this.menuTipo = 'venda';
+    } 
+    else if (['ricardo', 'roberta', 'jose vinicius'].includes(nomeLower)) {
+      this.menuTipo = 'drp';
     }
+
+    console.log('Usuário logado:', this.nome, '→ menuTipo:', this.menuTipo);
   }
+}
+
   //função para fazer o logout do usuário
   //logout(): void {
     //if (window.confirm('Deseja realmente sair do sistema?')) {
@@ -37,6 +59,12 @@ export class MenuComponent implements OnInit {
       //window.location.href = '/login-usuarios';
     //}
   //}
+  logout(): void {
+  sessionStorage.removeItem('auth_usuario');
+  this.autent = false;
+  this.nome = '';
+  this.router.navigate(['/autenticar']);
+}
   
 
 }

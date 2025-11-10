@@ -1,0 +1,714 @@
+<nav class="navbar navbar-expand-lg navbar-dark"
+    style="background-color: #ffffff; margin-bottom: 0px; padding: 1px;  margin-left: 90px;margin-right: 140px;  margin-top: -10px;">
+
+
+
+    <div class="container mt-3">
+
+
+        <a class="navbar-brand" href="inicio">
+            <img src="/assets/cplg.png" alt="Logo" style="width: 200px; height: auto;">
+
+        </a>
+        <div class="container pt-5">
+
+            <div class="d-flex justify-content-center align-items-center mb-4 gap-2" style=" margin-left: 71px;margin-right: 140px; 
+                        margin-top: -20px; margin-bottom: 0px; padding: 1px;">
+                <div class="dropdown">
+                    <button class="btn btn-outline-success" routerLink="/cobranca">
+                        <i class="bi bi-cash-coin me-1"></i> Cobrança
+                    </button>
+
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success" routerLink="/compras">
+                        <i class="bi bi-cash-coin me-1"></i> Compras
+                    </button>
+
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-success" routerLink="/despesas">
+                        <i class="bi bi-cash-coin me-1"></i> Despesas
+                    </button>
+
+                </div>
+                <div>
+                    <button class="btn btn-outline-success " routerLink="/fornecedor">
+                        <i class="bi bi-truck me-1"></i> Fornecedor
+                    </button>
+
+                </div>
+
+            </div>
+            <div class="input-group pt-0 barra-pesquisa">
+                <input type="text" class="form-control lupa" placeholder="Pesquisar" aria-label="Pesquisar"
+                    aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarDespesasLoja()">
+                <i class=" bi-trash-fill btn-clear" (click)="limparPesquisa()"></i>
+                <div class="overlay" (click)="filtrarDespesasLoja()"></div>
+            </div>
+            <div class="mb-3 d-flex gap-3 align-items-center  justify-content-center">
+
+                <div>
+                    <label for="dataInicio" class="form-label"></label>
+                    <input id="dataInicio" type="date" class="form-control" [(ngModel)]="dataVencInicio"
+                        (change)="filtrarDespesasLoja()">
+                </div>
+
+                <div>
+                    <label for="dataFim" class="form-label"></label>
+                    <input id="dataFim" type="date" class="form-control" [(ngModel)]="dataVencFim"
+                        (change)="filtrarDespesasLoja()">
+                </div>
+
+                <br>
+
+                Pagar
+
+
+                <label class="form-check">
+                    <br>
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="filtroAtivo" (change)="onFiltroCheck()"
+                        style="background-color: rgb(216, 62, 62); transform: scale(1.5);">
+
+                </label>
+                <br>
+                Pagos
+                <label class="form-check">
+                    <br>
+                    <input type="checkbox" class="form-check-input" [(ngModel)]="filtroInativo"
+                        (change)="onFiltroCheck()" style="background-color: green; transform: scale(1.5);">
+
+
+                </label>
+            </div>
+
+        </div>
+
+
+        <div class="collapse navbar-collapse" id="navbarNav" style="margin-left: 15px;">
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link black-text">
+                        <img src="/assets/2.2.png" alt="Ícone de Cadastro" width="110" height="110"
+                            data-bs-toggle="modal" data-bs-target="#despesas">
+                    </a>
+                </li>
+
+
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div *ngIf="mensagem" class="alert alert-primary alert-dismissible fade show" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="onFecharAlerta()" type="button" class="btn-close" aria-label="Close"></button>
+</div>
+<div class="line container mt-3  "></div>
+
+
+<div class="d-flex justify-content-between align-items-center mb-3 container-fluid" style="width: 100%;">
+
+    <!-- Coluna vazia à esquerda -->
+    <div class="col-4"></div>
+
+    <!-- Coluna central com paginação -->
+    <div class="col-4 text-center"> <strong>
+            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo">
+            </pagination-controls></strong>
+    </div>
+
+    <!-- Coluna à direita com os resumos -->
+    <div class="d-flex gap-1 justify-content col-4">
+        <div class="card shadow-sm border-0 rounded-4" style="min-width: 50px;">
+            <div class="card-body p-3">
+                <h6 class="text-center mb-3 fw-bold text-success">Resumo de despesas</h6>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pagar: </span>
+                    <span class="fw-bold text-danger">{{ totalSaldoAtivas | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold text-muted">Pago: </span>
+                    <span class="fw-bold text-success">{{ totalValorPago | currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm border-0 rounded-4" style="min-width: 50px;">
+            <div class="card-body p-3">
+                <h6 class="text-center mb-3 fw-bold text-success">Total de despesas</h6>
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="fw-bold text-success"> {{ totalSaldoAtivas + totalValorPago|
+                        currency:'BRL':'symbol':'1.2-2' }}</span>
+                </div>
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+<div class="table-responsive container mt-3" style="padding:  10px;">
+
+
+
+
+
+
+
+    <table class="table">
+        <!-- ... thead ... -->
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Loja</th>
+                <th>Custo</th>
+                <th>Despesa</th>
+                <th>Qtd</th>
+                <th>Valor cobrado</th>
+                <th>Op</th>
+                <th>Ref</th>
+                <th>Data Venc</th>
+                <th>Valor pago</th>
+                <th>Data pg</th>
+                <th>Forma pg</th>
+                <th>Obs</th>
+
+            </tr>
+        </thead>
+
+        <ng-container
+            *ngFor="let despesasLoja of despesasLojaFiltradas | paginate: { itemsPerPage: 50, currentPage: p }; let i = index">
+
+            <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
+                <td>{{ despesasLoja.id }}</td>
+                <td>{{ despesasLoja.loja || '-' }}</td>
+                <td>{{despesasLoja.categoria}}</td>
+                <td>{{ despesasLoja.despesa || '-' }}</td>
+                <td>{{despesasLoja.quantidade}}</td>
+
+
+                <td>R$ {{ despesasLoja.valorCobr != null ? despesasLoja.valorCobr.toLocaleString('pt-BR', {
+                    minimumFractionDigits:
+                    2, maximumFractionDigits: 2 }) : '-' }}
+                </td>
+
+                <td>
+                    <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#opcoes' + despesasLoja.id">
+                        <!-- Ícone ou texto para Opções -->
+                    </button>
+                </td>
+                <td>{{despesasLoja.mesReferencia}}</td>
+                <td
+                    [ngStyle]="isVencidaOuHoje(despesasLoja.dataVencimento, despesasLoja.ativo) ? {'color': 'red', 'font-weight': 'bold'} : {}">
+                    {{ despesasLoja.dataVencimento | date: 'dd/MM/yyyy' }}
+                </td>
+
+                <td style="color: rgb(6, 68, 255);">
+                    R$ {{ despesasLoja.valorPago != null ? despesasLoja.valorPago.toLocaleString('pt-BR', {
+                    minimumFractionDigits:
+                    2, maximumFractionDigits: 2 }) : '-' }}
+                </td>
+
+                <td> {{despesasLoja.dataPagamento | date: 'dd/MM/yyyy'}}</td>
+                <td>{{ despesasLoja.formaPagamento || '-' }}</td>
+                <td>
+                    <button class="btn btn-sm"
+                        [ngClass]="despesasLoja.observacao ? 'btn-primary' : 'btn-outline-secondary'"
+                        [style.background-color]="despesasLoja.observacao ? '#0d6efd' : 'transparent'"
+                        (click)="mostraObservacao(despesasLoja)"></button>
+                </td>
+
+            </tr>
+        </ng-container>
+    </table>
+
+    <tfoot>
+        <tr>
+            <td colspan="17" class="text-start">
+                <strong>
+                    Quantidade exibida: {{ despesasLojaFiltradas.length }}
+                    <span *ngIf="despesasLojaFiltradas.length !== allDespesasLoja.length">
+                        (de um total de {{ allDespesasLoja.length }})
+                    </span>
+                </strong>
+            </td>
+        </tr>
+    </tfoot>
+
+</div>
+
+<div class="col text-center"><strong>
+        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+            nextLabel="Próximo"></pagination-controls></strong>
+
+
+
+</div>
+
+
+
+<div class="modal fade" id="despesas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Cadastrar despesas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formDespesasLoja">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+
+                                <!-- Primeira linha -->
+                                <div class="row mb-14 row justify-content-center">
+
+                                    <!-- Categoria -->
+                                    <div class="col-md-5">
+                                        <label><strong>Custo</strong></label>
+                                        <select class="form-select text-center" formControlName="categoria"
+                                            (change)="onCategoriaChange($event)">
+                                            <option value="">SELECIONE</option>
+                                            <option *ngFor="let categ of categoria" [value]="categ">{{categ}}</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Despesa -->
+                                    <div class="col-md-5">
+                                        <label><strong>Despesa</strong></label>
+
+                                        <!-- Select normal quando NÃO for 'OUTROS' -->
+                                        <select *ngIf="!mostrarInputDespesa" class="form-select text-center"
+                                            formControlName="despesa">
+                                            <option value="">SELECIONE</option>
+                                            <option *ngFor="let desp of despesasSelect" [value]="desp">{{desp}}</option>
+                                        </select>
+
+
+                                        <!-- Input texto quando for 'OUTROS' -->
+                                        <input *ngIf="mostrarInputDespesa" type="text" class="form-control text-center"
+                                            placeholder="Digite a despesa" formControlName="despesa">
+                                    </div>
+
+                                    <!-- Referência -->
+                                    <div class="col-md-2">
+                                        <label><strong>Ref</strong></label>
+                                        <select class="form-select text-center" formControlName="mesReferencia">
+                                            <option value="">MÊS</option>
+                                            <option *ngFor="let ref of mesReferencia" [value]="ref">{{ref}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <hr>
+                                <!-- Segunda linha -->
+                                <div class="row mb-12 row justify-content-center">
+                                    <div class="col-md-3">
+                                        <label><strong>Loja</strong></label>
+                                        <select class="form-select text-center " formControlName="loja">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label><strong>QTD</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="0"
+                                            formControlName="quantidade" />
+
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label><strong>Valor</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="R$ 0,00"
+                                            formControlName="valorCobr" />
+
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label><strong>Data vencimento</strong></label>
+                                        <input type="date" class="form-control text-center"
+                                            formControlName="dataVencimento" />
+                                    </div>
+
+                                </div>
+                                <hr>
+
+                                <div class="row mb-18 justify-content-center">
+
+                                    <div class="col-md-7 ">
+                                        <label><strong>Obs</strong></label>
+                                        <textarea class="form-control text-center" placeholder="Observação"
+                                            formControlName="observacao"></textarea>
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="cadastrarDespesas()">Cadastrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modalObservacao" tabindex="-1" aria-hidden="true" style="text-align: center;">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-center w-100">Detalhes da Cobrança</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Observação:</strong></p>
+                <div class="texto-obs">{{ observacaoSelecionada.observacao || 'Nenhuma' }}</div>
+
+                <br>
+                <p><strong>Pagamento feito pela conta:</strong> <br>{{ observacaoSelecionada.conta || 'Nenhuma' }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngFor="let desp of despesasLojaFiltradas">
+    <div class="modal fade" [attr.id]="'opcoes' + desp.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header d-block text-center">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+                        Escolha uma ação, para a despesa de id {{ desp.id }}
+                    </h1>
+                    <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-3">Despesa:</div>
+                        <div class="col-md-7">{{desp.despesa}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Loja:</div>
+                        <div class="col-md-7">{{desp.loja}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">Valor:</div>
+                        <div class="col-md-7">{{desp.valorCobr != null ? desp.valorCobr.toLocaleString('pt-BR', {
+                            minimumFractionDigits:
+                            2, maximumFractionDigits: 2 }) : '-' }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Data Venc:</div>
+                        <div class="col-md-7">{{desp.dataVencimento | date: 'dd/MM/yyyy'}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">Observação:</div>
+                        <div class="col-md-7">{{desp.observacao}}</div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" (click)="onEdite(desp.id, 'pagar')"
+                        data-bs-toggle="modal" data-bs-target="#modalConcluirDespesasLoja"
+                        data-bs-dismiss="modal">Pagar</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Excluir</button>
+                    <button type="button" class="btn btn-dark" (click)="onEdite(desp.id, 'editar')"
+                        data-bs-toggle="modal" data-bs-target="#edicaoDespesas">
+                        Editar
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="edicaoDespesas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Editar despesas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formDespesasLoja">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+
+                                <!-- Primeira linha -->
+                                <div class="row mb-11 justify-content-center">
+
+                                    <!-- Categoria -->
+                                    <div class="col-md-4">
+                                        <label><strong>Custo</strong></label>
+                                        <select class="form-select text-center" formControlName="categoria"
+                                            (change)="onCategoriaChange($event)">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let categ of categoria" [value]="categ">{{categ}}</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Despesa -->
+                                    <div class="col-md-4">
+                                        <label><strong>Despesa</strong></label>
+
+                                        <!-- Select normal quando NÃO for 'OUTROS' -->
+                                        <select *ngIf="!mostrarInputDespesa" class="form-select text-center"
+                                            formControlName="despesa">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let desp of despesasSelect" [value]="desp">{{desp}}</option>
+                                        </select>
+
+                                        <!-- Input texto quando for 'OUTROS' -->
+                                        <input *ngIf="mostrarInputDespesa" type="text" class="form-control text-center"
+                                            placeholder="Digite a despesa" formControlName="despesa">
+                                    </div>
+
+                                    <!-- Referência -->
+                                    <div class="col-md-2">
+                                        <label><strong>Ref</strong></label>
+                                        <select class="form-select text-center" formControlName="mesReferencia">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let ref of mesReferencia" [value]="ref">{{ref}}</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <div class="row mb-10 justify-content-center">
+
+                                    <!-- Loja -->
+                                    <div class="col-md-2">
+                                        <label><strong>Loja</strong></label>
+                                        <select class="form-select" formControlName="loja">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let lojaItem of loja" [value]="lojaItem">{{lojaItem}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Valor -->
+                                    <div class="col-md-3">
+                                        <label><strong>Valor</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="R$ 0,00"
+                                            formControlName="valorCobr" />
+                                    </div>
+
+                                    <!-- Data vencimento -->
+                                    <div class="col-md-3">
+                                        <label><strong>Data vencimento</strong></label>
+                                        <input type="date" class="form-control text-center"
+                                            formControlName="dataVencimento" />
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <div class="row mb-10">
+
+                                    <!-- Conta -->
+                                    <div class="col-md-2">
+                                        <label><strong>Conta</strong></label>
+                                        <select class="form-select" formControlName="conta">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let contaItem of conta" [value]="contaItem">{{contaItem}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Valor pago -->
+                                    <div class="col-md-3">
+                                        <label><strong>Valor pago</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="R$ 0,00"
+                                            formControlName="valorPago" />
+                                    </div>
+
+                                    <!-- Forma de pagamento -->
+                                    <div class="col-md-4">
+                                        <label><strong>Forma de pagamento</strong></label>
+                                        <select class="form-select text-center" formControlName="formaPagamento">
+                                            <option value="">Selecione</option>
+                                            <option *ngFor="let formaPag of formaPag" [value]="formaPag">{{formaPag}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Data pagamento -->
+                                    <div class="col-md-3">
+                                        <label><strong>Data pagamento</strong></label>
+                                        <input type="date" class="form-control text-center"
+                                            formControlName="dataPagamento" />
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                                <!-- Observação -->
+                                <div class="row mb-18 justify-content-center">
+                                    <div class="col-md-7">
+                                        <label><strong>Obs</strong></label>
+                                        <textarea class="form-control text-center" placeholder="Observação"
+                                            formControlName="observacao"></textarea>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="onSubmit()">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalConcluirDespesasLoja" aria-labelledby="exampleModalLabel" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content text-center ">
+            <div class="modal-header">
+                <h3 class="modal-title w-100">Pagamento</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body justify-content-center">
+
+                <form [formGroup]="formDespesasLoja">
+
+
+
+                    <div class="row mt-2  text-center">
+                        <div class="col-md-2">
+                            <label><strong>Loja</strong></label>
+                            <input type="text" class="form-control text-center" formControlName="loja" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Despesa</strong></label>
+                            <input type="text" class="form-control text-center"
+                                [value]="formDespesasLoja.get('despesa')?.value" readonly>
+
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Valor</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="R$"
+                                formControlName="valorCobr" readonly />
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Data vencimento</strong></label>
+                            <input type="date" class="form-control text-center" formControlName="dataVencimento"
+                                readonly />
+
+                        </div>
+
+
+
+
+                        <div class="row mt-3 justify-content-center text-center">
+                            <div class="col-md-8">
+                                <label><strong>Observação</strong></label>
+                                <textarea class="form-control text-center" placeholder="Digite aqui"
+                                    formControlName="observacao"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row mt-2 justify-content-center text-center">
+                        <h3>Informe os dados abaixos para concluir o pagamento</h3>
+                        <br><br><br>
+                        <div class="col-md-2">
+                            <label><strong>Conta</strong></label>
+                            <select class="form-select " formControlName="conta">
+                                <option value=""> Selecione </option>
+                                <option *ngFor="let conta of conta" [value]="conta">{{ conta }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label><strong>Valor pago</strong></label>
+                            <input type="text" class="form-control text-center" placeholder="R$ 0,00"
+                                formControlName="valorPago" />
+
+                        </div>
+                        <div class="col-md-4">
+                            <label><strong>Forma de pagamento</strong></label>
+                            <select class="form-select text-center" formControlName="formaPagamento">
+                                <option value=""> Selecione </option>
+                                <option *ngFor="let formaPag of formaPag" [value]="formaPag">{{ formaPag }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label><strong>Data pagamento</strong></label>
+                            <input type="date" class="form-control text-center" formControlName="dataPagamento" />
+                        </div>
+
+
+                    </div>
+                </form>
+                <hr>
+                <div class="modal-body">
+                    <h1 style="color: rgb(9, 105, 5);"><strong> Deseja concluir o pagamento ?
+
+                        </strong></h1>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                    <button type="button" class="btn btn-primary" (click)="onConcluir()"
+                        data-bs-dismiss="modal">Sim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -260,7 +260,7 @@ export class ComprasComponent implements OnInit, AfterViewInit {
             .subscribe({
                 next: (comprasData) => {
                     this.compras = (comprasData as any[]).sort((a, b) =>
-                        new Date(a.dataNota).getTime() - new Date(b.dataNota).getTime()
+                        new Date(b.dataEntrega).getTime() - new Date(a.dataEntrega).getTime()
                     );
                     this.comprasFiltradas = [...this.compras];
                     console.log('📦 Compras carregadas e ordenadas:', this.compras);

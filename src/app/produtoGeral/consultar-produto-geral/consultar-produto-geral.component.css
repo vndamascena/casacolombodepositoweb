@@ -1,7 +1,13 @@
 
 User
 /* Adicione esta classe para controlar a visibilidade da imagem ampliada */
-
+.custom-icon {
+  cursor: pointer;      /* faz aparecer a mãozinha */
+    /* aumenta o tamanho (opcional) */
+}
+.custom-icon:hover {
+  color: #198754;       /* verde do Bootstrap mais escuro no hover */
+}
 
 .imagem-ampliada {
     display: none;
@@ -56,7 +62,7 @@ User
     text-align: center;
 }
 .formulario-credenciais {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

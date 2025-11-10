@@ -32,7 +32,7 @@
                 <div class="overlay" (click)="filtrarCompras()"></div>
 
             </div>
-            
+
             <div class="mb-2 d-flex gap-3 align-items-center  justify-content-center">
 
                 <div>
@@ -95,40 +95,64 @@
 
 
 <div class="line container mt-3  "></div>
-<br>
 <div class="table-responsive   container mt-3 ">
 
 
 
 
+  <div class="d-flex justify-content-between align-items-center">
+    <!-- Paginação à esquerda (ou centro, se preferir) -->
+    <div class="col text-center flex-grow-1">
+      <strong>
+        <pagination-controls
+          (pageChange)="p = $event"
+          previousLabel="Anterior"
+          nextLabel="Próximo">
+        </pagination-controls>
+      </strong>
+    </div>
 
-    <table class="table">
+    <!-- Botão alinhado à direita -->
+    <button class="btn btn-success ms-auto" (click)="imprimirTabela()">
+      🖨️ 
+    </button>
+  </div>
+
+    <table class="table" id="tabela-suprimentos" >
 
         <thead>
             <tr>
 
-                <th style="width: 4%;">Id</th>
-                <th style="width: 15%;">Nome</th>
-                <th style="width: 11%;">Data pedida</th>
+                <th style="width: 3%;">Id</th>
+                <th style="width: 10%;">Nome</th>
+                <th style="width: 5%;">Data pedida</th>
                 <!--<th style="width: 2%;">JC1</th>-->
 
-                <th style="width: 2%;">VA</th>
+                <th *ngIf="!lojaAtiva || lojaAtiva === 'VA'" style="width: 1%; cursor:pointer;"
+                    (click)="alternarLoja('VA')" [ngClass]="{'bg-danger text-white': lojaAtiva === 'VA' && filtroAtivo}"> VA
+                </th>
 
-                <th style="width: 2%;">JC2</th>
+                <th *ngIf="!lojaAtiva || lojaAtiva === 'JC2'" style="width: 1%; cursor:pointer;"
+                    (click)="alternarLoja('JC2')" [ngClass]="{'bg-danger text-white': lojaAtiva === 'JC2' && filtroAtivo}"> JC2
+                </th>
 
-                <th style="width: 2%;">CL</th>
-                <th style="width: 4%;">Total</th>
+                <th *ngIf="!lojaAtiva || lojaAtiva === 'CL'" style="width: 1%; cursor:pointer;"
+                    (click)="alternarLoja('CL')" [ngClass]="{'bg-danger text-white': lojaAtiva === 'CL' && filtroAtivo}"> CL
+                </th>
+                <th style="width: 3%;">Total</th>
 
-                <th style="width: 4%;">Obs</th>
-                <th style="width: 9%;">Entregue</th>
+                <th style="width: 2%;">Obs</th>
+                <th style="width: 4%;">Entregue</th>
 
 
 
             </tr>
         </thead>
 
+
         <ng-container
             *ngFor="let suprimentos of suprimentosFiltradas | paginate: { itemsPerPage: 50, currentPage: p }; let i = index;">
+
 
             <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
 
@@ -137,27 +161,27 @@
                 <td>{{suprimentos.dataPedido | date: 'dd/MM/yyyy'}}</td>
                 <!-- JC1 -->
                 <!-- <td>
-                    <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
-                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'jC1')"
-                                [disabled]="suprimentos.dataEntrega || produtoPossuiLojaIndividual(suprimentos, 'jC1')"
-                                (click)="abrirModalQuantidade(suprimentos, 'jC1', $event)" />
-                            <span class="checkmark"
-                                [ngClass]="{'entrega-preenchida': suprimentos.dataEntrega && produtoPossuiLojaIndividual(suprimentos, 'jC1')}">
+                        <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
+                            <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                                <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'jC1')"
+                                    [disabled]="suprimentos.dataEntrega || produtoPossuiLojaIndividual(suprimentos, 'jC1')"
+                                    (click)="abrirModalQuantidade(suprimentos, 'jC1', $event)" />
+                                <span class="checkmark"
+                                    [ngClass]="{'entrega-preenchida': suprimentos.dataEntrega && produtoPossuiLojaIndividual(suprimentos, 'jC1')}">
 
+                                </span>
+
+                            </label>
+                            <span>{{ formatarQuantidade(suprimentos.quantidadeJC1) }}
+                                <input type="checkbox" [(ngModel)]="suprimentos.selected" (change)="updateSelection(suprimentos)" />
                             </span>
-
-                        </label>
-                        <span>{{ formatarQuantidade(suprimentos.quantidadeJC1) }}
-                               <input type="checkbox" [(ngModel)]="suprimentos.selected" (change)="updateSelection(suprimentos)" />
-                        </span>
-                    </div>
-                </td>-->
+                        </div>
+                    </td>-->
 
 
 
                 <!-- VA -->
-                <td style="text-align: center; position: relative;">
+                <td *ngIf="!lojaAtiva || lojaAtiva === 'VA'" style="text-align: center; position: relative;">
                     <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
                             <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'va')"
@@ -183,7 +207,7 @@
                 </td>
 
                 <!-- JC2 -->
-                <td style="text-align: center; position: relative;">
+                <td *ngIf="!lojaAtiva || lojaAtiva === 'JC2'" style="text-align: center; position: relative;">
                     <div style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
                             <input type="checkbox" [checked]="produtoPossuiLojaIndividual(suprimentos, 'jC2')"
@@ -209,7 +233,7 @@
                 </td>
 
                 <!-- CL -->
-                <td style="text-align: center; position: relative;">
+                <td *ngIf="!lojaAtiva || lojaAtiva === 'CL'" style="text-align: center; position: relative;">
                     <div class="quantidade-container"
                         style="display: flex; align-items: center; gap: 4px; white-space: nowrap;">
                         <label class="custom-checkbox" (click)="$event.stopPropagation()">
@@ -284,7 +308,14 @@
     </tfoot>
 
 
+    <div class="col text-center"><strong>
+            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+                nextLabel="Próximo"></pagination-controls>
+        </strong>
 
+
+
+    </div>
 
 
 </div>
@@ -292,6 +323,8 @@
     *ngIf="suprimentoSelecionado && suprimentoSelecionado === suprimentoSelecionado">
     <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
     <h4><strong>Confirmar entrega</strong></h4>
+
+
     <div class="mb-3">
         <label for="matriculaInput" class="form-label"></label>
         <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
@@ -303,12 +336,12 @@
     </div>
 
 
- <form [formGroup]="formSuprimentos">
-  <div class="md-3">
-    <label class="text-center w-100"><strong>Quantidade</strong></label>
-    <input type="number" min="1" class="form-control text-center" formControlName="quantidade" />
-  </div>
-</form>
+    <form [formGroup]="formSuprimentos">
+        <div class="md-3">
+            <label class="text-center w-100"><strong>Quantidade</strong></label>
+            <input type="text" min="1" class="form-control text-center" formControlName="quantidade" />
+        </div>
+    </form>
     <br>
     <button type="button" class="btn btn-outline-light" (click)="confirmarEntrega()" style="font-weight: bold;">
         <strong>Confirmar</strong>

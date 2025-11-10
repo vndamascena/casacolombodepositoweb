@@ -14,6 +14,14 @@
 
 
 <div class="container mt-3">
+
+   <!-- AVISO CENTRALIZADO -->
+  <div *ngIf="aniversarianteHoje && mostrarAviso" class="aviso-aniversario">
+    <div class="aviso-conteudo" >
+      🎉 Hoje é aniversário de {{ aniversarianteHoje.nome }}! Parabéns pelo seu dia!!! 🎉🎂
+      <button class="btn-fechar" (click)="fecharAviso()">✖</button>
+    </div>
+  </div>
     <nav class="navbar navbar-expand-lg navbar-dark"
         style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
 

@@ -27,90 +27,96 @@ export class HistoricoVendasComponent implements OnInit {
   originalCombinedData: any[] = [];
   lotes: any[] = [];
   combinedData: any[] = [];
+  dadosOriginais: any[] = [];
+  dadosFiltrados: any[] = [];
+  filtroEntrada: boolean = false;
+  filtroSaida: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
     private router: Router
   ) { }
 
- ngOnInit(): void {
-  const currentDate = new Date();
-  this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+  ngOnInit(): void {
+    const currentDate = new Date();
+    this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-  // Carrega vendas e lotes em paralelo
-  forkJoin({
-    vendas: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`),
-    lotes: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/lotes`)
-  }).subscribe({
-    next: ({ vendas, lotes }) => {
-      // Trata vendas
-      this.vendas = vendas.map(venda => {
-        venda.dataVenda = new Date(venda.dataVenda);
-        return venda;
-      });
-
-      // Trata lotes filtrando 'xxx'
-      this.lotes = lotes
-        .filter(lote =>
-          lote.codigo.trim().toLowerCase() !== 'xxx' &&
-          lote.numeroLote.trim().toLowerCase() !== 'xxx'
-        )
-        .map(lote => {
-          lote.dataEntrada = new Date(lote.dataEntrada);
-          return lote;
+    // Carrega vendas e lotes em paralelo
+    forkJoin({
+      vendas: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/venda`),
+      lotes: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoPiso/lotes`)
+    }).subscribe({
+      next: ({ vendas, lotes }) => {
+        // Trata vendas
+        this.vendas = vendas.map(venda => {
+          venda.dataVenda = new Date(venda.dataVenda);
+          return venda;
         });
 
-      // Combina dados
-      this.combinedData = [
-        ...this.vendas.map(venda => ({
-          ...venda,
-          data: venda.dataVenda,
-          tipo: 'dataVenda'
-        })),
-        ...this.lotes.map(lote => ({
-          ...lote,
-          data: lote.dataEntrada,
-          tipo: 'dataEntrada'
-        }))
-      ];
+        // Trata lotes filtrando 'xxx'
+        this.lotes = lotes
+          .filter(lote =>
+            lote.codigo.trim().toLowerCase() !== 'xxx' &&
+            lote.numeroLote.trim().toLowerCase() !== 'xxx'
+          )
+          .map(lote => {
+            lote.dataEntrada = new Date(lote.dataEntrada);
+            return lote;
+          });
 
-      // ✅ Etapa de carregamento de nomes única
-      this.carregarNomesUsuarios();
+        // Combina dados
+        this.combinedData = [
+          ...this.vendas.map(venda => ({
+            ...venda,
+            data: venda.dataVenda,
+            tipo: 'dataVenda'
+          })),
+          ...this.lotes.map(lote => ({
+            ...lote,
+            data: lote.dataEntrada,
+            tipo: 'dataEntrada'
+          }))
+        ];
 
-      // Ordena por data
-      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
-      this.originalCombinedData = [...this.combinedData];
-    },
-    error: (err) => {
-      console.error('Erro ao carregar dados:', err);
-    }
-  });
-}
-carregarNomesUsuarios(): void {
-  const uniqueIds = Array.from(new Set(
-    this.combinedData.map(item => Number(item.usuarioId)).filter(id => !isNaN(id))
-  ));
+        // ✅ Etapa de carregamento de nomes única
+        this.carregarNomesUsuarios();
 
-  const userRequests = uniqueIds.map(id =>
-    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${id}`)
-      .pipe(
-        catchError(() => of({ nome: 'Desconhecido', id }))
-      )
-  );
-
-  forkJoin(userRequests).subscribe(users => {
-    const nomeMap = new Map<number, string>();
-    users.forEach((user, index) => {
-      nomeMap.set(uniqueIds[index], user.nome || 'Desconhecido');
+        // Ordena por data
+        this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
+        this.originalCombinedData = [...this.combinedData];
+        this.dadosOriginais = [...this.combinedData];
+        this.dadosFiltrados = [...this.combinedData];
+      },
+      error: (err) => {
+        console.error('Erro ao carregar dados:', err);
+      }
     });
+  }
+  carregarNomesUsuarios(): void {
+    const uniqueIds = Array.from(new Set(
+      this.combinedData.map(item => Number(item.usuarioId)).filter(id => !isNaN(id))
+    ));
 
-    // Atribui nomes
-    this.combinedData.forEach(item => {
-      item.nome = nomeMap.get(Number(item.usuarioId)) || 'Desconhecido';
+    const userRequests = uniqueIds.map(id =>
+      this.httpClient.get<any>(`${this.userApiUrl}?matricula=${id}`)
+        .pipe(
+          catchError(() => of({ nome: 'Desconhecido', id }))
+        )
+    );
+
+    forkJoin(userRequests).subscribe(users => {
+      const nomeMap = new Map<number, string>();
+      users.forEach((user, index) => {
+        nomeMap.set(uniqueIds[index], user.nome || 'Desconhecido');
+      });
+
+      // Atribui nomes
+      this.combinedData.forEach(item => {
+        item.nome = nomeMap.get(Number(item.usuarioId)) || 'Desconhecido';
+      });
     });
-  });
-}
+  }
 
 
 
@@ -135,12 +141,31 @@ carregarNomesUsuarios(): void {
 
 
 
+ onFiltroCheck(): void {
+  // Nenhum filtro → mostra tudo
+  if (!this.filtroEntrada && !this.filtroSaida) {
+    this.dadosFiltrados = [...this.dadosOriginais];
+    return;
+  }
 
+  this.dadosFiltrados = this.dadosOriginais.filter(item => {
+    // Entrada = registros que vieram de "lotes" (sem dataVenda)
+    if (this.filtroEntrada && item.tipo === 'dataEntrada') {
+      return true;
+    }
 
+    // Saída = registros que vieram de "vendas" (com dataVenda)
+    if (this.filtroSaida && item.tipo === 'dataVenda') {
+      return true;
+    }
+
+    return false;
+  });
+}
 
 
   loadUserName(venda: any): void {
-    
+
     this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
       .subscribe({
         next: (userData) => {
@@ -225,7 +250,7 @@ carregarNomesUsuarios(): void {
       const searchTerm = this.expression.toLowerCase();
 
       // Filtrar a tabela com base no termo de pesquisa
-      this.combinedData = this.originalCombinedData.filter(item => {
+      this.dadosFiltrados = this.originalCombinedData.filter(item => {
         // Itera sobre todos os valores do item (registro da tabela)
         return Object.keys(item).some(key => {
           const value = item[key];
@@ -241,7 +266,7 @@ carregarNomesUsuarios(): void {
       });
 
       // Ordena os dados filtrados por data de forma decrescente (do mais recente para o mais antigo)
-      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
+      this.dadosFiltrados.sort((a, b) => b.data.getTime() - a.data.getTime());
     }
   }
 

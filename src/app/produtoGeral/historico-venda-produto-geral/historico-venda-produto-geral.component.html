@@ -18,6 +18,29 @@
                     <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
                 <div class="overlay" (click)="filtrarProdutos()"></div>
             </div>
+            <div>
+
+        <div class="row mb-2 justify-content-center text-center">
+          <div class="col-md-3 d-flex justify-content-center align-items-center">
+
+            <!-- Saída -->
+            <div class="form-check d-flex flex-column align-items-center me-2">
+              <input type="checkbox" class="form-check-input" [(ngModel)]="filtroSaida" (change)="onFiltroCheck()"
+                style="background-color: rgb(216, 62, 62); transform: scale(1.5);">
+              
+            </div>
+
+            <!-- Entrada -->
+            <div class="form-check d-flex flex-column align-items-center">
+              <input type="checkbox" class="form-check-input" [(ngModel)]="filtroEntrada" (change)="onFiltroCheck()"
+                style="background-color: rgb(8, 0, 244); transform: scale(1.5);">
+             
+            </div>
+
+          </div>
+        </div>
+
+      </div>
         </div>
 
 
@@ -49,19 +72,7 @@
 <br>
 
 <div class="table-responsive container mt-3">
-    <div >
-      <h2>Filtro</h2>
-      <div class="row mb-2 align-items-end">
-        <div class="col-md-2">
-          <label for="startDate">Data Inicial:</label>
-          <input type="date" class="form-control" [ngModel]="startDate | date:'yyyy-MM-dd'" (ngModelChange)="startDate = $event; filterData()">
-        </div>
-        <div class="col-md-2">
-          <label for="endDate">Data Final:</label>
-          <input type="date" class="form-control" [ngModel]="endDate | date:'yyyy-MM-dd'" (ngModelChange)="endDate = $event; filterData()">
-        </div>
-      </div>
-    </div>
+   
   
     <table class="table">
       <!-- Cabeçalho da tabela -->
@@ -78,14 +89,12 @@
       </thead>
       <!-- Corpo da tabela -->
       <tbody>
-        <ng-container *ngFor="let item of combinedData | paginate: { itemsPerPage: 12, currentPage: p }" >
+        <ng-container *ngFor="let item of dadosFiltrados | paginate: { itemsPerPage: 12, currentPage: p }" >
           <tr >
             <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.nome }}</td>
             <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.nomeProduto }}</td>
             <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{item.marca}}</td>
             <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.codigoSistema }}</td>
-            
-          
             <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.quantidadeVendida || item.qtdEntrada }}</td>
             <td [ngStyle]="{'color': item.tipo === 'dataVenda' ? 'red' : 'blue'}">{{ item.dataVenda ? (item.dataVenda | date:'dd/MM/yyyy') : (item.dataEntrada | date:'dd/MM/yyyy') }}</td>
           </tr>

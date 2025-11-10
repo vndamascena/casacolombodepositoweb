@@ -43,6 +43,15 @@ export class CobrancaComponent implements OnInit {
   selectedFornecedor: any = null;
   selectedEmpresaFrete: any = null;
   ultimaCompra: any = null;
+  totalValorCobr: number = 0;
+  totalValorPago: number = 0;
+  totalPagoInativas: number = 0;
+  totalSaldo: number = 0;
+  totalSaldoAtivas: number = 0;
+  totalChequeCobr = 0;
+  totalChequePago = 0;
+  totalChequeSaldo = 0;
+
 
   filtroIdCompraAtivo: string | null = null;
 
@@ -178,20 +187,17 @@ export class CobrancaComponent implements OnInit {
   }
 
   aplicarFiltroDashboard(tipo: string) {
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+    const hoje = normalizarData(new Date());
     const dataLimite = new Date(hoje);
-    dataLimite.setDate(hoje.getDate() + 5);
-    dataLimite.setHours(0, 0, 0, 0);
+    dataLimite.setUTCDate(hoje.getUTCDate() + 5); // usa UTC
     const formasIgnoradas = ['DINHEIRO', 'CHEQUE', 'TRANSFERÊNCIA'];
+
     switch (tipo) {
       case 'vencidas':
-        
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = new Date(c.dataVenc);
-          venc.setHours(0, 0, 0, 0);
+          const venc = normalizarData(new Date(c.dataVenc));
           const tipo = (c.tipoCobr || '').toUpperCase();
-          return c.ativo && venc <= hoje && !formasIgnoradas.includes(tipo);
+          return c.ativo && venc < hoje && !formasIgnoradas.includes(tipo);
         });
         this.ordenarPorDataVencimento();
         this.mensagem = 'Exibindo apenas cobranças vencidas';
@@ -199,8 +205,7 @@ export class CobrancaComponent implements OnInit {
 
       case 'proxvenc':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = new Date(c.dataVenc);
-          venc.setHours(0, 0, 0, 0);
+          const venc = normalizarData(new Date(c.dataVenc));
           return c.ativo && venc > hoje && venc <= dataLimite;
         });
         this.ordenarPorDataVencimento();
@@ -209,8 +214,7 @@ export class CobrancaComponent implements OnInit {
 
       case 'avencer':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = new Date(c.dataVenc);
-          venc.setHours(0, 0, 0, 0);
+          const venc = normalizarData(new Date(c.dataVenc));
           return c.ativo && venc > hoje && !c.dataPag;
         });
         this.ordenarPorDataVencimento();
@@ -219,8 +223,11 @@ export class CobrancaComponent implements OnInit {
 
       case 'pagasmes':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
+          if (!c.dataPag) return false;
           const pag = new Date(c.dataPag);
-          return !c.ativo && pag.getMonth() === hoje.getMonth() && pag.getFullYear() === hoje.getFullYear();
+          return !c.ativo &&
+            pag.getUTCMonth() === hoje.getUTCMonth() &&
+            pag.getUTCFullYear() === hoje.getUTCFullYear();
         });
         this.ordenarPorDataVencimento();
         this.mensagem = 'Exibindo cobranças pagas no mês';
@@ -228,8 +235,8 @@ export class CobrancaComponent implements OnInit {
 
       case 'pagasdia':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const pag = new Date(c.dataPag);
-          pag.setHours(0, 0, 0, 0);
+          if (!c.dataPag) return false;
+          const pag = normalizarData(new Date(c.dataPag));
           return !c.ativo && pag.getTime() === hoje.getTime();
         });
         this.ordenarPorDataVencimento();
@@ -238,29 +245,28 @@ export class CobrancaComponent implements OnInit {
 
       case 'vencidadia':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = new Date(c.dataVenc);
-          venc.setHours(0, 0, 0, 0);
+          const venc = normalizarData(new Date(c.dataVenc));
           return c.ativo && venc.getTime() === hoje.getTime();
         });
         this.ordenarPorDataVencimento();
-        this.mensagem = 'Exibindo cobranças vencidas hoje';
+        this.mensagem = 'Exibindo cobranças vencendo hoje';
         break;
 
       case 'vencidasSemPagamento':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = new Date(c.dataVenc);
-          venc.setHours(0, 0, 0, 0);
+          const venc = normalizarData(new Date(c.dataVenc));
           const tipo = (c.tipoCobr || '').toUpperCase();
-          return c.ativo && venc <= hoje && formasIgnoradas.includes(tipo);
+          return c.ativo && venc < hoje && formasIgnoradas.includes(tipo);
         });
         this.ordenarPorDataVencimento();
         this.mensagem = 'Cobranças vencidas com pagamento manual (DINHEIRO, CHEQUE, TRANSFERÊNCIA)';
         break;
     }
   }
+
   getCorTexto(idCompra: number): string {
     const ehVermelho = this.isSomaDasCobrancasDiferenteDaCompra(idCompra);
-    console.log(`Cor do texto para idCompra ${idCompra}: ${ehVermelho ? 'red' : 'black'}`);
+    //console.log(`Cor do texto para idCompra ${idCompra}: ${ehVermelho ? 'red' : 'black'}`);
     return ehVermelho ? 'red' : 'blue';
   }
   isSomaDasCobrancasDiferenteDaCompra(idCompra: number): boolean {
@@ -318,6 +324,7 @@ export class CobrancaComponent implements OnInit {
       )
     }).subscribe({
       next: (results) => {
+        
         this.fornecedor = results.fornecedores;
         this.compras = results.comprasApi;
 
@@ -336,9 +343,12 @@ export class CobrancaComponent implements OnInit {
             numNota: numNotaCompra,
             dataNota: dataNotaCompra,
             dataCadastro: cobranca.dataCadastro,
-            ativo: cobranca.dataPag == null ? 1 : 0
+            ativo: cobranca.ativo ?? (cobranca.dataPag == null ? 1 : 0)
           };
+          
+          
         });
+        
 
         this.route.queryParams.subscribe(params => {
           this.filtroIdCompraAtivo = params['idCompra'] || null;
@@ -357,10 +367,34 @@ export class CobrancaComponent implements OnInit {
         });
         console.log('Total de cobranças carregadas:', this.allCobrancas.length);
         console.log('Dados iniciais carregados e processados no CobrancaComponent.');
+        const cheques = this.cobrancasFiltradas.filter(c => c.tipoCobr?.toLowerCase() === 'cheque');
+        const naoCheques = this.cobrancasFiltradas.filter(c => c.tipoCobr?.toLowerCase() !== 'cheque');
+
+        // 🔹 Helper para somar
+        const soma = (lista: any[], fn: (c: any) => number) => lista.reduce((s, c) => s + fn(c), 0);
+
+        // 🔹 Totais gerais (excluindo cheques)
+        this.totalValorCobr = soma(naoCheques, c => c.valorCobr || 0);
+        this.totalValorPago = soma(naoCheques, c => c.valorPago || 0);
+        this.totalSaldo = soma(naoCheques, c => Math.max(0, (c.valorCobr || 0) - (c.valorPago || 0)));
+
+        // 🔹 Totais por status (ativas e inativas — sem cheques)
+        const ativas = naoCheques.filter(c => c.ativo === 1);
+        const inativas = naoCheques.filter(c => c.ativo === 0);
+
+        this.totalSaldoAtivas = soma(ativas, c => Math.max(0, (c.valorCobr || 0) - (c.valorPago || 0)));
+        this.totalPagoInativas = soma(inativas, c => c.valorPago || 0);
+
+        // 🔹 Totais específicos de cheques
+        this.totalChequeCobr = soma(cheques, c => c.valorCobr || 0);
+        this.totalChequePago = soma(cheques, c => c.valorPago || 0);
+        this.totalChequeSaldo = soma(cheques, c => Math.max(0, (c.valorCobr || 0) - (c.valorPago || 0)));
       },
+
       error: (e) => {
         console.error('Erro ao carregar dados iniciais (forkJoin) no CobrancaComponent:', e);
       }
+
     });
 
     const modalComprasEl = document.getElementById('cadastrarCompras');
@@ -382,7 +416,7 @@ export class CobrancaComponent implements OnInit {
     hoje.setHours(0, 0, 0, 0);
     venc.setHours(0, 0, 0, 0);
 
-    return venc <= hoje;
+    return venc < hoje;
   }
 
 
@@ -417,6 +451,7 @@ export class CobrancaComponent implements OnInit {
         this.mensagem = '';
       });
     }
+
   }
 
 
@@ -608,7 +643,7 @@ export class CobrancaComponent implements OnInit {
         next: (data: any) => {
           this.mensagem = data.message;
           this.router.navigate(['/cobranca']).then(() => {
-            window.location.reload();
+          window.location.reload();
           });
         },
         error: (error) => {
@@ -757,7 +792,9 @@ export class CobrancaComponent implements OnInit {
       valorPago: valorPagoFormatado,
       dataPag: rawForm.dataPag,
       conta: rawForm.conta,
-      formaPag: rawForm.formaPag
+      formaPag: rawForm.formaPag,
+      obs: rawForm.obs
+      
     };
 
     this.httpClient.put(`${environment.financa}/cobranca/baixa`, dadosParaEnviar)
@@ -812,7 +849,6 @@ export class CobrancaComponent implements OnInit {
 
 
 
-
   filtrarCobranca(): void {
     const termo = this.expression?.toLowerCase().trim() || '';
     const inicioStr = this.dataVencInicio;
@@ -820,37 +856,57 @@ export class CobrancaComponent implements OnInit {
 
     this.cobrancasFiltradas = this.allCobrancas.filter(cobranca => {
       const contemTexto = termo === '' || Object.values(cobranca).some(value =>
-       String(value).toLowerCase().includes(termo)
+        String(value).toLowerCase().includes(termo)
       );
 
       const dataVenc = cobranca.dataVenc ? new Date(cobranca.dataVenc) : null;
       let dataFimFiltrada: Date | null = null;
       let dataInicioFiltrada: Date | null = null;
-
-      if (inicioStr) {
-        dataInicioFiltrada = new Date(inicioStr);
-      }
-
+      if (inicioStr) { dataInicioFiltrada = new Date(inicioStr); }
       if (fimStr) {
         dataFimFiltrada = new Date(fimStr);
         dataFimFiltrada.setDate(dataFimFiltrada.getDate() + 1);
       }
 
-      const dentroDoPeriodo =
-        (!dataInicioFiltrada || (dataVenc && dataVenc >= dataInicioFiltrada)) &&
-        (!dataFimFiltrada || (dataVenc && dataVenc < dataFimFiltrada));
+      const dentroDoPeriodo = (!dataInicioFiltrada || (dataVenc && dataVenc >= dataInicioFiltrada))
+        && (!dataFimFiltrada || (dataVenc && dataVenc < dataFimFiltrada));
 
-      const statusValido =
-        (!this.filtroAtivo && !this.filtroInativo) ||
-        (this.filtroAtivo && cobranca.ativo === 1) ||
-        (this.filtroInativo && cobranca.ativo === 0);
+      const statusValido = (!this.filtroAtivo && !this.filtroInativo)
+        || (this.filtroAtivo && cobranca.ativo === 1)
+        || (this.filtroInativo && cobranca.ativo === 0);
 
       return contemTexto && dentroDoPeriodo && statusValido;
     });
 
+    // 🔹 Separa cheques e não-cheques
+    const cheques = this.cobrancasFiltradas.filter(c => c.tipoCobr?.toLowerCase() === 'cheque');
+    const naoCheques = this.cobrancasFiltradas.filter(c => c.tipoCobr?.toLowerCase() !== 'cheque');
+
+    // 🔹 Helper para somar
+    const soma = (lista: any[], fn: (c: any) => number) => lista.reduce((s, c) => s + fn(c), 0);
+
+    // 🔹 Totais gerais (excluindo cheques)
+    this.totalValorCobr = soma(naoCheques, c => c.valorCobr || 0);
+    this.totalValorPago = soma(naoCheques, c => c.valorPago || 0);
+    this.totalSaldo = soma(naoCheques, c => Math.max(0, (c.valorCobr || 0) - (c.valorPago || 0)));
+
+    // 🔹 Totais por status (ativas e inativas — sem cheques)
+    const ativas = naoCheques.filter(c => c.ativo === 1);
+    const inativas = naoCheques.filter(c => c.ativo === 0);
+
+    this.totalSaldoAtivas = soma(ativas, c => Math.max(0, (c.valorCobr || 0) - (c.valorPago || 0)));
+    this.totalPagoInativas = soma(inativas, c => c.valorPago || 0);
+
+    // 🔹 Totais específicos de cheques
+    this.totalChequeCobr = soma(cheques, c => c.valorCobr || 0);
+    this.totalChequePago = soma(cheques, c => c.valorPago || 0);
+    this.totalChequeSaldo = soma(cheques, c => Math.max(0, (c.valorCobr || 0) - (c.valorPago || 0)));
+
     this.ordenarPorDataVencimento();
     this.p = 1;
   }
+
+
 
 
 
@@ -900,7 +956,7 @@ export class CobrancaComponent implements OnInit {
       const dataA = a.dataVenc ? new Date(a.dataVenc).getTime() : Infinity;
       const dataB = b.dataVenc ? new Date(b.dataVenc).getTime() : Infinity;
 
-      return dataA - dataB;
+      return dataB - dataA;
     });
   }
 
@@ -953,4 +1009,7 @@ export class CobrancaComponent implements OnInit {
   }
 
 
+}
+function normalizarData(date: Date): Date {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }

@@ -37,6 +37,7 @@ import { FornecedorComponent } from './financias/fornecedor/fornecedor.component
 import { DashboardComponent } from './financias/dashboard/dashboard.component';
 import { DespesasComponent } from './financias/despesas/despesas.component';
 import { SuprimentosComponent } from './financias/suprimentos/suprimentos.component';
+import { DespesasLojaComponent } from './financias/despesas-loja/despesas-loja.component';
 
 
 
@@ -162,7 +163,7 @@ export const routes: Routes = [
         path: 'historico-titulofuncionario',
         component: HistoricoTitulofuncionarioComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Admin','Ricardo', 'Roberta', 'Vinicius'] }
     },
     {
         path: 'cadastrar-titulofuncionario',
@@ -173,7 +174,7 @@ export const routes: Routes = [
         path: 'editar-titulofuncionario/:id',
         component: EditarTitulofuncionarioComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Ricardo', 'Roberta','Vinicius'] }
     },
     {
         path: 'consultar-titulofuncionario',
@@ -197,13 +198,13 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Ricardo', 'Roberta','Vinicius'] }
     },
     {
         path: 'cobranca',
         component: CobrancaComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Ricardo', 'Roberta', 'Admin','Vinicius'] }
 
     },
 
@@ -211,23 +212,30 @@ export const routes: Routes = [
         path: 'compras',
         component: ComprasComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Ricardo', 'Roberta', 'Admin','Vinicius'] }
     },
     {
         path: 'fornecedor',
         component: FornecedorComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+       data: { roles: ['Ricardo', 'Roberta', 'Admin','Vinicius'] }
 
     },
     {
         path: 'despesas',
         component: DespesasComponent,
         canActivate: [AuthenticationGuard],
-        data: { roles: ['Admin'] }
+        data: { roles: ['Ricardo', 'Roberta', 'Admin','Vinicius'] }
 
     },
-     {
+    {
+        path: 'despesas-loja',
+        component: DespesasLojaComponent,
+        canActivate: [AuthenticationGuard],
+        data: { roles: ['Ricardo', 'Roberta','Vinicius'] }
+
+    },
+    {
         path: 'suprimentos',
         component: SuprimentosComponent,
         canActivate: [AuthenticationGuard]

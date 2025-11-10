@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment.development';
 declare var bootstrap: any;
 
 
+
 @Component({
   selector: 'app-dashboard',
   imports: [CommonModule, FormsModule, RouterModule, ReactiveFormsModule, NgxPaginationModule, NgxSpinnerModule, NgxImageZoomModule,],
@@ -35,6 +36,7 @@ export class DashboardComponent implements OnInit {
   cobrancaJaInicializada = false;
   tipoFornec: string[] = ['DISTRIBUIDOR', 'FABRICA', 'DIST / FABR', 'TRANSPORTADORA'];
   formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA'];
+  formaPagDespesa: string[] = ['BOLETO','CARTÃO DE CREDITO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA'];
   tipoDespesa: string[] = ['COMBUSTÍVEL', 'CONTABILIDADE', 'DESINFETANTE E CLORO', 'INSUMOS', 'MECÂNICA', 'MERCADO', 'OBRA', 'REFEIÇÃO', 'SACOLAS', 'TRABALHO EXTRA', 'OUTROS',]
   selectedFornecedor: any = null;
   selectedEmpresaFrete: any = null;
@@ -44,8 +46,22 @@ export class DashboardComponent implements OnInit {
   qtdCobrancasPagasNoDia: number = 0;
   qtdCobrancasVencidasNoDia: number = 0;
   qtdCobrancasAVencer: number = 0;
+  totalValorCobrVencidas: number = 0;
+  totalValorPagoVencidas: number = 0;
+  totalValorCobrProximo: number = 0;
+  totalValorPagoProximo: number = 0;
+  totalValorCobrVencidasDia: number = 0;
+  totalValorPagoVencidasDia: number = 0;
+  totalValorCobrAVencer: number = 0;
+  totalValorPagoAVencer: number = 0;
+  totalValorCobrSemPagamento: number = 0;
+  totalValorPagoSemPagamento: number = 0;
+  totalValorCobrPagasMes: number = 0;
+  totalValorPagoPagasMes: number = 0;
+  totalValorCobrPagasDia: number = 0;
+  totalValorPagoPagasDia: number = 0;
   cobrancasAVencer: any[] = [];
-  
+
 
   constructor(
     private route: ActivatedRoute,
@@ -407,114 +423,116 @@ export class DashboardComponent implements OnInit {
 
 
   carregarDadosCobrancas(): void {
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
+  const hoje = normalizarData(new Date());
 
-    const dataLimiteProximoVencimento = new Date();
-    dataLimiteProximoVencimento.setDate(hoje.getDate() + 5);
-    dataLimiteProximoVencimento.setHours(0, 0, 0, 0);
+  const dataLimiteProximoVencimento = new Date(hoje);
+  dataLimiteProximoVencimento.setDate(hoje.getUTCDate() + 5);
 
-    const formasIgnoradas = ['DINHEIRO', 'CHEQUE', 'TRANSFERÊNCIA'];
+  const formasIgnoradas = ['DINHEIRO', 'CHEQUE', 'TRANSFERÊNCIA'];
 
-    this.httpClient.get(environment.financa + "/cobranca/ativo")
-      .subscribe({
-        next: (data) => {
-          const cobrancasAtivas = data as any[];
+  this.httpClient.get(environment.financa + "/cobranca/ativo")
+    .subscribe({
+      next: (data) => {
+        const cobrancasAtivas = data as any[];
 
-          // 🔴 FILTRO 1: VENCIDAS (EXCLUINDO DINHEIRO, CHEQUE, TRANSFERÊNCIA)
-          this.cobranca = cobrancasAtivas.filter((cobranca: any) => {
-            const dataVencimento = new Date(cobranca.dataVenc);
-            dataVencimento.setHours(0, 0, 0, 0);
-
-            const tipo = (cobranca.tipoCobr || '').toUpperCase();
-            return (
-              dataVencimento <= hoje &&
-              !formasIgnoradas.includes(tipo)
-            );
-          });
-          this.qtdCobrancasVencidas = this.cobranca.length;
-          console.log('💲 Cobranças ativas e vencidas (excluindo DINHEIRO, CHEQUE, TRANSFERÊNCIA):', this.cobranca);
-
-          // 🟡 FILTRO 2: Próximas ao vencimento (sem mudanças)
-          this.cobrancasProximoVencimento = cobrancasAtivas.filter((cobranca: any) => {
-            const dataVencimento = new Date(cobranca.dataVenc);
-            dataVencimento.setHours(0, 0, 0, 0);
-            return dataVencimento > hoje && dataVencimento <= dataLimiteProximoVencimento;
-          });
-          this.qtdCobrancasProximoVencimento = this.cobrancasProximoVencimento.length;
-
-          // 🔵 FILTRO 3: Vencidas no dia (sem mudanças)
-          this.cobrancasVencidasNoDia = cobrancasAtivas.filter((cobranca: any) => {
-            const dataVencimento = new Date(cobranca.dataVenc);
-            dataVencimento.setHours(0, 0, 0, 0);
-            return dataVencimento.getTime() === hoje.getTime();
-          });
-          this.qtdCobrancasVencidasNoDia = this.cobrancasVencidasNoDia.length;
-
-          // 🟢 FILTRO 4: A vencer (sem mudanças)
-          this.cobrancasAVencer = cobrancasAtivas.filter((cobranca: any) => {
-            const dataVencimento = new Date(cobranca.dataVenc);
-            dataVencimento.setHours(0, 0, 0, 0);
-            return dataVencimento > hoje && !cobranca.dataPag;
-          });
-          this.qtdCobrancasAVencer = this.cobrancasAVencer.length;
+        // 🔴 FILTRO 1: VENCIDAS
+        this.cobranca = cobrancasAtivas.filter((cobranca: any) => {
+          const dataVencimento = normalizarData(new Date(cobranca.dataVenc));
+          const tipo = (cobranca.tipoCobr || '').toUpperCase();
+          return (
+            dataVencimento < hoje && // ⬅️ Só menores que hoje
+            !formasIgnoradas.includes(tipo)
+          );
+        });
+        this.qtdCobrancasVencidas = this.cobranca.length;
+        this.totalValorCobrVencidas = this.cobranca.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
 
-          // 🔶 FILTRO 5: VENCIDAS COM PAGAMENTO MANUAL (DINHEIRO, CHEQUE, TRANSFERÊNCIA)
-          this.cobrancasSemPagamentos = cobrancasAtivas.filter((cobranca: any) => {
-            const dataVencimento = new Date(cobranca.dataVenc);
-            dataVencimento.setHours(0, 0, 0, 0);
+        // 🟡 FILTRO 2: Próximas ao vencimento
+        const amanha = new Date(hoje);
+        amanha.setDate(hoje.getDate() + 1); // começa a contar a partir de amanhã
 
-            const tipo = (cobranca.tipoCobr || '').toUpperCase();
+        this.cobrancasProximoVencimento = cobrancasAtivas.filter((cobranca: any) => {
+          const dataVencimento = normalizarDataLocal(new Date(cobranca.dataVenc));
+          const incluir = dataVencimento >= amanha && dataVencimento <= dataLimiteProximoVencimento;
 
-            return (
-              dataVencimento <= hoje &&
-              formasIgnoradas.includes(tipo)
-            );
-          });
-          this.qtdCobrancasSemPagamento = this.cobrancasSemPagamentos.length;
-          console.log('🔶 Cobranças vencidas com pagamento manual:', this.cobrancasSemPagamentos);
+          //if (incluir) {
+            //console.log(`Cobrança incluída: ${cobranca.id || cobranca.valorCobr} - Vencimento: ${dataVencimento.toLocaleDateString('pt-BR')}`);
+         // }
+
+          return incluir;
+        });
+        this.qtdCobrancasProximoVencimento = this.cobrancasProximoVencimento.length,
+        this.totalValorCobrProximo = this.cobrancasProximoVencimento.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // 🔵 FILTRO 3: Vencidas no dia
+        this.cobrancasVencidasNoDia = cobrancasAtivas.filter((cobranca: any) => {
+          const dataVencimento = normalizarData(new Date(cobranca.dataVenc));
+          return dataVencimento.getTime() === hoje.getTime();
+        });
+        this.qtdCobrancasVencidasNoDia = this.cobrancasVencidasNoDia.length;
+        this.totalValorCobrVencidasDia = this.cobrancasVencidasNoDia.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // 🟢 FILTRO 4: A vencer
+        this.cobrancasAVencer = cobrancasAtivas.filter((cobranca: any) => {
+          const dataVencimento = normalizarData(new Date(cobranca.dataVenc));
+          return dataVencimento > hoje && !cobranca.dataPag;
+        });
+        this.qtdCobrancasAVencer = this.cobrancasAVencer.length;
+        this.totalValorCobrAVencer = this.cobrancasAVencer.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // 🔶 FILTRO 5: VENCIDAS COM PAGAMENTO MANUAL
+        this.cobrancasSemPagamentos = cobrancasAtivas.filter((cobranca: any) => {
+          const dataVencimento = normalizarData(new Date(cobranca.dataVenc));
+          const tipo = (cobranca.tipoCobr || '').toUpperCase();
+          return (
+            dataVencimento < hoje && // ⬅️ Só menores que hoje
+            formasIgnoradas.includes(tipo)
+          );
+        });
+        this.qtdCobrancasSemPagamento = this.cobrancasSemPagamentos.length;
+        this.totalValorCobrSemPagamento = this.cobrancasSemPagamentos.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        console.log('🔶 Cobranças vencidas com pagamento manual:', this.cobrancasSemPagamentos);
+      },
+
+      error: (e) => {
+        console.log('Erro ao carregar cobranças ativas:', e.error);
+      }
+    });
+
+  this.httpClient.get(environment.financa + "/Cobranca/inativo")
+    .subscribe({
+      next: (data) => {
+        const cobrancasInativas = data as any[];
+
+        // ✅ Cobranças pagas no mês
+        this.cobrancasPagasNoMes = cobrancasInativas.filter((cobranca: any) => {
+          if (!cobranca.dataPag) return false;
+          const dataPagamento = new Date(cobranca.dataPag);
+          return (
+            dataPagamento.getUTCMonth() === hoje.getUTCMonth() &&
+            dataPagamento.getUTCFullYear() === hoje.getUTCFullYear()
+          );
+        });
+        this.qtdCobrancasPagasNoMes = this.cobrancasPagasNoMes.length;
+        this.totalValorCobrPagasMes = this.cobrancasPagasNoMes.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // ✅ Cobranças pagas no dia
+        this.cobrancasPagasNoDia = cobrancasInativas.filter((cobranca: any) => {
+          if (!cobranca.dataPag) return false;
+          const dataPagamento = normalizarData(new Date(cobranca.dataPag));
+          return dataPagamento.getTime() === hoje.getTime();
+        });
+        this.qtdCobrancasPagasNoDia = this.cobrancasPagasNoDia.length;
+        this.totalValorCobrPagasDia = this.cobrancasPagasNoDia.reduce((acc, c) => acc + (Number(c.valorCobr) || 0), 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      },
+      error: (e) => {
+        console.log('Erro ao carregar cobranças inativas (pagas):', e.error);
+      }
+    });
+}
 
 
-
-        },
-
-
-        error: (e) => {
-          console.log('Erro ao carregar cobranças ativas:', e.error);
-        }
-      });
-
-    this.httpClient.get(environment.financa + "/Cobranca/inativo")
-      .subscribe({
-        next: (data) => {
-          const cobrancasInativas = data as any[];
-
-          // ✅ Cobranças pagas no mês (sem mudanças)
-          this.cobrancasPagasNoMes = cobrancasInativas.filter((cobranca: any) => {
-            if (!cobranca.dataPag) return false;
-            const dataPagamento = new Date(cobranca.dataPag);
-            return (
-              dataPagamento.getMonth() === hoje.getMonth() &&
-              dataPagamento.getFullYear() === hoje.getFullYear()
-            );
-          });
-          this.qtdCobrancasPagasNoMes = this.cobrancasPagasNoMes.length;
-
-          // ✅ Cobranças pagas no dia (sem mudanças)
-          this.cobrancasPagasNoDia = cobrancasInativas.filter((cobranca: any) => {
-            if (!cobranca.dataPag) return false;
-            const dataPagamento = new Date(cobranca.dataPag);
-            dataPagamento.setHours(0, 0, 0, 0);
-            return dataPagamento.getTime() === hoje.getTime();
-          });
-          this.qtdCobrancasPagasNoDia = this.cobrancasPagasNoDia.length;
-        },
-        error: (e) => {
-          console.log('Erro ao carregar cobranças inativas (pagas):', e.error);
-        }
-      });
-  }
 
 
 
@@ -867,3 +885,9 @@ export class DashboardComponent implements OnInit {
 
 
 
+function normalizarData(date: Date): Date {
+  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+}
+function normalizarDataLocal(data: Date): Date {
+  return new Date(data.getFullYear(), data.getMonth(), data.getDate());
+}

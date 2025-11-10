@@ -5,25 +5,30 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { environment } from '../../../environments/environment.development';
+import { forkJoin, catchError, of } from 'rxjs';
 
 @Component({
-    selector: 'app-historico-venda-produto-geral',
-    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
-    templateUrl: './historico-venda-produto-geral.component.html',
-    styleUrl: './historico-venda-produto-geral.component.css'
+  selector: 'app-historico-venda-produto-geral',
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule],
+  templateUrl: './historico-venda-produto-geral.component.html',
+  styleUrl: './historico-venda-produto-geral.component.css'
 })
-export class HistoricoVendaProdutoGeralComponent implements OnInit{
+export class HistoricoVendaProdutoGeralComponent implements OnInit {
   vendas: any[] = [];
   startDate: Date = new Date();
   endDate: Date = new Date();
   expression: string = ''; // String para armazenar a expressão de pesquisa
   userApiUrl: string = 'https://colombo01-001-site2.gtempurl.com/api/usuarios';
-  combinedData: any[] = []; 
+  combinedData: any[] = [];
   originalVendas: any[] = [];
   originalCombinedData: any[] = [];
   p: number = 1;
   produtos: any[] = []; // Array de objetos para armazenar produtos
-  produtoDepositos: any [] = []
+  produtoDepositos: any[] = []
+  filtroEntrada: boolean = false;
+  filtroSaida: boolean = false;
+  dadosOriginais: any[] = [];
+  dadosFiltrados: any[] = [];
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -37,64 +42,145 @@ export class HistoricoVendaProdutoGeralComponent implements OnInit{
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-    this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral/venda`)
+
+    forkJoin({
+      vendas: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral/venda`),
+      produtoDepositos: this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral/produtoDepositos`)
+    }).subscribe({
+      next: ({ vendas, produtoDepositos }) => {
+        this.vendas = vendas.map(venda => {
+          venda.dataVenda = new Date(venda.dataVenda); // Certifique-se de que a data seja convertida para Date
+          return venda;
+        });
+
+
+
+
+        // Aplique o filtro antes de mapear os depositos
+        this.produtoDepositos = produtoDepositos
+          .filter(ProdutoDeposito =>
+
+            ProdutoDeposito.codigoSistema.trim().toLowerCase() !== 'xxx' &&
+            ProdutoDeposito.nomeProduto.trim().toLowerCase() !== 'xxx'
+          )
+          .map(produtoDeposito => {
+            produtoDeposito.dataEntrada = new Date(produtoDeposito.dataEntrada);
+            return produtoDeposito
+
+          })
+
+
+        // Combine os dados de vendas e depositos
+        this.combinedData = [
+          ...this.vendas.map(venda => ({
+            ...venda,
+            data: venda.dataVenda, // Usa dataVenda para a ordenação
+            tipo: 'dataVenda' // Adiciona um campo para diferenciar
+          })),
+
+          ...this.produtoDepositos.map(prdodutoDeposito => ({
+            ...prdodutoDeposito,
+            data: prdodutoDeposito.dataEntrada, // Usa dataEntrada para a ordenação
+            tipo: 'dataEntrada' // Adiciona um campo para diferenciar
+          }))
+
+        ];
+        this.carregarNomesUsuarios();
+        
+
+        // Ordena por data
+        this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
+        this.originalCombinedData = [...this.combinedData];
+        this.dadosOriginais = [...this.combinedData];
+        this.dadosFiltrados = [...this.combinedData];
+      },
+      error: (err) => {
+        console.error('Erro ao carregar dados:', err);
+      }
+    });
+  }
+
+
+ carregarNomesUsuarios(): void {
+  // Pega todos os IDs possíveis (de vendas e de entradas)
+  const uniqueIds = Array.from(new Set(
+    this.combinedData
+      .map(item => item.usuarioId || item.usuarioIdCadastro) // pega dos dois campos
+      .filter(id => !!id) // remove null/undefined
+      .map(id => Number(id)) // converte para número
+      .filter(id => !isNaN(id)) // garante que é número válido
+  ));
+
+  // Faz as requisições para buscar os nomes
+  const userRequests = uniqueIds.map(id =>
+    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${id}`)
+      .pipe(
+        catchError(() => of({ nome: 'Desconhecido', id }))
+      )
+  );
+
+  forkJoin(userRequests).subscribe(users => {
+    const nomeMap = new Map<number, string>();
+
+    users.forEach((user, index) => {
+      nomeMap.set(uniqueIds[index], user.nome || 'Desconhecido');
+    });
+
+    // Atribui nomes aos objetos
+    this.combinedData.forEach(item => {
+      const id = Number(item.usuarioId || item.usuarioIdCadastro);
+      item.nome = nomeMap.get(id) || 'Desconhecido';
+    });
+  });
+}
+
+
+  loadUserName(venda: any): void {
+
+    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
       .subscribe({
-        next: (vendasData) => {
-          this.vendas = vendasData.map(venda => {
-            venda.dataVenda = new Date(venda.dataVenda); // Certifique-se de que a data seja convertida para Date
-            return venda;
-          });
-
-          this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral/produtoDepositos`)
-            .subscribe({
-              next: (ProdutoDepositoData) => {
-                // Aplique o filtro antes de mapear os depositos
-                this.produtoDepositos = ProdutoDepositoData
-                .filter(ProdutoDeposito => {
-                  console.log('Filtrando deposito:', ProdutoDeposito.codigoSistema, ProdutoDeposito.nomeProduto); 
-                  return ProdutoDeposito.codigoSistema.trim().toLowerCase() !== 'xxx' && ProdutoDeposito.nomeProduto.trim().toLowerCase() !== 'xxx';
-                })
-                
-
-                // Combine os dados de vendas e depositos
-                this.combinedData = [
-                  ...this.vendas.map(venda => ({
-                    ...venda,
-                    data: venda.dataVenda, // Usa dataVenda para a ordenação
-                    tipo: 'dataVenda' // Adiciona um campo para diferenciar
-                  })),
-
-                  ...this.produtoDepositos.map(deposito => ({
-                    ...deposito,
-                    data: deposito.dataEntrada, // Usa dataEntrada para a ordenação
-                    tipo: 'dataEntrada' // Adiciona um campo para diferenciar
-                  }))
-                 
-                ];
-
-                // Carrega os nomes dos usuários para todos os itens combinados
-                this.combinedData.forEach(item => this.loadUserName(item));
-                this.combinedData.forEach(item => this.loadEntryUserName(item));
-                this.originalCombinedData = [...this.combinedData];
-                
-
-                // Ordena os dados combinados por data de forma decrescente (do mais recente para o mais antigo)
-                this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
-              },
-              error: (error) => {
-                console.error('Erro ao carregar os depositos:', error);
-              }
-            });
+        next: (userData) => {
+          venda.nome = userData.nome;
         },
         error: (error) => {
-          console.error('Erro ao carregar o histórico de vendas:', error);
+          console.error('❌ Erro ao carregar nome para ID', venda.usuarioId, ':', error);
         }
       });
   }
 
+  loadEntryUserName(entrada: any): void {
+    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${entrada.usuarioIdCadastro}`)
+      .subscribe({
+        next: (userData) => {
+          entrada.nome = userData.nome; // Atribuir o nome do usuário para a entrada
+        },
+        error: (error) => {
+          console.error('Erro ao carregar o nome do usuário (entrada):', error);
+        }
+      });
+  }
 
+  onFiltroCheck(): void {
+    // Nenhum filtro → mostra tudo
+    if (!this.filtroEntrada && !this.filtroSaida) {
+      this.dadosFiltrados = [...this.dadosOriginais];
+      return;
+    }
 
+    this.dadosFiltrados = this.dadosOriginais.filter(item => {
+      // Entrada = registros que vieram de "lotes" (sem dataVenda)
+      if (this.filtroEntrada && item.tipo === 'dataEntrada') {
+        return true;
+      }
 
+      // Saída = registros que vieram de "vendas" (com dataVenda)
+      if (this.filtroSaida && item.tipo === 'dataVenda') {
+        return true;
+      }
+
+      return false;
+    });
+  }
 
 
 
@@ -103,55 +189,47 @@ export class HistoricoVendaProdutoGeralComponent implements OnInit{
 
 
   limparPesquisa() {
-  this.expression = '';
-  this.filtrarProdutos(); // Chama filtro com campo limpo
-}
+    this.expression = '';
+    this.filtrarProdutos(); // Chama filtro com campo limpo
+  }
 
 
 
 
   filtrarProdutos(): void {
-    if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todos os dados combinados da lista original
-      this.combinedData = [...this.originalCombinedData];
-      
-      // Ordena os dados combinados por data de forma decrescente (do mais recente para o mais antigo)
-      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
-      
-      window.location.reload();
-      
+    const searchTerm = this.expression.trim().toLowerCase();
+
+    if (!searchTerm) {
+      // Se campo de pesquisa estiver vazio, volta para todos os registros
+      this.dadosFiltrados = [...this.dadosOriginais];
     } else {
-      const searchTerm = this.expression.toLowerCase();
-      
-      // Filtrar a tabela com base no termo de pesquisa
-      this.combinedData = this.originalCombinedData.filter(item => {
-        // Itera sobre todos os valores do item (registro da tabela)
-        return Object.keys(item).some(key => {
-          const value = item[key];
-          
-          // Verifica se o valor é válido (não nulo, não indefinido)
+      // Pesquisa em todos os registros (não importa a página)
+      this.dadosFiltrados = this.dadosOriginais.filter(item => {
+        return Object.values(item).some(value => {
           if (value !== null && value !== undefined) {
-            // Converte o valor para string, independentemente do tipo, e compara com o termo de pesquisa
             return value.toString().toLowerCase().includes(searchTerm);
           }
-          
           return false;
         });
       });
-      
-      // Ordena os dados filtrados por data de forma decrescente (do mais recente para o mais antigo)
-      this.combinedData.sort((a, b) => b.data.getTime() - a.data.getTime());
     }
+
+    // Ordena por data do mais recente para o mais antigo
+    this.dadosFiltrados.sort((a, b) => b.data.getTime() - a.data.getTime());
+
+    // Sempre volta para a primeira página
+    this.p = 1;
   }
-  
+
+
 
   filterData(): void {
 
-    
+
     if (this.startDate && this.endDate) {
       const start = new Date(this.startDate);
       const end = new Date(this.endDate);
-     
+
       end.setDate(end.getDate() + 1);
 
       this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral/venda`).subscribe({
@@ -164,10 +242,10 @@ export class HistoricoVendaProdutoGeralComponent implements OnInit{
 
             return vendaDate >= start && vendaDate < end;
           });
-           
+
           this.vendas.sort((a, b) => b.dataVenda - a.dataVenda);
           this.vendas.forEach(venda => this.loadUserName(venda));
-         
+
         },
         error: (error) => {
           console.error('Erro ao filtrar o histórico de vendas:', error);
@@ -207,38 +285,14 @@ export class HistoricoVendaProdutoGeralComponent implements OnInit{
     }
   }
 
-// Método para alternar a exibição dos detalhes do produto
-toggleDetalhes(produto: any): void {
-  produto.mostrarDetalhes = !produto.mostrarDetalhes;
-  if (produto.mostrarDetalhes && !produto.produtoDepositos) {
-    this.carregarDepositos(produto);// Carrega os lotes do produto se ainda não estiverem carregados
-  }
-}
-
-  loadUserName(venda: any): void {
-    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${venda.usuarioId}`)
-      .subscribe({
-        next: (userData) => {
-          venda.nome = userData.nome; // Atribuir o nome do usuário
-        },
-        error: (error) => {
-          console.error('Erro ao carregar o nome do usuário:', error);
-        }
-      });
-
-      
+  // Método para alternar a exibição dos detalhes do produto
+  toggleDetalhes(produto: any): void {
+    produto.mostrarDetalhes = !produto.mostrarDetalhes;
+    if (produto.mostrarDetalhes && !produto.produtoDepositos) {
+      this.carregarDepositos(produto);// Carrega os lotes do produto se ainda não estiverem carregados
+    }
   }
 
-  loadEntryUserName(entrada: any): void {
-    this.httpClient.get<any>(`${this.userApiUrl}?matricula=${entrada.usuarioIdCadastro}`)
-      .subscribe({
-        next: (userData) => {
-          entrada.nome = userData.nome; // Atribuir o nome do usuário para a entrada
-        },
-        error: (error) => {
-          console.error('Erro ao carregar o nome do usuário (entrada):', error);
-        }
-      });
-  }
+
 
 }

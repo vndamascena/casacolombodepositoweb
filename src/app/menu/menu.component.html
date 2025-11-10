@@ -1,101 +1,256 @@
-<nav *ngIf="autent" class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <button style="color: white;" class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span style="color: white;" class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="inicio"><strong>Home</strong></a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" id="DropdownMenuLink1" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <strong>Produtos</strong>
-                    </a>
+<!-- MENU ADMIN  -->
+<nav *ngIf="autent && menuTipo === 'admin'" class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button style="color: white;" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span style="color: white;" class="navbar-toggler-icon"></span>
+    </button>
 
-                    <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink1">
-                     
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" aria-expanded="false" href="consulta-produtos"><strong>Pisos e Revestimentos</strong></a>
-                        </li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" aria-expanded="false" href="consultar-produtoGeral"><strong>Produtos Gerais</strong></a>
-                        </li>
-                     
-                    </ul>
-                    
-                     
-                        
-                   
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="inicio"><strong>Home</strong></a>
+        </li>
 
-                </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link" id="DropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Produtos</strong>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink1">
+            <li><a class="dropdown-item" href="consulta-produtos"><strong>Pisos e Revestimentos</strong></a></li>
+            <li><a class="dropdown-item" href="consultar-produtoGeral"><strong>Produtos Gerais</strong></a></li>
+          </ul>
+        </li>
 
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown" href="#" id="DropdownMenuLink2" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <strong>Tarefas</strong>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink2">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="ocorrencia"><strong>Ocorrências</strong></a>
-                        </li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="produtofalta-consultar"><strong>Produtos em falta</strong></a>
-                        </li>
-                         <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="suprimentos"><strong>Pedido suprimento</strong></a>
-                        </li>
-                    </ul>
-                    
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown" href="#" id="DropdownMenuLink3" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <strong>Utilitários</strong>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink3">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="consulta-fornecedor"><strong>Fornecedor</strong></a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown" href="#" id="DropdownMenuLink4" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <strong>Entregas</strong>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink4">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="consulta-entrega"><strong>Consulta entrega</strong></a>
-                        </li>
-                    </ul>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Tarefas</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="ocorrencia"><strong>Ocorrências</strong></a></li>
+            <li><a class="dropdown-item" href="produtofalta-consultar"><strong>Produtos em falta</strong></a></li>
+            <li><a class="dropdown-item" href="suprimentos"><strong>Pedido suprimento</strong></a></li>
+          </ul>
+        </li>
 
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown" href="#" id="DropdownMenuLink4" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <strong>Títulos a receber</strong>
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink4">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="consultar-titulo"><strong>Consulta títulos</strong></a>
-                            
-                        </li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item" href="cadastrar-titulofuncionario"><strong>Consulta títulos funcionários</strong></a>
-                        </li>
-                    </ul>
-                   
-                    
-                </li>
-               <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="dashboard"><strong>Finanças</strong></a>
-                </li>
-            </ul>
-        </div>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Utilitários</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-fornecedor"><strong>Fornecedor</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Entregas</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-entrega"><strong>Consulta entrega</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Títulos a receber</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consultar-titulo"><strong>Consulta títulos</strong></a></li>
+            <li><a class="dropdown-item" href="cadastrar-titulofuncionario"><strong>Consulta títulos funcionários</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Finanças</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="compras"><strong>Compras</strong></a></li>
+            <li><a class="dropdown-item" href="cobranca"><strong>Cobranças</strong></a></li>
+            <li><a class="dropdown-item" href="despesas"><strong>Despesas</strong></a></li>
+            <li><a class="dropdown-item" href="fornecedor"><strong>Fornecedor</strong></a></li>
+          </ul>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link btn btn-sm btn-primary"  href="#" aria-expanded="false">
+            <strong>{{ nome }} | <a (click)="logout()" style="cursor: pointer;">Sair</a></strong>
+          </a>
+        </li>
+      </ul>
     </div>
+  </div>
+</nav>
+
+<!-- MENU ADMIN  -->
+<nav *ngIf="autent && menuTipo === 'venda'" class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button style="color: white;" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span style="color: white;" class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="inicio"><strong>Home</strong></a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link" id="DropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Produtos</strong>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="DropdownMenuLink1">
+            <li><a class="dropdown-item" href="consulta-produtos"><strong>Pisos e Revestimentos</strong></a></li>
+            <li><a class="dropdown-item" href="consultar-produtoGeral"><strong>Produtos Gerais</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Tarefas</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="ocorrencia"><strong>Ocorrências</strong></a></li>
+            <li><a class="dropdown-item" href="produtofalta-consultar"><strong>Produtos em falta</strong></a></li>
+            <li><a class="dropdown-item" href="suprimentos"><strong>Pedido suprimento</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Utilitários</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-fornecedor"><strong>Fornecedor</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Entregas</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-entrega"><strong>Consulta entrega</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Títulos a receber</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consultar-titulo"><strong>Consulta títulos</strong></a></li>
+            <li><a class="dropdown-item" href="cadastrar-titulofuncionario"><strong>Consulta títulos funcionários</strong></a></li>
+          </ul>
+        </li>
+
+       <!-- <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Finanças</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="compras"><strong>Compras</strong></a></li>
+            <li><a class="dropdown-item" href="cobranca"><strong>Cobranças</strong></a></li>
+            <li><a class="dropdown-item" href="despesas"><strong>Despesas</strong></a></li>
+            <li><a class="dropdown-item" href="fornecedor"><strong>Fornecedor</strong></a></li>
+          </ul>
+        </li>-->
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+           <a class="nav-link btn btn-sm btn-primary"  href="#" aria-expanded="false">
+            <strong>{{ nome }} | <a (click)="logout()" style="cursor: pointer;">Sair</a></strong>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- MENU RICARDO / ROBERTA / VINICIUS -->
+<nav *ngIf="autent && menuTipo === 'drp'" class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button style="color: white;" class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown2" aria-controls="navbarNavDropdown2" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span style="color: white;" class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown2">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="inicio"><strong>Home</strong></a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link" id="DropdownMenuLink1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Produtos</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-produtos"><strong>Pisos e Revestimentos</strong></a></li>
+            <li><a class="dropdown-item" href="consultar-produtoGeral"><strong>Produtos Gerais</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Tarefas</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="ocorrencia"><strong>Ocorrências</strong></a></li>
+            <li><a class="dropdown-item" href="produtofalta-consultar"><strong>Produtos em falta</strong></a></li>
+            <li><a class="dropdown-item" href="suprimentos"><strong>Pedido suprimento</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Utilitários</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-fornecedor"><strong>Fornecedor</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Entregas</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consulta-entrega"><strong>Consulta entrega</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <strong>Títulos a receber</strong>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="consultar-titulo"><strong>Consulta títulos</strong></a></li>
+            <li><a class="dropdown-item" href="cadastrar-titulofuncionario"><strong>Consulta títulos funcionários</strong></a></li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link active" href="dashboard"><strong>Finanças</strong></a>
+        </li>
+      </ul>
+
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link btn btn-sm btn-primary"  href="#" aria-expanded="false">
+            <strong>{{ nome }} | <a (click)="logout()" style="cursor: pointer;">Sair</a></strong>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </nav>
 <br>

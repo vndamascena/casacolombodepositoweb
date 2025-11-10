@@ -69,6 +69,14 @@
         </ul>
       </div>
 
+      <div class="dropdown">
+        <button class="btn btn-outline-success" id="DropdownMenuCompras" data-bs-toggle="dropdown" aria-expanded="false"
+          routerLink="/despesas-loja">
+          <i class="bi bi-cart-check me-1"></i> Despesas-Loja
+        </button>
+      </div>
+
+
       <!-- Fornecedor -->
       <div class="dropdown">
         <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuFornecedor" data-bs-toggle="dropdown"
@@ -103,6 +111,8 @@
               <i class="bi bi-exclamation-circle display-10"></i>
               <h5 class="card-title mt-2">Cobranças vencidas</h5>
               <h1 class="card-text">{{ qtdCobrancasVencidas }}</h1>
+              <h3 class="card-text">{{totalValorCobrVencidas }}</h3>
+
             </div>
           </a>
         </div>
@@ -114,6 +124,7 @@
               <i class="bi bi-exclamation-circle display-10"></i>
               <h5 class="card-title  mt-2">Vencendo hoje</h5>
               <h1 class="card-text">{{ qtdCobrancasVencidasNoDia }}</h1>
+              <h3 class="card-text">{{totalValorCobrVencidasDia }}</h3>
             </div>
           </a>
         </div>
@@ -124,6 +135,7 @@
               <i class="bi bi-calendar-event display-10"></i>
               <h5 class="card-title mt-2">Prox. vencimento</h5>
               <h1 class="card-text">{{ qtdCobrancasProximoVencimento }}</h1>
+              <h3 class="card-text">{{totalValorCobrProximo }}</h3>
             </div>
           </a>
         </div>
@@ -135,6 +147,7 @@
               <i class="bi bi-bag-check display-10"></i>
               <h5 class="card-title  mt-2">A vencer</h5>
               <h1 class="card-text">{{ qtdCobrancasAVencer }}</h1>
+              <h3 class="card-text">{{totalValorCobrAVencer }}</h3>
             </div>
           </a>
         </div>
@@ -147,11 +160,13 @@
         style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
 
         <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidasSemPagamento' }" class="text-decoration-none">
+          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidasSemPagamento' }"
+            class="text-decoration-none">
             <div class="card bg-warning text-dark text-center p-3 shadow">
               <i class="bi bi-exclamation-circle display-10"></i>
               <h5 class="card-title mt-2">Cobranças a pagar</h5>
-              <h1 class="card-text">{{  qtdCobrancasSemPagamento }}</h1>
+              <h1 class="card-text">{{ qtdCobrancasSemPagamento }}</h1>
+              <h3 class="card-text">{{totalValorCobrSemPagamento }}</h3>
             </div>
           </a>
         </div>
@@ -161,8 +176,9 @@
           <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasdia' }" class="text-decoration-none">
             <div class="card bg-success text-white text-center p-3 shadow">
               <i class="bi bi-check-circle display-10"></i>
-              <h5 class="card-title">Pagas hoje</h5>
+              <h5 class="card-title mt-2">Pagas hoje</h5>
               <h1 class="card-text">{{ qtdCobrancasPagasNoDia }}</h1>
+              <h3 class="card-text">{{totalValorCobrPagasDia }}</h3>
             </div>
           </a>
         </div>
@@ -173,6 +189,7 @@
               <i class="bi bi-check-circle display-10"></i>
               <h5 class="card-title  mt-2">Pagas no mês</h5>
               <h1 class="card-text">{{ qtdCobrancasPagasNoMes }}</h1>
+              <h3 class="card-text">{{totalValorCobrPagasMes }}</h3>
             </div>
           </a>
         </div>
@@ -584,7 +601,7 @@
                     <label><strong>Pagamento</strong></label>
                     <select class="form-select text-center" formControlName="formaPagamento">
                       <option value=""> Selecione </option>
-                      <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                      <option *ngFor=" let form of formaPagDespesa" [value]="form">{{form}}</option>
                     </select>
                   </div>
 

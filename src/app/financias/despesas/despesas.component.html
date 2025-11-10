@@ -97,7 +97,13 @@
 
 <div class="table-responsive   container mt-3 ">
 
+    <div class="col text-center"><strong>
+            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+                nextLabel="Próximo"></pagination-controls></strong>
 
+
+
+    </div>
 
 
     <table class="table">
@@ -115,6 +121,7 @@
                 <th style="width: 8%;">Data compra</th>
 
                 <th>Obs</th>
+                <th style="width: 4%;">Op</th>
 
 
 
@@ -138,6 +145,12 @@
                     2, maximumFractionDigits: 2 }) : '-'}}</td>
                 <td>{{despesas.dataCompra | date: 'dd/MM/yyyy'}}</td>
                 <td>{{despesas.observacao}} </td>
+                <td >
+                     <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal"
+                        [attr.data-bs-target]="'#opcoes' + despesas.id">
+                        <!-- Ícone ou texto para Opções -->
+                    </button>
+                </td>
 
 
 
@@ -153,8 +166,13 @@
         <tr>
             <td colspan="14" class="text-start">
                 <strong>
-                    Quantidade exibida: {{ despesasFiltradas.length }}
-                    <span *ngIf="despesas.length !== despesas.length">
+
+                    Exibindo
+                    {{
+                    (despesasFiltradas | paginate: { itemsPerPage: 50, currentPage: p }).length
+                    }} de {{ despesasFiltradas.length }}
+
+                    <span *ngIf="despesasFiltradas.length !== despesas.length">
                         (de um total de {{ despesas.length }})
                     </span>
                 </strong>
@@ -162,8 +180,12 @@
         </tr>
     </tfoot>
 
-
-
+    <div class="col text-center">
+        <strong>
+            <pagination-controls (pageChange)="p = $event" previousLabel="Anterior" nextLabel="Próximo">
+            </pagination-controls>
+        </strong>
+    </div>
 
 
 </div>
@@ -267,4 +289,167 @@
             </div>
         </div>
     </div>
-</div>>
+</div>
+
+<div *ngFor="let despesas of despesasFiltradas">
+    <div class="modal fade" [attr.id]="'opcoes' + despesas.id" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: black;">
+                        Cobrança com vencimento em {{ despesas.dataVenc | date: 'dd/MM/yyyy' }}
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Verifique os dados e escolha uma ação</p>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-4">Local:</div>
+                        <div class="col-md-7">{{despesas.nomeLocal}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">Despesa:</div>
+                        <div class="col-md-7">{{despesas.nomeDespesa}}</div>
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-md-4">Loja:</div>
+                        <div class="col-md-7">{{despesas.loja}}</div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-4">QTD:</div>
+                        <div class="col-md-7">{{despesas.quantidade}}</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">Valor:</div>
+                        <div class="col-md-7">{{despesas.valor}}</div>
+                    </div>
+                     <div class="row">
+                        <div class="col-md-4">Data compra:</div>
+                        <div class="col-md-7">{{despesas.dataCompra}}</div>
+                        
+                    </div>
+                     <div class="row">
+                        <div class="col-md-4">OBS:</div>
+                        <div class="col-md-7">{{despesas.observacao}}</div>
+                    </div>
+                   
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    
+                    
+                    <button type="button" class="btn btn-dark" (click)="onEdite(despesas.id)" data-bs-toggle="modal"
+                        data-bs-target="#edicaoDespesa">
+                        Editar
+                    </button>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edicaoDespesa" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h1 class="modal-title fs-5 w-100" id="exampleModalLabel">Edição de despesas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form [formGroup]="formDespesas">
+                    <div class="container text-center">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+
+                                <!-- Primeira linha -->
+                                <div class="row mb-10">
+                                    <div class="col-md-6">
+                                        <label><strong>Nome</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="Digite aqui"
+                                            formControlName="nomeLocal" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label><strong>Despesa</strong></label>
+                                        <select class="form-select text-center" formControlName="nomeDespesa">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor=" let form of tipoDespesa" [value]="form">{{form}}</option>
+                                        </select>
+
+
+
+
+
+                                    </div>
+                                </div>
+                                <hr>
+                                <!-- Segunda linha -->
+                                <div class="row mb-12 row justify-content-center">
+                                    <div class="col-md-3">
+                                        <label><strong>Valor</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="R$ 0,00"
+                                            formControlName="valor" />
+
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label><strong>Quantidade</strong></label>
+                                        <input type="text" class="form-control text-center" placeholder="x"
+                                            formControlName="quantidade" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label><strong>Loja</strong></label>
+                                        <select class="form-select " formControlName="loja">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor="let loja of loja" [value]="loja">{{ loja }}</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label><strong>Pagamento</strong></label>
+                                        <select class="form-select text-center" formControlName="formaPagamento">
+                                            <option value=""> Selecione </option>
+                                            <option *ngFor=" let form of formaPag" [value]="form">{{form}}</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <hr>
+
+                                <div class="row mb-18 justify-content-center">
+                                    <div class="col-md-5">
+                                        <label><strong>Data compra</strong></label>
+                                        <input type="date" class="form-control text-center"
+                                            formControlName="dataCompra" />
+                                    </div>
+                                    <div class="col-md-7 ">
+                                        <label><strong>Obs</strong></label>
+                                        <textarea class="form-control text-center" placeholder="Observação"
+                                            formControlName="observacao"></textarea>
+                                    </div>
+
+                                </div>
+
+                                <hr>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer text-center">
+                <div class="w-100">
+                    <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                        (click)="Editar()">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

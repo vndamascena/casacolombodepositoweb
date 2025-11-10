@@ -13,6 +13,7 @@
   animation: piscar 1s infinite;
 }
 
+
 .dropdown {
   position: relative;
 }
@@ -45,4 +46,99 @@
 
 .dropdown-submenu:hover .dropdown-menu {
     display: block;
+}
+/* Paleta de Cores Customizadas para Cards */
+.bg-purple-subtle {
+  background-color: #e0e6f7 !important; /* Lavanda suave */
+}
+.text-purple {
+  color: #6c757d !important; /* Cinza escuro ou cor de destaque para contraste */
+}
+.bg-orange-subtle {
+  background-color: #fff3e0 !important; /* Laranja suave */
+}
+.text-orange {
+  color: #f77f00 !important;
+}
+.bg-success-light-subtle {
+    background-color: #d4edda !important; /* Verde mais claro */
+}
+
+
+/* Estilos Comuns */
+.animated-card {
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  border: none; /* Remove a borda padrão */
+}
+
+.animated-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Dark Mode - Estilos Base */
+.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0;
+}
+
+.dark-mode .card,
+.dark-mode .list-group-item {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0 !important;
+  border-color: #333 !important;
+}
+
+.dark-mode .text-primary-emphasis {
+    color: #90caf9 !important; /* Azul claro para título */
+}
+
+.dark-mode .text-muted {
+  color: #b0b0b0 !important;
+}
+
+.dark-mode .animated-card:hover {
+  box-shadow: 0 10px 20px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Dark Mode - Adaptação dos Cards de Indicadores */
+.dark-mode .bg-danger-subtle { background-color: #2c0000 !important; }
+.dark-mode .text-danger { color: #ff8a80 !important; }
+
+.dark-mode .bg-purple-subtle { background-color: #211c34 !important; }
+.dark-mode .text-purple { color: #b39ddb !important; }
+
+.dark-mode .bg-orange-subtle { background-color: #311c00 !important; }
+.dark-mode .text-orange { color: #ffb74d !important; }
+
+.dark-mode .bg-primary-subtle { background-color: #0d1a3b !important; }
+.dark-mode .text-primary { color: #64b5f6 !important; }
+
+.dark-mode .bg-warning-subtle { background-color: #332700 !important; }
+.dark-mode .text-warning-emphasis { color: #ffeb3b !important; }
+
+.dark-mode .bg-success-subtle { background-color: #0a260a !important; }
+.dark-mode .text-success { color: #81c784 !important; }
+
+.dark-mode .bg-success-light-subtle { background-color: #1c361c !important; }
+.dark-mode .text-success-emphasis { color: #a5d6a7 !important; }
+
+.dark-mode .list-group-item-danger {
+    background-color: #331515 !important;
+}
+
+.dark-mode .list-group-item-warning {
+    background-color: #332c15 !important;
+}
+
+/* Estilos para o Calendário */
+.calendar-modern {
+  min-height: 250px;
+  border-radius: 8px;
+}
+
+/* Microanimações nos números (biblioteca CountUp.js) */
+.countup-number {
+  font-size: 2.5rem; /* Ajuste o tamanho conforme necessário */
 }

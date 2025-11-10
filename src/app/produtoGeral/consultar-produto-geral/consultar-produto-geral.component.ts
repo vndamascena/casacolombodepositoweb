@@ -8,10 +8,10 @@ import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 
 @Component({
-    selector: 'app-consultar-produto-geral',
-    imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
-    templateUrl: './consultar-produto-geral.component.html',
-    styleUrl: './consultar-produto-geral.component.css'
+  selector: 'app-consultar-produto-geral',
+  imports: [CommonModule, FormsModule, RouterModule, NgxPaginationModule, NgxSpinnerModule],
+  templateUrl: './consultar-produto-geral.component.html',
+  styleUrl: './consultar-produto-geral.component.css'
 })
 export class ConsultarProdutoGeralComponent implements OnInit {
   depositoSelecionado: any;
@@ -30,6 +30,8 @@ export class ConsultarProdutoGeralComponent implements OnInit {
   depositos: any[] = []; // Array para armazenar os deposito do produto atual
   p: number = 1;
   originalProdutoGerals: any[] = [];
+  allProdutos: any[] = [];
+
 
 
 
@@ -43,46 +45,33 @@ export class ConsultarProdutoGeralComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Recupera o ID do produto da URL
     const productId = this.route.snapshot.queryParams['id'];
 
-    // Verifica se o ID do produto está presente na URL
     if (productId) {
       this.httpClient.get(`${environment.apiUrl}/produtoGeral/${productId}`)
         .subscribe({
           next: (produtoGeralData: any) => {
-            // Atribua os dados do produto geral ao objeto produtoGeral
             this.produtoGeral = produtoGeralData;
-
-            // Certifique-se de que o array de depósitos esteja presente
             this.depositos = produtoGeralData.produtoDeposito || [];
-
-            // Atribui os produtos gerais à lista original (se aplicável)
-            this.originalProdutoGerals = [...this.produtoGerals];
           },
-          error: (error) => {
-            console.error('Erro ao carregar o produto:', error);
-          }
+          error: (error) => console.error('Erro ao carregar o produto:', error)
         });
     } else {
-      // Se não houver ID do produto na URL, exibe todos os produtos
       this.httpClient.get(`${environment.apiUrl}/produtoGeral`)
         .subscribe({
           next: (produtosGeralData) => {
-            this.produtoGerals = produtosGeralData as any[];
-            this.originalProdutoGerals = [...this.produtoGerals];
+            this.allProdutos = produtosGeralData as any[];
+            this.produtoGerals = [...this.allProdutos]; // começa mostrando tudo
           },
-          error: (error) => {
-            console.error('Erro ao carregar os produtos:', error);
-          }
+          error: (error) => console.error('Erro ao carregar os produtos:', error)
         });
     }
   }
 
   limparPesquisa() {
-  this.expression = '';
-  this.filtrarProdutos(); // Chama filtro com campo limpo
-}
+    this.expression = '';
+    this.filtrarProdutos(); // Chama filtro com campo limpo
+  }
   getFullImageUrlGeral(imagemUrlGeral: string): string {
     return `${environment.apiUrl + '/produtoGeral'}${imagemUrlGeral}`;
   }
@@ -150,18 +139,24 @@ export class ConsultarProdutoGeralComponent implements OnInit {
           { quantidadeVendida: this.depositoSelecionado.quantidadeVendida }, options)
           .subscribe({
             next: (response) => {
-              this.depositoSelecionado.quantidadeLote -= this.depositoSelecionado.quantidadeVendida;
-              this.depositoSelecionado.quantidadeVendida = 0;
               this.spinner.hide();
-
               this.mensagem = response.message;
               this.fecharFormularioCredenciais();
+
+              // Atualiza lista de produtos
+              this.httpClient.get<any[]>(`${environment.apiUrl}/produtoGeral`).subscribe({
+                next: (produtos: any[]) => {
+                  this.produtoGerals = [...produtos];
+                },
+                error: (err) => console.error(err)
+              });
             },
             error: (error) => {
               alert('Erro ao confirmar venda. Usuário e senha incorretos, tente novamente.');
               this.spinner.hide();
             }
           });
+
       } else {
         alert('Por favor, selecione uma quantidade válida para vender.');
         this.spinner.hide();
@@ -210,10 +205,10 @@ export class ConsultarProdutoGeralComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.spinner.hide();
-          
 
-              this.mensagem = response.message;
-              this.fecharFormularioCredenciais();
+
+          this.mensagem = response.message;
+          this.fecharFormularioCredenciais();
         },
         error: (error) => {
           this.spinner.hide();
@@ -230,28 +225,25 @@ export class ConsultarProdutoGeralComponent implements OnInit {
 
 
 
-  // Método para filtrar os produtos com base na expressão de pesquisa
   filtrarProdutos(): void {
     if (this.expression.trim() === '') {
-      // Se a expressão de pesquisa estiver vazia, recarrega todos os produtos da lista original
-      this.originalProdutoGerals = [...this.produtoGerals];
-      window.location.reload();
+      this.produtoGerals = [...this.allProdutos];
     } else {
-      // Filtra os produtos com base na expressão de pesquisa na lista original
-      this.produtoGerals = this.originalProdutoGerals.filter(p =>
+      const termo = this.expression.toLowerCase();
+      this.produtoGerals = this.allProdutos.filter(p =>
         Object.values(p).some(value => {
-          // Verifica se o valor é string ou número
           if (typeof value === 'string') {
-            return value.toLowerCase().includes(this.expression.toLowerCase());
+            return value.toLowerCase().includes(termo);
           } else if (typeof value === 'number') {
-            // Converte o número para string e verifica se contém a expressão de pesquisa
-            return value.toString().includes(this.expression);
+            return value.toString().includes(termo);
           }
           return false;
         })
       );
     }
+    this.p = 1; // sempre volta para a primeira página após pesquisar
   }
+
 
 
 

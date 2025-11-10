@@ -495,7 +495,7 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         next: (data: any) => {
           this.mensagem = "Cadastro realizado com sucesso.";
 
-          // ✅ Aqui está a correção
+          
           if (this.produtoSelecionadoId !== null) {
             this.carregarFornecedoresDoBanco(this.produtoSelecionadoId);
           }

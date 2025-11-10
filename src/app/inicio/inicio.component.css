@@ -219,6 +219,38 @@ font-size: 1.3em;
   display: block;
 }
 
+
+.aviso-aniversario {
+  display: flex;
+  justify-content: center; /* centraliza horizontalmente */
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.aviso-conteudo {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  font-size: 20px;
+  font-weight: bold;
+  width: auto; /* só o tamanho necessário */
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 12px; /* espaço pequeno entre texto e botão */
+}
+
+.btn-fechar {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+}
+
+
 @media screen and (max-width: 768px) {
   
 
