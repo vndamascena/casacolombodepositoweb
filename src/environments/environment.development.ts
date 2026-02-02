@@ -7,5 +7,6 @@ export const environment = {
     //financa: 'http://localhost:5206/api',
     //ocorrencApi:'http://localhost:5007/api'
     //apiUrl: 'http://localhost:5007/api',
+    //entregatitulo: 'http://localhost:5007/api',
 
 };

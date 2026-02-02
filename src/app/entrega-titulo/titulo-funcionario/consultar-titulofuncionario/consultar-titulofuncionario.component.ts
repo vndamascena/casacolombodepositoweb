@@ -7,6 +7,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
+import * as pdfjsLib from 'pdfjs-dist';
+(pdfjsLib as any).GlobalWorkerOptions.workerSrc =  '/assets/pdfjs/pdf.worker.min.js';
 
 @Component({
     selector: 'app-consultar-titulofuncionario',
@@ -475,6 +477,26 @@ contarTitulosPorCliente(titulos: any[]): any[] {
       imagemAmpliada.classList.add('mostrar');
     }
   }
+ expandirArquivo(url: string): void {
+  if (!url) {
+    alert('Arquivo não disponível');
+    return;
+  }
+
+  const fullUrl = this.getFullImageUrl(url);
+
+  // 🟢 PDF → encode + nova aba
+  if (url.toLowerCase().endsWith('.pdf')) {
+    window.open(encodeURI(fullUrl), '_blank');
+    return;
+  }
+
+  // 🟢 IMAGEM → comportamento antigo
+  this.expandirImagem(url);
+}
+isPdf(url: string): boolean {
+  return !!url && url.toLowerCase().endsWith('.pdf');
+}
 
   fecharImagemAmpliada(dia: any = null): void {
     const target = dia || this;
@@ -608,6 +630,33 @@ concluirSelecionados(): void {
   this.fecharFormularios(); // Fecha o formulário
 }
 
+renderPdfThumbnail(pdfUrl: string, canvasId: string): void {
+  const loadingTask = (pdfjsLib as any).getDocument(pdfUrl);
+
+  loadingTask.promise.then((pdf: any) => {
+    pdf.getPage(1).then((page: any) => {
+
+      const scale = 0.4; // controla tamanho e performance
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+      if (!canvas) return;
+
+      const context = canvas.getContext('2d');
+      if (!context) return;
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      const renderContext = {
+        canvasContext: context,
+        viewport
+      };
+
+      page.render(renderContext);
+    });
+  });
+}
 
 
 

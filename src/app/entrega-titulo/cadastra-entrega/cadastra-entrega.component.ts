@@ -159,24 +159,56 @@ export class CadastraEntregaComponent implements OnInit {
     }
   }
   
-  processFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      const file = input.files[0];
-      const fileType = file.type;
-  
-      if (fileType.startsWith('image/jpeg') || fileType.startsWith('image/jpg') || 
-          fileType.startsWith('image/png') || fileType.startsWith('image/bmp') || 
-          fileType.startsWith('image/gif')) {
-        this.extractTextFromImage(file);
-      } else if (fileType.startsWith('text/html')) {
-        this.extractTextFromHtml(file);
-      } else {
-        alert('Por favor, selecione um arquivo de imagem ou HTML.');
-      }
-      this.imagemFile = file;
-    }
+processFile(event: Event): void {
+  const input = event.target as HTMLInputElement;
+
+  if (!input.files?.length) return;
+
+  const file = input.files[0];
+  const fileType = file.type;
+
+  this.imagemFile = file;
+
+  // 🟢 IMAGEM → mantém como está
+  if (
+    fileType.startsWith('image/jpeg') ||
+    fileType.startsWith('image/jpg') ||
+    fileType.startsWith('image/png') ||
+    fileType.startsWith('image/bmp') ||
+    fileType.startsWith('image/gif')
+  ) {
+    this.extractTextFromImage(file);
+    return;
   }
+
+  // 🟢 PDF → envia para backend
+  if (fileType === 'application/pdf') {
+    this.processarPdfNoBackend(file);
+    return;
+  }
+
+  alert('Formato não suportado.');
+}
+processarPdfNoBackend(file: File): void {
+  const formData = new FormData();
+  formData.append('arquivo', file);
+
+  this.httpClient
+    .post<any>(
+      environment.entregatitulo + '/entrega/extrairTextoPdf',
+      formData
+    )
+    .subscribe({
+      next: (res) => {
+        this.preencherFormularioPdf(res.textoExtraido);
+      },
+      error: () => {
+        alert('Erro ao processar PDF');
+      }
+    });
+}
+
+
   
   extractTextFromImage(file: File): void {
     Tesseract.recognize(file, 'eng', { logger: info => console.log(info) })
@@ -265,46 +297,227 @@ export class CadastraEntregaComponent implements OnInit {
       loja: loja,
     });
   }
-  
+preencherFormularioPdf(text: string): void {
+  console.log('OCR PDF RAW:', text);
 
-  uploadImagem(): void {
-    if (!this.imagemFile) {
-      alert('Por favor, selecione uma imagem para a entrega cadastrada.');
-      return;
-    }
+  // ===============================
+  // NOME (mesma linha OU linha abaixo)
+  // ===============================
+  let nome = '';
 
-    if (this.entregaId === null || this.entregaId === undefined) {
-      alert('O ID da entrega não está disponível. Por favor, cadastre a entrega primeiro.');
-      console.log('Entrega ID está nulo ou indefinido:', this.entregaId);
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('imageFile', this.imagemFile as Blob);
-
-    this.spinner.show();
-
-    this.httpClient.post(`${environment.entregatitulo}/entrega/upload?entregaId=${this.entregaId}`, formData)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Imagem enviada com sucesso:', data);
-          this.mensagem = 'Imagem enviada com sucesso!';
-          this.spinner.hide();
-
-          const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-          if (fileInput) {
-            fileInput.value = '';
-          }
-
-          this.imagemFile = null;
-          this.spinner.hide();
-          
-        },
-        error: (e) => {
-          console.log('Erro ao enviar a imagem:', e.error);
-          alert('Erro ao enviar a imagem. Tente novamente.');
-          this.spinner.hide();
-        }
-      });
+  const nomeLinhaUnica = text.match(/Nome:\s*(.+)/i);
+  if (nomeLinhaUnica && nomeLinhaUnica[1].trim().length > 3) {
+    nome = nomeLinhaUnica[1].trim();
+  } else {
+    const nomeLinhaSeguinte = text.match(/Nome:\s*\n\s*(.+)/i);
+    nome = nomeLinhaSeguinte ? nomeLinhaSeguinte[1].trim() : '';
   }
+
+  // ===============================
+  // DOCUMENTO
+  // ===============================
+  const docMatch = text.match(/N[°º]?\s*DOC:\s*(\d{6,})/i);
+  const DOC = docMatch ? docMatch[1] : '';
+
+  // ===============================
+  // DATA
+  // ===============================
+  const dataMatch = text.match(/(\d{2}\/\d{2}\/\d{4})/);
+  const data = dataMatch ? dataMatch[1] : '';
+
+  // ===============================
+  // VENDEDOR (para na quebra de linha)
+  // ===============================
+ const vendedorMatch = text.match(
+  /Vendedor\s+([A-ZÀ-Ú\s]+?)(?=\s*(?:I|\||\-)?\s*(?:JC0[1-9]|VA|CL)|\n)/i
+);
+
+const vendedor = vendedorMatch ? vendedorMatch[1].trim() : '';
+
+  // ===============================
+  // VALOR LÍQUIDO
+  // ===============================
+  const valorMatch = text.match(/Valor\s*L[ií]quido\s*R?\$?\s*([\d.,]+)/i);
+  const valorLiquido = valorMatch ? valorMatch[1] : '';
+
+  // ===============================
+  // LOJA
+  // ===============================
+
+// ===============================
+// LOJA (regra definitiva)
+// ===============================
+let loja = '';
+
+// 1️⃣ tenta pegar loja colada no VENDEDOR (caso bom)
+const lojaComVendedor = text.match(
+  /Vendedor\s+[A-ZÀ-Ú\s]+.*?(?:\||\-|I)\s*(JC0?1|JC0?2|VA|CL)\b/i
+);
+
+if (lojaComVendedor) {
+  loja = lojaComVendedor[1]
+    .replace(/^0/, '')
+    .toUpperCase();
+}
+
+// 2️⃣ fallback: pegar ÚLTIMA ocorrência de JC / VA (IGNORA CL)
+if (!loja) {
+  const lojasEncontradas = [...text.matchAll(
+    /\bI?\s*(JC0?1|JC0?2|VA)\b/gi
+  )];
+
+  if (lojasEncontradas.length) {
+    loja = lojasEncontradas[lojasEncontradas.length - 1][1]
+      .replace(/^0/, '')
+      .toUpperCase();
+  }
+}
+
+
+
+
+let observacao = '';
+
+const limparObservacao = (raw: string): string => {
+  return raw
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l =>
+      l &&
+
+      // valores
+      !/^R?\$?\s*\d+[.,]\d+/.test(l) &&
+
+      // UF / loja
+      !/^RJ$/.test(l) &&
+      !/^I\s*JC\d+/i.test(l) &&
+
+      // colunas
+      !/^VI\s+L[ií]q/i.test(l) &&
+      !/^Vl\s+Uni/i.test(l) &&
+      !/^VI\s+Uni$/i.test(l) &&
+      !/^Desc$/i.test(l) &&
+      !/^IVA$/i.test(l) &&
+
+      // cabeçalho
+      !/^Casa\s+Colombo/i.test(l) &&
+      !/^Av\./i.test(l) &&
+      !/^CNPJ/i.test(l) &&
+
+      // endereço numérico (👈 ESTE É O QUE RESOLVE SEU CASO)
+      !(/^\d+\s+[A-ZÀ-Úa-zà-ú\s.-]+-\s*[A-Z]{1,3}$/i.test(l)) &&
+
+      // telefones
+      !/^0?\s*\(?\d{2}\)?\s?\d{4,5}-\d{4}/.test(l) &&
+
+      // data + hora
+      !/^\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}$/.test(l) &&
+
+      // cidade
+      !/^Cidade:/i.test(l)
+    )
+    .join('\n')
+    .trim();
+};
+
+
+
+const obsFreteMatch = text.match(
+  /Valor\s+Frete\s*\n([\s\S]*?)(?=\n(?:Casa\s+Colombo|Valor\s+L[ií]quido))/i
+);
+
+if (obsFreteMatch) {
+  observacao = limparObservacao(obsFreteMatch[1]);
+}
+
+// ---------- 2️⃣ fallback: após VALOR LÍQUIDO ----------
+if (!observacao) {
+  const obsLiquidoMatch = text.match(
+    /Valor\s*L[ií]quido[\s\S]*?\n([\s\S]*?)(?=\nENTREGAS\s+EM\s+HOR[ÁA]RIO\s+COMERCIAL)/i
+  );
+
+  if (obsLiquidoMatch) {
+    observacao = limparObservacao(obsLiquidoMatch[1]);
+  }
+}
+
+
+
+
+
+  console.log({
+    nome,
+    vendedor,
+    DOC,
+    data,
+    valorLiquido,
+    loja,
+    observacao
+  });
+
+  // ===============================
+  // PATCH FORM
+  // ===============================
+  this.form.patchValue({
+    nomeCliente: nome,
+    vendedor: vendedor,
+    numeroNota: DOC,
+    dataVenda: data,
+    valor: valorLiquido,
+    observacao: observacao,
+    loja: loja
+  });
+}
+
+
+uploadImagem(): void {
+  if (!this.imagemFile) {
+    alert('Por favor, selecione um arquivo.');
+    return;
+  }
+
+  if (this.entregaId === null || this.entregaId === undefined) {
+    alert('O ID da entrega não está disponível. Cadastre a entrega primeiro.');
+    return;
+  }
+
+  const formData = new FormData();
+  const isPdf = this.imagemFile.type === 'application/pdf';
+
+  // 🔹 MANTÉM O PADRÃO ANTIGO PARA IMAGEM
+  if (isPdf) {
+    formData.append('arquivo', this.imagemFile);
+  } else {
+    formData.append('imageFile', this.imagemFile);
+  }
+
+  this.spinner.show();
+
+  const url = isPdf
+    ? `${environment.entregatitulo}/entrega/uploadDocumento?entregaId=${this.entregaId}`
+    : `${environment.entregatitulo}/entrega/upload?entregaId=${this.entregaId}`;
+
+  this.httpClient.post(url, formData).subscribe({
+    next: (data: any) => {
+      console.log('Arquivo enviado com sucesso:', data);
+      this.mensagem = 'Arquivo enviado com sucesso!';
+      this.resetarFileInput();
+      this.spinner.hide();
+    },
+    error: (e) => {
+      console.error('Erro ao enviar arquivo:', e);
+      alert('Erro ao enviar o arquivo.');
+      this.spinner.hide();
+    }
+  });
+}
+
+private resetarFileInput(): void {
+  const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = '';
+  }
+  this.imagemFile = null;
+}
+
 }

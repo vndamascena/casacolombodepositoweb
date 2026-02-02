@@ -1,4 +1,3 @@
-<div class="line container mt-3"></div>
 <br>
 
 
@@ -44,523 +43,578 @@
 
 </div>
 <br>
-<div class="table-responsive container mt-3">
-    <table class="table table-bordered table-hover">
-        <!-- cabeçalho da tabela -->
-        <thead>
-            <tr>
-                <th>✓</th>
-                <th>Nome do produto</th>
-                <th>Cotação</th>
-                <th>C.S</th>
-                <th>C.F</th>
-                <th>Usuario</th>
-                <th>
-                    JC1
-                    <button (click)="toggleFiltro('JC1')"
-                        style="border: none; background: none; padding: 0; margin-left: 4px;">
-                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'JC1'}">
-                        </i>
-                    </button>
-                </th>
+<div class="container-fluid mt-3">
+    <div class="row">
 
-                <th>
-                    JC2
-                    <button (click)="toggleFiltro('JC2')"
-                        style="border: none; background: none; padding: 0; margin-left: 4px;">
-                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'JC2'}">
-                        </i>
-                    </button>
-                </th>
+        <!-- LEGENDA (lado esquerdo, fixa) -->
+        <div class="col-md-2 ">
+            <div class="legenda-status">
+                <h6 class="titulo-legenda">Legenda</h6>
 
-                <th>
-                    VA
-                    <button (click)="toggleFiltro('VA')"
-                        style="border: none; background: none; padding: 0; margin-left: 4px;">
-                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'VA'}">
-                        </i>
-                    </button>
-                </th>
+                <div class="item-legenda">
+                    <span class="box pendente"></span>
+                    <strong><span>Solicitado pela loja</span></strong>
+                </div>
 
-                <th>
-                    CL
-                    <button (click)="toggleFiltro('CL')"
-                        style="border: none; background: none; padding: 0; margin-left: 4px;">
-                        <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'CL'}">
-                        </i>
-                    </button>
-                </th>
-                <th>Observação</th>
-                <th>Op</th>
+                <div class="item-legenda">
+                    <span class="box separado"></span>
+                    <strong><span>Separado no estoque</span></strong>
+                </div>
+
+                <div class="item-legenda">
+                    <span class="box recebido"></span>
+                  <strong>  <span>Recebido na loja</span></strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABELA (lado direito) -->
+        <div class="col-md-10 ps-1">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <!-- cabeçalho da tabela -->
+                    <thead>
+                        <tr>
+                            <th>✓</th>
+                            <th>Nome do produto</th>
+                            <th>Cotação</th>
+                            <th>C.S</th>
+                            <th>C.F</th>
+                            <th>Usuario</th>
+                            <th>
+                                JC1
+                                <button (click)="toggleFiltro('JC1')"
+                                    style="border: none; background: none; padding: 0; margin-left: 4px;">
+                                    <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'JC1'}">
+                                    </i>
+                                </button>
+                            </th>
+
+                            <th>
+                                JC2
+                                <button (click)="toggleFiltro('JC2')"
+                                    style="border: none; background: none; padding: 0; margin-left: 4px;">
+                                    <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'JC2'}">
+                                    </i>
+                                </button>
+                            </th>
+
+                            <th>
+                                VA
+                                <button (click)="toggleFiltro('VA')"
+                                    style="border: none; background: none; padding: 0; margin-left: 4px;">
+                                    <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'VA'}">
+                                    </i>
+                                </button>
+                            </th>
+
+                            <th>
+                                CL
+                                <button (click)="toggleFiltro('CL')"
+                                    style="border: none; background: none; padding: 0; margin-left: 4px;">
+                                    <i class="bi bi-caret-down-fill" [ngClass]="{'rotate-arrow': filtroLoja === 'CL'}">
+                                    </i>
+                                </button>
+                            </th>
+                            <th>Observação</th>
+                            <th>Op</th>
 
 
-            </tr>
-        </thead>
-        <!-- Corpo da tabela -->
+                        </tr>
+                    </thead>
+                    <!-- Corpo da tabela -->
 
-        <tbody>
-            <ng-container
-                *ngFor="let produtoGeral of produtosFaltaFiltrados | paginate: { itemsPerPage: 20, currentPage: p }">
-                <tr>
-                    <td>
-                        <input type="checkbox" [(ngModel)]="produtoGeral.selected"
-                            (change)="updateSelection(produtoGeral)" />
-                    </td>
-                    <!-- Nome do produto centralizado -->
-                    <td style="text-align: center;">{{ produtoGeral.nomeProduto | uppercase }}</td>
+                    <tbody>
+                        <ng-container
+                            *ngFor="let produtoGeral of produtosFaltaFiltrados | paginate: { itemsPerPage: 20, currentPage: p }">
+                            <tr>
+                                <td>
+                                    <input type="checkbox" [(ngModel)]="produtoGeral.selected"
+                                        (change)="updateSelection(produtoGeral)" />
+                                </td>
+                                <!-- Nome do produto centralizado -->
+                                <td style="text-align: center;">{{ produtoGeral.nomeProduto | uppercase }}</td>
 
-                    <!-- Coluna de Fornecedor e preço -->
-                    <td style="text-align: center;">
-                        <div style="display: flex; align-items: center; justify-content: center;">
-                            <!-- Ícone de lupa -->
-                            <button type="button" class="btn btn-outline-success" (click)="toggleDetalhes(produtoGeral)"
-                                style="padding: 0; border: none; background: none;">
-                                <i class="bi bi-zoom-in custom-icon" style="font-size: 16px;"></i>
-                            </button>
-                            <!-- Nome do fornecedor e preço -->
-                            <span style="margin-left: 8px;">
-                                {{ produtoGeral.fornecedorMenorPreco?.nome }} - R$ {{
-                                produtoGeral.fornecedorMenorPreco?.valor }}
-                            </span>
-                        </div>
-                    </td>
+                                <!-- Coluna de Fornecedor e preço -->
+                                <td style="text-align: center;">
+                                    <div style="display: flex; align-items: center; justify-content: center;">
+                                        <!-- Ícone de lupa -->
+                                        <button type="button" class="btn btn-outline-success"
+                                            (click)="toggleDetalhes(produtoGeral)"
+                                            style="padding: 0; border: none; background: none;">
+                                            <i class="bi bi-zoom-in custom-icon" style="font-size: 16px;"></i>
+                                        </button>
+                                        <!-- Nome do fornecedor e preço -->
+                                        <span style="margin-left: 8px;">
+                                            <ng-container *ngIf="produtoGeral.fornecedorMenorPreco">
+                                                {{ produtoGeral.fornecedorMenorPreco.nome }} -
+                                                R$ {{ produtoGeral.fornecedorMenorPreco.valor }}
+                                            </ng-container>
 
-                    <!-- Código do produto centralizado -->
-                    <td style="text-align: center;">{{ produtoGeral.codigo }}</td>
+                                            <ng-template #semCotacao>
+                                                Sem cotação
+                                            </ng-template>
+                                        </span>
+                                    </div>
+                                </td>
 
-                    <!-- Código do fornecedor centralizado -->
-                    <td style="text-align: center;">{{ produtoGeral.codigoFornecedor }}</td>
+                                <!-- Código do produto centralizado -->
+                                <td style="text-align: center;">{{ produtoGeral.codigo }}</td>
 
-                    <!-- Usuário e Data centralizados -->
-                    <td style="text-align: center;">
-                        <div>
-                            {{ produtoGeral.usuario }}
-                        </div>
-                        <div style="font-size: 12px; color: rgb(30, 28, 28);">
-                            {{ produtoGeral.dataHoraCadastro | date: 'dd/MM/yyyy' }}
-                        </div>
-                    </td>
+                                <!-- Código do fornecedor centralizado -->
+                                <td style="text-align: center;">{{ produtoGeral.codigoFornecedor }}</td>
 
-                    <td style="text-align: center;">
-                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 1)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 1)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 1, $event)">
+                                <!-- Usuário e Data centralizados -->
+                                <td style="text-align: center;">
+                                    <div>
+                                        {{ produtoGeral.usuario }}
+                                    </div>
+                                    <div style="font-size: 12px; color: rgb(30, 28, 28);">
+                                        {{ produtoGeral.dataHoraCadastro | date: 'dd/MM/yyyy' }}
+                                    </div>
+                                </td>
 
-                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 1, $event)" [ngClass]="{
+                                <td style="text-align: center;">
+                                    <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                                        <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 1)"
+                                            [disabled]="produtoPossuiLoja(produtoGeral, 1)"
+                                            (change)="onLojaCheckboxChange(produtoGeral, 1, $event)">
+
+                                        <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 1, $event)"
+                                            [ngClass]="{
                                   'recebido-checkbox': produtoGeral.jC1Recebido,
                                   'separado-checkbox': produtoGeral.separadoJC1 && !produtoGeral.jC1Recebido
                                 }"></span>
-                        </label>
-                    </td>
+                                    </label>
+                                </td>
 
 
 
 
-                    <td style="text-align: center;">
-                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 2)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 2)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 2, $event)">
+                                <td style="text-align: center;">
+                                    <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                                        <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 2)"
+                                            [disabled]="produtoPossuiLoja(produtoGeral, 2)"
+                                            (change)="onLojaCheckboxChange(produtoGeral, 2, $event)">
 
-                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 2, $event)" [ngClass]="{
+                                        <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 2, $event)"
+                                            [ngClass]="{
                                   'recebido-checkbox': produtoGeral.jC2Recebido,
                                   'separado-checkbox': produtoGeral.separadoJC2 && !produtoGeral.jC2Recebido
                                 }"></span>
-                        </label>
-                    </td>
+                                    </label>
+                                </td>
 
-                    <td style="text-align: center;">
-                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 3)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 3)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 3, $event)">
+                                <td style="text-align: center;">
+                                    <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                                        <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 3)"
+                                            [disabled]="produtoPossuiLoja(produtoGeral, 3)"
+                                            (change)="onLojaCheckboxChange(produtoGeral, 3, $event)">
 
-                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 3, $event)" [ngClass]="{
+                                        <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 3, $event)"
+                                            [ngClass]="{
                                   'recebido-checkbox': produtoGeral.vaRecebido,
                                   'separado-checkbox': produtoGeral.separadoVA && !produtoGeral.vaRecebido
                                 }"></span>
-                        </label>
-                    </td>
-                    <td style="text-align: center;">
-                        <label class="custom-checkbox" (click)="$event.stopPropagation()">
-                            <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 4)"
-                                [disabled]="produtoPossuiLoja(produtoGeral, 4)"
-                                (change)="onLojaCheckboxChange(produtoGeral, 4, $event)">
+                                    </label>
+                                </td>
+                                <td style="text-align: center;">
+                                    <label class="custom-checkbox" (click)="$event.stopPropagation()">
+                                        <input type="checkbox" [checked]="produtoPossuiLoja(produtoGeral, 4)"
+                                            [disabled]="produtoPossuiLoja(produtoGeral, 4)"
+                                            (change)="onLojaCheckboxChange(produtoGeral, 4, $event)">
 
-                            <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 4, $event)" [ngClass]="{
+                                        <span class="checkmark" (click)="onCheckmarkClick(produtoGeral, 4, $event)"
+                                            [ngClass]="{
                                   'recebido-checkbox': produtoGeral.clRecebido,
                                   'separado-checkbox': produtoGeral.separadoCL && !produtoGeral.clRecebido
                                 }"></span>
-                        </label>
-                    </td>
-                    <!-- Observação -->
-                    <td style="text-align: center;">{{ produtoGeral.observacao }}</td>
+                                    </label>
+                                </td>
+                                <!-- Observação -->
+                                <td style="text-align: center;">{{ produtoGeral.observacao }}</td>
 
-                    <!-- Ações -->
-                    <td class="text-center">
-                        <div style="display: flex; align-items: center; gap: 3px; justify-content: center;">
-                            <input type="checkbox" [checked]="produtoGeral.dataSolicitacao"
-                                [disabled]="produtoGeral.dataSolicitacao"
-                                (click)="!produtoGeral.dataSolicitacao && abrirFormularioCredenciaisEditar(produtoGeral.id)" />
-                            <div *ngIf="produtoGeral.dataSolicitacao" class="data-solicitacao-destaque">
-                                <strong> {{ produtoGeral.dataSolicitacao | date: 'dd/MM/yyyy' }}</strong>
+                                <!-- Ações -->
+                                <td class="text-center">
+                                    <div style="display: flex; align-items: center; gap: 3px; justify-content: center;">
+                                        <input type="checkbox" [checked]="produtoGeral.dataSolicitacao"
+                                            [disabled]="produtoGeral.dataSolicitacao"
+                                            (click)="!produtoGeral.dataSolicitacao && abrirFormularioCredenciaisEditar(produtoGeral.id)" />
+                                        <div *ngIf="produtoGeral.dataSolicitacao" class="data-solicitacao-destaque">
+                                            <strong> {{ produtoGeral.dataSolicitacao | date: 'dd/MM/yyyy' }}</strong>
 
-                            </div>
-                            <button class="btn btn-sm btn-outline-success"
-                                (click)="abrirFormularioCredenciaisEditar(produtoGeral)">
-                                Concluir
-                            </button>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-success"
+                                            (click)="abrirFormularioCredenciaisEditar(produtoGeral)">
+                                            
+                                        </button>
+                                    </div>
+
+                                </td>
+                            </tr>
+
+                            <!-- Linha para exibir os detalhes adicionais -->
+                            <tr *ngIf="produtoGeral.mostrarDetalhes">
+                                <td colspan="10">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Fornecedor
+                                                    <button class="btn btn-warning" data-bs-toggle="modal"
+                                                        data-bs-target="#adicionarFornecedor"
+                                                        (click)="setProdutoSelecionado(produtoGeral.id)">+</button>
+                                                </th>
+                                                <th>Valor</th>
+                                                <th style="color: #07612b; font-weight: bold;">Quantidade</th>
+                                                <th>Autorizado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let fornecedor of produtoGeral.fornecedores">
+                                                <td>{{ fornecedor.nome }}</td>
+                                                <td
+                                                    [ngClass]="{'text-success font-weight-bold': fornecedor.valor === getMenorPreco(produtoGeral.fornecedores)}">
+                                                    R$ {{ fornecedor.valor }}
+                                                </td>
+                                                <td>{{ fornecedor.quantidade }}</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                                        <input type="checkbox" [checked]="fornecedor.usuarioAutorizador"
+                                                            [disabled]="fornecedor.usuarioAutorizador"
+                                                            (click)="!fornecedor.usuarioAutorizador && abriformularioautorizar(fornecedor.id)" />
+                                                        <div *ngIf="fornecedor.usuarioAutorizador"
+                                                            style="margin-top: 4px; font-size: 12px;">
+                                                            {{ fornecedor.usuarioAutorizador }}
+                                                        </div>
+                                                    </div>
+                                                </td>
+
+
+
+
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+
+                    <!-- rodapé da tabela -->
+                </table>
+                <tfoot>
+                    <tr>
+                        <td colspan="14"><strong> Quantidade de produtos: {{ produtosFalta.length }}</strong>
+
+                        </td>
+                    </tr>
+                </tfoot>
+
+            </div>
+
+
+            <div class="floating-question" *ngIf="menuFlutuante as menu">
+                <p>O que deseja informar para este produto?</p>
+                <button (click)="marcarSeparado(menu.produto, menu.lojaId)">📦 Separado na Matriz</button>
+                <button (click)="confirmarRecebimento(menu.produto, menu.lojaId)">✅ Recebido na Loja</button>
+                <button class="cancelar" (click)="fecharMenu()">Cancelar</button>
+            </div>
+
+
+
+            <div class="col text-center"><strong>
+                    <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
+                        nextLabel="Próximo"></pagination-controls>
+                </strong>
+
+
+
+            </div>
+
+
+
+
+            <div class="modal fade" id="cadastraProdutoFalta" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                Cadastrar produto faltante
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        <div class="modal-body">
 
-                    </td>
-                </tr>
+                            <form [formGroup]="form">
+                                <div class="container">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-8">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label><strong>Produto</strong></label>
+                                                    <input type="text" class="form-control"
+                                                        placeholder="Digite o nome ou código do produto"
+                                                        formControlName="codigo" (input)="filtrarProdutosDigitando()"
+                                                        (focus)="mostrarSugestoes = true" (blur)="esconderSugestoes()"
+                                                        [value]="form.get('produtoNomeDisplay')?.value"
+                                                        [readonly]="produtoSelecionadoParaCadastro" />
 
-                <!-- Linha para exibir os detalhes adicionais -->
-                <tr *ngIf="produtoGeral.mostrarDetalhes">
-                    <td colspan="10">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Fornecedor
-                                        <button class="btn btn-warning" data-bs-toggle="modal"
-                                            data-bs-target="#adicionarFornecedor"
-                                            (click)="setProdutoSelecionado(produtoGeral.id)">+</button>
-                                    </th>
-                                    <th>Valor</th>
-                                    <th style="color: #07612b; font-weight: bold;">Quantidade</th>
-                                    <th>Autorizado</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let fornecedor of produtoGeral.fornecedores">
-                                    <td>{{ fornecedor.nome }}</td>
-                                    <td
-                                        [ngClass]="{'text-success font-weight-bold': fornecedor.valor === getMenorPreco(produtoGeral.fornecedores)}">
-                                        R$ {{ fornecedor.valor }}
-                                    </td>
-                                    <td>{{ fornecedor.quantidade }}</td>
-                                    <td>
-                                        <div style="display: flex; align-items: center; gap: 6px;">
-                                            <input type="checkbox" [checked]="fornecedor.usuarioAutorizador"
-                                                [disabled]="fornecedor.usuarioAutorizador"
-                                                (click)="!fornecedor.usuarioAutorizador && abriformularioautorizar(fornecedor.id)" />
-                                            <div *ngIf="fornecedor.usuarioAutorizador"
-                                                style="margin-top: 4px; font-size: 12px;">
-                                                {{ fornecedor.usuarioAutorizador }}
+                                                    <ul class="list-group mt-2"
+                                                        *ngIf="mostrarSugestoes && produtosFiltradosDigitando.length > 0">
+                                                        <li class="list-group-item list-group-item-action"
+                                                            *ngFor="let p of produtosFiltradosDigitando"
+                                                            (click)="selecionarProduto(p)">
+                                                            {{ p.nomeProduto | uppercase }} - {{
+                                                            formatarCodigo(p.codigo) }}
+                                                        </li>
+                                                    </ul>
+
+                                                    <div class="mt-2">
+                                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                                            (click)="exibirCampoOutroProduto = true; mostrarSugestoes = false; form.get('codigo')?.setValue(''); form.get('produtoNomeDisplay')?.setValue('');">
+                                                            Novo Produto
+                                                        </button>
+                                                        <input *ngIf="exibirCampoOutroProduto" type="text"
+                                                            class="form-control mt-2"
+                                                            placeholder="Digite o nome do novo produto"
+                                                            formControlName="produtoCustom">
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
 
-
-
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </ng-container>
-        </tbody>
-
-        <!-- rodapé da tabela -->
-    </table>
-    <tfoot>
-        <tr>
-            <td colspan="14"><strong> Quantidade de produtos: {{ produtosFalta.length }}</strong>
-
-            </td>
-        </tr>
-    </tfoot>
-
-</div>
-
-
-<div class="floating-question" *ngIf="menuFlutuante as menu">
-    <p>O que deseja informar para este produto?</p>
-    <button (click)="marcarSeparado(menu.produto, menu.lojaId)">📦 Separado na Matriz</button>
-    <button (click)="confirmarRecebimento(menu.produto, menu.lojaId)">✅ Recebido na Loja</button>
-    <button class="cancelar" (click)="fecharMenu()">Cancelar</button>
-</div>
-
-
-
-<div class="col text-center"><strong>
-        <pagination-controls (pageChange)="p = $event" previousLabel="Anterior"
-            nextLabel="Próximo"></pagination-controls>
-    </strong>
-
-
-
-</div>
-
-
-
-
-<div class="modal fade" id="cadastraProdutoFalta" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                    Cadastrar produto faltante
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <form [formGroup]="form">
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label><strong>Produto</strong></label>
-                                        <input type="text" class="form-control"
-                                            placeholder="Digite o nome ou código do produto" formControlName="codigo"
-                                            (input)="filtrarProdutosDigitando()" (focus)="mostrarSugestoes = true"
-                                            (blur)="esconderSugestoes()" [value]="form.get('produtoNomeDisplay')?.value"
-                                            [readonly]="produtoSelecionadoParaCadastro" />
-
-                                        <ul class="list-group mt-2"
-                                            *ngIf="mostrarSugestoes && produtosFiltradosDigitando.length > 0">
-                                            <li class="list-group-item list-group-item-action"
-                                                *ngFor="let p of produtosFiltradosDigitando"
-                                                (click)="selecionarProduto(p)">
-                                                {{ p.nomeProduto | uppercase }} - {{ formatarCodigo(p.codigo) }}
-                                            </li>
-                                        </ul>
-
-                                        <div class="mt-2">
-                                            <button type="button" class="btn btn-outline-secondary btn-sm"
-                                                (click)="exibirCampoOutroProduto = true; mostrarSugestoes = false; form.get('codigo')?.setValue(''); form.get('produtoNomeDisplay')?.setValue('');">
-                                                Novo Produto
-                                            </button>
-                                            <input *ngIf="exibirCampoOutroProduto" type="text" class="form-control mt-2"
-                                                placeholder="Digite o nome do novo produto"
-                                                formControlName="produtoCustom">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <label><strong>Loja</strong></label>
-                                        <select class="form-select" formControlName="lojaId">
-                                            <option value="">Selecione uma loja</option>
-                                            <option *ngFor="let c of lojas" [value]="c.id">{{ c.nome | uppercase }}
-                                            </option>
-                                        </select>
-                                        <div class="text-danger" *ngIf="f['lojaId'].touched && f['lojaId'].invalid">
-                                            Selecione uma loja.
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Observação</strong></label>
-                                        <textarea class="form-control" placeholder="Digite aqui"
-                                            formControlName="observacao" rows="4">
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <label><strong>Loja</strong></label>
+                                                    <select class="form-select" formControlName="lojaId">
+                                                        <option value="">Selecione uma loja</option>
+                                                        <option *ngFor="let c of lojas" [value]="c.id">{{ c.nome |
+                                                            uppercase }}
+                                                        </option>
+                                                    </select>
+                                                    <div class="text-danger"
+                                                        *ngIf="f['lojaId'].touched && f['lojaId'].invalid">
+                                                        Selecione uma loja.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <label><strong>Observação</strong></label>
+                                                    <textarea class="form-control" placeholder="Digite aqui"
+                                                        formControlName="observacao" rows="4">
                                     </textarea>
-                                    </div>
+                                                </div>
 
-                                </div>
-                                <hr>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    Cancelar
-                </button>
-                <button type="button" class="btn btn-success" data-bs-dismiss="modal"
-                    (click)="abrirFormularioCredenciais(produtosFalta, 'cadastrar')">
-                    Confirmar cadastro
-                </button>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-
-<div class="modal fade" id="adicionarFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">
-                    Adicionar nova cotação
-                </h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-
-                <form [formGroup]="formi">
-                    <!-- Contêiner centralizado -->
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-md-8">
-                                <!-- primeira linha -->
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <label><strong>Fornecedor</strong></label>
-                                        <select class="form-select" formControlName="fornecedorGeralId">
-                                            <option value="">Selecione um fornecedor</option>
-                                            <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome | uppercase
-                                                }}</option>
-                                        </select>
-
-                                    </div>
-
-                                    <div class="col-md-10">
-                                        <label><strong>Valor</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="valor" />
-                                    </div>
-
-                                    <div class="col-md-10">
-                                        <label><strong>Quantidade</strong></label>
-                                        <input type="text" class="form-control" placeholder="Digite aqui"
-                                            formControlName="quantidade" />
+                                            </div>
+                                            <hr>
+                                        </div>
                                     </div>
                                 </div>
+                            </form>
 
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn btn-success" data-bs-dismiss="modal"
+                                (click)="abrirFormularioCredenciais(produtosFalta, 'cadastrar')">
+                                Confirmar cadastro
+                            </button>
 
-                                <hr>
-                            </div>
                         </div>
                     </div>
-                </form>
-
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 
-                    Cancelar
+
+
+
+            <div class="modal fade" id="adicionarFornecedor" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                Adicionar nova cotação
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <form [formGroup]="formi">
+                                <!-- Contêiner centralizado -->
+                                <div class="container">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-8">
+                                            <!-- primeira linha -->
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <label><strong>Fornecedor</strong></label>
+                                                    <select class="form-select" formControlName="fornecedorGeralId">
+                                                        <option value="">Selecione um fornecedor</option>
+                                                        <option *ngFor="let f of fornecedores" [value]="f.id">{{ f.nome
+                                                            |
+                                                            uppercase
+                                                            }}</option>
+                                                    </select>
+
+                                                </div>
+
+                                                <div class="col-md-10">
+                                                    <label><strong>Valor</strong></label>
+                                                    <input type="text" class="form-control" placeholder="Digite aqui"
+                                                        formControlName="valor" />
+                                                </div>
+
+                                                <div class="col-md-10">
+                                                    <label><strong>Quantidade</strong></label>
+                                                    <input type="text" class="form-control" placeholder="Digite aqui"
+                                                        formControlName="quantidade" />
+                                                </div>
+                                            </div>
+
+
+                                            <hr>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                                Cancelar
+                            </button>
+                            <button type="button" class="btn btn-success" (click)="onSubmit()" data-bs-dismiss="modal">
+                                Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="formulario-credenciais text-center"
+                *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
+                <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+                <h4>Entre com suas credências</h4>
+                <div class="mb-3">
+                    <label for="matriculaInput" class="form-label">Matrícula</label>
+                    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+                        [(ngModel)]="matricula">
+                </div>
+                <div class="mb-3">
+                    <label for="senhaInput" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha"
+                        [(ngModel)]="senha">
+                </div>
+                <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt1()">Confirmar
                 </button>
-                <button type="button" class="btn btn-success" (click)="onSubmit()" data-bs-dismiss="modal">
-                    Adicionar</button>
             </div>
-        </div>
-    </div>
-</div>
 
+            <div class="formulario-credenciais text-center"
+                *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
+                <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+                <h4>Entre com suas credências</h4>
+                <div class="mb-3">
+                    <label for="matriculaInput" class="form-label">Matrícula</label>
+                    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+                        [(ngModel)]="matricula">
+                </div>
+                <div class="mb-3">
+                    <label for="senhaInput" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha"
+                        [(ngModel)]="senha">
+                </div>
+                <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt1()">Confirmar
+                </button>
+            </div>
 
-<div class="formulario-credenciais text-center"
-    *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Entre com suas credências</h4>
-    <div class="mb-3">
-        <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-            [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-        <label for="senhaInput" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt()">Confirmar
-    </button>
-</div>
-
-<div class="formulario-credenciais text-center"
-    *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Entre com suas credências</h4>
-    <div class="mb-3">
-        <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-            [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-        <label for="senhaInput" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt()">Confirmar
-    </button>
-</div>
-
-<div class="formulario-credenciais text-center"
-    *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Entre com suas credências</h4>
-    <div class="mb-3">
-        <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-            [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-        <label for="senhaInput" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt()">Confirmar
-    </button>
-</div>
+            <div class="formulario-credenciais text-center"
+                *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
+                <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+                <h4>Entre com suas credências</h4>
+                <div class="mb-3">
+                    <label for="matriculaInput" class="form-label">Matrícula</label>
+                    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+                        [(ngModel)]="matricula">
+                </div>
+                <div class="mb-3">
+                    <label for="senhaInput" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha"
+                        [(ngModel)]="senha">
+                </div>
+                <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt1()">Confirmar
+                </button>
+            </div>
 
 
 
-<div class="formulario-credenciais text-center"
-    *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Entre com suas credências</h4>
-    <div class="mb-3">
-        <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-            [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-        <label for="senhaInput" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt()">Confirmar
-    </button>
-</div>
+            <div class="formulario-credenciais text-center"
+                *ngIf="selecionadoprodutoFalta && selecionadoprodutoFalta === selecionadoprodutoFalta">
+                <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+                <h4>Entre com suas credências</h4>
+                <div class="mb-3">
+                    <label for="matriculaInput" class="form-label">Matrícula</label>
+                    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+                        [(ngModel)]="matricula">
+                </div>
+                <div class="mb-3">
+                    <label for="senhaInput" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha"
+                        [(ngModel)]="senha">
+                </div>
+                <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onSubmitt1()">Confirmar
+                </button>
+            </div>
 
-<div class="formulario-credenciais text-center" *ngIf="editarProduto && editarProduto === editarProduto">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Solicitar ou concluir</h4>
-    <div class="mb-3">
-        <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-            [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-        <label for="senhaInput" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <div class="d-flex justify-content-center gap-2">
-        <button class="btn btn-outline-light" style="font-weight: bold;" (click)="onEdit()">Solicitar</button>
-        <button class="btn btn-outline-light" style="font-weight: bold;"
-            (click)="concluir(editarProduto)">Concluir</button>
-        <button class="btn btn-outline-light" (click)="concluirSelecionados()" style="font-weight: bold;">
-            Concluir selecionados
-        </button>
+            <div class="formulario-credenciais text-center" *ngIf="editarProduto && editarProduto === editarProduto">
+                <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+                <h4>Solicitar ou concluir</h4>
+                <div class="mb-3">
+                    <label for="matriculaInput" class="form-label">Matrícula</label>
+                    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+                        [(ngModel)]="matricula">
+                </div>
+                <div class="mb-3">
+                    <label for="senhaInput" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha"
+                        [(ngModel)]="senha">
+                </div>
+                <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-outline-light" style="font-weight: bold;"
+                        (click)="onEdit()">Solicitar</button>
+                    <button class="btn btn-outline-light" style="font-weight: bold;"
+                        (click)="concluir(editarProduto)">Concluir</button>
+                    <button class="btn btn-outline-light" (click)="concluirSelecionados()" style="font-weight: bold;">
+                        Concluir selecionados
+                    </button>
 
-    </div>
-</div>
-
-
-<div class="formulario-credenciais text-center" *ngIf="autorizar && autorizar === autorizar">
-    <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
-    <h4>Autorizar</h4>
-    <div class="mb-3">
-        <label for="matriculaInput" class="form-label">Matrícula</label>
-        <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
-            [(ngModel)]="matricula">
-    </div>
-    <div class="mb-3">
-        <label for="senhaInput" class="form-label">Senha</label>
-        <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha" [(ngModel)]="senha">
-    </div>
-    <div class="d-flex justify-content-center gap-2">
-        <button class="btn btn-outline-light" style="font-weight: bold;" (click)="autorizarCompra()">Autorizar</button>
+                </div>
+            </div>
 
 
-    </div>
-</div>
+            <div class="formulario-credenciais text-center" *ngIf="autorizar && autorizar === autorizar">
+                <button class="btn-close btn-close-white" (click)="fecharFormularioCredenciais()">&times;</button>
+                <h4>Autorizar</h4>
+                <div class="mb-3">
+                    <label for="matriculaInput" class="form-label">Matrícula</label>
+                    <input type="text" class="form-control" id="matriculaInput" placeholder="Digite sua matrícula"
+                        [(ngModel)]="matricula">
+                </div>
+                <div class="mb-3">
+                    <label for="senhaInput" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senhaInput" placeholder="Digite sua senha"
+                        [(ngModel)]="senha">
+                </div>
+                <div class="d-flex justify-content-center gap-2">
+                    <button class="btn btn-outline-light" style="font-weight: bold;"
+                        (click)="autorizarCompra()">Autorizar</button>
+
+
+                </div>
+            </div>

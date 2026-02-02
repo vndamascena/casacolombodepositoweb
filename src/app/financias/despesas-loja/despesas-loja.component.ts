@@ -8,6 +8,8 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 declare var bootstrap: any;
+let dataFiltroCalendario: string | null = null;
+let tipoFiltroCalendario: string | null = null;
 
 @Component({
   selector: 'app-despesas-loja',
@@ -36,15 +38,15 @@ export class DespesasLojaComponent implements OnInit {
   categoriasDespesas: any = {
     'ADMINISTRATIVOS': ['CONTABILIDADE', 'INTERNET', 'INVESTIMENTOS', 'JUROS DE EMPRÉSTIMOS', 'MEDICINA DO TRABALHO', 'REDE', 'SISTEMAS', 'TAXAS BAIRRO', 'TÁRIFAS BANCÁRIAS', 'TELEFONE',],
     'FUNCIONAMENTO': ['MANUTENÇÃO', 'MERCADO', 'REFEIÇÃO', 'SUPRIMENTOS',],
-    'FUNCIONÁRIOS': ['ALIMENTAÇÃO', 'BONIFICAÇÃO', 'COMISSÃO', 'DÉCIMO TERCEIRO SALÁRIO', 'FÉRIAS', 'FGTS', 'HORA EXTRA', 'INSS', 'PASSAGEM', 'PLANO DE SAÚDE', 'SALÁRIOS', 'SEGURO DE VIDA',],
-    'IMÓVEIS': ['ALUGUEIS', 'CONDOMINIOS', 'CONTA DE ÁGUA', 'CONTA DE LUZ', 'IPTU', 'MANUTENÇÃO', 'OBRAS', 'OUTROS IMPOSTOS', 'SEGURO',],
-    'LOGÍSTICA': ['COMBUSTIVEL', 'IPVA', 'MANUTENÇÃO', 'MECÂNICA',],
+    'FUNCIONÁRIOS': ['ALIMENTAÇÃO', 'BONIFICAÇÃO', 'COMISSÃO', 'DÉCIMO TERCEIRO SALÁRIO', 'FÉRIAS', 'FGTS', 'HORA EXTRA', 'GPS', 'PASSAGEM', 'PLANO DE SAÚDE', 'SALÁRIOS', 'SEGURO DE VIDA',],
+    'IMÓVEIS': ['ALUGUEIS', 'CONDOMINIOS', 'CONTA DE ÁGUA', 'CONTA DE LUZ', 'IPTU', 'MANUTENÇÃO', 'OBRAS', 'OUTROS IMPOSTOS', 'PRESTAÇÃO', 'SEGURO',],
+    'LOGÍSTICA': ['COMBUSTIVEL', 'IPVA', 'MANUTENÇÃO', 'MECÂNICA', 'SEGURO'],
     'VENDA': ['SIMPLES', 'TAXAS DA MAQUINA DE CARTÃO',],
     'OUTROS': []
   };
   loja: string[] = ['JC1', 'VA', 'JC2', 'CL', 'CONSTRUTORA', 'OUTROS'];
   mesReferencia: string[] = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ']
-  formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA'];
+  formaPag: string[] = ['BOLETO', 'CHEQUE', 'DINHEIRO', 'TRANSFERÊNCIA', 'SEM COBRANÇA', 'CARTÃO DE CREDITO'];
   conta: string[] = ['ITAU-JC1', 'ITAU-VA', 'ITAU-JC2', 'ITAU-CL', 'BRAD-JC1',];
   despesasFixas = [
     { categoria: 'VENDA', despesa: 'SIMPLES', diaVenc: 20 },
@@ -67,6 +69,7 @@ export class DespesasLojaComponent implements OnInit {
   totalChequeCobr = 0;
   totalChequePago = 0;
   totalChequeSaldo = 0;
+
 
 
 
@@ -98,6 +101,17 @@ export class DespesasLojaComponent implements OnInit {
 
 
   ngOnInit(): void {
+
+    let dataFiltroCalendario: string | null = null;
+    let tipoFiltroCalendario: string | null = null;
+
+    this.route.queryParams.subscribe(params => {
+      if (params['data']) {
+        dataFiltroCalendario = params['data'];
+        tipoFiltroCalendario = params['tipo'];
+      }
+    });
+
     this.httpClient.get(environment.financa + "/despesasLoja")
       .subscribe({
         next: (depesasLojaData) => {
@@ -112,6 +126,39 @@ export class DespesasLojaComponent implements OnInit {
             new Date(b.dataVencimento).getTime() - new Date(a.dataVencimento).getTime()
           );
           this.despesasLojaFiltradas = [...this.despesasLoja];
+          if (dataFiltroCalendario) {
+
+            // Filtra exatamente a data clicada
+            this.dataVencInicio = dataFiltroCalendario;
+            this.dataVencFim = dataFiltroCalendario;
+
+            // Sempre exibir só ATIVOS (vencido/próximo é só para ativos mesmo)
+            this.filtroAtivo = true;
+            this.filtroInativo = false;
+
+            // Aplica o filtro já existente
+            this.filtrarDespesasLoja();
+
+            // Agora filtramos especificamente o tipo (vencido / próximo)
+            if (tipoFiltroCalendario === 'vencido') {
+              this.despesasLojaFiltradas = this.despesasLojaFiltradas.filter(d =>
+                new Date(d.dataVencimento) < new Date()
+              );
+            }
+
+            if (tipoFiltroCalendario === 'proximo') {
+              const hoje = new Date();
+              const d3 = new Date();
+              d3.setDate(hoje.getDate() + 3);
+
+              this.despesasLojaFiltradas = this.despesasLojaFiltradas.filter(d => {
+                const data = new Date(d.dataVencimento);
+                return data >= hoje && data <= d3;
+              });
+            }
+          }
+
+
 
 
           console.log('📦 Compras carregadas e ajustadas:', this.despesasLoja);
@@ -171,50 +218,58 @@ export class DespesasLojaComponent implements OnInit {
       .subscribe({
         next: (despesasMes) => {
           const despesasFixas = [
-            { categoria: 'IMÓVEIS', despesa: 'ALUGUEL LOJA R18', loja: 'JC2', valorCobr: '4000,00', diaVenc: 1 },
-            { categoria: 'IMÓVEIS', despesa: 'LUZ LOJA R8', loja: 'JC1', diaVenc: 1 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'SERVIDOR NA NUVEM', loja: 'OUTROS', valorCobr: '170,22', diaVenc: 4 },
+            { categoria: 'IMÓVEIS', despesa: 'ALUGUEIS', loja: 'JC2', valorCobr: '4000,00', diaVenc: 1 },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE LUZ	', loja: 'JC1', diaVenc: 1 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'SISTEMAS', loja: 'OUTROS', valorCobr: '170,22', diaVenc: 4, observacao:'SERVIDOR NA NUVEM' },
             { categoria: 'ADMINISTRATIVOS', despesa: 'REDE TOP JC1', loja: 'JC1', valorCobr: '750,00', diaVenc: 5 },
             { categoria: 'ADMINISTRATIVOS', despesa: 'REDE TOP JC2', loja: 'JC2', valorCobr: '250,00', diaVenc: 5 },
-            { categoria: 'IMÓVEIS', despesa: 'ALUGUEL CL', loja: 'CL', valorCobr: '10083,80,', diaVenc: 5 },
-            { categoria: 'FUNCIONAMENTO', despesa: 'INTERNET DA LOJA R8 FLACK', loja: 'JC1', valorCobr: '155,00', diaVenc: 5 },
-            { categoria: 'LOGÍSTICA', despesa: 'SEGURO SAVEIRO BR', loja: 'OUTROS', valorCobr: '262,63', diaVenc: 5 },
-            { categoria: 'LOGÍSTICA', despesa: 'SEGURO SAVEIRO PR', loja: 'OUTROS', valorCobr: '169,10', diaVenc: 5 },
-            { categoria: 'LOGÍSTICA', despesa: 'COROLLA', loja: 'OUTROS', valorCobr: '209,35', diaVenc: 5 },
-            { categoria: 'IMÓVEIS', despesa: 'ALUGUEL GALPÃO R8', loja: 'OUTROS', valorCobr: '2249,53', diaVenc: 5 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'FGTS MAT COLOMBO', loja: 'JC1', diaVenc: 20 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'FGTS CASA COLOMBO', loja: 'VA', diaVenc: 20 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'FGTS CASA COLOMBO JC', loja: 'JC2', diaVenc: 20 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'SEG VIDA JC1', loja: 'JC1', valorCobr: '311,59', diaVenc: 10 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'SEG VIDA VA', loja: 'VA', valorCobr: '95,83', diaVenc: 10 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'SEG VIDA JC2', loja: 'JC2', valorCobr: '150,30', diaVenc: 10 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'ALTERDATA JC2', loja: 'JC2', valorCobr: '232,28', diaVenc: 10 },
-            { categoria: 'IMÓVEIS', despesa: 'LUZ DEPOSITO R5', loja: 'OUTROS', diaVenc: 10 },
-            { categoria: 'IMÓVEIS', despesa: 'LUZ VA', loja: 'VA', diaVenc: 10 },
-            { categoria: 'IMÓVEIS', despesa: 'LUZ MAT COLOMBO', loja: 'JC1', diaVenc: 10 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'BRADESCO SAÚDE', loja: 'JC1', valorCobr: '3672,25', diaVenc: 14 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'FLIT', loja: 'OUTROS', valorCobr: '199,00', diaVenc: 15 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'TIM CL',loja: 'CL',valorCobr: '41,85', diaVenc: 10 },
-           // { categoria: 'ADMINISTRATIVOS', despesa: 'CLARO FIXO', loja: 'JC1', valorCobr: '21,00', diaVenc: 15 },
-           // { categoria: 'ADMINISTRATIVOS', despesa: 'CLARO CEL', loja: 'C1', valorCobr: '49,90', diaVenc: 10 },
-           // { categoria: 'ADMINISTRATIVOS', despesa: 'CLARO CEL', loja: 'C2', valorCobr: '49,90', diaVenc: 10 },
-           // { categoria: 'ADMINISTRATIVOS', despesa: 'OI / TIM LOJA', diaVenc: 15 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'INTERNET R18', loja: 'JC2', valorCobr: '135,00', diaVenc: 15 },
-            { categoria: 'IMÓVEIS', despesa: 'AGUAS DO RIO', loja: 'JC1', valorCobr: '447,77', diaVenc: 16 },
-            { categoria: 'IMÓVEIS', despesa: 'APARTAMENTO 201/202/203', loja: 'OUTROS', valorCobr: '925,00', diaVenc: 20 },
-            { categoria: 'IMÓVEIS', despesa: 'LUZ LOJA R18', loja: 'JC1', diaVenc: 20 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'GPS CASA COLOMBO', loja: 'VA', diaVenc: 20 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'GPS MAT COLOMBO', loja: 'JC1', diaVenc: 20 },
-            { categoria: 'FUNCIONÁRIOS', despesa: 'GPS CASA COLOMBO JC', loja: 'JC2', diaVenc: 20 },
-            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES CASA COLOMBO', loja: 'VA', diaVenc: 20 },
-            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES MAT COLOMBO', loja: 'JC1', diaVenc: 20 },
-            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES CASA COLOMBO JC', loja: 'JC2', diaVenc: 20 },
-            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES CASA COLOMBO CL', loja: 'CL', diaVenc: 20 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'ALTERDATA VA-JC1', loja: 'JC1', diaVenc: 20 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'ALTERDATA CL', loja: 'CL', valorCobr: '283,47', diaVenc: 20 },
-            { categoria: 'IMÓVEIS', despesa: 'ALUGUEL VA', loja: 'VA', valorCobr: '5250,00', diaVenc: 20 },
-            { categoria: 'ADMINISTRATIVOS', despesa: 'INTERNET VA WESTLINK', loja: 'VA', valorCobr: '99,90', diaVenc: 20 },
-            { categoria: 'VENDA', despesa: 'SIMPLES CONSTRUTORA', loja: 'CONSTRUTORA', valorCobr: '80,90', diaVenc: 20 },
+            { categoria: 'IMÓVEIS', despesa: 'ALUGUEIS', loja: 'CL', valorCobr: '10083,80,', diaVenc: 5 },
+            { categoria: 'FUNCIONAMENTO', despesa: 'INTERNET', loja: 'JC1', valorCobr: '155,00', diaVenc: 5 },
+            { categoria: 'LOGÍSTICA', despesa: 'SEGURO', loja: 'OUTROS', valorCobr: '262,63', diaVenc: 5, observacao:'SEGURO SAVEIRO BR' },
+            { categoria: 'LOGÍSTICA', despesa: 'SEGURO', loja: 'OUTROS', valorCobr: '169,10', diaVenc: 5, observacao:'SEGURO SAVEIRO PR' },
+            { categoria: 'LOGÍSTICA', despesa: 'SEGURO', loja: 'OUTROS', valorCobr: '209,35', diaVenc: 5, observacao:'COROLLA'},
+            { categoria: 'IMÓVEIS', despesa: 'ALUGUEIS', loja: 'OUTROS', valorCobr: '2249,53', diaVenc: 5, observacao:'ALUGUEL GALPÃO R8'  },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'FGTS', loja: 'JC1', diaVenc: 20 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'FGTS', loja: 'VA', diaVenc: 20 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'FGTS', loja: 'JC2', diaVenc: 20 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'SEGURO DE VIDA	', loja: 'JC1', valorCobr: '311,59', diaVenc: 10 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'SEGURO DE VIDA	', loja: 'VA', valorCobr: '95,83', diaVenc: 10 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'SEGURO DE VIDA	', loja: 'JC2', valorCobr: '150,30', diaVenc: 10 },
+            { categoria: 'ADMINISTRATIVOS', despesa: '', loja: 'JC2', valorCobr: '232,28', diaVenc: 10, observacao:'ALTERDATA JC2' },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE LUZ	', loja: 'OUTROS', diaVenc: 10, observacao: 'LUZ DEPOSITO R5' },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE LUZ	', loja: 'VA', diaVenc: 10 },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE LUZ	', loja: 'JC1', diaVenc: 10 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'PLANO DE SAÚDE', loja: 'JC1', valorCobr: '3672,25', diaVenc: 14 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'SISTEMAS', loja: 'OUTROS', valorCobr: '199,00', diaVenc: 15, observacao:'FLIT' },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'TIM', loja: 'CL', valorCobr: '41,85', diaVenc: 10 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'TIM', loja: 'VA', valorCobr: '41,85', diaVenc: 15 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'TIM CEL', loja: 'JC1', valorCobr: '239,99', diaVenc: 15 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'CLARO FIXO', loja: 'JC2', valorCobr: '21,00', diaVenc: 15 },
+            // { categoria: 'ADMINISTRATIVOS', despesa: 'CLARO CEL', loja: 'C1', valorCobr: '49,90', diaVenc: 10 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'CLARO CEL', loja: 'JC2', valorCobr: '49,90', diaVenc: 5 },
+            // { categoria: 'ADMINISTRATIVOS', despesa: 'OI / TIM LOJA', diaVenc: 15 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'INTERNET', loja: 'JC2', valorCobr: '135,00', diaVenc: 15 },
+             { categoria: 'ADMINISTRATIVOS', despesa: 'INTERNET', loja: 'CL', valorCobr: '89,99', diaVenc: 16, observacao:'NIO FIBRA'  },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE ÁGUA', loja: 'JC1', valorCobr: '447,77', diaVenc: 16 },
+            { categoria: 'IMÓVEIS', despesa: 'PRESTAÇÃO', loja: 'OUTROS', valorCobr: '925,00', diaVenc: 20 },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE LUZ	', loja: 'JC2', diaVenc: 20 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'GPS', loja: 'VA', diaVenc: 20 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'GPS', loja: 'JC1', diaVenc: 20 },
+            { categoria: 'FUNCIONÁRIOS', despesa: 'GPS', loja: 'JC2', diaVenc: 20 },
+            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES', loja: 'VA', diaVenc: 20 },
+            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES', loja: 'JC1', diaVenc: 20 },
+            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES', loja: 'JC2', diaVenc: 20 },
+            { categoria: 'CUSTOS DE VENDA', despesa: 'SIMPLES', loja: 'CL', diaVenc: 20 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'SISTEMAS', loja: 'JC1', diaVenc: 20, observacao:'ALTERDATA VA-JC1' },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'SISTEMAS', loja: 'CL', valorCobr: '283,47', diaVenc: 20, observacao:'ALTERDATA CL' },
+            { categoria: 'IMÓVEIS', despesa: 'ALUGUEIS', loja: 'VA', valorCobr: '5250,00', diaVenc: 20 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'INTERNET', loja: 'VA', valorCobr: '99,90', diaVenc: 20 },
+            { categoria: 'CUSTO DE VENDA', despesa: 'SIMPLES', loja: 'CONSTRUTORA', valorCobr: '80,90', diaVenc: 20 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'CONTABILIDADE', loja: 'JC1', valorCobr: '920,00', diaVenc: 25 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'CONTABILIDADE', loja: 'VA', valorCobr: '600,00', diaVenc: 25 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'CONTABILIDADE', loja: 'JC2', valorCobr: '600,00', diaVenc: 25 },
+            { categoria: 'ADMINISTRATIVOS', despesa: 'CONTABILIDADE', loja: 'CL', valorCobr: '600,00', diaVenc: 25 },
+            { categoria: 'IMÓVEIS', despesa: 'CONTA DE LUZ	', loja: 'CL', diaVenc: 28 }
 
 
 
@@ -255,7 +310,10 @@ export class DespesasLojaComponent implements OnInit {
               mesReferencia: mesRef,
               valorCobr: valor,
               valorPago: null,
-              ativo: 1
+              ativo: 1,
+              observacao:fixa.observacao
+              
+
             };
 
             return this.httpClient.post(`${environment.financa}/despesasLoja`, novaDespesa)
@@ -461,7 +519,7 @@ export class DespesasLojaComponent implements OnInit {
       .subscribe({
         next: (data: any) => {
           this.mensagem = data.message;
-          this.formDespesasLoja.reset();
+           this.limparFormulario();
 
 
           this.spinner.hide();
@@ -621,6 +679,27 @@ export class DespesasLojaComponent implements OnInit {
         }
       });
   }
+
+  limparFormulario(): void {
+  this.formDespesasLoja.reset({
+    id: '',
+    despesa: '',
+    loja: '',
+    categoria: '',
+    quantidade: '',
+    dataVencimento: '',
+    mesReferencia: '',
+    valorCobr: '',
+    valorPago: '',
+    observacao: '',
+    conta: '',
+    dataPagamento: '',
+    formaPagamento: ''
+  });
+
+  this.formDespesasLoja.markAsPristine();
+  this.formDespesasLoja.markAsUntouched();
+}
 
 
   onConcluir(): void {

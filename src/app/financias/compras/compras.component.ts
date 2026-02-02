@@ -220,16 +220,23 @@ export class ComprasComponent implements OnInit, AfterViewInit {
         this.filtrarCompras();
     }
 
-    enriquecerComprasComFornecedores() {
-        if (this.compras?.length && this.fornecedor?.length) {
-            this.compras.forEach(compra => {
-                const fornecedorRelacionado = this.fornecedor.find(f => f.id === compra.idForn);
-                compra.nomeFornecedor = fornecedorRelacionado ? fornecedorRelacionado.fornecedo : 'Desconhecido';
-            });
-            this.comprasFiltradas = [...this.compras];
-            console.log('📌 Compras com fornecedo:', this.compras);
-        }
+enriquecerComprasComFornecedores() {
+    if (this.compras?.length && this.fornecedor?.length) {
+        this.compras.forEach(compra => {
+            const fornecedorRelacionado = this.fornecedor.find(
+                f => String(f.id) === String(compra.idForn)
+            );
+
+            compra.nomeFornecedor = fornecedorRelacionado
+                ? fornecedorRelacionado.fornecedo
+                : 'Desconhecido';
+        });
+
+        // 🚫 NÃO mexe em comprasFiltradas
+        console.log('✅ Compras enriquecidas com nome do fornecedor');
     }
+}
+
     onGenericFornecedorInput(event: any, campo: 'idForn' | 'idEmpFrete') {
         const nome = event.target.value;
         const fornecedor = this.fornecedor.find(f => f.fornecedo === nome);
@@ -254,56 +261,158 @@ export class ComprasComponent implements OnInit, AfterViewInit {
             }
         }
     }
+    limparFiltroDashboard(): void {
+
+    // 1️⃣ Limpa mensagem
+    this.mensagem = null;
+
+    // 2️⃣ Reseta lista
+    this.comprasFiltradas = [...this.compras];
+
+    // 3️⃣ Limpa URL (remove filtros do dashboard)
+    this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: {},
+        replaceUrl: true
+    });
+
+    console.log('🧹 Filtro do dashboard removido, exibindo todas as compras');
+}
+private tentarAplicarFiltroDashboard(): void {
+
+    const filtro = this.route.snapshot.queryParamMap.get('filtroDashboard');
+    const idForn = this.route.snapshot.queryParamMap.get('idForn');
+    const periodo = this.route.snapshot.queryParamMap.get('periodo'); // 👈 NOVO
+
+    if (!filtro) return;
+
+    if (!this.compras.length || !this.fornecedoresCarregados) {
+        console.log('⏳ Aguardando dados para aplicar filtro...');
+        return;
+    }
+
+    console.log('✅ Aplicando filtro:', filtro, 'Fornecedor:', idForn, 'Período:', periodo);
+
+    // 🔥 DRILL-DOWN POR FORNECEDOR
+    if (filtro === 'fornecedor' && idForn) {
+
+        let filtradas = this.compras.filter(
+            c => String(c.idForn) === String(idForn)
+        );
+
+        // 🔹 SE FOR RANKING MENSAL
+        if (periodo === 'mes') {
+            const hoje = new Date();
+            const mesAtual = hoje.getMonth();
+            const anoAtual = hoje.getFullYear();
+
+            filtradas = filtradas.filter(c => {
+                const d = new Date(c.dataNota);
+                return d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
+            });
+
+            this.mensagem = 'Exibindo compras do fornecedor no mês atual';
+        } else {
+            this.mensagem = 'Exibindo compras do fornecedor selecionado';
+        }
+
+        this.comprasFiltradas = filtradas;
+
+        console.log('📌 Compras filtradas:', this.comprasFiltradas.length);
+        return; // ⛔ ESSENCIAL
+    }
+
+    // 🔹 DEMAIS FILTROS
+    this.aplicarFiltroDashboardCompras(filtro);
+}
+
 
     ngOnInit(): void {
+
+        let filtroDashboardAtivo: string | null = null;
+
+        // 🔹 1. Escuta a URL
+        this.route.queryParams.subscribe(params => {
+            this.tentarAplicarFiltroDashboard();
+            filtroDashboardAtivo = params['filtroDashboard'] || null;
+            console.log('🧭 Filtro vindo da URL:', filtroDashboardAtivo);
+
+            // caso os dados já tenham sido carregados
+            if (filtroDashboardAtivo && this.compras.length) {
+                console.log('🔁 Aplicando filtro (dados já carregados)');
+             
+            }
+        });
+
+        // 🔹 2. Carrega compras
         this.httpClient.get(environment.financa + "/compras")
             .subscribe({
                 next: (comprasData) => {
+
                     this.compras = (comprasData as any[]).sort((a, b) =>
                         new Date(b.dataEntrega).getTime() - new Date(a.dataEntrega).getTime()
                     );
+
                     this.comprasFiltradas = [...this.compras];
-                    console.log('📦 Compras carregadas e ordenadas:', this.compras);
+
+                    console.log('📦 Compras carregadas:', this.compras.length);
+
+                    // 🔥 AQUI é o ponto chave
+                    if (filtroDashboardAtivo) {
+                        console.log('🔥 Aplicando filtro após carregar compras');
+                      
+                    }
+
                     this.comprasCarregadas = true;
+                    this.tentarAplicarFiltroDashboard();
+
                     this.verificarEInicializarPopovers();
                 },
                 error: (e) => {
-                    console.log("Erro ao carregar compras:", e.error);
+                    console.error("Erro ao carregar compras:", e);
                 }
             });
 
+        // 🔹 3. Carrega cobranças (inalterado)
         this.httpClient.get(environment.financa + "/cobranca")
             .subscribe({
                 next: (data) => {
                     this.cobranca = data as any[];
+
                     this.cobranca.forEach(cob => {
                         if (!this.cobrancasPorCompraId[cob.idCompra]) {
                             this.cobrancasPorCompraId[cob.idCompra] = [];
                         }
                         this.cobrancasPorCompraId[cob.idCompra].push(cob);
                     });
+
                     console.log('🧾 Cobranças carregadas e mapeadas:', this.cobrancasPorCompraId);
+
                     this.cobrancasCarregadas = true;
                     this.verificarEInicializarPopovers();
                 },
                 error: (e) => {
-                    console.log("Erro ao carregar cobranças:", e.error);
+                    console.error("Erro ao carregar cobranças:", e);
                 }
             });
-
         this.httpClient.get<any[]>(environment.financa + "/fornecedor")
             .subscribe({
                 next: (fornecedoresData) => {
                     console.log('Fornecedores carregados:', fornecedoresData);
                     this.fornecedor = fornecedoresData;
                     this.fornecedoresCarregados = true;
+                    this.tentarAplicarFiltroDashboard();
                     this.verificarEInicializarPopovers();
                 },
                 error: (e) => {
                     console.log("Erro ao carregar fornecedores:", e.error);
                 }
             });
+
+
     }
+
+
 
     ngAfterViewInit() {
 
@@ -350,26 +459,40 @@ export class ComprasComponent implements OnInit, AfterViewInit {
         console.log('✅ Popovers inicializados ou re-inicializados!');
     }
 
-    filtrarCompras(): void {
-        const termo = this.expression.toLowerCase().trim();
-        const inicioStr = this.dataNotaInicio;
-        const fimStr = this.dataNotaFim;
+  filtrarCompras(): void {
+  const termo = this.expression.toLowerCase().trim();
+  const inicioStr = this.dataNotaInicio;
+  const fimStr = this.dataNotaFim;
 
-        this.comprasFiltradas = this.compras.filter(p => {
-            const contemTexto = Object.values(p).some(value =>
-                String(value).toLowerCase().includes(termo)
-            );
-            const dataNotaValida = p.dataNota ? new Date(p.dataNota).toISOString().slice(0, 10) : '';
-            const dentroDoPeriodo =
-                (!inicioStr || dataNotaValida >= inicioStr) &&
-                (!fimStr || dataNotaValida <= fimStr);
-            return contemTexto && dentroDoPeriodo;
-        });
-        this.p = 1;
-        setTimeout(() => {
-            this.initializePopovers();
-        }, 1550);
-    }
+  this.comprasFiltradas = this.compras.filter(p => {
+
+    // 🔹 filtro por texto
+    const contemTexto = Object.values(p).some(value =>
+      String(value).toLowerCase().includes(termo)
+    );
+
+    // 🔹 data base correta (ENTREGA > NOTA)
+    const dataBase = p.dataEntrega || p.dataNota;
+    if (!dataBase) return false;
+
+    const dataBaseISO = new Date(dataBase)
+      .toISOString()
+      .slice(0, 10);
+
+    // 🔹 filtro por período
+    const dentroDoPeriodo =
+      (!inicioStr || dataBaseISO >= inicioStr) &&
+      (!fimStr || dataBaseISO <= fimStr);
+
+    return contemTexto && dentroDoPeriodo;
+  });
+
+  this.p = 1;
+
+  setTimeout(() => {
+    this.initializePopovers();
+  }, 1550);
+}
 
     mostraObservacao(compras: any): void {
         this.observacaoSelecionada = compras;
@@ -378,8 +501,6 @@ export class ComprasComponent implements OnInit, AfterViewInit {
         modalInstance.show();
     }
 
-    // --- FUNÇÃO getCobrancasParaCompra MODIFICADA ---
-    // ... (seu código existente)
 
     getCobrancasParaCompra(idCompra: number): string {
         const cobrancasRelacionadas = this.cobrancasPorCompraId[idCompra];
@@ -400,7 +521,6 @@ export class ComprasComponent implements OnInit, AfterViewInit {
                 const dateA = dateAValue ? new Date(dateAValue).getTime() : Infinity;
                 const dateB = dateBValue ? new Date(dateBValue).getTime() : Infinity;
 
-                // --- NOVO: LOG DA COMPARAÇÃO ---
                 if (isNaN(dateA) || isNaN(dateB)) {
                     console.warn(`Data inválida encontrada na ordenação! A: ${dateAValue} (Convertido: ${dateA}), B: ${dateBValue} (Convertido: ${dateB})`);
                 }
@@ -441,6 +561,8 @@ export class ComprasComponent implements OnInit, AfterViewInit {
                 }
 
                 content += `<li>`;
+                content += `<strong>ID da cobrança: ${cob.id} </strong><br>`;
+                content += `<strong>N° da cobrança: ${cob.numCobr} </strong><br>`;
                 content += `<strong class="${valorClass}">Valor:</strong> <strong class="${valorClass}">R$ ${valor}</strong> <br>`;
                 content += `<strong class="${vencimentoClass}">Vencimento:</strong> <strong class="${vencimentoClass}">${dataVencimentoStr}</strong><br>`;
                 content += `<strong class="${pagamentoClass}">Pago dia:</strong> <strong class="${pagamentoClass}">${dataPagamentoStr}</strong> <br>`;
@@ -759,4 +881,143 @@ export class ComprasComponent implements OnInit, AfterViewInit {
         });
     }
 
+    aplicarFiltroDashboardCompras(tipo: string) {
+
+  const hoje = normalizarDataLocal(new Date());
+
+  const inicioSemanaAtual = new Date(hoje);
+  inicioSemanaAtual.setDate(hoje.getDate() - hoje.getDay());
+
+  const fimSemanaAtual = new Date(inicioSemanaAtual);
+  fimSemanaAtual.setDate(inicioSemanaAtual.getDate() + 6);
+
+  const inicioSemanaPassada = new Date(inicioSemanaAtual);
+  inicioSemanaPassada.setDate(inicioSemanaAtual.getDate() - 7);
+
+  const fimSemanaPassada = new Date(inicioSemanaAtual);
+  fimSemanaPassada.setDate(inicioSemanaAtual.getDate() - 1);
+
+  const mesAtual = hoje.getMonth();
+  const anoAtual = hoje.getFullYear();
+
+  const mesAnterior = mesAtual === 0 ? 11 : mesAtual - 1;
+  const anoMesAnterior = mesAtual === 0 ? anoAtual - 1 : anoAtual;
+
+  const idForn = Number(this.route.snapshot.queryParamMap.get('idForn'));
+
+  switch (tipo) {
+
+    case 'ano-atual':
+      this.comprasFiltradas = this.compras.filter(c => {
+        const d = this.getDataBaseCompra(c);
+        return d && d.getFullYear() === anoAtual;
+      });
+      this.mensagem = 'Exibindo compras do ano atual';
+      break;
+
+    case 'ano-anterior':
+      this.comprasFiltradas = this.compras.filter(c => {
+        const d = this.getDataBaseCompra(c);
+        return d && d.getFullYear() === anoAtual - 1;
+      });
+      this.mensagem = 'Exibindo compras do ano anterior';
+      break;
+
+    case 'mes':
+      this.comprasFiltradas = this.compras.filter(c => {
+        const d = this.getDataBaseCompra(c);
+        return d && d.getMonth() === mesAtual && d.getFullYear() === anoAtual;
+      });
+      this.mensagem = 'Exibindo compras do mês atual';
+      break;
+
+    case 'mes-anterior':
+      this.comprasFiltradas = this.compras.filter(c => {
+        const d = this.getDataBaseCompra(c);
+        return d && d.getMonth() === mesAnterior && d.getFullYear() === anoMesAnterior;
+      });
+      this.mensagem = 'Exibindo compras do mês anterior';
+      break;
+
+    case 'semana':
+      this.comprasFiltradas = this.compras.filter(c => {
+        const d = this.getDataBaseCompra(c);
+        return d && d >= inicioSemanaAtual && d <= fimSemanaAtual;
+      });
+      this.mensagem = 'Exibindo compras da semana atual';
+      break;
+
+    case 'semana-passada':
+      this.comprasFiltradas = this.compras.filter(c => {
+        const d = this.getDataBaseCompra(c);
+        return d && d >= inicioSemanaPassada && d <= fimSemanaPassada;
+      });
+      this.mensagem = 'Exibindo compras da semana passada';
+      break;
+
+    default:
+      this.comprasFiltradas = [...this.compras];
+      this.mensagem = 'Exibindo todas as compras';
+      break;
+  }
+}
+
+
+get totalMensal(): number {
+  const hoje = normalizarDataLocal(new Date());
+
+  const inicioFiltro = this.dataNotaInicio
+    ? normalizarDataLocal(new Date(this.dataNotaInicio))
+    : null;
+
+  const fimFiltro = this.dataNotaFim
+    ? normalizarDataLocal(new Date(this.dataNotaFim))
+    : null;
+
+  return this.comprasFiltradas
+    .filter(c => {
+      const d = this.getDataBaseCompra(c);
+      if (!d) return false;
+
+      // 📌 com filtro de data
+      if (inicioFiltro || fimFiltro) {
+        if (inicioFiltro && d < inicioFiltro) return false;
+        if (fimFiltro && d > fimFiltro) return false;
+        return true;
+      }
+
+      // 📌 sem filtro → mês atual
+      return (
+        d.getMonth() === hoje.getMonth() &&
+        d.getFullYear() === hoje.getFullYear()
+      );
+    })
+    .reduce((total, c) => total + (Number(c.valorCompra) || 0), 0);
+}
+
+
+get totalAnual(): number {
+  const anoAtual = new Date().getFullYear();
+
+  return this.compras
+    .filter(c => {
+      const d = this.getDataBaseCompra(c);
+      return d && d.getFullYear() === anoAtual;
+    })
+    .reduce((total, c) => total + (Number(c.valorCompra) || 0), 0);
+}
+
+
+getDataBaseCompra(compra: any): Date | null {
+  if (compra.dataEntrega) return normalizarDataLocal(new Date(compra.dataEntrega));
+  if (compra.dataNota) return normalizarDataLocal(new Date(compra.dataNota));
+  return null;
+}
+
+
+
+
+}
+function normalizarDataLocal(d: Date): Date {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }

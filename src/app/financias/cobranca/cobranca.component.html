@@ -116,12 +116,14 @@
 
                 <div class="d-flex justify-content-between">
                     <span class="fw-semibold text-muted">Pagar: </span>
-                    <span class="fw-bold text-danger">{{ totalSaldoAtivas + totalChequeSaldo | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    <span class="fw-bold text-danger">{{ totalSaldoAtivas + totalChequeSaldo |
+                        currency:'BRL':'symbol':'1.2-2' }}</span>
                 </div>
 
                 <div class="d-flex justify-content-between">
                     <span class="fw-semibold text-muted">Pago: </span>
-                    <span class="fw-bold text-success">{{ totalValorPago + totalChequePago | currency:'BRL':'symbol':'1.2-2' }}</span>
+                    <span class="fw-bold text-success">{{ totalValorPago + totalChequePago |
+                        currency:'BRL':'symbol':'1.2-2' }}</span>
                 </div>
             </div>
         </div>
@@ -185,7 +187,8 @@
         <!-- ... thead ... -->
         <thead>
             <tr>
-                <th>Id compra</th>
+                <th>Id C</th>
+                <th>Id</th>
                 <th>Fornecedor</th>
                 <th>NF</th>
                 <th>N° nota</th>
@@ -214,8 +217,9 @@
                     [attr.title]="isSomaDasCobrancasDiferenteDaCompra(cobranca.idCompra) ? 'Não foram cadastrada todas as cobranças' : null">
                     {{ cobranca.idCompra }}
                 </td>
-
+                <td>{{cobranca.id}}</td>
                 <td>{{ cobranca.nomeFornecedor|| '-' }}</td>
+
                 <td>{{cobranca.numNF}}</td>
                 <td>{{cobranca.numNota}}</td>
                 <td>{{ cobranca.numCobr || '-' }}</td>
@@ -362,7 +366,7 @@
                     </div>
 
                 </div>
-                <div class="modal-footer">
+               <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-success" (click)="onEdite(cobra.id)" data-bs-toggle="modal"
                         data-bs-target="#modalConcluirCobranca" data-bs-dismiss="modal">Pagar</button>
@@ -639,7 +643,7 @@
 
                     Cancelar
                 </button>
-                <button type="button" class="btn btn-success" (click)="onSubmit()">
+                <button type="button" class="btn btn-success" (click)="onSubmit()" data-bs-dismiss="modal">
                     Confirmar edição</button>
             </div>
         </div>

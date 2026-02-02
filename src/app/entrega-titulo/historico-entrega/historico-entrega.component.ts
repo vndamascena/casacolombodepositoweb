@@ -7,6 +7,8 @@ import { environment } from '../../../environments/environment.development';
 import { CommonModule } from '@angular/common';
 import { NgxPaginationModule } from 'ngx-pagination';
 import * as XLSX from 'xlsx';
+import * as pdfjsLib from 'pdfjs-dist';
+(pdfjsLib as any).GlobalWorkerOptions.workerSrc =  '/assets/pdfjs/pdf.worker.min.js';
 
 @Component({
     selector: 'app-historico-entrega',
@@ -225,7 +227,26 @@ export class HistoricoEntregaComponent implements OnInit {
       imagemAmpliada.classList.add('mostrar');
     }
   }
+ expandirArquivo(url: string): void {
+    if (!url) {
+      alert('Arquivo não disponível');
+      return;
+    }
 
+    const fullUrl = this.getFullImageUrl(url);
+
+    // 🟢 PDF → encode + nova aba
+    if (url.toLowerCase().endsWith('.pdf')) {
+      window.open(encodeURI(fullUrl), '_blank');
+      return;
+    }
+
+    // 🟢 IMAGEM → comportamento antigo
+    this.expandirImagem(url);
+  }
+  isPdf(url: string): boolean {
+    return !!url && url.toLowerCase().endsWith('.pdf');
+  }
 
   fecharImagemAmpliada(): void {
     const imagemAmpliada = document.querySelector('.imagem-ampliada');

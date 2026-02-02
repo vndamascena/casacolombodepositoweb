@@ -17,7 +17,13 @@ User
  .barra-pesquisa {
   position: relative;
 }
-
+  .img-thumb {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
+}
 .btn-clear {
   position: absolute;
   right: 10px;

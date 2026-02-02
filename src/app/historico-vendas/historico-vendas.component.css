@@ -1,5 +1,5 @@
 User
-/* Adicione esta classe para controlar a visibilidade da imagem ampliada */
+
 
 .imagem-ampliada {
   position: absolute;
@@ -59,33 +59,33 @@ User
 
   display: none;
   position: absolute;
-  /* Define a posição fixa para a imagem expandida */
+  
   top: 80%;
-  /* Ajusta a posição verticalmente */
+ 
   left: 50%;
-  /* Ajusta a posição horizontalmente */
+  
   transform: translate(-50%, -50%);
 
-  /* Centraliza a imagem na tela */
+ 
   z-index: 1000;
-  /* Garante que a imagem esteja acima de outros elementos */
+
   background-color: rgba(255, 255, 255, 0.9);
-  /* Adiciona um fundo transparente */
+
 
 }
 
 .imagem-ampliada .btn-close {
   position: absolute;
-  /* Define a posição absoluta para o botão de fechar */
+  
   top: 1px;
-  /* Ajusta a posição do topo */
+  
   right: 30px;
-  /* Ajusta a posição da direita */
+  
   z-index: 9999;
-  /* Garante que o botão esteja acima da imagem */
+ 
 }
 
-/* Estilos Responsivos */
+
 
 
 
@@ -99,9 +99,9 @@ User
 .table td {
   border: 1px solid #dddddd;
   padding: 8px;
-  /* Impede a quebra de linha no texto */
+ 
   width: 150px;
-  /* Define uma largura fixa para todas as células */
+
   text-align: center;
 }
 
@@ -112,17 +112,17 @@ td {
 }
 
 .table {
-  /*width: 1295px; /* Ajuste a largura da tabela conforme necessário */
+  
   border: 1px solid #cccccc;
-  /* Ajuste a espessura da borda conforme necessário */
+  
 
 }
 
 .table th {
   padding: 1px;
-  /* Ajuste o preenchimento das células conforme necessário */
+  
   border: 3px solid #ccc;
-  /* Ajuste a espessura da borda das células conforme necessário */
+ 
   background-color: #03682b;
   color: #fff;
 
@@ -130,9 +130,9 @@ td {
 
 .table td {
   padding: 1px;
-  /* Ajuste o preenchimento das células conforme necessário */
+ 
   border: 1px solid #cccccc;
-  /* Ajuste a espessura da borda das células conforme necessário */
+ 
 
 
 }
@@ -140,7 +140,7 @@ td {
 .inner-table {
   padding: 4px;
   border: none;
-  /* Remove a borda da tabela interna */
+ 
 }
 
 
@@ -154,20 +154,20 @@ td {
 .navbar-nav .nav-link {
   display: flex;
   align-items: center;
-  /* Alinha verticalmente os itens */
+  
   margin-right: -10px;
-  /* Espaçamento entre os itens */
+  
 }
 
 
 .navbar-brand {
   margin-right: 50px;
-  /* Adiciona margem à direita do logo */
+  
 }
 
 .black-text {
   color: black;
-  /* Define a cor do texto como preto */
+ 
 }
 
 .nav-item {
@@ -181,22 +181,21 @@ td {
 
 .barra-pesquisa {
   margin-top: 0px;
-  /* Move a barra de pesquisa para baixo */
+  
 }
 
 .form-control.lupa {
   padding-right: 45px;
-  /* Ajusta o espaço para a imagem e o elemento de sobreposição */
-  /*background-image: url('/assets/lupa.png'); /* Caminho para a imagem da lupa */
+ 
   background-repeat: no-repeat;
   background-position: right;
-  /* Ajusta a posição da imagem */
+  
   background-size: 70px;
-  /* Define o tamanho da imagem */
+ 
   z-index: 1;
-  /* Garante que a imagem fique na frente do elemento de sobreposição */
+ 
   height: 40px;
-  /* Define a altura da barra de pesquisa */
+  
 }
 
 .overlay {
@@ -206,17 +205,17 @@ td {
   bottom: 0;
   left: auto;
   width: 65px;
-  /* Largura do espaço clicável */
+ 
   cursor: pointer;
   z-index: 2;
-  /* Coloca o elemento de sobreposição sobre a imagem */
+  
 }
 
 .titulo {
   text-align: center;
-  /* Centraliza o texto */
+ 
   color: rgb(4, 105, 45);
-  /* Define a cor do texto como verde */
+  
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
 }

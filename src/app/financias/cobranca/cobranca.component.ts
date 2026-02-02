@@ -187,38 +187,75 @@ export class CobrancaComponent implements OnInit {
   }
 
   aplicarFiltroDashboard(tipo: string) {
-    const hoje = normalizarData(new Date());
-    const dataLimite = new Date(hoje);
-    dataLimite.setUTCDate(hoje.getUTCDate() + 5); // usa UTC
+
+    const hoje = normalizarDataLocal(new Date());
+
+    const inicioSemanaAtual = new Date(hoje);
+    inicioSemanaAtual.setDate(hoje.getDate() - hoje.getDay());
+
+    const fimSemanaAtual = new Date(inicioSemanaAtual);
+    fimSemanaAtual.setDate(inicioSemanaAtual.getDate() + 6);
+
+    // Próxima semana
+    const inicioProxSemana = new Date(fimSemanaAtual);
+    inicioProxSemana.setDate(fimSemanaAtual.getDate() + 1);
+
+    const fimProxSemana = new Date(inicioProxSemana);
+    fimProxSemana.setDate(inicioProxSemana.getDate() + 6);
+
     const formasIgnoradas = ['DINHEIRO', 'CHEQUE', 'TRANSFERÊNCIA'];
 
     switch (tipo) {
+
       case 'vencidas':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = normalizarData(new Date(c.dataVenc));
-          const tipo = (c.tipoCobr || '').toUpperCase();
-          return c.ativo && venc < hoje && !formasIgnoradas.includes(tipo);
+          const venc = normalizarDataLocal(new Date(c.dataVenc));
+          return c.ativo && venc < hoje && !formasIgnoradas.includes((c.tipoCobr || '').toUpperCase());
         });
-        this.ordenarPorDataVencimento();
         this.mensagem = 'Exibindo apenas cobranças vencidas';
         break;
 
       case 'proxvenc':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = normalizarData(new Date(c.dataVenc));
-          return c.ativo && venc > hoje && venc <= dataLimite;
+          const venc = normalizarDataLocal(new Date(c.dataVenc));
+          return c.ativo && venc >= inicioSemanaAtual && venc <= fimSemanaAtual;
         });
-        this.ordenarPorDataVencimento();
-        this.mensagem = 'Exibindo cobranças com vencimento nos próximos 5 dias';
+        this.mensagem = `Exibindo cobranças com vencimento nesta semana (${inicioSemanaAtual.toLocaleDateString('pt-BR')} a ${fimSemanaAtual.toLocaleDateString('pt-BR')})`;
+
+        break;
+
+      case 'proxsemana':
+        this.cobrancasFiltradas = this.allCobrancas.filter(c => {
+          const venc = normalizarDataLocal(new Date(c.dataVenc));
+          return c.ativo && venc >= inicioProxSemana && venc <= fimProxSemana;
+        });
+        this.mensagem = `Exibindo cobranças da próxima semana (${inicioProxSemana.toLocaleDateString('pt-BR')} a ${fimProxSemana.toLocaleDateString('pt-BR')})`;
         break;
 
       case 'avencer':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = normalizarData(new Date(c.dataVenc));
+          const venc = normalizarDataLocal(new Date(c.dataVenc));
           return c.ativo && venc > hoje && !c.dataPag;
         });
-        this.ordenarPorDataVencimento();
         this.mensagem = 'Exibindo cobranças a vencer';
+        break;
+
+      case 'pagasdia':
+        this.cobrancasFiltradas = this.allCobrancas.filter(c => {
+          if (!c.dataPag) return false;
+          const pag = normalizarDataLocal(new Date(c.dataPag));
+          return !c.ativo && pag.getTime() === hoje.getTime();
+        });
+        this.mensagem = 'Exibindo cobranças pagas hoje';
+        break;
+
+      case 'pagassemana':
+        this.cobrancasFiltradas = this.allCobrancas.filter(c => {
+          if (!c.dataPag) return false;
+          const pag = normalizarDataLocal(new Date(c.dataPag));
+          return !c.ativo && pag >= inicioSemanaAtual && pag <= fimSemanaAtual;
+        });
+        this.mensagem = 'Exibindo cobranças pagas na semana atual (domingo a sábado)';
         break;
 
       case 'pagasmes':
@@ -226,43 +263,37 @@ export class CobrancaComponent implements OnInit {
           if (!c.dataPag) return false;
           const pag = new Date(c.dataPag);
           return !c.ativo &&
-            pag.getUTCMonth() === hoje.getUTCMonth() &&
-            pag.getUTCFullYear() === hoje.getUTCFullYear();
+            pag.getMonth() === hoje.getMonth() &&
+            pag.getFullYear() === hoje.getFullYear();
         });
-        this.ordenarPorDataVencimento();
         this.mensagem = 'Exibindo cobranças pagas no mês';
-        break;
-
-      case 'pagasdia':
-        this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          if (!c.dataPag) return false;
-          const pag = normalizarData(new Date(c.dataPag));
-          return !c.ativo && pag.getTime() === hoje.getTime();
-        });
-        this.ordenarPorDataVencimento();
-        this.mensagem = 'Exibindo cobranças pagas hoje';
         break;
 
       case 'vencidadia':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = normalizarData(new Date(c.dataVenc));
+          const venc = normalizarDataLocal(new Date(c.dataVenc));
           return c.ativo && venc.getTime() === hoje.getTime();
         });
-        this.ordenarPorDataVencimento();
         this.mensagem = 'Exibindo cobranças vencendo hoje';
+        break;
+
+      case 'totalcobranca':
+        this.cobrancasFiltradas = this.allCobrancas.filter(c => c.ativo && !c.dataPag);
+        this.mensagem = 'Exibindo todas as cobranças em aberto ';
         break;
 
       case 'vencidasSemPagamento':
         this.cobrancasFiltradas = this.allCobrancas.filter(c => {
-          const venc = normalizarData(new Date(c.dataVenc));
-          const tipo = (c.tipoCobr || '').toUpperCase();
-          return c.ativo && venc < hoje && formasIgnoradas.includes(tipo);
+          const venc = normalizarDataLocal(new Date(c.dataVenc));
+          return c.ativo && venc < hoje && formasIgnoradas.includes((c.tipoCobr || '').toUpperCase());
         });
-        this.ordenarPorDataVencimento();
-        this.mensagem = 'Cobranças vencidas com pagamento manual (DINHEIRO, CHEQUE, TRANSFERÊNCIA)';
+        this.mensagem = 'Cobranças vencidas com pagamento manual'
         break;
     }
+
+    this.ordenarPorDataVencimento();
   }
+
 
   getCorTexto(idCompra: number): string {
     const ehVermelho = this.isSomaDasCobrancasDiferenteDaCompra(idCompra);
@@ -324,7 +355,7 @@ export class CobrancaComponent implements OnInit {
       )
     }).subscribe({
       next: (results) => {
-        
+
         this.fornecedor = results.fornecedores;
         this.compras = results.comprasApi;
 
@@ -345,10 +376,10 @@ export class CobrancaComponent implements OnInit {
             dataCadastro: cobranca.dataCadastro,
             ativo: cobranca.ativo ?? (cobranca.dataPag == null ? 1 : 0)
           };
-          
-          
+
+
         });
-        
+
 
         this.route.queryParams.subscribe(params => {
           this.filtroIdCompraAtivo = params['idCompra'] || null;
@@ -624,34 +655,7 @@ export class CobrancaComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
-    const formData = { ...this.form.value };
-    delete formData.valorPago;
 
-    if (typeof formData.valorCobr === 'string') {
-      const cleaned = formData.valorCobr
-        .replace(/\s/g, '')
-        .replace('R$', '')
-        .replace(/\./g, '')
-        .replace(',', '.');
-      formData.valorCobr = parseFloat(cleaned);
-    }
-    console.log('Form enviado:', this.form.value);
-
-    this.httpClient.put(`${environment.financa}/cobranca`, formData)
-      .subscribe({
-        next: (data: any) => {
-          this.mensagem = data.message;
-          this.router.navigate(['/cobranca']).then(() => {
-          window.location.reload();
-          });
-        },
-        error: (error) => {
-          console.error('Erro ao atualizar :', error);
-          alert('Erro ao atualizar . Verifique os campos e tente novamente.');
-        }
-      });
-  }
 
   CadastrarCompras(): void {
     const formData = { ...this.formCompras.value };
@@ -773,6 +777,48 @@ export class CobrancaComponent implements OnInit {
       });
   }
 
+  onSubmit(): void {
+    const formData = { ...this.form.value };
+    delete formData.valorPago;
+
+    if (typeof formData.valorCobr === 'string') {
+      const cleaned = formData.valorCobr
+        .replace(/\s/g, '')
+        .replace('R$', '')
+        .replace(/\./g, '')
+        .replace(',', '.');
+      formData.valorCobr = parseFloat(cleaned);
+    }
+    console.log('Form enviado:', this.form.value);
+
+    this.httpClient.put(`${environment.financa}/cobranca`, formData)
+      .subscribe({
+        next: (data: any) => {
+
+          this.mensagem = data.message;
+          const modalEl = document.getElementById('modalConcluirCobranca'); // ou 'edicaoCobranca'
+          if (modalEl) {
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal?.hide();
+          }
+
+          // REMOVA O BACKDROP MANUALMENTE (Garante que a tela não fique cinza)
+          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+          document.body.classList.remove('modal-open');
+          document.body.style.paddingRight = '';
+
+          // Se for fazer o reload, faça após limpar o DOM
+          this.router.navigate(['/cobranca']).then(() => {
+            // window.location.reload(); // Evite reload se puder, mas se for necessário, o código acima resolve o cinza
+          });
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar :', error);
+          alert('Erro ao atualizar . Verifique os campos e tente novamente.');
+        }
+      });
+  }
+
   onConcluir(): void {
     const rawForm = this.form.value;
 
@@ -841,6 +887,7 @@ export class CobrancaComponent implements OnInit {
         }
       });
   }
+
 
 
 
@@ -1010,6 +1057,6 @@ export class CobrancaComponent implements OnInit {
 
 
 }
-function normalizarData(date: Date): Date {
-  return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+function normalizarDataLocal(d: Date): Date {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }

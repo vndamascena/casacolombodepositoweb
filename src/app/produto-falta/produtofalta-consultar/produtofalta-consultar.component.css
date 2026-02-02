@@ -27,6 +27,66 @@
    .barra-pesquisa {
   position: relative;
 }
+/* CONTAINER DA LEGENDA */
+.legenda-status {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 14px;
+  background-color: #f8f9fa;
+  width: 75%;
+  position: sticky; /* 🔥 fica visível ao rolar */
+  top: 40px;
+}
+
+/* TÍTULO */
+.titulo-legenda {
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 14px;
+  color: #036822;
+}
+
+/* ITEM */
+.item-legenda {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 15px;
+}
+
+/* RETÂNGULO COM ✓ */
+.box {
+  width: 33px;      /* MAIS LARGO */
+  height: 22px;     /* MAIS ALTO */
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;  /* tamanho do ✓ */
+  font-weight: bold;
+  color: #fff;
+}
+
+/* ✓ */
+.box::after {
+  content: "✓";
+}
+
+/* CORES */
+.box.pendente {
+  background-color: #6c757d;
+}
+
+.box.separado {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.box.recebido {
+  background-color: #198754;
+}
 
 .btn-clear {
   position: absolute;

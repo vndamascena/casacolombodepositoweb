@@ -79,6 +79,27 @@ h4 {
   text-align: center;
 }
 
+.aviso-entrega {
+  max-width: 900px;          /* mais longo */
+  border: 1px solid #dc3545; /* mais fino */
+  border-radius: 8px;
+  padding: 12px 24px;        /* menos altura */
+  background-color: #fff5f5;
+}
+
+.titulo-aviso {
+  color: #dc3545;
+  font-size: 1.6rem;         /* maior */
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.conteudo-aviso {
+  font-size: 1rem;
+  color: #333;
+  white-space: pre-line;
+  line-height: 1.5;
+}
 
  .barra-pesquisa {
   position: relative;
@@ -130,6 +151,13 @@ td {
   padding: 4px;
   border: none;
   /* Remove a borda da tabela interna */
+}
+.img-thumb {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {

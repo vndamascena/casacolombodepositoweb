@@ -14,7 +14,13 @@
 
 }
 
-
+  .img-thumb {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
+}
 
 .navbar-nav .nav-link {
   display: flex;
@@ -382,7 +388,7 @@ td {
 .imagem-ampliada {
 
   display: none;
-  position: absolute;
+  position: fixed;
   /* Define a posição fixa para a imagem expandida */
   top: 50%;
   /* Ajusta a posição verticalmente */

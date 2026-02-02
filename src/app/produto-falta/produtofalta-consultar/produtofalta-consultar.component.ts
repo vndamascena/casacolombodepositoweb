@@ -465,18 +465,24 @@ export class ProdutofaltaConsultarComponent implements OnInit {
   }
 
 
-  getMenorPreco(fornecedores: any[]): any {
-    if (!fornecedores || fornecedores.length === 0) {
-      return null;
-    }
-
-    return fornecedores.reduce((menor, atual) => {
-      const valorAtual = parseFloat(atual.valor.toString().replace(',', '.'));
-      const valorMenor = parseFloat(menor.valor.toString().replace(',', '.'));
-
-      return valorAtual < valorMenor ? atual : menor;
-    }, fornecedores[0]);
+getMenorPreco(fornecedores: any[]): any {
+  if (!fornecedores || fornecedores.length === 0) {
+    return null;
   }
+
+  const comValor = fornecedores.filter(f => f.valor !== null && f.valor !== '');
+
+  if (comValor.length > 0) {
+    return comValor.reduce((menor, atual) => {
+      const vAtual = Number(String(atual.valor).replace(',', '.'));
+      const vMenor = Number(String(menor.valor).replace(',', '.'));
+      return vAtual < vMenor ? atual : menor;
+    });
+  }
+
+  // ⚠️ fallback visual (SEM valor)
+  return fornecedores[0];
+}
 
 
   onSubmit(): void {
@@ -518,89 +524,103 @@ export class ProdutofaltaConsultarComponent implements OnInit {
 
 
 
-  onSubmitt(): void {
-    if (!this.matricula || !this.senha) {
-      alert('Preencha matrícula e senha');
-      return;
-    }
+ onSubmitt1(): void {
+  if (!this.matricula || !this.senha) {
+    alert('Preencha matrícula e senha');
+    return;
+  }
 
-    const options = {
-      params: { matricula: this.matricula, senha: this.senha }
-    };
+  this.spinner.show();
 
-    this.spinner.show();
+  const params = {
+    matricula: this.matricula,
+    senha: this.senha
+  };
 
-    const payload: any = {
+ const payload: any = {
       lojaId: this.form.get('lojaId')?.value,
       observacao: this.form.get('observacao')?.value,
     };
 
-    if (this.produtoSelecionadoParaCadastro) {
-      payload.codigo = this.produtoSelecionadoParaCadastro.codigo; // Envia o código para o backend
-      payload.nomeProduto = this.form.get('produtoNomeDisplay')?.value; // Envia o nome para o backend (se necessário)
-    } else if (this.exibirCampoOutroProduto && this.form.get('produtoCustom')?.value) {
-      payload.nomeProduto = this.form.get('produtoCustom')?.value;
-    } else if (this.form.get('codigo')?.value && !this.form.get('produtoNomeDisplay')?.value) {
-      // Se algo foi digitado no código e nenhum produto foi selecionado, tenta enviar como código
-      const codigoDigitado = this.form.get('codigo')?.value;
-      const codigoNumerico = parseInt(codigoDigitado, 10);
-      if (!isNaN(codigoNumerico)) {
-        payload.codigo = codigoNumerico;
-      } else {
-        payload.nomeProduto = codigoDigitado;
-      }
-    } else if (!this.form.get('produtoNomeDisplay')?.value && !this.form.get('produtoCustom')?.value) {
-      alert('Por favor, selecione um produto ou digite o nome.');
-      this.spinner.hide();
-      return;
-    } else if (this.form.get('produtoNomeDisplay')?.value) {
-      payload.nomeProduto = this.form.get('produtoNomeDisplay')?.value;
-      payload.codigo = this.form.get('codigo')?.value; // Envia o código também, se disponível
-    }
 
-    if (this.acaoAtual === 'cadastrar') {
-      console.log('Cadastrando produto com:', payload);
-      this.httpClient.post(environment.apiUrl + "/produtoFalta/cadastrar", payload, options)
-        .subscribe({
-          next: (data: any) => {
-            this.mensagem = data.message;
-            this.form.reset();
-            this.fecharFormularioCredenciais();
-            this.spinner.hide();
-            window.location.reload();
-          },
-          error: (e) => {
-            console.log('Erro ao cadastrar produto:', e.error);
+  // ---------- PRODUTO ----------
+  if (this.produtoSelecionadoParaCadastro) {
+    payload.codigo = this.produtoSelecionadoParaCadastro.codigo;
+    payload.nomeProduto = this.form.get('produtoNomeDisplay')?.value;
+  }
+  else if (this.exibirCampoOutroProduto && this.form.get('produtoCustom')?.value) {
+    payload.nomeProduto = this.form.get('produtoCustom')?.value;
+  }
+  else if (this.form.get('codigo')?.value && !this.form.get('produtoNomeDisplay')?.value) {
+    const codigoDigitado = this.form.get('codigo')?.value;
+    const codigoNumerico = Number(codigoDigitado);
 
-            this.mensagem_erro = e.error.message;
-            this.spinner.hide();
-            setTimeout(() => {
-              window.location.reload();
-            }, 5000);
-          }
-        });
-    }
-    else if (this.acaoAtual === 'concluir' && this.produtoParaConcluir) {
-      const body = {
-        id: this.produtoParaConcluir.id
-      };
-
-      this.httpClient.post(`${environment.apiUrl}/produtoFalta/confirmar-baixa`, body, options)
-        .subscribe({
-          next: (data: any) => {
-            this.mensagem = data.message;
-            this.fecharFormularioCredenciais();
-            this.spinner.hide();
-            window.location.reload();
-          },
-          error: (e) => {
-            console.log('Erro ao concluir produto:', e.error);
-            alert('Falha ao concluir o produto.');
-            this.spinner.hide();
-          }
-        });
+    if (!isNaN(codigoNumerico)) {
+      payload.codigo = codigoNumerico;
+    } else {
+      payload.nomeProduto = codigoDigitado;
     }
   }
+  else if (!this.form.get('produtoNomeDisplay')?.value && !this.form.get('produtoCustom')?.value) {
+    alert('Por favor, selecione um produto ou digite o nome.');
+    this.spinner.hide();
+    return;
+  }
+  else {
+    payload.nomeProduto = this.form.get('produtoNomeDisplay')?.value;
+    payload.codigo = this.form.get('codigo')?.value;
+  }
+
+  // ---------- AÇÃO ----------
+  if (this.acaoAtual === 'cadastrar') {
+
+    this.httpClient.post(
+      `${environment.apiUrl}/produtoFalta/cadastrar`,
+      payload,
+      { params }
+    ).subscribe({
+      next: (res: any) => {
+        this.mensagem = res.message;
+        this.form.reset();
+        this.fecharFormularioCredenciais();
+        this.spinner.hide();
+        window.location.reload();
+      },
+      error: (err) => {
+        console.error('Erro ao cadastrar produto:', err);
+        this.mensagem_erro = err.error?.message || 'Erro ao cadastrar';
+        this.spinner.hide();
+      }
+    });
+
+  }
+  else if (this.acaoAtual === 'concluir' && this.produtoParaConcluir) {
+
+    const body = {
+      id: this.produtoParaConcluir.id
+    };
+
+    this.httpClient.post(
+      `${environment.apiUrl}/produtoFalta/confirmar-baixa`,
+      body,
+      { params }
+    ).subscribe({
+      next: (res: any) => {
+        this.mensagem = res.message;
+        this.fecharFormularioCredenciais();
+        this.spinner.hide();
+        window.location.reload();
+      },
+      error: (err) => {
+        console.error('Erro ao concluir produto:', err);
+        alert('Falha ao concluir o produto. Verifique matrícula e senha.');
+        this.spinner.hide();
+      }
+    });
+
+  }
+}
+
   setProdutoSelecionado(id: number) {
     this.produtoSelecionadoId = id;
   }
@@ -646,41 +666,41 @@ export class ProdutofaltaConsultarComponent implements OnInit {
         }
       });
   }
-  concluir(concluirFalta: any): void {
-
-    this.produtoParaConcluir = concluirFalta;
-
-
-
-    const params = {
-      matricula: this.matricula,
-      senha: this.senha,
-      id: this.produtoParaConcluir.id
-    };
-
-
-    console.log('Dados enviados:', params);
-
-    this.spinner.show();
-    console.log('🔍 Parâmetros enviados:', params);
-    // 👇 Corpo vazio (conforme backend)
-    this.httpClient.post(`${environment.apiUrl}/produtofalta/confirmar-baixa`, {}, { params })
-      .subscribe({
-        next: (data: any) => {
-          console.log('Resposta do backend:', data);
-          this.mensagem = data.message;
-          this.fecharFormularioCredenciais();
-          this.spinner.hide();
-          window.location.reload();
-        },
-        error: (err) => {
-          console.error('❌ Erro ao concluir produto:', err);
-          alert('Erro ao concluir o produto. Verifique as credenciais e tente novamente.');
-          this.spinner.hide();
-
-        }
-      });
+ concluir(produto: any): void {
+  if (!this.matricula || !this.senha) {
+    alert('Preencha matrícula e senha');
+    return;
   }
+
+  const params = {
+    matricula: this.matricula,
+    senha: this.senha,
+     id: this.produtoParaConcluir.id
+  };
+
+ 
+
+  this.spinner.show();
+
+  this.httpClient.post(
+    `${environment.apiUrl}/produtoFalta/confirmar-baixa`,
+    {},
+    { params }
+  ).subscribe({
+    next: (res: any) => {
+      this.mensagem = res.message;
+      this.fecharFormularioCredenciais();
+      this.spinner.hide();
+      window.location.reload();
+    },
+    error: (err) => {
+      console.error('Erro ao concluir produto:', err);
+      alert('Erro ao concluir o produto. Verifique matrícula e senha.');
+      this.spinner.hide();
+    }
+  });
+}
+
   concluirSelecionados(): void {
     // Obter os IDs dos títulos selecionados
     this.selecionados = this.produtosFalta
@@ -735,29 +755,34 @@ export class ProdutofaltaConsultarComponent implements OnInit {
 
     this.fecharFormularioCredenciais(); // Fecha o formulário
   }
-  carregarFornecedoresDoBanco(produtoId: number): void {
-    this.httpClient.get<any>(`${environment.apiUrl}/produtoFalta/${produtoId}/fornecedorProduto`)
-      .subscribe({
-        next: (fornecedores: any[]) => {
-          const index = this.produtosFalta.findIndex(p => p.id === produtoId);
-          if (index !== -1) {
-            const produtoAtualizado = {
-              ...this.produtosFalta[index],
-              fornecedores: fornecedores,
-              mostrarDetalhes: true // se quiser manter expandido
-            };
-            this.produtosFalta[index] = produtoAtualizado;
+ carregarFornecedoresDoBanco(produtoId: number): void {
+  this.httpClient.get<any[]>(
+    `${environment.apiUrl}/produtoFalta/${produtoId}/fornecedorProduto`
+  ).subscribe({
+    next: (fornecedores) => {
+      const index = this.produtosFalta.findIndex(p => p.id === produtoId);
 
-            // 🔁 Gatilho de atualização reativa
-            this.produtosFalta = [...this.produtosFalta];
-          }
-        },
-        error: (err) => {
-          console.error('Erro ao buscar fornecedores atualizados:', err);
-          alert("Erro ao atualizar fornecedores após cadastro.");
-        }
-      });
-  }
+      if (index !== -1) {
+        this.produtosFalta[index] = {
+          ...this.produtosFalta[index],
+          fornecedores: fornecedores,
+          fornecedorMenorPreco: this.getMenorPreco(fornecedores),
+          mostrarDetalhes: true
+        };
+
+        // força atualização no Angular
+        this.produtosFalta = [...this.produtosFalta];
+        this.produtosFaltaFiltrada = [...this.produtosFalta];
+        this.originalProdutosFalta = [...this.produtosFalta];
+      }
+    },
+    error: (err) => {
+      console.error('Erro ao atualizar fornecedores:', err);
+      alert('Erro ao carregar fornecedores');
+    }
+  });
+}
+
 
 
   autorizarCompra(): void {

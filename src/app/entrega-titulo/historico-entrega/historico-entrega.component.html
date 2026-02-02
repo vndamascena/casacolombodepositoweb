@@ -99,8 +99,11 @@
         <ng-container
             *ngFor="let baixaEntrega of baixaEntregas | paginate: { itemsPerPage: 30, currentPage: p }; let i = index">
             <tr [ngStyle]="{'background-color': getColor(i)}">
-                <td><img [src]="getFullImageUrl(baixaEntrega.thumbnail)" alt="{{ baixaEntrega.nome }}" width="30"
-                        (click)="expandirImagem(baixaEntrega.imagemUrl)"></td>
+                <td>  <img *ngIf="isPdf(baixaEntrega.imagemUrl)" src="assets/NOTA.jpg"
+                        class="img-fluid img-thumb" (click)="expandirArquivo(baixaEntrega.imagemUrl)" title="Abrir PDF" />
+                      <img *ngIf="!isPdf(baixaEntrega.imagemUrl)" [src]="getFullImageUrl(baixaEntrega.thumbnail)"
+                        alt="{{ baixaEntrega.nome }}" class="img-fluid" style="width: 30px; cursor: pointer;"
+                        (click)="expandirArquivo(baixaEntrega.imagemUrl)">
                 <td>{{ baixaEntrega.nome | uppercase }}</td>
                 <td>{{ baixaEntrega.numeroNota }}</td>
                 <td>{{ baixaEntrega.nomeCliente | uppercase}}</td>

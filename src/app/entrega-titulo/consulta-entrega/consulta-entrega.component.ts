@@ -7,6 +7,9 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { environment } from '../../../environments/environment.development';
 import { NgxImageZoomModule } from 'ngx-image-zoom';
+import * as pdfjsLib from 'pdfjs-dist';
+(pdfjsLib as any).GlobalWorkerOptions.workerSrc =  '/assets/pdfjs/pdf.worker.min.js';
+
 
 
 @Component({
@@ -43,7 +46,7 @@ export class ConsultaEntregaComponent implements OnInit {
     { nome: 'Sexta-feira', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
     { nome: 'Sábado', entregas: [], pendencias: [], exibir: false, filaEntrega: false, saiuEntrega: false, pendentes: false },
   ];
-  motoristas: string[] = ['EDVALDO', 'DOUGLAS', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
+  motoristas: string[] = ['EDVALDO', 'MARCELO', 'MAURÍCIO', 'ARTHUR', 'LEONARDO', 'OUTROS'];
   pagamentos: string[] = ['PAGO', 'REC NO LOCAL', 'CARTEIRA'];
   isEditing: string | null = null;
   entregaEditando: any = null;
@@ -59,7 +62,13 @@ export class ConsultaEntregaComponent implements OnInit {
 
 
 
+mostrarAviso: boolean = false;
 
+mensagemAviso: string = `1 - Travessa Dom Bosco - Vila 3
+2 - Rua Odila Gomes Barros - Rocha ( PROIBIDO MATERIAL BRUTO )`
+
+
+;
 
 
   formi = new FormGroup({
@@ -120,18 +129,18 @@ export class ConsultaEntregaComponent implements OnInit {
   filtrarEntregas(): void {
     console.log(`Filtrando entregas com a expressão: "${this.expression}"`);
 
-    // Se a expressão de pesquisa estiver vazia, restaura as entregas do array original
+    
     if (this.expression.trim() === '') {
-        this.entregas = [...this.originalEntregas]; // Restaura todas as entregas
-        this.categorizarEntregasPorDia(); // Reatribui as entregas para cada dia
+        this.entregas = [...this.originalEntregas]; 
+        this.categorizarEntregasPorDia();
         this.categorizarPendenciasPorDia
         console.log('Nenhuma expressão fornecida, todas as entregas foram restauradas.');
         return;
     }
 
-    // Limpa as entregas antes de aplicar o filtro
+    
     this.datas.forEach(data => {
-        data.entregas = []; // Inicializa como vazio
+        data.entregas = []; 
     });
 
     // Filtra as entregas para cada dia
@@ -204,6 +213,14 @@ private extractDate(diaNome: string): string | undefined {
 
 
   ngOnInit(): void {
+
+  
+  this.mostrarAviso = true;
+
+  
+  setTimeout(() => {
+    this.mostrarAviso = false;
+  }, 60000);
     const currentDate = new Date();
     this.startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
     this.endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
@@ -739,6 +756,28 @@ private extractDate(diaNome: string): string | undefined {
       imagemAmpliada.classList.add('mostrar');
     }
   }
+ expandirArquivo(url: string): void {
+  if (!url) {
+    alert('Arquivo não disponível');
+    return;
+  }
+
+  const fullUrl = this.getFullImageUrl(url);
+
+  // 🟢 PDF → encode + nova aba
+  if (url.toLowerCase().endsWith('.pdf')) {
+    window.open(encodeURI(fullUrl), '_blank');
+    return;
+  }
+
+  // 🟢 IMAGEM → comportamento antigo
+  this.expandirImagem(url);
+}
+isPdf(url: string): boolean {
+  return !!url && url.toLowerCase().endsWith('.pdf');
+}
+
+
 
   fecharImagemAmpliada(dia: any = null): void {
     const target = dia || this;
@@ -1034,6 +1073,33 @@ private extractDate(diaNome: string): string | undefined {
     this.pendenciaEntrega = null;
   }
 
+renderPdfThumbnail(pdfUrl: string, canvasId: string): void {
+  const loadingTask = (pdfjsLib as any).getDocument(pdfUrl);
+
+  loadingTask.promise.then((pdf: any) => {
+    pdf.getPage(1).then((page: any) => {
+
+      const scale = 0.4; // controla tamanho e performance
+      const viewport = page.getViewport({ scale });
+
+      const canvas = document.getElementById(canvasId) as HTMLCanvasElement;
+      if (!canvas) return;
+
+      const context = canvas.getContext('2d');
+      if (!context) return;
+
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+
+      const renderContext = {
+        canvasContext: context,
+        viewport
+      };
+
+      page.render(renderContext);
+    });
+  });
+}
 
 
   isNotaPendente(numeroNota: string, pendencias: any[]): boolean {

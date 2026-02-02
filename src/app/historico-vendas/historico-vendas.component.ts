@@ -31,6 +31,14 @@ export class HistoricoVendasComponent implements OnInit {
   dadosFiltrados: any[] = [];
   filtroEntrada: boolean = false;
   filtroSaida: boolean = false;
+  dataVendaInicio: string = '';
+  dataVendaFim: string = '';
+  totalVendidoGeral: number = 0;
+  totalEntradaGeral: number = 0;
+
+  totalVendidoFiltrado: number = 0;
+  totalEntradaFiltrada: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private httpClient: HttpClient,
@@ -87,6 +95,20 @@ export class HistoricoVendasComponent implements OnInit {
         this.originalCombinedData = [...this.combinedData];
         this.dadosOriginais = [...this.combinedData];
         this.dadosFiltrados = [...this.combinedData];
+        // Total geral de vendas (saídas)
+        this.totalVendidoGeral = this.dadosOriginais
+          .filter(x => x.tipo === 'dataVenda')
+          .reduce((sum, item) => sum + (item.quantidade || 0), 0);
+
+        // Total geral de entradas
+        this.totalEntradaGeral = this.dadosOriginais
+          .filter(x => x.tipo === 'dataEntrada')
+          .reduce((sum, item) => sum + (item.qtdEntrada || item.quantidade || 0), 0);
+
+        // Inicia os filtrados com o mesmo valor
+        this.totalVendidoFiltrado = this.totalVendidoGeral;
+        this.totalEntradaFiltrada = this.totalEntradaGeral;
+
       },
       error: (err) => {
         console.error('Erro ao carregar dados:', err);
@@ -118,6 +140,15 @@ export class HistoricoVendasComponent implements OnInit {
     });
   }
 
+atualizarTotaisFiltrados() {
+  this.totalVendidoFiltrado = this.dadosFiltrados
+    .filter(x => x.tipo === 'dataVenda')
+    .reduce((sum, item) => sum + (item.quantidade || 0), 0);
+
+  this.totalEntradaFiltrada = this.dadosFiltrados
+    .filter(x => x.tipo === 'dataEntrada')
+    .reduce((sum, item) => sum + (item.qtdEntrada || item.quantidade || 0), 0);
+}
 
 
   limparPesquisa() {
@@ -141,27 +172,28 @@ export class HistoricoVendasComponent implements OnInit {
 
 
 
- onFiltroCheck(): void {
-  // Nenhum filtro → mostra tudo
-  if (!this.filtroEntrada && !this.filtroSaida) {
-    this.dadosFiltrados = [...this.dadosOriginais];
-    return;
+  onFiltroCheck(): void {
+    // Nenhum filtro → mostra tudo
+    if (!this.filtroEntrada && !this.filtroSaida) {
+      this.dadosFiltrados = [...this.dadosOriginais];
+      return;
+    }
+
+    this.dadosFiltrados = this.dadosOriginais.filter(item => {
+      // Entrada = registros que vieram de "lotes" (sem dataVenda)
+      if (this.filtroEntrada && item.tipo === 'dataEntrada') {
+        return true;
+      }
+
+      // Saída = registros que vieram de "vendas" (com dataVenda)
+      if (this.filtroSaida && item.tipo === 'dataVenda') {
+        return true;
+      }
+
+      return false;
+    });
+    this.atualizarTotaisFiltrados();
   }
-
-  this.dadosFiltrados = this.dadosOriginais.filter(item => {
-    // Entrada = registros que vieram de "lotes" (sem dataVenda)
-    if (this.filtroEntrada && item.tipo === 'dataEntrada') {
-      return true;
-    }
-
-    // Saída = registros que vieram de "vendas" (com dataVenda)
-    if (this.filtroSaida && item.tipo === 'dataVenda') {
-      return true;
-    }
-
-    return false;
-  });
-}
 
 
   loadUserName(venda: any): void {
@@ -267,8 +299,43 @@ export class HistoricoVendasComponent implements OnInit {
 
       // Ordena os dados filtrados por data de forma decrescente (do mais recente para o mais antigo)
       this.dadosFiltrados.sort((a, b) => b.data.getTime() - a.data.getTime());
+      this.atualizarTotaisFiltrados();
+
     }
   }
+  filtrarPisoData(): void {
+    const termo = this.expression.toLowerCase().trim();
+    const inicio = this.dataVendaInicio;
+    const fim = this.dataVendaFim;
 
+    this.dadosFiltrados = this.dadosOriginais.filter(item => {
+
+      // 🔵 1. FILTRAR POR TIPO (entrada/saída)
+      if (this.filtroEntrada && item.tipo !== 'dataEntrada') return false;
+      if (this.filtroSaida && item.tipo !== 'dataVenda') return false;
+
+      // 🟡 2. FILTRAR POR TEXTO
+      if (termo) {
+        const contemTexto = Object.values(item).some(v =>
+          v && v.toString().toLowerCase().includes(termo)
+        );
+        if (!contemTexto) return false;
+      }
+
+      // 🔴 3. FILTRAR POR DATA
+      const data = item.data ? item.data.toISOString().slice(0, 10) : '';
+
+      if (inicio && data < inicio) return false;
+      if (fim && data > fim) return false;
+
+      return true;
+    });
+   this.atualizarTotaisFiltrados();
+
+    // Ordena por data DESC
+    this.dadosFiltrados.sort((a, b) => b.data - a.data);
+
+    this.p = 1;
+  }
 
 }

@@ -1,206 +1,1088 @@
-<br>
+<div class="container-fluid py-4" [class.dark-mode]="isDarkMode">
 
-<div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show" role="alert">
-  <strong>{{mensagem}}</strong>
-  <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
-</div>
-<div *ngIf="mensagemErro" class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>{{mensagemErro}}</strong>
-  <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
-</div>
+  <header class="d-flex justify-content-between align-items-center mb-4 position-relative">
+    <!-- Botões alinhados à esquerda -->
+    <div class="d-flex align-items-center gap-3">
+      <button class="btn btn-outline-secondary" (click)="toggleDarkMode()" title="Alternar Modo Escuro">
+        <i class="bi" [ngClass]="{'bi-sun-fill': isDarkMode, 'bi-moon-fill': !isDarkMode}"></i>
+      </button>
 
-<div class="container mt-3">
-
-  <main class="container mt-3">
-
-
-    <div class="d-flex justify-content-center align-items-center mb-4 gap-2">
-
-      <!-- Compras -->
+      <!-- Menu principal -->
       <div class="dropdown">
-        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuCompras" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          <i class="bi bi-cart-check me-1"></i> Compras
+        <button class="btn btn-success dropdown" id="menuAcoes" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-plus-circle-fill me-1"></i> Ações
         </button>
-        <ul class="dropdown-menu" aria-labelledby="DropdownMenuCompras">
-          <li>
-            <a class="dropdown-item" routerLink="/compras"><strong>Consultar</strong></a>
+
+        <ul class="dropdown-menu" aria-labelledby="menuAcoes">
+          <!-- Compras -->
+          <li class="dropdown-submenu">
+            <a class="dropdown-item dropdown">Compras</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/compras"><i class="bi bi-cart-check"></i> Consultar Compras</a>
+              </li>
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarCompras"><i
+                    class="bi bi-cart-plus"></i> Cadastrar Compra</a></li>
+            </ul>
           </li>
-          <li>
-            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarCompras">
-              <strong>Cadastrar</strong>
-            </a>
+
+
+
+          <!-- Cobranças -->
+          <li class="dropdown-submenu">
+            <a class="dropdown-item dropdown">Cobranças</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/cobranca"><i class="bi bi-cash-coin"></i> Consultar
+                  Cobranças</a></li>
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarCobrancas"
+                  (click)="abrirModalCobranca()"><i class="bi bi-currency-dollar"></i> Cadastrar Cobrança</a></li>
+            </ul>
+          </li>
+
+
+
+          <!-- Despesas 
+          <li class="dropdown-submenu">
+            <a class="dropdown-item dropdown" href="#">Despesas</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/despesas"><i class="bi bi-cash-coin"></i> Consultar Despesas</a>
+              </li>
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#despesas"><i class="bi bi-tag"></i>
+                  Cadastrar Despesa</a></li>
+            </ul>
+          </li>-->
+
+          <li class="dropdown-submenu">
+            <a class="dropdown-item dropdown">Fornecedor</a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" routerLink="/fornecedor"><i class="bi bi-truck"></i> Consultar Fornecedor</a>
+              </li>
+              <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarFornecedor"><i
+                    class="bi bi-person-badge"></i> Cadastrar Fornecedor</a></li>
+            </ul>
+          </li>
+
+          <!-- Despesas Loja -->
+          <li class="dropdown-submenu">
+            <a class="dropdown-item dropdown" routerLink="/despesas-loja">Despesas-Loja</a>
+            <!--<ul class="dropdown-menu">
+             <li><a class="dropdown-item" routerLink="/despesas-loja"><i class="bi bi-shop"></i> Consultar Despesas</a>
+              </li>
+            </ul>-->
           </li>
         </ul>
       </div>
+    </div>
 
-      <!-- Cobranças -->
-      <div class="dropdown">
-        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuCobranca" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          <i class="bi bi-cash-coin me-1"></i> Cobranças
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="DropdownMenuCobranca">
-          <li>
-            <a class="dropdown-item" routerLink="/cobranca"><strong>Consultar</strong></a>
-          </li>
-          <li>
-            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarCobrancas"
-              (click)="abrirModalCobranca()">
-              <strong>Cadastrar</strong>
+    <!-- Título centralizado -->
+    <h2 class="text-primary-emphasis position-absolute start-50 translate-middle-x mb-0">
+      Painel de Controle Financeiro
+    </h2>
+  </header>
+
+
+  <div *ngIf="mensagem" class="alert alert-success alert-dismissible fade show animated-alert" role="alert">
+    <strong>{{mensagem}}</strong>
+    <button (click)="mensagem = ''" type="button" class="btn-close" aria-label="Close"></button>
+  </div>
+  <div *ngIf="mensagemErro" class="alert alert-danger alert-dismissible fade show animated-alert" role="alert">
+    <strong>{{mensagemErro}}</strong>
+    <button (click)="mensagemErro = ''" type="button" class="btn-close" aria-label="Close"></button>
+  </div>
+
+
+
+
+
+
+  <div class="row g-8 mb-8">
+    <div class="row">
+
+      <div class="col-md-6">
+
+        <div class="row g-4">
+          <h2 class="text-center cursor-pointer" (click)="abrirModal('compras')">
+            Compras
+          </h2>
+          <div class="col-md-3">
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'ano-anterior' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-primary-subtle text-primary p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Ano Anterior</p>
+                    <h4 class="card-title fw-bolder">{{ comprasAnoAnteriorQtd }}</h4>
+                  </div>
+                  <i class="bi bi-arrow-counterclockwise display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasAnoAnteriorValorFloat" [options]="countUpOptions">
+                    {{ comprasAnoAnteriorValor }}
+                  </span>
+                </div>
+              </div>
             </a>
-          </li>
-        </ul>
-      </div>
-      <div class="dropdown">
-        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuCobranca" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          <i class="bi bi-cash-coin me-1"></i> Despesas
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="DropdownMenuCobranca">
-          <li>
-            <a class="dropdown-item" routerLink="/despesas"><strong>Consultar</strong></a>
-          </li>
-          <li>
-            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#despesas">
-              <strong>Cadastrar</strong>
+          </div>
+
+          <div class="col-md-3">
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'ano-atual' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-primary-subtle text-primary p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Ano Atual</p>
+                    <h4 class="card-title fw-bolder">{{ comprasAnoAtualQtd }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-check display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasAnoAtualValorFloat" [options]="countUpOptions">
+                    {{ comprasAnoAtualValor }}
+                  </span>
+                </div>
+              </div>
             </a>
-          </li>
-        </ul>
-      </div>
-
-      <div class="dropdown">
-        <button class="btn btn-outline-success" id="DropdownMenuCompras" data-bs-toggle="dropdown" aria-expanded="false"
-          routerLink="/despesas-loja">
-          <i class="bi bi-cart-check me-1"></i> Despesas-Loja
-        </button>
-      </div>
+          </div>
 
 
-      <!-- Fornecedor -->
-      <div class="dropdown">
-        <button class="btn btn-outline-success dropdown-toggle" id="DropdownMenuFornecedor" data-bs-toggle="dropdown"
-          aria-expanded="false">
-          <i class="bi bi-truck me-1"></i> Fornecedor
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="DropdownMenuFornecedor">
-          <li>
-            <a class="dropdown-item" routerLink="/fornecedor"><strong>Consultar</strong></a>
-          </li>
-          <li>
-            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#cadastrarFornecedor">
-              <strong>Cadastrar</strong>
+          <div class="col-md-3">
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'mes-anterior' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-success-light-subtle text-success p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Mês Anterior</p>
+                    <h4 class="card-title fw-bolder">{{ comprasMesAnteriorQtd }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-week display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasMesAnteriorValorFloat" [options]="countUpOptions">
+                    {{ comprasMesAnteriorValor }}
+                  </span>
+                </div>
+              </div>
             </a>
-          </li>
-        </ul>
+          </div>
+
+
+          <div class="col-md-3"> <!-- Compras Mês -->
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'mes' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-success-light-subtle text-success p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Mês atual</p>
+                    <h4 class="card-title fw-bolder">{{ comprasMesQtd }}</h4>
+                  </div>
+                  <i class="bi bi-check-circle-fill display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasMesValorFloat" [options]="countUpOptions">
+                    {{ comprasMesValor }}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+
+          <div class="col-md-3">
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'semana-passada' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-purple-subtle text-purple p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Semana Passada</p>
+                    <h4 class="card-title fw-bolder">{{ comprasSemanaPassadaQtd }}</h4>
+                  </div>
+                  <i class="bi bi-arrow-left-circle display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasSemanaPassadaValorFloat" [options]="countUpOptions">
+                    {{ comprasSemanaPassadaValor }}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+
+          <div class="col-md-3"> <!-- Compras Semana -->
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'semana' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-purple-subtle text-purple p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Semana Atual</p>
+                    <h4 class="card-title fw-bolder">{{ comprasSemanaQtd }}</h4>
+                  </div>
+                  <i class="bi bi-arrow-right-circle display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasSemanaValorFloat" [options]="countUpOptions">
+                    {{ comprasSemanaValor }}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+
+
+          <!-- Linha 2 (2 cards) -->
+          <div class="col-md-3"> <!-- Sem Cobrança -->
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'semcobranca' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-orange-subtle text-orange  p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Sem Cobrança</p>
+                    <h4 class="card-title fw-bolder">{{ comprasSemCobrancaQtd }}</h4>
+                  </div>
+                  <i class="bi bi-x-circle-fill display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasSemCobrancaValorFloat" [options]="countUpOptions">
+                    {{ comprasSemCobrancaValor }}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <div class="col-md-3"> <!-- Manuais -->
+            <a [routerLink]="['/compras']" [queryParams]="{ filtroDashboard: 'manuais' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-secondary-subtle text-secondary p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Manuais</p>
+                    <h4 class="card-title fw-bolder">{{ comprasManuaisQtd }}</h4>
+                  </div>
+                  <i class="bi bi-pencil-square display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span [countUp]="comprasManuaisValorFloat" [options]="countUpOptions">
+                    {{ comprasManuaisValor }}
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+
+
+
+          <div class="col-md-6">
+
+
+            <div class="animated-card  p-3 shadow-sm h-100" style="background-color:#aec6f0; color:#0646db;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <p class="card-subtitle text-uppercase fw-bold mb-0">TOP Fornecedor Ano</p>
+
+                  <span *ngFor="let r of rankFornecedorAno | slice:0:3" class="d-block small lh-sm mt-1">
+                    {{ r.nome }} → <strong>{{ r.total | currency:'BRL'}}</strong>
+                  </span>
+                </div>
+                <i class="bi bi-award-fill display-6 opacity-50"></i>
+              </div>
+            </div>
+
+          </div>
+          <div class="col-md-6">
+
+            <div class="animated-card  p-3 shadow-sm h-100" style="background-color:#aec6f0; color:#0646db;">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <p class="card-subtitle text-uppercase fw-bold mb-0">TOP Fornecedor Mês</p>
+
+                  <span *ngFor="let r of rankFornecedorMes  | slice:0:3" class="d-block small lh-sm mt-1">
+                    <a [routerLink]="['/compras']"
+                      [queryParams]="{ filtroDashboard: 'fornecedor', idForn: r.id, periodo: 'mes'}"
+                      class="text-decoration-none text-reset fw-semibold">
+                      {{ r.nome }} → <strong>{{ r.total | currency:'BRL' }}</strong>
+                    </a>
+                  </span>
+                </div>
+                <i class="bi bi-award-fill display-6 opacity-50"></i>
+              </div>
+            </div>
+
+          </div>
+
+
+
+
+
+
+
+
+        </div>
       </div>
+      <div class="col-md-6">
+        <div class="row g-4">
+          <h2 class="text-center cursor-pointer" (click)="abrirModal('cobrancas')">
+            Cobranças
+          </h2>
+
+          <div class="col-md-3">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'totalcobranca' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-primary-subtle text-primary p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Total cobranças</p>
+                    <h4 class="card-title fw-bolder">{{ qtdTotalCobrancas }}</h4>
+                  </div>
+                  <i class="bi bi-bag-check display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalCobrancasFloat"
+                    [options]="countUpOptions">{{
+                    totalValorCobranca }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-3">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'avencer' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-primary-subtle text-primary p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">A Vencer</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasAVencer }}</h4>
+                  </div>
+                  <i class="bi bi-bag-check display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrAVencerFloat"
+                    [options]="countUpOptions">{{ totalValorCobrAVencer }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-3">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidadia' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-purple-subtle text-purple p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Vencendo Hoje</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasVencidasNoDia }}</h4>
+                  </div>
+                  <i class="bi bi-clock-history display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrVencidasDiaFloat"
+                    [options]="countUpOptions">{{ totalValorCobrVencidasDia }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-3">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidas' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-danger-subtle text-danger p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Vencidas</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasVencidas }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-x display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrVencidasFloat"
+                    [options]="countUpOptions">{{ totalValorCobrVencidas }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+          <!-- Linha 2 (4 cards) -->
+          <div class="col-md-4">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidasSemPagamento' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-warning-subtle text-warning-emphasis p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">A Pagar (Manual)</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasSemPagamento }}</h4>
+                  </div>
+                  <i class="bi bi-wallet-fill display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrSemPagamentoFloat"
+                    [options]="countUpOptions">{{ totalValorCobrSemPagamento }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'proxvenc' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-orange-subtle text-orange p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">a pagar essa semana</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasProximoVencimento }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-event display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrProximoFloat"
+                    [options]="countUpOptions">{{ totalValorCobrProximo }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'proxsemana' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-orange-subtle text-orange p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">a pagar próx. semana</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasProximaSemana }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-event display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrProxSemanaFloat"
+                    [options]="countUpOptions">{{ totalValorCobrProxSemana }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+
+          <!-- Linha 3 (4 cards) -->
+          <div class="col-md-4">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasdia' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-success-subtle text-success p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Cobranças Pagas Hoje</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasPagasNoDia }}</h4>
+                  </div>
+                  <i class="bi bi-check-circle-fill display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrPagasDiaFloat"
+                    [options]="countUpOptions">{{ totalValorCobrPagasDia }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagassemana' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-success-light-subtle text-success-emphasis p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Cobranças Pagas Semana </p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasPagasSemana }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-check-fill display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrPagasSemanaFloat"
+                    [options]="countUpOptions">{{ totalValorCobrPagasSemana }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasmes' }"
+              class="text-decoration-none h-100">
+              <div class="animated-card bg-success-light-subtle text-success-emphasis p-3 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <p class="card-subtitle text-uppercase fw-bold mb-1">Cobranças Pagas Mês</p>
+                    <h4 class="card-title fw-bolder">{{ qtdCobrancasPagasNoMes }}</h4>
+                  </div>
+                  <i class="bi bi-calendar-check-fill display-6 opacity-50"></i>
+                </div>
+                <div class="text-end mt-2">
+                  <span class="fs-6 fw-semibold text-truncate" [countUp]="totalValorCobrPagasMesFloat"
+                    [options]="countUpOptions">{{ totalValorCobrPagasMes }}</span>
+                </div>
+              </div>
+            </a>
+          </div>
+
+
+        </div>
+      </div>
+
+
+    </div>
+
+  </div>
+  <br><br>
+
+  <div class="row g-4">
+
+    <!-- ================= TOPO ================= -->
+    <div class="col-12 text-center mb-4">
+
+      <!-- Linha 1 -->
+      <h4 class="fw-bold mb-1">Despesas Loja</h4>
+      <div class="calendar-top d-flex justify-content-center align-items-center gap-4 mb-8">
+        <button class="btn btn-outline-secondary" (click)="mudarMes(-1)">🡄</button>
+        <h5 class="mb-0">{{ nomeMes }}</h5>
+        <button class="btn btn-outline-secondary" (click)="mudarMes(1)">🡆</button>
+      </div>
+
+      <!-- Linha 2 -->
+
+    </div>
+
+    <div class="col-lg-6">
+
+      <div class="calendar">
+
+
+
+
+
+        <div class="calendar-legend mb-3 d-flex justify-content-center gap-3">
+          <div class="d-flex justify-content-center gap-5 flex-wrap">
+
+
+            <div>
+              <strong>Resumo Mensal</strong>
+              <div class="text-success">Pago: {{ totalMesPago | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+              <div class="text-danger">A pagar: {{ totalMesAberto | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+              <div class="fw-bold text-primary">Total: {{ totalMesGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+              </div>
+            </div>
+
+            <div>
+              <strong>Resumo Geral</strong>
+              <div class="text-success">Pago: {{ totalGeralPago | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+              <div class="text-danger">A pagar: {{ totalGeralAberto | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</div>
+              <div class="fw-bold text-primary">Total: {{ totalGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </div>
+            </div>
+
+
+          </div>
+          <span class="legend-item"><span class="legend-color pago"></span> Pago</span>
+          <span class="legend-item"><span class="legend-color vencido"></span> Vencido</span>
+          <span class="legend-item"><span class="legend-color proximo"></span> Próximo</span>
+        </div>
+
+        <div class="calendar-header">
+          <div *ngFor="let dia of semana" class="week-day">{{ dia }}</div>
+        </div>
+
+
+        <div class="calendar-grid ">
+          <div *ngFor="let dia of diasDoMes" class="day-cell" [ngClass]="{
+            'pago': dia.status === 'pago',
+            'vencido': dia.status === 'vencido',
+            'proximo': dia.status === 'proximo',
+            'normal': dia.status === 'normal',
+            'empty': dia.vazio
+          }" (mouseenter)="showTooltip(dia, $event)" (mouseleave)="hideTooltip()"
+            [routerLink]="(dia.vencido || dia.proximo) && !dia.vazio ? ['/despesas-loja'] : null"
+            [queryParams]="(dia.vencido || dia.proximo) && !dia.vazio ? { data: dia.data.toISOString().slice(0,10) } : null">
+
+            <span *ngIf="dia.valorPago > 0" class="valor valor-pago">
+              Pago: {{ dia.valorPago | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </span>
+
+            <span *ngIf="!dia.vazio" class="day-number">{{ dia.numero }}</span>
+
+            <span *ngIf="dia.valorAberto > 0" class="valor valor-aberto">
+              Pagar: {{ dia.valorAberto | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </span>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip-despesas" class="tooltip-custom" [innerHTML]="tooltipHtml"></div>
 
     </div>
 
 
+    <div class="col-lg-6 d-flex flex-column ">
 
 
-    <div class="container mt-3">
-      <nav class="navbar navbar-expand-lg navbar-dark"
-        style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+      <div class="ranking-clean mb-2 ranking-top-align">
+        <h6 class="text-center mb-2"><strong>Ranking do Mês</strong></h6>
+
+        <div class="row text-center">
+          <div class="col-4" *ngFor="let item of rankingMes; let i = index">
+            <strong>{{ i + 1 }}°</strong> {{ item.nome }}<br>
+            {{ item.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="tabela-anual">
+        <h6 class="text-center mb-2"><strong>Resumo Anual por Categoria</strong></h6>
+        <button class="btn btn-success btn-sm d-flex align-items-center" (click)="exportarExcel()">
+          <i class="bi bi-file-earmark-excel-fill me-1"></i> Excel
+        </button>
+
+        <table class="table table-sm table-bordered text-center align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Mês</th>
+              <th *ngFor="let cat of categoriasFixas">{{ cat }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let row of tabelaCategoriasAno">
+              <td><strong>{{ row.mes }}</strong></td>
+
+              <td *ngFor="let cat of categoriasFixas" [ngClass]="{
+    'maior-valor': cat === row.maiorCategoria,
+    'coluna-total': cat === 'Total',
+    'clicked-cell': clickedCell?.mes === row.mes && clickedCell?.categoria === cat
+  }" class="cell-click" [style.cursor]="cat === 'Total' ? 'default' : 'pointer'"
+                (click)="cat !== 'Total' && abrirModalDespesas(cat, row.mes)">
+                {{ row.valores[cat] | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-center gap-4 p-2 bg-light border rounded">
+
+          <h6 class="m-0">
+            <strong>Total:</strong>
+            {{ totalAnual | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </h6>
+
+          <span class="mx-2">|</span>
+
+          <h6 class="m-0">
+            <strong>Média:</strong>
+            {{ mediaAnual | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </h6>
 
 
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidas' }" class="text-decoration-none">
-            <div class="card bg-danger text-white text-center p-3 shadow">
-              <i class="bi bi-exclamation-circle display-10"></i>
-              <h5 class="card-title mt-2">Cobranças vencidas</h5>
-              <h1 class="card-text">{{ qtdCobrancasVencidas }}</h1>
-              <h3 class="card-text">{{totalValorCobrVencidas }}</h3>
 
-            </div>
-          </a>
+
         </div>
 
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidadia' }"
-            class="text-decoration-none">
-            <div class="card bg-secondary text-white text-center p-3 shadow">
-              <i class="bi bi-exclamation-circle display-10"></i>
-              <h5 class="card-title  mt-2">Vencendo hoje</h5>
-              <h1 class="card-text">{{ qtdCobrancasVencidasNoDia }}</h1>
-              <h3 class="card-text">{{totalValorCobrVencidasDia }}</h3>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'proxvenc' }" class="text-decoration-none">
-            <div class="card bg-warning text-dark text-center p-3 shadow">
-              <i class="bi bi-calendar-event display-10"></i>
-              <h5 class="card-title mt-2">Prox. vencimento</h5>
-              <h1 class="card-text">{{ qtdCobrancasProximoVencimento }}</h1>
-              <h3 class="card-text">{{totalValorCobrProximo }}</h3>
-            </div>
-          </a>
-        </div>
+      </div>
 
 
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'avencer' }" class="text-decoration-none">
-            <div class="card bg-primary text-white text-center p-3 shadow">
-              <i class="bi bi-bag-check display-10"></i>
-              <h5 class="card-title  mt-2">A vencer</h5>
-              <h1 class="card-text">{{ qtdCobrancasAVencer }}</h1>
-              <h3 class="card-text">{{totalValorCobrAVencer }}</h3>
-            </div>
-          </a>
-        </div>
+    </div>
+  </div>
 
+</div>
+<!--<div class="row g-4">
 
+    
+    <div class="col-12 text-center mb-4">
 
-      </nav>
+     
+      <h4 class="fw-bold mb-1">Despesas Loja</h4>
+      <div class="calendar-top d-flex justify-content-center align-items-center gap-4 mb-8">
+        <button class="btn btn-outline-secondary" (click)="mudarMes(-1)">🡄</button>
+        <h5 class="mb-0">{{ nomeMes }}</h5>
+        <button class="btn btn-outline-secondary" (click)="mudarMes(1)">🡆</button>
+      </div>
 
-      <nav class="navbar navbar-expand-lg navbar-dark justify-content-center"
-        style="background-color: #ffffff; margin-bottom: 0px; padding: 12px;">
+    
 
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'vencidasSemPagamento' }"
-            class="text-decoration-none">
-            <div class="card bg-warning text-dark text-center p-3 shadow">
-              <i class="bi bi-exclamation-circle display-10"></i>
-              <h5 class="card-title mt-2">Cobranças a pagar</h5>
-              <h1 class="card-text">{{ qtdCobrancasSemPagamento }}</h1>
-              <h3 class="card-text">{{totalValorCobrSemPagamento }}</h3>
-            </div>
-          </a>
-        </div>
-
-
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasdia' }" class="text-decoration-none">
-            <div class="card bg-success text-white text-center p-3 shadow">
-              <i class="bi bi-check-circle display-10"></i>
-              <h5 class="card-title mt-2">Pagas hoje</h5>
-              <h1 class="card-text">{{ qtdCobrancasPagasNoDia }}</h1>
-              <h3 class="card-text">{{totalValorCobrPagasDia }}</h3>
-            </div>
-          </a>
-        </div>
-
-        <div class="col-md-3 px-3">
-          <a [routerLink]="['/cobranca']" [queryParams]="{ filtroDashboard: 'pagasmes' }" class="text-decoration-none">
-            <div class="card bg-success text-white text-center p-3 shadow">
-              <i class="bi bi-check-circle display-10"></i>
-              <h5 class="card-title  mt-2">Pagas no mês</h5>
-              <h1 class="card-text">{{ qtdCobrancasPagasNoMes }}</h1>
-              <h3 class="card-text">{{totalValorCobrPagasMes }}</h3>
-            </div>
-          </a>
-        </div>
-
-      </nav>
-      <div class="line container mt-3"></div>
     </div>
 
-  </main>
+    <div class="col-lg-6">
+
+      <div class="calendar">
+
+
+
+
+
+        <div class="ranking-clean mb-2 ranking-top-align">
+        <h6 class="text-center mb-2"><strong>Ranking do Mês</strong></h6>
+
+        <div class="row text-center">
+          <div class="col-4" *ngFor="let item of rankingMes; let i = index">
+            <strong>{{ i + 1 }}°</strong> {{ item.nome }}<br>
+            {{ item.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="tabela-anual">
+        <h6 class="text-center mb-2"><strong>Resumo Anual por Categoria</strong></h6>
+        <button class="btn btn-success btn-sm d-flex align-items-center" (click)="exportarExcel()">
+          <i class="bi bi-file-earmark-excel-fill me-1"></i> Excel
+        </button>
+
+        <table class="table table-sm table-bordered text-center align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Mês</th>
+              <th *ngFor="let cat of categoriasFixas">{{ cat }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let row of tabelaCategoriasAno">
+              <td><strong>{{ row.mes }}</strong></td>
+
+              <td *ngFor="let cat of categoriasFixas" [ngClass]="{
+    'maior-valor': cat === row.maiorCategoria,
+    'coluna-total': cat === 'Total',
+    'clicked-cell': clickedCell?.mes === row.mes && clickedCell?.categoria === cat
+  }" class="cell-click" [style.cursor]="cat === 'Total' ? 'default' : 'pointer'"
+                (click)="cat !== 'Total' && abrirModalDespesas(cat, row.mes)">
+                {{ row.valores[cat] | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-center gap-4 p-2 bg-light border rounded">
+
+          <h6 class="m-0">
+            <strong>Total:</strong>
+            {{ totalAnual | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </h6>
+
+          <span class="mx-2">|</span>
+
+          <h6 class="m-0">
+            <strong>Média:</strong>
+            {{ mediaAnual | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </h6>
+
+
+
+
+        </div>
+
+      </div>
+
+
+    </div>
+
+    </div>
+
+
+    <div class="col-lg-6 d-flex flex-column ">
+
+
+      <div class="ranking-clean mb-2 ranking-top-align">
+        <h6 class="text-center mb-2"><strong>Ranking do Mês</strong></h6>
+
+        <div class="row text-center">
+          <div class="col-4" *ngFor="let item of rankingMes; let i = index">
+            <strong>{{ i + 1 }}°</strong> {{ item.nome }}<br>
+            {{ item.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+          </div>
+        </div>
+      </div>
+      <br>
+
+      <div class="tabela-anual">
+        <h6 class="text-center mb-2"><strong>Resumo Anual por Categoria</strong></h6>
+        <button class="btn btn-success btn-sm d-flex align-items-center" (click)="exportarExcel()">
+          <i class="bi bi-file-earmark-excel-fill me-1"></i> Excel
+        </button>
+
+        <table class="table table-sm table-bordered text-center align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Mês</th>
+              <th *ngFor="let cat of categoriasFixas">{{ cat }}</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let row of tabelaCategoriasAno">
+              <td><strong>{{ row.mes }}</strong></td>
+
+              <td *ngFor="let cat of categoriasFixas" [ngClass]="{
+    'maior-valor': cat === row.maiorCategoria,
+    'coluna-total': cat === 'Total',
+    'clicked-cell': clickedCell?.mes === row.mes && clickedCell?.categoria === cat
+  }" class="cell-click" [style.cursor]="cat === 'Total' ? 'default' : 'pointer'"
+                (click)="cat !== 'Total' && abrirModalDespesas(cat, row.mes)">
+                {{ row.valores[cat] | currency:'BRL':'symbol':'1.2-2':'pt-BR'}}
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+        <div class="d-flex justify-content-center gap-4 p-2 bg-light border rounded">
+
+          <h6 class="m-0">
+            <strong>Total:</strong>
+            {{ totalAnual | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </h6>
+
+          <span class="mx-2">|</span>
+
+          <h6 class="m-0">
+            <strong>Média:</strong>
+            {{ mediaAnual | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </h6>
+
+
+
+
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>!-->
+
+
+<!--<div class="col-lg-6">
+  <div class="card p-3 shadow-sm animated-card">
+    <h5 class="card-title">Cobranças Vencidas (Resumo)</h5>
+    <ul class="list-group list-group-flush">
+      <li *ngFor="let cobranca of cobranca | slice:0:5"
+        class="list-group-item d-flex justify-content-between align-items-center">
+        <span class="text-danger fw-bold"><i class="bi bi-x-circle me-1"></i> {{ cobranca.fornecedor.fornecedo
+          }}</span>
+        <span class="badge text-bg-danger">{{ cobranca.valorCobr | currency:'BRL' }}</span>
+      </li>
+      <li class="list-group-item text-center">
+        <a routerLink="/cobranca" [queryParams]="{ filtroDashboard: 'vencidas' }">Ver todas ({{ qtdCobrancasVencidas
+          }})</a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="col-lg-6">
+  <div class="card p-3 shadow-sm animated-card">
+    <h5 class="card-title">Distribuição de cobranças</h5>
+    <canvas id="chartConsolidado"></canvas>
+  </div>
+
+</div>!-->
+
+<div class="modal fade" id="modalResumo" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header position-relative">
+
+
+        <h5 class="modal-title mb-0">
+          Resumo Anual – {{ tipoSelecionado | titlecase }}
+        </h5>
+
+
+        <div class="d-flex align-items-center gap-2 position-absolute start-50 translate-middle-x" style="left: 47%;">
+
+          <button class="btn btn-outline-secondary btn-sm" (click)="alterarAno(-1)"> 🡄 </button>
+
+          <span class="fw-bold fs-5"> {{ anoAtual }} </span>
+
+          <button class="btn btn-outline-secondary btn-sm" (click)="alterarAno(1)"> 🡆 </button>
+        </div>
+
+
+        <div class="ms-auto d-flex align-items-center gap-2">
+          <button class="btn btn-success btn-sm btn-sm" title="Exportar para Excel"
+            (click)="exportarExcelResumoCompra(2025, anoAtual)">
+            <i class="bi bi-file-earmark-excel"></i>
+          </button>
+
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+      </div>
+
+
+
+      <div class="modal-body">
+        <table class="table table-bordered table-sm text-center align-middle resumo-anual">
+          <thead class="table-dark">
+            <tr>
+              <th>Mês</th>
+
+              <th *ngFor="let fp of formasPagamento">
+                {{ fp }}
+              </th>
+
+              <th>TOTAL</th>
+              <th>MÉDIA</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <!-- LINHAS DOS MESES -->
+            <tr *ngFor="let row of tabelaFormaPagAno; let i = index">
+              <td><strong>{{ row.mes }}</strong></td>
+
+              <td *ngFor="let fp of formasPagamento" class="bg-verde cell-click" style="cursor: pointer"
+                (click)="abrirModalResumoFormaPag(row.mes, fp)">
+                {{ row.valores[fp] | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+
+
+              <td class="fw-bold">
+                {{ row.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+
+              <!-- MÉDIA % ÚNICA -->
+              <td class="fw-bold"
+                [ngClass]="{'perc-baixo': row.percentualAnual < 80,'perc-medio': row.percentualAnual >= 80 && row.percentualAnual < 100, 'perc-alto': row.percentualAnual > 100}">
+                {{ row.percentualAnual | number:'1.2-2' }}%
+              </td>
+
+
+            </tr>
+
+            <!-- LINHA MÉDIA POR FORMA DE PAGAMENTO -->
+            <tr class="table-secondary fw-bold">
+              <td>MÉDIA</td>
+
+              <td *ngFor="let fp of formasPagamento">
+                {{ mediaPorFormaPag[fp] | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+
+              <td>
+                {{ mediaTotalGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+
+              <td></td>
+            </tr>
+
+            <!-- LINHA TOTAL POR FORMA DE PAGAMENTO -->
+            <tr class="table-secondary fw-bold">
+              <td>TOTAL</td>
+
+              <td *ngFor="let fp of formasPagamento">
+                {{ totalPorFormaPag[fp] | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+
+              <td>
+                {{ totalGeral | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+      </div>
+
+    </div>
+  </div>
 </div>
 
+
+<div class="modal fade" id="despesasModal" tabindex="-1" aria-labelledby="despesasModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="despesasModalLabel">
+          {{ categoriaModal }} - {{ mesModal }}
+          <span class="badge bg-primary ms-2">{{ listaDespesasFiltradas.length }}</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Obs</th>
+              <th>Data</th>
+              <th>Valor Pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of listaDespesasFiltradas">
+              <td>{{ d.despesa }}</td>
+              <td>{{d.observacao}}</td>
+              <td>{{d.dataPagamento | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ d.valorPago | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+
+            </tr>
+          </tbody>
+        </table>
+
+        <hr />
+        <h5>Total: {{ totalModal |currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</h5>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Fechar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="modalResumoFormaPag" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ formaPagModal }} – {{ mesResumoModal }}
+          <span class="badge bg-primary ms-2">
+            {{ listaResumoFormaPag.length }}
+          </span>
+        </h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Fornecedor / Cliente</th>
+              <th>Data</th>
+              <th>Forma Pag.</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let i of listaResumoFormaPag">
+              <td>{{ i.fornecedor || i.cliente }}</td>
+              <td>
+                {{ (i.dataEntrega || i.dataNota) | date:'dd/MM/yyyy' }}
+              </td>
+              <td>{{ i.formaPag }}</td>
+              <td>
+                {{ i.valorCompra | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <hr />
+        <h5 class="text-end">
+          Total:
+          {{ totalResumoFormaPag | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </h5>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 
 <div>

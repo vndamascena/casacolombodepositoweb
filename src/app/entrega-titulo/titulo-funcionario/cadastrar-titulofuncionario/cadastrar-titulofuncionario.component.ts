@@ -153,24 +153,54 @@ export class CadastrarTitulofuncionarioComponent implements OnInit {
     }
   }
 
-  processFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      const file = input.files[0];
-      const fileType = file.type;
+   processFile(event: Event): void {
+  const input = event.target as HTMLInputElement;
 
-      if (fileType.startsWith('image/jpeg') || fileType.startsWith('image/jpg') ||
-        fileType.startsWith('image/png') || fileType.startsWith('image/bmp') ||
-        fileType.startsWith('image/gif')) {
-        this.extractTextFromImage(file);
-      } else if (fileType.startsWith('text/html')) {
-        this.extractTextFromHtml(file);
-      } else {
-        alert('Por favor, selecione um arquivo de imagem ou HTML.');
-      }
-      this.imagemFile = file;
-    }
+  if (!input.files?.length) return;
+
+  const file = input.files[0];
+  const fileType = file.type;
+
+  this.imagemFile = file;
+
+  // 🟢 IMAGEM → mantém como está
+  if (
+    fileType.startsWith('image/jpeg') ||
+    fileType.startsWith('image/jpg') ||
+    fileType.startsWith('image/png') ||
+    fileType.startsWith('image/bmp') ||
+    fileType.startsWith('image/gif')
+  ) {
+    this.extractTextFromImage(file);
+    return;
   }
+
+  // 🟢 PDF → envia para backend
+  if (fileType === 'application/pdf') {
+    this.processarPdfNoBackend(file);
+    return;
+  }
+
+  alert('Formato não suportado.');
+}
+processarPdfNoBackend(file: File): void {
+  const formData = new FormData();
+  formData.append('arquivo', file);
+
+  this.httpClient
+    .post<any>(
+      environment.entregatitulo + '/tituloReceberFuncionario/extrairTextoPdf',
+      formData
+    )
+    .subscribe({
+      next: (res) => {
+        this.preencherFormularioPdf(res.textoExtraido);
+      },
+      error: () => {
+        alert('Erro ao processar PDF');
+      }
+    });
+}
 
   extractTextFromImage(file: File): void {
     Tesseract.recognize(file, 'eng', { logger: info => console.log(info) })
@@ -269,6 +299,100 @@ console.log('telefone:', telefone);
     
   }
 
+preencherFormularioPdf(text: string): void {
+  console.log('OCR PDF RAW:', text);
+
+  // ===============================
+  // NOME (mesma linha OU linha abaixo)
+  // ===============================
+  let nome = '';
+
+  const nomeLinhaUnica = text.match(/Nome:\s*(.+)/i);
+  if (nomeLinhaUnica && nomeLinhaUnica[1].trim().length > 3) {
+    nome = nomeLinhaUnica[1].trim();
+  } else {
+    const nomeLinhaSeguinte = text.match(/Nome:\s*\n\s*(.+)/i);
+    nome = nomeLinhaSeguinte ? nomeLinhaSeguinte[1].trim() : '';
+  }
+
+  // ===============================
+  // DOCUMENTO
+  // ===============================
+  const docMatch = text.match(/N[°º]?\s*DOC:\s*(\d{6,})/i);
+  const DOC = docMatch ? docMatch[1] : '';
+
+  // ===============================
+  // DATA
+  // ===============================
+  const dataMatch = text.match(/(\d{2}\/\d{2}\/\d{4})/);
+  const data = dataMatch ? dataMatch[1] : '';
+
+  // ===============================
+  // VENDEDOR (para na quebra de linha)
+  // ===============================
+ const vendedorMatch = text.match(
+  /Vendedor\s+([A-ZÀ-Ú\s]+?)(?=\s*(?:I|\||\-)?\s*(?:JC0[1-9]|VA|CL)|\n)/i
+);
+
+const vendedor = vendedorMatch ? vendedorMatch[1].trim() : '';
+
+  // ===============================
+  // VALOR LÍQUIDO
+  // ===============================
+  const valorMatch = text.match(/Valor\s*L[ií]quido\s*R?\$?\s*([\d.,]+)/i);
+  const valorLiquido = valorMatch ? valorMatch[1] : '';
+
+  // ===============================
+  // LOJA
+  // ===============================
+
+let loja = '';
+
+const lojaMatch = text.match(
+  /Vendedor\s+[A-ZÀ-Ú\s]+[\s\S]{0,1200}?\b(?:I|\||\-)?\s*(JC[1-9]|VA|CL)\b/i
+);
+
+if (lojaMatch) {
+  loja = lojaMatch[1].toUpperCase();
+}
+
+
+let observacao = '';
+
+const obsMatch = text.match(
+  /Valor\s*L[ií]quido[\s\S]*?\n([\s\S]*?)(?=\nENTREGAS\s+EM\s+HOR)/i
+);
+
+if (obsMatch) {
+  observacao = obsMatch[1]
+    .replace(/\n{2,}/g, '\n')
+    .trim();
+}
+
+
+  console.log({
+    nome,
+    vendedor,
+    DOC,
+    data,
+    valorLiquido,
+    loja,
+    observacao
+  });
+
+  // ===============================
+  // PATCH FORM
+  // ===============================
+  this.form.patchValue({
+    nomeCliente: nome,
+    vendedor: vendedor,
+    numeroNota: DOC,
+    dataVenda: data,
+    valor: valorLiquido,
+    loja: loja
+  });
+}
+
 
   uploadImagem(): void {
     if (!this.imagemFile) {
@@ -283,35 +407,42 @@ console.log('telefone:', telefone);
     }
 
     const formData = new FormData();
-    formData.append('imageFile', this.imagemFile as Blob);
+    const isPdf = this.imagemFile.type === 'application/pdf';
+
+    // 🔹 MANTÉM O PADRÃO ANTIGO PARA IMAGEM
+    if (isPdf) {
+      formData.append('arquivo', this.imagemFile);
+    } else {
+      formData.append('imageFile', this.imagemFile);
+    }
 
     this.spinner.show();
+    const url = isPdf
+      ? `${environment.entregatitulo}/tituloReceberFuncionario/uploadDocumento?tituloId=${this.tituloId}`
+      : `${environment.entregatitulo}/tituloReceberFuncionario/upload?tituloId=${this.tituloId}`;
 
-    this.httpClient.post(`${environment.entregatitulo}/tituloReceberFuncionario/upload?tituloId=${this.tituloId}`, formData)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Imagem enviada com sucesso:', data);
-          this.mensagem = 'Imagem enviada com sucesso!';
-          this.spinner.hide();
-
-          const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-          if (fileInput) {
-            fileInput.value = '';
-          }
-
-          this.imagemFile = null;
-          this.spinner.hide();
-         
-        },
-        error: (e) => {
-          console.log('Erro ao enviar a imagem:', e.error);
-          alert('Erro ao enviar a imagem. Tente novamente.');
-          this.spinner.hide();
-        }
-      });
+    this.httpClient.post(url, formData).subscribe({
+      next: (data: any) => {
+        console.log('Arquivo enviado com sucesso:', data);
+        this.mensagem = 'Arquivo enviado com sucesso!';
+        this.resetarFileInput();
+        this.spinner.hide();
+      },
+      error: (e) => {
+        console.error('Erro ao enviar arquivo:', e);
+        alert('Erro ao enviar o arquivo.');
+        this.spinner.hide();
+      }
+    });
   }
 
-
+  private resetarFileInput(): void {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.imagemFile = null;
+  }
 
 
 

@@ -27,6 +27,14 @@ User
 
 
 }
+
+ .img-thumb {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
+}
  .barra-pesquisa {
   position: relative;
 }

@@ -26,12 +26,12 @@
                     </button>
 
                 </div>
-                <div class="dropdown">
+                <!--<div class="dropdown">
                     <button class="btn btn-outline-success" routerLink="/despesas">
                         <i class="bi bi-cash-coin me-1"></i> Despesas
                     </button>
 
-                </div>
+                </div>-->
                 <div>
                     <button class="btn btn-outline-success " routerLink="/fornecedor">
                         <i class="bi bi-truck me-1"></i> Fornecedor
@@ -174,8 +174,9 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Loja</th>
+              
                 <th>Custo</th>
+                <th>Loja</th>
                 <th>Despesa</th>
                 <th>Qtd</th>
                 <th>Valor cobrado</th>
@@ -195,10 +196,11 @@
 
             <tr [ngStyle]="{'background-color': getColor(i)}" style="font-weight: bold;">
                 <td>{{ despesasLoja.id }}</td>
+               
+                <td>{{ despesasLoja.categoria}}</td>
                 <td>{{ despesasLoja.loja || '-' }}</td>
-                <td>{{despesasLoja.categoria}}</td>
                 <td>{{ despesasLoja.despesa || '-' }}</td>
-                <td>{{despesasLoja.quantidade}}</td>
+                <td>{{ despesasLoja.quantidade}}</td>
 
 
                 <td>R$ {{ despesasLoja.valorCobr != null ? despesasLoja.valorCobr.toLocaleString('pt-BR', {

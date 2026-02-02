@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, LOCALE_ID, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MenuComponent } from './menu/menu.component';
 import { ConsultaProdutosComponent } from './consulta-produtos/consulta-produtos.component';
@@ -22,6 +22,11 @@ import { CadastroTituloComponent } from './entrega-titulo/cadastro-titulo/cadast
 import { ConsultarTituloComponent } from './entrega-titulo/consultar-titulo/consultar-titulo.component';
 import { EditarEntregaComponent } from './entrega-titulo/editar-entrega/editar-entrega.component';
 
+import { registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
+registerLocaleData(localePt);
+
+
 @Component({
     selector: 'app-root',
     imports: [
@@ -33,21 +38,26 @@ import { EditarEntregaComponent } from './entrega-titulo/editar-entrega/editar-e
         //CadastrarProdutoGeralComponent, ConsultarProdutoGeralComponent, EdicaoProdutoGeralComponent, HistoricoTituloComponent,
         //EditarTituloComponent, CadastroTituloComponent, ConsultarTituloComponent, EditarEntregaComponent
     ],
+
     templateUrl: './app.component.html',
-    styleUrl: './app.component.css'
+    styleUrl: './app.component.css',
+       providers: [
+        { provide: LOCALE_ID, useValue: 'pt-BR' } 
+    ]
 })
 export class AppComponent implements OnInit{
   title = 'casacolombodeposito';
+  
 
-  showMenu: boolean = true; // Variável para controlar a exibição do menu
+  showMenu: boolean = true; 
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    // Inscrever-se para detectar alterações na rota
+   
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        // Verificar se a rota atual é a página de autenticação de usuário
+        
         this.showMenu = !event.url.includes('autenticar-usuario');
       }
     });

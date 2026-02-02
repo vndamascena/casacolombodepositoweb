@@ -1,4 +1,4 @@
-<div class="container mt-3" >
+<div class="container mt-3">
 
 
   <nav class="navbar navbar-expand-lg navbar-dark"
@@ -21,7 +21,7 @@
         <div class="input-group mb-3 barra-pesquisa">
           <input type="text" class="form-control lupa" placeholder="Digite para pesquisar a entrega"
             aria-label="Pesquisar" aria-describedby="basic-addon1" [(ngModel)]="expression" (input)="filtrarEntregas()">
-            <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
+          <i class=" bi-trash-fill	btn-clear" (click)="limparPesquisa()"></i>
           <div class="overlay" (click)="filtrarEntregas()"></div>
         </div>
       </div>
@@ -55,6 +55,17 @@
 
     </div>
   </nav>
+
+  <div *ngIf="mostrarAviso" class="alert aviso-entrega mx-auto text-center">
+    <div class="titulo-aviso">
+      Lugares proibidos para entrega
+    </div>
+
+    <div class="conteudo-aviso"><strong>
+        {{ mensagemAviso }}</strong>
+    </div>
+  </div>
+
 
 
   <div class="line my-3"></div>
@@ -103,8 +114,9 @@
               <ng-container
                 *ngFor="let pendente of getPendenciasPorPeriodo(getAllPendencias(), periodo) | paginate: { itemsPerPage: 50, currentPage: p };let i = index">
                 <tr>
-                  <td [ngStyle]="{'background-color': getColor(i)}">
-                    <img [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
+                  <td [ngStyle]="{'background-color': getColor(i)}"> <img *ngIf="isPdf(pendente.imagemUrl)" src="assets/NOTA.jpg"
+                        class="img-fluid img-thumb" (click)="expandirArquivo(pendente.imagemUrl)" title="Abrir PDF" />
+                      <img *ngIf="!isPdf(pendente.imagemUrl)"  [src]="getFullImageUrl(pendente.imagemUrl)" alt="{{ pendente.nome }}" class="img-fluid"
                       style="width: 30px;" (click)="expandirImagem(pendente.imagemUrl)">
                   </td>
                   <td [ngStyle]="{'background-color': getColor(i)}">{{pendente.loja}}</td>
@@ -198,9 +210,13 @@
                         (click)="abrirFormularioImpressao(entrega)">
                     </td>
                     <td [ngStyle]="{'background-color': getColor(i)}">
-                      <img [src]="getFullImageUrl(entrega.thumbnail)" alt="{{ entrega.nome }}" class="img-fluid"
-                        style="width: 30px;" (click)="expandirImagem(entrega.imagemUrl, data)">
+                      <img *ngIf="isPdf(entrega.imagemUrl)" src="assets/NOTA.jpg"
+                        class="img-fluid img-thumb" (click)="expandirArquivo(entrega.imagemUrl)" title="Abrir PDF" />
+                      <img *ngIf="!isPdf(entrega.imagemUrl)" [src]="getFullImageUrl(entrega.thumbnail)"
+                        alt="{{ entrega.nome }}" class="img-fluid" style="width: 30px; cursor: pointer;"
+                        (click)="expandirArquivo(entrega.imagemUrl)">
                     </td>
+
                     <td [ngStyle]="{'background-color': getColor(i)}">{{entrega.loja}}
                     </td>
                     <td [ngStyle]="{'background-color': getColor(i)}">

@@ -13,7 +13,13 @@
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   
   }
-  
+  .img-thumb {
+  width: 30px;
+  height: 40px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 4px;
+}
   
   
   .navbar-nav .nav-link {

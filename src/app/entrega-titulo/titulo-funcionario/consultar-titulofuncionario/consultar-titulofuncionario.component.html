@@ -124,7 +124,9 @@
                       <input type="checkbox" [(ngModel)]="titulo.selected" (change)="updateSelection(titulo)" />
                     </td>
                     <td>
-                      <img [src]="getFullImageUrl(titulo.imagemUrl)" alt="{{ titulo.nome }}" class="img-fluid"
+                       <img *ngIf="isPdf(titulo.imagemUrl)" src="assets/NOTA-TITULO.jpg"
+                        class="img-fluid img-thumb" (click)="expandirArquivo(titulo.imagemUrl)" title="Abrir PDF" />
+                      <img  *ngIf="!isPdf(titulo.imagemUrl)" [src]="getFullImageUrl(titulo.imagemUrl)" alt="{{ titulo.nome }}" class="img-fluid"
                         style="width: 30px;" (click)="expandirImagem(titulo.imagemUrl)">
                     </td>
                     <td>{{titulo.loja}}</td>
